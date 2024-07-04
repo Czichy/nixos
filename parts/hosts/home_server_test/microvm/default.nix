@@ -47,7 +47,7 @@ in {
     {
       imports = [
         # Include the microvm host module
-        inputs.microvm.nixosModules.host
+        microvm.nixosModules.host
       ];
 
       # guests = let
