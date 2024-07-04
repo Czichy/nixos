@@ -199,8 +199,8 @@ cat /root/.ssh/id_ed25519.pub
 ```
 
 ```bash
-git clone git@github.com:Czichy/nixos-flake.git
-cd nixos-flake
+git clone git@github.com:Czichy/nixos.git
+cd nixos
 ```
 
 1. change the disk device path in ./disko.nix to the disk you want to use
@@ -252,7 +252,7 @@ nixos-install --flake .#test --no-root-passwd --option accept-flake-config true
 Move Repo
 
 ```bash
-mv /root/nixos-flake /mnt/persist/etc/
+mv /root/nixos /mnt/persist/etc/
 
 ```
 
