@@ -1,0 +1,23 @@
+*.sw?
+.vim/backup/*
+.vim/tmp/*
+.vim/undos/
+.vim/plugged/
+result/
+build/
+
+result
+.direnv/
+.devenv/
+
+.devcontainer.json
+.pre-commit-config.yaml
+
+# home-manager
+czichy
+czichy-*-link
+!parts/**/czichy
+
+# tmp
+etc/dotfiles/config/wal/templates/Xresources
+etc/dotfiles/config/wal/templates/dunstrc
