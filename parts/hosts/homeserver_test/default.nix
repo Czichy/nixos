@@ -17,8 +17,7 @@
   inputs,
   system,
   ...
-}:
-{
+}: {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -38,7 +37,6 @@
   # ------------------------------
   environment.systemPackages = with pkgs; [
     networkmanagerapplet # need this to configure L2TP ipsec
-    # docker-compose
     wireguard-tools
   ];
 
@@ -134,7 +132,7 @@
   # NOTE for wireguard
   networking.wireguard.enable = true;
   networking.firewall = {
-    allowedUDPPorts = [ 51820 ];
+    allowedUDPPorts = [51820];
   };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
@@ -151,13 +149,11 @@
         enable = true;
         allowOther = true;
       };
-      services.keepassxc.enable = true;
       programs = {
         ssh = {
           enable = true;
           sshKey.enable = false;
         };
-        ib-tws.enable = true;
       };
       hardware.monitors = {
         enable = true;
@@ -176,21 +172,11 @@
       };
     };
 
-    #services.syncthing = {
-    #  enable = true;
-    #  tray.enable = true;
-    #};
-
     home.username = "czichy";
     home.homeDirectory = "/home/czichy";
     home.sessionVariables = {
       DEFAULT_USERNAME = "czichy";
       DEFAULT_MAIL = "christian@czichy.com";
     };
-    home.packages = with pkgs; [
-      zathura # A highly customizable and functional PDF viewer
-
-      inputs.self.packages.${system}.pywalfox-native
-    ];
   };
 }

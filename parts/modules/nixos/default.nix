@@ -17,19 +17,17 @@
   inputs,
   self,
   ...
-}:
-let
+}: let
   inherit (inputs.flake-parts.lib) importApply;
   localFlake = self;
-in
-{
+in {
   flake.nixosModules = {
     # -- misc --
-    misc_nix = importApply ./misc/nix.nix { inherit inputs localFlake; };
+    misc_nix = importApply ./misc/nix.nix {inherit inputs localFlake;};
 
     # -- profiles --
-    profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
-    profiles_packages-extra = importApply ./profiles/packages-extra.nix { inherit localFlake inputs; };
+    profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
+    profiles_packages-extra = importApply ./profiles/packages-extra.nix {inherit localFlake inputs;};
     profiles_graphical-plasma6 = importApply ./profiles/graphical-plasma6.nix {
       inherit localFlake inputs;
     };
@@ -39,9 +37,9 @@ in
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;
     };
-    profiles_server = importApply ./profiles/server.nix { inherit localFlake; };
-    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
-    profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
+    profiles_server = importApply ./profiles/server.nix {inherit localFlake;};
+    profiles_headless = importApply ./profiles/headless.nix {inherit localFlake;};
+    profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
 
     # -- programs --
 
@@ -49,7 +47,7 @@ in
 
     # -- services --
     # services_x11_desktop-managers_plasma6 = import ./services/x11/desktop-managers/plasma6.nix;
-    services_printing = importApply ./services/printing.nix { inherit localFlake; };
+    services_printing = importApply ./services/printing.nix {inherit localFlake;};
     services_syncthing = importApply ./services/syncthing.nix {
       inherit localFlake;
       inherit (config.secrets) secretsPath;
@@ -58,22 +56,23 @@ in
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {
       inherit localFlake;
     };
-    services_networking_ssh = importApply ./services/networking/ssh.nix { inherit localFlake; };
+    services_networking_ssh = importApply ./services/networking/ssh.nix {inherit localFlake;};
     services_x11_desktop-managers_startx-home-manager =
       importApply ./services/x11/desktop-managers/startx-home-manager.nix
-        { inherit localFlake; };
+      {inherit localFlake;};
 
-    services_virtualisation = importApply ./services/virtualisation { inherit localFlake; };
+    services_virtualisation = importApply ./services/virtualisation {inherit localFlake;};
+    services_microvm = importApply ./services/virtualisation/microvm {inherit localFlake;};
 
     # -- system --
-    system_impermanence = importApply ./system/impermanence.nix { inherit localFlake inputs; };
+    system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};
     system_users = importApply ./system/users.nix {
       inherit localFlake;
       inherit (config.secrets) secretsPath pubkeys;
     };
 
     # -- tasks --
-    tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix { inherit localFlake; };
-    tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix { inherit localFlake; };
+    tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
+    tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix {inherit localFlake;};
   };
 }
