@@ -69,7 +69,7 @@ in {
         };
 
         config = {
-          import = [../../networking/ssh.nix {inherit localFlake;}];
+          imports = [import ../../networking/ssh.nix {inherit localFlake;}];
 
           microvm = {
             # Any other configuration for your MicroVM
