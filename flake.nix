@@ -62,6 +62,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    impermanence.url = "github:nix-community/impermanence";
 
     nixGL = {
       url = "github:nix-community/nixGL";
@@ -79,7 +80,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    impermanence.url = "github:nix-community/impermanence";
+    nixos-extra-modules = {
+      url = "github:czichy/nixos-extra-modules";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     #nur.url = "github:nix-community/NUR";
 
     arkenfox-user-js = {
@@ -198,6 +203,6 @@
       # 3. load the flake - `:lf .`
       # After that you can inspect the flake from the root attribute `debug.flake`
       #
-      # debug = true;
+      debug = true;
     };
 }

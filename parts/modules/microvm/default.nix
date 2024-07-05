@@ -21,7 +21,6 @@
 }:
 with builtins;
 with lib; let
-  inherit (inputs.flake-parts.lib) importApply;
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.virtualisation.microvm;

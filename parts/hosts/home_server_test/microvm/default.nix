@@ -12,123 +12,28 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
-  config,
-  lib,
-  pkgs,
+{
+  # myvars,
+  # mylib,
+  # agenix,
+  microvm,
+  private,
+  # nuenv,
   ...
-}:
-with builtins;
-with lib; let
-  inherit (inputs.flake-parts.lib) importApply;
-  inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+}: {
+  imports = [
+    # Include the microvm host module
+    microvm.nixosModules.host
+  ];
 
-  cfg = config.tensorfiles.services.virtualisation.microvm;
+  microvm.vms = {
+    test = {
+      autostart = true;
+      restartIfChanged = true;
 
-  impermanenceCheck =
-    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
-  impermanence =
-    if impermanenceCheck
-    then config.tensorfiles.system.impermanence
-    else {};
-in {
-  options.tensorfiles.services.virtualisation.microvm = with types; {
-    enable = mkEnableOption ''
-      Enables Micro-VM host.
-    '';
+      # specialArgs = {inherit private;};
 
-    impermanence = {
-      enable = mkImpermanenceEnableOption;
+      config.imports = [./test];
     };
   };
-
-  config = mkIf cfg.enable (mkMerge [
-    # |----------------------------------------------------------------------| #
-    {
-      imports = [
-        # Include the microvm host module
-        microvm.nixosModules.host
-      ];
-
-      # guests = let
-      #   mkGuest = guestName: {
-      #     autostart = true;
-      #     restartIfChanged = true;
-      #     # zfs."/state" = {
-      #     #   pool = "rpool";
-      #     #   dataset = "local/guests/${guestName}";
-      #     # };
-      #     # zfs."/persist" = {
-      #     #   pool = "rpool";
-      #     #   dataset = "safe/guests/${guestName}";
-      #     # };
-      #     modules = [
-      #       ../../config
-      #       # ./common.nix
-      #       ./${guestName}.nix
-      #       {
-      #         node.secretsDir = ./secrets/${guestName};
-      #         networking.nftables.firewall = {
-      #           zones.untrusted.interfaces = [config.guests.${guestName}.networking.mainLinkName];
-      #         };
-      #       }
-      #     ];
-      #   };
-
-      #   mkMicrovm = guestName: {
-      #     ${guestName} =
-      #       mkGuest guestName
-      #       // {
-      #         backend = "microvm";
-      #         microvm = {
-      #           system = "x86_64-linux";
-      #           macvtap = "lan";
-      #           baseMac = config.repo.secrets.local.networking.interfaces.lan.mac;
-      #         };
-      #         extraSpecialArgs = {
-      #           inherit (inputs.self) nodes globals;
-      #           inherit (inputs.self.pkgs.x86_64-linux) lib;
-      #           inherit inputs minimal;
-      #         };
-      #       };
-      #   };
-      # deadnix: skip
-      # mkContainer = guestName: {
-      #   ${guestName} =
-      #     mkGuest guestName
-      #     // {
-      #       backend = "container";
-      #       container.macvlan = "lan";
-      #       extraSpecialArgs = {
-      #         inherit (inputs.self) nodes globals;
-      #         inherit (inputs.self.pkgs.x86_64-linux) lib;
-      #         inherit inputs minimal;
-      #       };
-      #     };
-      # };
-      # in
-      #   # lib.mkIf (!minimal)
-      #   (
-      #     {}
-      #     // mkMicrovm "adguardhome"
-      #     // mkMicrovm "forgejo"
-      #     // mkMicrovm "home-gateway"
-      #     // mkMicrovm "kanidm"
-      #     // mkMicrovm "netbird"
-      #     // mkMicrovm "radicale"
-      #     // mkMicrovm "vaultwarden"
-      #     // mkMicrovm "web-proxy"
-      #   );
-      services_microvm_test = importApply ./test.nix {inherit localFlake microvm;};
-    }
-    # |----------------------------------------------------------------------| #
-    (mkIf impermanenceCheck {
-      environment.persistence."${impermanence.persistentRoot}" = {
-        directories = ["/var/lib/microvms"];
-      };
-    })
-    # |----------------------------------------------------------------------| #
-  ]);
-
-  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }

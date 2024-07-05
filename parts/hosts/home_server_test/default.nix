@@ -30,6 +30,7 @@
     disko.nixosModules.disko
     ./hardware-configuration.nix
     ./disko.nix
+    # ./microvm
   ];
 
   # ------------------------------
@@ -62,11 +63,16 @@
     };
     security.agenix.enable = true;
 
-    services.printing.enable = true;
-    services.syncthing = {
+    services.virtualisation.microvm = {
       enable = true;
-      user = "czichy";
+      test.enable = true;
     };
+
+    # services.printing.enable = true;
+    # services.syncthing = {
+    #   enable = true;
+    #   user = "czichy";
+    # };
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;

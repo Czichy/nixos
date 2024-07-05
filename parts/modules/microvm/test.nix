@@ -12,11 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  localFlake,
-  secretsPath,
-  pubkeys,
-}: {
+{localFlake}: {
   config,
   lib,
   pkgs,
@@ -25,48 +21,37 @@
 }:
 with builtins;
 with lib; let
-  inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+  inherit (localFlake.lib); # isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.virtualisation.microvm.test;
-
-  ipv4 = "192.168.1.177";
-  mainGateway = "192.168.1.1";
-  nameservers = [
-    "119.29.29.29" # DNSPod
-    "223.5.5.5" # AliDNS
-  ];
-  ipv4WithMask = "${ipv4}/24";
-
-  impermanenceCheck =
-    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
-  impermanence =
-    if impermanenceCheck
-    then config.tensorfiles.system.impermanence
-    else {};
+  # impermanenceCheck =
+  #   (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+  # impermanence =
+  #   if impermanenceCheck
+  #   then config.tensorfiles.system.impermanence
+  #   else {};
 in {
   options.tensorfiles.services.virtualisation.microvm.test = with types; {
     enable = mkEnableOption ''
       Enables Micro-VM host.
     '';
 
-    impermanence = {
-      enable = mkImpermanenceEnableOption;
-    };
+    # impermanence = {
+    #   enable = mkImpermanenceEnableOption;
+    # };
   };
 
-  # imports = [../../networking/ssh.nix];
+  # imports = [
+  #   # Include the microvm host module
+  #   inputs.microvm.nixosModules.host
+  # ];
+
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       microvm.vms.test = {
         autostart = true;
         restartIfChanged = true;
-
-        specialArgs = {
-          inherit localFlake;
-          inherit secretsPath pubkeys;
-        };
-
         config = {
           microvm = {
             # Any other configuration for your MicroVM
@@ -125,8 +110,39 @@ in {
             socket = "control.socket";
             # specialArgs = {inherit localFlake config lib agenix private;};
           };
-          networking.hostName = "test";
+          networking.hostName = cfg.hostname;
 
+          # ---------------------
+          # | ADDITIONAL CONFIG |
+          # ---------------------
+          tensorfiles = {
+            profiles.graphical-startx-home-manager.enable = true;
+            profiles.packages-extra.enable = true;
+
+            security.agenix.enable = true;
+
+            services.syncthing = {
+              enable = true;
+              user = "czichy";
+            };
+
+            # system.users.usersSettings."root" = {
+            #   agenixPassword.enable = true;
+            # };
+            system.users.usersSettings."czichy" = {
+              isSudoer = true;
+              isNixTrusted = true;
+              agenixPassword.enable = true;
+              extraGroups = [
+                "video"
+                "camera"
+                "audio"
+                "networkmanager"
+                "input"
+                "docker"
+              ];
+            };
+          };
           users.defaultUserShell = pkgs.nushell;
           users.users.root.openssh.authorizedKeys.keys = [
             "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
@@ -138,23 +154,10 @@ in {
             enable = true;
             settings.PermitRootLogin = "yes";
           };
-
-          systemd.network.enable = true;
-
-          systemd.network.networks."20-lan" = {
-            matchConfig.Type = "ether";
-            networkConfig = {
-              Address = [ipv4WithMask];
-              Gateway = mainGateway;
-              DNS = nameservers;
-              DHCP = "no";
-            };
-          };
           system.stateVersion = "24.05";
         };
       };
     }
-    # |----------------------------------------------------------------------| #
     # |----------------------------------------------------------------------| #
     # (mkIf impermanenceCheck {
     #   environment.persistence."${impermanence.persistentRoot}" = {

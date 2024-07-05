@@ -18,35 +18,50 @@
   withSystem,
   config,
   ...
-}:
-let
-  mkHost =
-    args: hostName:
-    {
-      extraSpecialArgs ? { },
-      extraModules ? [ ],
-      extraOverlays ? [ ],
-      withHomeManager ? false,
-      ...
-    }:
-    let
-      baseSpecialArgs = {
+}: let
+  inherit
+    (lib)
+    concatMapAttrs
+    filterAttrs
+    flip
+    genAttrs
+    mapAttrs
+    mapAttrs'
+    nameValuePair
+    ;
+
+  mkHost = args: hostName: {
+    extraSpecialArgs ? {},
+    extraModules ? [],
+    extraOverlays ? [],
+    withHomeManager ? false,
+    ...
+  }: let
+    baseSpecialArgs =
+      {
+        inherit lib;
         inherit (args) system;
+        inherit (config) nodes; # globals;
         inherit inputs hostName;
-      } // extraSpecialArgs;
-    in
+      }
+      // extraSpecialArgs;
+  in
     lib.nixosSystem {
       inherit (args) system;
-      specialArgs = baseSpecialArgs // {
-        inherit lib hostName;
-        host.hostName = hostName;
-      };
+      specialArgs =
+        baseSpecialArgs
+        // {
+          inherit lib hostName;
+          host.hostName = hostName;
+        };
       modules =
         [
           {
             nixpkgs.overlays = extraOverlays;
             nixpkgs.config.allowUnfree = true;
             networking.hostName = hostName;
+
+            # node.name = hostName;
           }
           ./${hostName}
         ]
@@ -55,71 +70,74 @@ let
         # instead of imports
         ++ (lib.attrValues config.flake.nixosModules)
         ++ (
-          if withHomeManager then
-            [
-              inputs.home-manager.nixosModules.home-manager
-              {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  extraSpecialArgs = baseSpecialArgs;
-                  sharedModules = lib.attrValues config.flake.homeModules;
-                  backupFileExtension = "backup";
-                };
-              }
-            ]
-          else
-            [ ]
+          if withHomeManager
+          then [
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = baseSpecialArgs;
+                sharedModules = lib.attrValues config.flake.homeModules;
+                backupFileExtension = "backup";
+              };
+            }
+          ]
+          else []
         );
     };
-in
-{
+in {
   flake.nixosConfigurations = {
     installer = withSystem "x86_64-linux" (
       args:
-      mkHost args "installer" {
-        withHomeManager = false;
-        extraOverlays = with inputs; [ (final: _prev: { nur = import nur { pkgs = final; }; }) ];
-      }
+        mkHost args "installer" {
+          withHomeManager = false;
+          extraOverlays = with inputs; [(final: _prev: {nur = import nur {pkgs = final;};})];
+        }
     );
 
     desktop = withSystem "x86_64-linux" (
       args:
-      mkHost args "desktop" {
-        withHomeManager = true;
-        extraOverlays = with inputs; [
-          (final: _prev: { nur = import nur { pkgs = final; }; })
-          (final: _prev: { topology = import nix-topology.overlays.default { pkgs = final; }; })
-        ];
-      }
+        mkHost args "desktop" {
+          withHomeManager = true;
+          extraOverlays = with inputs; [
+            (final: _prev: {nur = import nur {pkgs = final;};})
+            (final: _prev: {topology = import nix-topology.overlays.default {pkgs = final;};})
+            (final: _prev: {topology = import nixos-extra-modules.overlays.default {pkgs = final;};})
+          ];
+        }
     );
     vm_test = withSystem "x86_64-linux" (
       args:
-      mkHost args "vm_test" {
-        withHomeManager = true;
-        extraOverlays = with inputs; [ (final: _prev: { nur = import nur { pkgs = final; }; }) ];
-      }
+        mkHost args "vm_test" {
+          withHomeManager = true;
+          extraOverlays = with inputs; [(final: _prev: {nur = import nur {pkgs = final;};})];
+        }
     );
     home_server_test = withSystem "x86_64-linux" (
       args:
-      mkHost args "home_server_test" {
-        withHomeManager = true;
-        extraOverlays = with inputs; [ (final: _prev: { nur = import nur { pkgs = final; }; }) ];
-      }
+        mkHost args "home_server_test" {
+          withHomeManager = true;
+          extraOverlays = with inputs; [
+            (final: _prev: {nur = import nur {pkgs = final;};})
+            (final: _prev: {topology = import nix-topology.overlays.default {pkgs = final;};})
+            (final: _prev: {topology = import nixos-extra-modules.overlays.default {pkgs = final;};})
+          ];
+        }
     );
     spinorbundle = withSystem "x86_64-linux" (
       args:
-      mkHost args "spinorbundle" {
-        withHomeManager = true;
-        extraOverlays = with inputs; [ (final: _prev: { nur = import nur { pkgs = final; }; }) ];
-      }
+        mkHost args "spinorbundle" {
+          withHomeManager = true;
+          extraOverlays = with inputs; [(final: _prev: {nur = import nur {pkgs = final;};})];
+        }
     );
     jetbundle = withSystem "x86_64-linux" (
       args:
-      mkHost args "jetbundle" {
-        withHomeManager = true;
-        extraOverlays = with inputs; [ (final: _prev: { nur = import nur { pkgs = final; }; }) ];
-      }
+        mkHost args "jetbundle" {
+          withHomeManager = true;
+          extraOverlays = with inputs; [(final: _prev: {nur = import nur {pkgs = final;};})];
+        }
     );
   };
 }
