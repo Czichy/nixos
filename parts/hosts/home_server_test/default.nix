@@ -65,7 +65,7 @@
 
     services.virtualisation.microvm = {
       enable = true;
-      test.enable = true;
+      # test.enable = true;
     };
 
     # services.printing.enable = true;
