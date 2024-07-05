@@ -28,9 +28,7 @@
   }: let
     baseSpecialArgs =
       {
-        inherit lib;
         inherit (args) system;
-        inherit (config) nodes; # globals;
         inherit inputs hostName;
       }
       // extraSpecialArgs;
