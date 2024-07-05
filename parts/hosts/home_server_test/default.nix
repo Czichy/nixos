@@ -106,7 +106,7 @@
   # Enable NetworkManager
   networking = {
     networkmanager.enable = true;
-    hostName = "vm_test";
+    hostName = "home_server_test";
     useDHCP = false;
     interfaces.enp1s0 = {
       useDHCP = true;
