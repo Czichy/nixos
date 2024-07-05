@@ -19,17 +19,6 @@
   config,
   ...
 }: let
-  inherit
-    (lib)
-    concatMapAttrs
-    filterAttrs
-    flip
-    genAttrs
-    mapAttrs
-    mapAttrs'
-    nameValuePair
-    ;
-
   mkHost = args: hostName: {
     extraSpecialArgs ? {},
     extraModules ? [],
@@ -103,7 +92,7 @@ in {
           extraOverlays = with inputs; [
             (final: _prev: {nur = import nur {pkgs = final;};})
             (final: _prev: {topology = import nix-topology.overlays.default {pkgs = final;};})
-            (final: _prev: {topology = import nixos-extra-modules.overlays.default {pkgs = final;};})
+            # (final: _prev: {nixos_extra = import nixos-extra-modules.overlays.default {pkgs = final;};})
           ];
         }
     );
@@ -121,7 +110,7 @@ in {
           extraOverlays = with inputs; [
             (final: _prev: {nur = import nur {pkgs = final;};})
             (final: _prev: {topology = import nix-topology.overlays.default {pkgs = final;};})
-            (final: _prev: {topology = import nixos-extra-modules.overlays.default {pkgs = final;};})
+            # (final: _prev: {nixos_extra = import nixos-extra-modules.overlays.default {pkgs = final;};})
           ];
         }
     );
