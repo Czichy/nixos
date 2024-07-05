@@ -146,42 +146,42 @@
   # of rpfilter. You can either disable rpfilter altogether:
   networking.firewall.checkReversePath = false;
 
-  home-manager.users."czichy" = {
-    tensorfiles.hm = {
-      security.agenix.enable = true;
+  # home-manager.users."czichy" = {
+  #   tensorfiles.hm = {
+  #     security.agenix.enable = true;
 
-      system.impermanence = {
-        enable = true;
-        allowOther = true;
-      };
-      programs = {
-        ssh = {
-          enable = true;
-          sshKey.enable = false;
-        };
-      };
-      hardware.monitors = {
-        enable = true;
-        monitors = [
-          {
-            name = "Virtual-1";
-            width = 2560;
-            height = 1600;
-            hasBar = true;
-            refreshRate = 75;
-            x = 0;
-            workspace = "1";
-            primary = true;
-          }
-        ];
-      };
-    };
+  #     system.impermanence = {
+  #       enable = true;
+  #       allowOther = true;
+  #     };
+  #     programs = {
+  #       ssh = {
+  #         enable = true;
+  #         sshKey.enable = false;
+  #       };
+  #     };
+  #     hardware.monitors = {
+  #       enable = true;
+  #       monitors = [
+  #         {
+  #           name = "Virtual-1";
+  #           width = 2560;
+  #           height = 1600;
+  #           hasBar = true;
+  #           refreshRate = 75;
+  #           x = 0;
+  #           workspace = "1";
+  #           primary = true;
+  #         }
+  #       ];
+  #     };
+  #   };
 
-    home.username = "czichy";
-    home.homeDirectory = "/home/czichy";
-    home.sessionVariables = {
-      DEFAULT_USERNAME = "czichy";
-      DEFAULT_MAIL = "christian@czichy.com";
-    };
-  };
+  #   home.username = "czichy";
+  #   home.homeDirectory = "/home/czichy";
+  #   home.sessionVariables = {
+  #     DEFAULT_USERNAME = "czichy";
+  #     DEFAULT_MAIL = "christian@czichy.com";
+  #   };
+  # };
 }
