@@ -54,7 +54,7 @@ in {
     };
   };
 
-  # imports = [../../networking/ssh.nix];
+  imports = [../../networking/ssh.nix];
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
