@@ -12,17 +12,18 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{ config, lib, ... }:
+{localFlake}: {
+  config,
+  lib,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.server;
   _ = mkOverrideAtHmProfileLevel;
-in
-{
+in {
   options.tensorfiles.hm.profiles.server = with types; {
     enable = mkEnableOption ''
       TODO
@@ -60,5 +61,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }
