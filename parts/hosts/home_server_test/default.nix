@@ -148,7 +148,6 @@
 
   home-manager.users."czichy" = {
     tensorfiles.hm = {
-      profiles.graphical-hyprland.enable = true;
       security.agenix.enable = true;
 
       system.impermanence = {
