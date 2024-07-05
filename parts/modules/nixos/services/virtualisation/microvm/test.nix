@@ -29,8 +29,8 @@ with lib; let
 
   cfg = config.tensorfiles.services.virtualisation.microvm.test;
 
-  ipv4 = "192.168.1.177";
-  mainGateway = "192.168.1.1";
+  ipv4 = "10.0.0.10";
+  mainGateway = "10.0.0.1";
   nameservers = [
     "119.29.29.29" # DNSPod
     "223.5.5.5" # AliDNS
@@ -98,7 +98,7 @@ in {
             interfaces = [
               {
                 type = "tap";
-                id = "vm-mitsuha"; # should be prefixed with "vm-"
+                id = "vm-test"; # should be prefixed with "vm-"
                 mac = "02:00:00:00:00:02"; # Unique MAC address
               }
             ];
@@ -125,9 +125,7 @@ in {
             socket = "control.socket";
             # specialArgs = {inherit localFlake config lib agenix private;};
           };
-          networking.hostName = "test";
-
-          users.defaultUserShell = pkgs.nushell;
+          users.users.root.password = "";
           users.users.root.openssh.authorizedKeys.keys = [
             "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
             "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKfYUpuZeYCkKCNL22+jUBroV4gaZYJOjcRVPDZDVXSp root@desktop"
