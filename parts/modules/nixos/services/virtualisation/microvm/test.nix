@@ -21,6 +21,7 @@
   lib,
   pkgs,
   microvm,
+  inputs,
   ...
 }:
 with builtins;
