@@ -14,52 +14,50 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {pkgs, ...}: {
   tensorfiles.hm = {
-    profiles.graphical-hyprland.enable = true;
+    profiles.server.enable = true;
     security.agenix.enable = true;
 
     system.impermanence = {
       enable = true;
       allowOther = true;
     };
-    services.keepassxc.enable = true;
     programs = {
       ssh = {
         enable = true;
         sshKey.enable = false;
       };
-      ib-tws.enable = true;
       ragenix.enable = true;
     };
-    hardware.monitors = {
-      enable = true;
-      monitors = [
-        {
-          name = "DP-2";
-          width = 3840;
-          height = 2160;
-          hasBar = true;
-          refreshRate = 60;
-          x = 0;
-          y = 2160;
-          scale = "1.0";
-          primary = true;
-          defaultWorkspace = 1;
-        }
+    # hardware.monitors = {
+    #   enable = true;
+    #   monitors = [
+    #     {
+    #       name = "DP-2";
+    #       width = 3840;
+    #       height = 2160;
+    #       hasBar = true;
+    #       refreshRate = 60;
+    #       x = 0;
+    #       y = 2160;
+    #       scale = "1.0";
+    #       primary = true;
+    #       defaultWorkspace = 1;
+    #     }
 
-        {
-          name = "DP-3";
-          width = 3840;
-          height = 2160;
-          hasBar = true;
-          refreshRate = 60;
-          x = 0;
-          y = 0;
-          scale = "1.0";
-          primary = false;
-          defaultWorkspace = 6;
-        }
-      ];
-    };
+    #     {
+    #       name = "DP-3";
+    #       width = 3840;
+    #       height = 2160;
+    #       hasBar = true;
+    #       refreshRate = 60;
+    #       x = 0;
+    #       y = 0;
+    #       scale = "1.0";
+    #       primary = false;
+    #       defaultWorkspace = 6;
+    #     }
+    #   ];
+    # };
   };
 
   home.username = "czichy";
