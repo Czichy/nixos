@@ -143,5 +143,5 @@
   # of rpfilter. You can either disable rpfilter altogether:
   networking.firewall.checkReversePath = false;
 
-  # home-manager.users."czichy" = import (../../homes + "/czichy@home_server");
+  home-manager.users."czichy" = import (../../homes + "/czichy@home_server");
 }
