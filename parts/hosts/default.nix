@@ -47,7 +47,6 @@
             nixpkgs.overlays = extraOverlays;
             nixpkgs.config.allowUnfree = true;
             networking.hostName = hostName;
-
             # node.name = hostName;
           }
           ./${hostName}
@@ -107,8 +106,11 @@ in {
           withHomeManager = true;
           extraOverlays = with inputs; [
             (final: _prev: {nur = import nur {pkgs = final;};})
-            (final: _prev: {topology = import nix-topology.overlays.default {pkgs = final;};})
+            nix-topology.overlays.default
             # (final: _prev: {nixos_extra = import nixos-extra-modules.overlays.default {pkgs = final;};})
+          ];
+          extraModules = with inputs; [
+            nix-topology.nixosModules.default
           ];
         }
     );

@@ -1,14 +1,26 @@
-{ config, ... }:
-let
-  inherit (config.lib.topology)
+#
+# Author:  czichy <christian@czichy.com>
+# URL:     https://github.com/czichy/tensorfiles
+# License: MIT
+#
+# 888                                                .d888 d8b 888
+# 888                                               d88P"  Y8P 888
+# 888                                               888        888
+# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
+# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
+# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
+# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
+#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{localFlake}: {config, ...}: let
+  inherit
+    (config.lib.topology)
     mkInternet
     mkDevice
     mkSwitch
     mkRouter
     mkConnection
     ;
-in
-{
+in {
   # TODO: collect networks from globals
   networks.ward-kea.name = "Home LAN";
   networks.zackbiene-kea.name = "Isolated IoT Network";
@@ -34,11 +46,11 @@ in
         "eth3"
         "eth4"
       ]
-      [ "wan1" ]
+      ["wan1"]
     ];
     connections.eth1 = mkConnection "ward" "wan";
     interfaces.eth1 = {
-      addresses = [ "192.168.178.1" ];
+      addresses = ["192.168.178.1"];
       network = "home-fritzbox";
     };
   };
@@ -99,19 +111,19 @@ in
   nodes.tv-livingroom = mkDevice "TV Livingroom" {
     info = "LG OLED65B6D";
     image = ./images/lg-oled65b6d.png;
-    interfaces.eth1 = { };
+    interfaces.eth1 = {};
   };
 
   nodes.soundbar-livingroom = mkDevice "Soundbar Livingroom" {
     info = "Bose SoundTouch 300";
     image = ./images/bose-soundtouch-300.png;
-    interfaces.eth1 = { };
+    interfaces.eth1 = {};
   };
 
   nodes.sat-receiver-livingroom = mkDevice "Sat Receiver Livingroom" {
     info = "TechniSat DIGIT ISIO STC+";
     image = ./images/technisat-digit-isio-stcplus.png;
-    interfaces.eth1 = { };
+    interfaces.eth1 = {};
   };
 
   nodes.ruckus-ap = mkSwitch "Wi-Fi AP" {

@@ -20,8 +20,6 @@
   config,
   lib,
   pkgs,
-  # microvm,
-  inputs,
   ...
 }:
 with builtins;
@@ -60,6 +58,7 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
       microvm.vms.adguardhome = {
         autostart = true;
         restartIfChanged = true;
@@ -102,8 +101,8 @@ in {
             interfaces = [
               {
                 type = "tap";
-                id = "vm-test"; # should be prefixed with "vm-"
-                mac = "02:00:00:00:00:02"; # Unique MAC address
+                id = "vm-adguardhome"; # should be prefixed with "vm-"
+                mac = "02:00:00:00:00:08"; # Unique MAC address
               }
             ];
 
@@ -159,11 +158,10 @@ in {
             allowedUDPPorts = [53];
           };
 
-          topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
           services.adguardhome = {
             enable = true;
             mutableSettings = false;
-            host = "0.0.0.0";
+            host = "10.0.0.148";
             port = 3000;
             settings = {
               dns = {
@@ -184,47 +182,47 @@ in {
                 ];
                 dhcp.enabled = false;
               };
-              filtering.rewrites =
-                [
-                  # Undo the /etc/hosts entry so we don't answer with the internal
-                  # wireguard address for influxdb
-                  {
-                    inherit (globals.services.influxdb) domain;
-                    answer = config.repo.secrets.global.domains.me;
-                  }
-                ]
-                # Use the local mirror-proxy for some services (not necessary, just for speed)
-                # ++ map (domain: {
-                #   inherit domain;
-                #   answer = globals.net.home-lan.hosts.ward-web-proxy.ipv4;
-                # }) [
-                #   # FIXME: dont hardcode, filter global service domains by internal state
-                #   globals.services.grafana.domain
-                #   globals.services.immich.domain
-                #   globals.services.influxdb.domain
-                #   globals.services.loki.domain
-                #   globals.services.paperless.domain
-                #   "home.${config.repo.secrets.global.domains.me}"
-                #   "fritzbox.${config.repo.secrets.global.domains.me}"
-                # ]
-                ;
-              filters = [
-                {
-                  name = "AdGuard DNS filter";
-                  url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
-                  enabled = true;
-                }
-                {
-                  name = "AdAway Default Blocklist";
-                  url = "https://adaway.org/hosts.txt";
-                  enabled = true;
-                }
-                {
-                  name = "OISD (Big)";
-                  url = "https://big.oisd.nl";
-                  enabled = true;
-                }
-              ];
+              # filtering.rewrites =
+              #   [
+              #     # Undo the /etc/hosts entry so we don't answer with the internal
+              #     # wireguard address for influxdb
+              #     {
+              #       inherit (globals.services.influxdb) domain;
+              #       answer = config.repo.secrets.global.domains.me;
+              #     }
+              #   ]
+              # Use the local mirror-proxy for some services (not necessary, just for speed)
+              # ++ map (domain: {
+              #   inherit domain;
+              #   answer = globals.net.home-lan.hosts.ward-web-proxy.ipv4;
+              # }) [
+              #   # FIXME: dont hardcode, filter global service domains by internal state
+              #   globals.services.grafana.domain
+              #   globals.services.immich.domain
+              #   globals.services.influxdb.domain
+              #   globals.services.loki.domain
+              #   globals.services.paperless.domain
+              #   "home.${config.repo.secrets.global.domains.me}"
+              #   "fritzbox.${config.repo.secrets.global.domains.me}"
+              # ]
+              # ;
+              # filters = [
+              #   {
+              #     name = "AdGuard DNS filter";
+              #     url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
+              #     enabled = true;
+              #   }
+              #   {
+              #     name = "AdAway Default Blocklist";
+              #     url = "https://adaway.org/hosts.txt";
+              #     enabled = true;
+              #   }
+              #   {
+              #     name = "OISD (Big)";
+              #     url = "https://big.oisd.nl";
+              #     enabled = true;
+              #   }
+              # ];
             };
           };
 
