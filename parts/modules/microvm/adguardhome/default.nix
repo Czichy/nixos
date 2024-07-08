@@ -28,36 +28,39 @@ with builtins;
 with lib; let
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
-  cfg = config.tensorfiles.services.virtualisation.microvm.test;
+  cfg = config.tensorfiles.services.virtualisation.microvm.adguardhome;
 
-  ipv4 = "10.0.0.10";
+  adguardhomeDomain = "adguardhome.czichy.com";
+  # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
+
+  ipv4 = "10.0.0.148";
   mainGateway = "10.0.0.1";
   nameservers = [
     "119.29.29.29" # DNSPod
     "223.5.5.5" # AliDNS
   ];
   ipv4WithMask = "${ipv4}/24";
-  # impermanenceCheck =
-  #   (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
-  # impermanence =
-  #   if impermanenceCheck
-  #   then config.tensorfiles.system.impermanence
-  #   else {};
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.system.impermanence
+    else {};
 in {
-  options.tensorfiles.services.virtualisation.microvm.test = with types; {
+  options.tensorfiles.services.virtualisation.microvm.adguardhome = with types; {
     enable = mkEnableOption ''
-      Enables Micro-VM host.
+      Enables Micro-VM adguardhome.
     '';
 
-    # impermanence = {
-    #   enable = mkImpermanenceEnableOption;
-    # };
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      microvm.vms.test = {
+      microvm.vms.adguardhome = {
         autostart = true;
         restartIfChanged = true;
 
@@ -150,17 +153,102 @@ in {
               DHCP = "no";
             };
           };
+
+          networking.firewall = {
+            allowedTCPPorts = [53];
+            allowedUDPPorts = [53];
+          };
+
+          topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
+          services.adguardhome = {
+            enable = true;
+            mutableSettings = false;
+            host = "0.0.0.0";
+            port = 3000;
+            settings = {
+              dns = {
+                # allowed_clients = [
+                # ];
+                #trusted_proxies = [];
+                ratelimit = 300;
+                upstream_dns = [
+                  "https://dns.cloudflare.com/dns-query"
+                  "https://dns.google/dns-query"
+                  "https://doh.mullvad.net/dns-query"
+                ];
+                bootstrap_dns = [
+                  "1.1.1.1"
+                  # FIXME: enable ipv6 "2606:4700:4700::1111"
+                  "8.8.8.8"
+                  # FIXME: enable ipv6 "2001:4860:4860::8844"
+                ];
+                dhcp.enabled = false;
+              };
+              filtering.rewrites =
+                [
+                  # Undo the /etc/hosts entry so we don't answer with the internal
+                  # wireguard address for influxdb
+                  {
+                    inherit (globals.services.influxdb) domain;
+                    answer = config.repo.secrets.global.domains.me;
+                  }
+                ]
+                # Use the local mirror-proxy for some services (not necessary, just for speed)
+                # ++ map (domain: {
+                #   inherit domain;
+                #   answer = globals.net.home-lan.hosts.ward-web-proxy.ipv4;
+                # }) [
+                #   # FIXME: dont hardcode, filter global service domains by internal state
+                #   globals.services.grafana.domain
+                #   globals.services.immich.domain
+                #   globals.services.influxdb.domain
+                #   globals.services.loki.domain
+                #   globals.services.paperless.domain
+                #   "home.${config.repo.secrets.global.domains.me}"
+                #   "fritzbox.${config.repo.secrets.global.domains.me}"
+                # ]
+                ;
+              filters = [
+                {
+                  name = "AdGuard DNS filter";
+                  url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
+                  enabled = true;
+                }
+                {
+                  name = "AdAway Default Blocklist";
+                  url = "https://adaway.org/hosts.txt";
+                  enabled = true;
+                }
+                {
+                  name = "OISD (Big)";
+                  url = "https://big.oisd.nl";
+                  enabled = true;
+                }
+              ];
+            };
+          };
+
+          systemd.services.adguardhome = {
+            preStart = lib.mkAfter ''
+              INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
+                ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
+                "$STATE_DIRECTORY/AdGuardHome.yaml"
+            '';
+            serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
+          };
+
           system.stateVersion = "24.05";
         };
       };
     }
     # |----------------------------------------------------------------------| #
+
     # |----------------------------------------------------------------------| #
-    # (mkIf impermanenceCheck {
-    #   environment.persistence."${impermanence.persistentRoot}" = {
-    #     directories = ["/var/lib/microvms"];
-    #   };
-    # })
+    (mkIf impermanenceCheck {
+      environment.persistence."${impermanence.persistentRoot}" = {
+        directories = ["/var/lib/private/AdGuardHome"];
+      };
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

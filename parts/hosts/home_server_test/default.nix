@@ -66,6 +66,7 @@
     services.virtualisation.microvm = {
       enable = true;
       test.enable = true;
+      adguardhome.enable = true;
     };
 
     # services.printing.enable = true;
