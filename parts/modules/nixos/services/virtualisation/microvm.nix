@@ -21,7 +21,6 @@
 }:
 with builtins;
 with lib; let
-  inherit (inputs.flake-parts.lib) importApply;
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.virtualisation.microvm;
@@ -33,18 +32,6 @@ with lib; let
     then config.tensorfiles.system.impermanence
     else {};
 in {
-  flake.nixosModules = {
-    services_microvm_test = importApply ./microvm/test.nix {
-      inherit localFlake;
-      inherit (config.secrets) secretsPath pubkeys;
-    };
-
-    # services_microvm_influxdb = importApply ./microvm/influxdb.nix {
-    #   inherit localFlake;
-    #   inherit (config.secrets) secretsPath pubkeys;
-    # };
-  };
-
   options.tensorfiles.services.virtualisation.microvm = with types; {
     enable = mkEnableOption ''
       Enables Micro-VM host.
