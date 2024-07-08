@@ -62,6 +62,8 @@ in {
       {inherit localFlake;};
 
     services_virtualisation = importApply ./services/virtualisation {inherit localFlake;};
+    # -- micro vm --
+    services_microvm = importApply ./services/virtualisation/microvm.nix {inherit localFlake;};
     # -- system --
     system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};
     system_users = importApply ./system/users.nix {

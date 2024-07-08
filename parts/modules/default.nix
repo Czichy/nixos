@@ -16,7 +16,6 @@
   imports = [
     ./nixos
     ./home-manager
-
     ./microvm
   ];
 }
