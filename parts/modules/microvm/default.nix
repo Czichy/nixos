@@ -23,9 +23,9 @@
 in {
   flake.nixosModules = {
     # -- micro vm --
-    services_microvm = importApply ./services/virtualisation/microvm.nix {inherit localFlake;};
+    # services_microvm = importApply ./microvm.nix {inherit localFlake;};
 
-    services_microvm_test = importApply ./services/virtualisation/microvm/test.nix {
+    services_microvm_test = importApply ./test {
       inherit localFlake;
       inherit (config.secrets) secretsPath pubkeys;
     };
