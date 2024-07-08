@@ -72,18 +72,5 @@ in {
     # -- tasks --
     tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
     tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix {inherit localFlake;};
-
-    # -- micro vm --
-    services_microvm = importApply ./services/virtualisation/microvm.nix {inherit localFlake;};
-
-    services_microvm_test = importApply ./services/virtualisation/microvm/test.nix {
-      inherit localFlake;
-      inherit (config.secrets) secretsPath pubkeys;
-    };
-
-    services_microvm_influxdb = importApply ./services/virtualisation/microvm/test.nix {
-      inherit localFlake;
-      inherit (config.secrets) secretsPath pubkeys;
-    };
   };
 }
