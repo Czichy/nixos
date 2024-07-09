@@ -50,7 +50,7 @@
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
-    profiles.graphical-startx-home-manager.enable = true;
+    profiles.server.enable = true;
     profiles.packages-extra.enable = true;
 
     system.impermanence = {
