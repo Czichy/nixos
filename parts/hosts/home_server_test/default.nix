@@ -112,22 +112,6 @@
       };
     };
   };
-  boot = {
-    loader = {
-      timeout = 1;
-      grub.enable = false;
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot";
-      };
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 3;
-      };
-    };
-    #binfmt.emulatedSystems = [ "aarch64-linux" ];
-    kernelPackages = pkgs.linuxPackages_latest;
-  };
   #networking.networkmanager.enableStrongSwan = true;
   #services.xl2tpd.enable = true;
   #services.strongswan = {
