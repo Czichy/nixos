@@ -12,8 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ lib, pkgs, ... }:
 {
+  lib,
+  pkgs,
+  ...
+}: {
   #imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   #environment.systemPackages = with pkgs; [ libva-utils ];
@@ -30,10 +33,10 @@
         "sr_mod"
         "virtio_blk"
       ];
-      kernelModules = [ ];
+      kernelModules = [];
     };
-    kernelModules = [ "kvm-amd" ];
-    extraModulePackages = [ ];
+    kernelModules = ["kvm-amd"];
+    extraModulePackages = [];
   };
 
   services.fwupd.enable = true;
@@ -66,7 +69,7 @@
   };
 
   # ensure snapshots_dir exists
-  systemd.tmpfiles.rules = [ "d /.snapshots/data/home 0755 root root - -" ];
+  systemd.tmpfiles.rules = ["d /.snapshots/data/home 0755 root root - -"];
 
   boot = {
     loader = {
@@ -87,22 +90,6 @@
 
   hardware = {
     enableAllFirmware = true;
-    #cpu.intel.updateMicrocode = true;
-    #opentabletdriver.enable = true;
-
-    graphics = {
-      enable = true;
-      extraPackages = with pkgs; [
-        #intel-media-driver
-        #vaapiIntel
-        #vaapiVdpau
-        #libvdpau-va-gl
-      ];
-    };
-
-    bluetooth = {
-      enable = true;
-    };
   };
   # Hardware hybrid decoding
   #nixpkgs.config.packageOverrides = pkgs: {

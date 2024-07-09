@@ -27,6 +27,7 @@
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = with inputs; [
+    inputs.home-manager.nixosModules.default
     disko.nixosModules.disko
     ./hardware-configuration.nix
     ./disko.nix
