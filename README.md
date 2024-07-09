@@ -52,7 +52,7 @@ Ran the following to generate a custom ISO with an SSH public key already embedd
 
 ```bash
 cd ISO
-nix run github:nix-community/nixos-generators -- --flake .#installer --format iso
+nix run github:nix-community/nixos-generators -- --flake .#sshInstallIso --format iso
 ```
 
 The ISO file will be generated in a directory called result.
