@@ -45,7 +45,7 @@ in {
   imports = [
     # Include the microvm host module
     inputs.microvm.nixosModules.host
-    inputs.microvm.nixosModules.microvm
+    # inputs.microvm.nixosModules.microvm
   ];
 
   config = mkIf cfg.enable (mkMerge [
