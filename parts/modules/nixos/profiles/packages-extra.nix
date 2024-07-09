@@ -12,8 +12,10 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
   pkgs,
@@ -21,14 +23,12 @@
   ...
 }:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.packages-extra;
   _ = mkOverrideAtProfileLevel;
-in
-{
+in {
   options.tensorfiles.profiles.packages-extra = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the packages-extra system profile.
@@ -40,8 +40,7 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      environment.systemPackages =
-        with pkgs;
+      environment.systemPackages = with pkgs;
         [
           # --- BASE UTILS ---
           binutils # Tools for manipulating binaries (linker, assembler, etc.) (wrapper script)
@@ -51,7 +50,7 @@ in
           #vim # The most popular clone of the VI editor
           calcurse # A calendar and scheduling application for the command line
           #w3m # A text-mode web browser
-          neofetch # A fast, highly customizable system info script
+          # neofetch # A fast, highly customizable system info script
           #cmake # Cross-platform, open-source build system generator
           #gnumake # A tool to control the generation of non-source files from sources
           git # Distributed version control system
@@ -126,5 +125,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }

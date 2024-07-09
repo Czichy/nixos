@@ -78,7 +78,7 @@
     jq # A lightweight and flexible command-line JSON processor
     killall
     vim # The most popular clone of the VI editor
-    neofetch # A fast, highly customizable system info script
+    # neofetch # A fast, highly customizable system info script
 
     # ARCHIVING UTILS --
     atool # Archive command line helper
