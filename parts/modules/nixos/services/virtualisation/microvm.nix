@@ -45,11 +45,26 @@ in {
   imports = [
     # Include the microvm host module
     inputs.microvm.nixosModules.host
+    inputs.microvm.nixosModules.microvm
   ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # environment.etc."machine-id" = {
+      #   mode = "0644";
+      #   text =
+      #     # change this to suit your flake's interface
+      #     self.lib.addresses.machineId.${config.networking.hostName} + "\n";
+      # };
+      # systemd.tmpfiles.rules = map (
+      #   vmHost: let
+      #     machineId = self.lib.addresses.machineId.${vmHost};
+      #   in
+      #     # creates a symlink of each MicroVM's journal under the host's /var/log/journal
+      #     "L+ /var/log/journal/${machineId} - - - - /var/lib/microvms/${vmHost}/journal/${machineId}"
+      # ) (builtins.attrNames self.lib.addresses.machineId);
+
       # https://astro.github.io/microvm.nix/advanced-network.html
       networking.useNetworkd = true;
       systemd.network.enable = true;
@@ -71,6 +86,9 @@ in {
             }
             {
               addressConfig.Address = "fd12:3456:789a::1/64";
+            }
+            {
+              addressConfig.Address = "192.168.122.197/24";
             }
           ];
           ipv6Prefixes = [
@@ -94,7 +112,7 @@ in {
         enable = true;
         enableIPv6 = true;
         # Change this to the interface with upstream Internet access
-        externalInterface = "bond0";
+        externalInterface = "enp1s0";
         internalInterfaces = ["microvm"];
       };
     }

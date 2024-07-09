@@ -92,15 +92,6 @@
 
   users.defaultUserShell = pkgs.nushell;
 
-  services = {
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-      jack.enable = true;
-    };
-  };
-
   # Enable NetworkManager
   networking = {
     networkmanager.enable = true;
@@ -113,7 +104,7 @@
       ipv4 = {
         addresses = [
           {
-            address = "192.168.122.198";
+            address = "192.168.122.197";
             prefixLength = 24;
           }
         ];

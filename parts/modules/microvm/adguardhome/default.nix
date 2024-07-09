@@ -96,8 +96,16 @@ in {
                 source = "/nix/store";
                 mountPoint = "/nix/.ro-store";
               }
+              {
+                # On the host
+                source = "/var/lib/microvms/${config.networking.hostName}/journal";
+                # In the MicroVM
+                mountPoint = "/var/log/journal";
+                tag = "journal";
+                proto = "virtiofs";
+                socket = "journal.sock";
+              }
             ];
-
             interfaces = [
               {
                 type = "tap";
@@ -161,7 +169,7 @@ in {
           services.adguardhome = {
             enable = true;
             mutableSettings = false;
-            host = "10.0.0.148";
+            host = "0.0.0.0";
             port = 3000;
             settings = {
               dns = {
@@ -206,29 +214,29 @@ in {
               #   "fritzbox.${config.repo.secrets.global.domains.me}"
               # ]
               # ;
-              # filters = [
-              #   {
-              #     name = "AdGuard DNS filter";
-              #     url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
-              #     enabled = true;
-              #   }
-              #   {
-              #     name = "AdAway Default Blocklist";
-              #     url = "https://adaway.org/hosts.txt";
-              #     enabled = true;
-              #   }
-              #   {
-              #     name = "OISD (Big)";
-              #     url = "https://big.oisd.nl";
-              #     enabled = true;
-              #   }
-              # ];
+              filters = [
+                {
+                  name = "AdGuard DNS filter";
+                  url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
+                  enabled = true;
+                }
+                {
+                  name = "AdAway Default Blocklist";
+                  url = "https://adaway.org/hosts.txt";
+                  enabled = true;
+                }
+                {
+                  name = "OISD (Big)";
+                  url = "https://big.oisd.nl";
+                  enabled = true;
+                }
+              ];
             };
           };
 
           systemd.services.adguardhome = {
             preStart = lib.mkAfter ''
-              INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
+              INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show enp0s5 | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
                 ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
                 "$STATE_DIRECTORY/AdGuardHome.yaml"
             '';
