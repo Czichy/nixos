@@ -15,6 +15,7 @@
 {
   pkgs,
   inputs,
+  properties,
   system,
   ...
 }: {
@@ -39,7 +40,7 @@
   # ------------------------------
   environment.systemPackages = with pkgs; [
     # networkmanagerapplet # need this to configure L2TP ipsec
-    # wireguard-tools
+    wireguard-tools
   ];
 
   # ----------------------------
@@ -67,9 +68,12 @@
     services.virtualisation.microvm = {
       enable = true;
       test.enable = true;
-      adguardhome.enable = true;
     };
 
+    services.virtualisation.microvm.adguardhome.enable = true;
+    services.adguardhome = {
+      host = properties.network.micro-infra.local.ip;
+    };
     # services.printing.enable = true;
     # services.syncthing = {
     #   enable = true;

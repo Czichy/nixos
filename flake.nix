@@ -80,10 +80,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-extra-modules = {
-      url = "github:czichy/nixos-extra-modules";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nixos-extra-modules = {
+    #   url = "github:czichy/nixos-extra-modules";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     #nur.url = "github:nix-community/NUR";
 
@@ -142,6 +142,8 @@
   outputs = inputs @ {flake-parts, ...}: let
     inherit (inputs) nixpkgs;
     inherit (lib.tensorfiles) mapModules flatten;
+    self = inputs.self;
+    properties = import (self + /assets/properties);
 
     # You should ideally use relative paths in each individual part from ./parts,
     # however, if needed you can use the `projectPath` variable that is passed
@@ -162,7 +164,7 @@
       }
     );
     specialArgs = {
-      inherit lib projectPath;
+      inherit lib projectPath properties;
     };
   in
     flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
@@ -186,7 +188,8 @@
       #      - myPackage2.nix
       #      - default.nix
       #    - mySimpleModule.nix
-      imports = flatten (mapModules ./parts (x: x)) ++ [./parts/options/default.nix];
+      imports = flatten (mapModules ./parts (x: x));
+      # imports = flatten (mapModules ./parts (x: x)) ++ [./parts/options/default.nix];
 
       # NOTE We use the default `systems` defined by the `nix-systems` flake, if
       # you need any additional systems, simply add them in the following manner

@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  lib,
+  self,
+  ...
+}: {
   flake = {
     config,
     lib,
@@ -8,7 +12,7 @@
       globalsSystem = lib.evalModules {
         prefix = ["globals"];
         specialArgs = {
-          inherit (inputs.self.pkgs.x86_64-linux) lib;
+          inherit lib;
         };
         modules = [
           ./globals.nix

@@ -16,6 +16,7 @@
   localFlake,
   secretsPath,
   pubkeys,
+  properties,
 }: {
   config,
   lib,
@@ -30,6 +31,8 @@ with lib; let
 
   adguardhomeDomain = "adguardhome.czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
+  filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
+  port = properties.ports.adguard;
 
   ipv4 = "10.0.0.148";
   mainGateway = "10.0.0.1";
@@ -65,7 +68,7 @@ in {
 
         specialArgs = {
           inherit localFlake;
-          inherit secretsPath pubkeys;
+          inherit secretsPath pubkeys properties;
         };
 
         config = {
@@ -162,17 +165,18 @@ in {
           };
 
           networking.firewall = {
-            allowedTCPPorts = [53];
-            allowedUDPPorts = [53];
+            allowedTCPPorts = [port];
+            allowedUDPPorts = [properties.ports.dns];
           };
 
           services.adguardhome = {
             enable = true;
             mutableSettings = false;
-            host = "0.0.0.0";
-            port = 3000;
+            # host = "0.0.0.0";
+            port = port;
             settings = {
               dns = {
+                port = properties.ports.dns;
                 # allowed_clients = [
                 # ];
                 #trusted_proxies = [];
@@ -219,16 +223,25 @@ in {
                   name = "AdGuard DNS filter";
                   url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
                   enabled = true;
+                  id = 1;
                 }
                 {
                   name = "AdAway Default Blocklist";
                   url = "https://adaway.org/hosts.txt";
                   enabled = true;
+                  id = 2;
                 }
                 {
                   name = "OISD (Big)";
                   url = "https://big.oisd.nl";
                   enabled = true;
+                  id = 3;
+                }
+                {
+                  enabled = true;
+                  url = "${filter-dir}/filter_12.txt";
+                  name = "Dandelion Sprout's Anti-Malware List";
+                  id = 4;
                 }
               ];
             };

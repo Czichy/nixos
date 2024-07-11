@@ -90,7 +90,7 @@ in {
           extraOverlays = with inputs; [
             (final: _prev: {nur = import nur {pkgs = final;};})
             nix-topology.overlays.default
-            # (final: _prev: {nixos_extra = import nixos-extra-modules.overlays.default {pkgs = final;};})
+            # nixos-extra-modules.overlays.default
           ];
           extraModules = with inputs; [nix-topology.nixosModules.default];
         }
