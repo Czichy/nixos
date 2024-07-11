@@ -82,7 +82,7 @@ in {
           };
           addresses = [
             {
-              addressConfig.Address = "10.0.0.1/24";
+              addressConfig.Address = "10.0.0.148/24";
             }
             {
               addressConfig.Address = "fd12:3456:789a::1/64";
