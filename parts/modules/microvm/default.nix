@@ -16,6 +16,7 @@
   config,
   inputs,
   self,
+  properties,
   ...
 }: let
   inherit (inputs.flake-parts.lib) importApply;

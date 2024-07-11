@@ -15,7 +15,7 @@
 {
   pkgs,
   inputs,
-  properties,
+  # properties,
   system,
   ...
 }: {
@@ -71,9 +71,9 @@
     };
 
     services.virtualisation.microvm.adguardhome.enable = true;
-    services.adguardhome = {
-      host = properties.network.micro-infra.local.ip;
-    };
+    # services.adguardhome = {
+    # host = properties.network.micro-infra.local.ip;
+    # };
     # services.printing.enable = true;
     # services.syncthing = {
     #   enable = true;
