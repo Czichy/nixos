@@ -88,7 +88,7 @@ in {
               addressConfig.Address = "fd12:3456:789a::1/64";
             }
             {
-              addressConfig.Address = "192.168.122.197/24";
+              addressConfig.Address = "192.168.122.148/24";
             }
           ];
           ipv6Prefixes = [
