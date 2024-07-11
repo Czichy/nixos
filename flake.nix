@@ -186,7 +186,7 @@
       #      - myPackage2.nix
       #      - default.nix
       #    - mySimpleModule.nix
-      imports = flatten (mapModules ./parts (x: x));
+      imports = flatten (mapModules ./parts (x: x)) ++ [./parts/options/default.nix];
 
       # NOTE We use the default `systems` defined by the `nix-systems` flake, if
       # you need any additional systems, simply add them in the following manner

@@ -14,6 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   pkgs,
+  globals,
   inputs,
   ...
 }: {
@@ -116,6 +117,32 @@
     # Needed for gpg pinetry
     # pcscd.enable = true;
   };
+
+  # FIXME: the ui is not directly accessible via environment.systemPackages
+  # FIXME: to control it as a user (and to allow SSO) we need to be in the netbird-home group
+  # services.netbird.ui.enable = true;
+  # services.netbird.clients.home = {
+  #   port = 51820;
+  #   name = "netbird-home";
+  #   interface = "wt-home";
+  #   autoStart = false;
+  #   openFirewall = true;
+  #   config.ServerSSHAllowed = false;
+  #   environment = rec {
+  #     NB_MANAGEMENT_URL = "https://${globals.services.netbird.domain}";
+  #     NB_ADMIN_URL = NB_MANAGEMENT_URL;
+  #   };
+  # };
+  # environment.persistence."/persist".directories = [
+  #   {
+  #     directory = "/var/lib/netbird-home";
+  #     mode = "0700";
+  #   }
+  # ];
+
+  programs.nix-ld.enable = true;
+  topology.self.icon = "devices.desktop";
+
   # Enable NetworkManager
   networking = {
     networkmanager.enable = true;
@@ -135,12 +162,6 @@
       };
     };
   };
-
-  # NOTE for wireguard
-  # networking.wireguard.enable = true;
-  # networking.firewall = {
-  #   allowedUDPPorts = [51820];
-  # };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because

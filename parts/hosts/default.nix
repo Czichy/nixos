@@ -30,6 +30,7 @@
       {
         inherit (args) system;
         inherit inputs hostName;
+        inherit (config) globals;
       }
       // extraSpecialArgs;
   in
