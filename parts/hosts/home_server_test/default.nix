@@ -15,8 +15,11 @@
 {
   pkgs,
   inputs,
-  # properties,
+  properties,
+  # nodes,
   system,
+  config,
+  lib,
   ...
 }: {
   # -----------------
@@ -32,9 +35,64 @@
     disko.nixosModules.disko
     ./hardware-configuration.nix
     ./disko.nix
-    # ./microvm
+    # ./net.nix
   ];
 
+  # networking.nftables = {
+  #   stopRuleset = lib.mkDefault ''
+  #     table inet filter {
+  #       chain input {
+  #         type filter hook input priority filter; policy drop;
+  #         ct state invalid drop
+  #         ct state {established, related} accept
+
+  #         iifname lo accept
+  #         meta l4proto ipv6-icmp accept
+  #         meta l4proto icmp accept
+  #         tcp dport ${toString (lib.head config.services.openssh.ports)} accept
+  #       }
+  #       chain forward {
+  #         type filter hook forward priority filter; policy drop;
+  #       }
+  #       chain output {
+  #         type filter hook output priority filter; policy accept;
+  #       }
+  #     }
+  #   '';
+
+  #   firewall = {
+  #     enable = true;
+  #     localZoneName = "local";
+  #     snippets = {
+  #       nnf-common.enable = false;
+  #       nnf-conntrack.enable = true;
+  #       nnf-drop.enable = true;
+  #       nnf-loopback.enable = true;
+  #       nnf-ssh.enable = true;
+  #       nnf-icmp = {
+  #         enable = true;
+  #         ipv6Types = ["echo-request" "destination-unreachable" "packet-too-big" "time-exceeded" "parameter-problem" "nd-router-advert" "nd-neighbor-solicit" "nd-neighbor-advert"];
+  #         ipv4Types = ["echo-request" "destination-unreachable" "router-advertisement" "time-exceeded" "parameter-problem"];
+  #       };
+  #     };
+
+  #     rules.untrusted-to-local = {
+  #       from = ["untrusted"];
+  #       to = ["local"];
+
+  #       inherit
+  #         (config.networking.firewall)
+  #         allowedTCPPorts
+  #         allowedTCPPortRanges
+  #         allowedUDPPorts
+  #         allowedUDPPortRanges
+  #         ;
+  #     };
+  #   };
+  # };
+
+  topology.self.hardware.image = ../../topology/images/odroid-h3.png;
+  topology.self.hardware.info = "O-Droid H3, 64GB RAM";
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
@@ -74,11 +132,6 @@
     # services.adguardhome = {
     # host = properties.network.micro-infra.local.ip;
     # };
-    # services.printing.enable = true;
-    # services.syncthing = {
-    #   enable = true;
-    #   user = "czichy";
-    # };
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
@@ -96,44 +149,6 @@
   };
 
   users.defaultUserShell = pkgs.nushell;
-
-  # Enable NetworkManager
-  networking = {
-    networkmanager.enable = true;
-    hostName = "home_server_test";
-    useDHCP = false;
-    interfaces.enp1s0 = {
-      useDHCP = true;
-      wakeOnLan.enable = true;
-
-      ipv4 = {
-        addresses = [
-          {
-            address = "192.168.122.197";
-            prefixLength = 24;
-          }
-        ];
-      };
-    };
-  };
-  #networking.networkmanager.enableStrongSwan = true;
-  #services.xl2tpd.enable = true;
-  #services.strongswan = {
-  #  enable = true;
-  #  secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
-  #};
-
-  #virtualisation.docker = {
-  #  enable = true;
-  #  autoPrune.enable = true;
-  #  storageDriver = "btrfs";
-  #};
-
-  # NOTE for wireguard
-  # networking.wireguard.enable = true;
-  # networking.firewall = {
-  #   allowedUDPPorts = [51820];
-  # };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because

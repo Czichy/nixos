@@ -37,14 +37,11 @@
     # --- SECRET DEPENDENCIES --
     agenix = {
       url = "github:ryantm/agenix";
+      #   url = "github:yaxitech/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
 
-    # agenix = {
-    #   url = "github:yaxitech/ragenix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     # my private secrets, it's a private repository, you need to replace it with your own.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
     private = {
@@ -80,10 +77,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nixos-extra-modules = {
-    #   url = "github:czichy/nixos-extra-modules";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    nixos-nftables-firewall = {
+      url = "github:thelegy/nixos-nftables-firewall";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixos-extra-modules = {
+      url = "github:czichy/nixos-extra-modules";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     #nur.url = "github:nix-community/NUR";
 
@@ -144,7 +146,6 @@
     inherit (lib.tensorfiles) mapModules flatten;
     self = inputs.self;
     properties = import (self + /assets/properties);
-
     # You should ideally use relative paths in each individual part from ./parts,
     # however, if needed you can use the `projectPath` variable that is passed
     # to every flakeModule to properly anchor your absolute paths.
@@ -189,7 +190,6 @@
       #      - default.nix
       #    - mySimpleModule.nix
       imports = flatten (mapModules ./parts (x: x));
-      # imports = flatten (mapModules ./parts (x: x)) ++ [./parts/options/default.nix];
 
       # NOTE We use the default `systems` defined by the `nix-systems` flake, if
       # you need any additional systems, simply add them in the following manner

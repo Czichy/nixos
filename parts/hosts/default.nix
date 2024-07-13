@@ -30,7 +30,7 @@
       {
         inherit (args) system;
         inherit inputs hostName;
-        inherit (config) globals;
+        # inherit (config) globals;
       }
       // extraSpecialArgs;
   in
@@ -90,9 +90,12 @@ in {
           extraOverlays = with inputs; [
             (final: _prev: {nur = import nur {pkgs = final;};})
             nix-topology.overlays.default
-            # nixos-extra-modules.overlays.default
+            nixos-extra-modules.overlays.default
           ];
-          extraModules = with inputs; [nix-topology.nixosModules.default];
+          extraModules = with inputs; [
+            nix-topology.nixosModules.default
+            nixos-nftables-firewall.nixosModules.default
+          ];
         }
     );
     vm_test = withSystem "x86_64-linux" (
@@ -109,10 +112,12 @@ in {
           extraOverlays = with inputs; [
             (final: _prev: {nur = import nur {pkgs = final;};})
             nix-topology.overlays.default
+            nixos-extra-modules.overlays.default
             # (final: _prev: {nixos_extra = import nixos-extra-modules.overlays.default {pkgs = final;};})
           ];
           extraModules = with inputs; [
             nix-topology.nixosModules.default
+            nixos-nftables-firewall.nixosModules.default
           ];
         }
     );

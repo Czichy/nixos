@@ -1,52 +1,82 @@
 {
+  lib,
+  modulesPath,
   config,
-  globals,
   ...
-}: {
-  networking.hostId = config.repo.secrets.local.networking.hostId;
+}: let
+  inherit (config.globals) globals;
+in {
+  # networking.hostId = config.repo.secrets.local.networking.hostId;
+  # networking.hostId = config.repo.secrets.local.networking.hostId;
 
-  globals.net = {
-    home-wan = {
-      cidrv4 = "192.168.178.0/24";
-      hosts.fritzbox.id = 1;
-      hosts.ward.id = 2;
-    };
+  # globals.net = {
+  #   home-wan = {
+  #     cidrv4 = "192.168.178.0/24";
+  #     hosts.fritzbox.id = 1;
+  #     hosts.ward.id = 2;
+  #   };
 
-    home-lan = {
-      cidrv4 = "192.168.1.0/24";
-      cidrv6 = "fd10::/64";
-      hosts.ward.id = 1;
-      hosts.sire.id = 2;
-      hosts.ward-adguardhome.id = 3;
-      hosts.ward-web-proxy.id = 4;
-      hosts.sire-samba.id = 10;
-    };
+  #   home-lan = {
+  #     cidrv4 = "192.168.1.0/24";
+  #     cidrv6 = "fd10::/64";
+  #     hosts.ward.id = 1;
+  #     hosts.sire.id = 2;
+  #     hosts.ward-adguardhome.id = 3;
+  #     hosts.ward-web-proxy.id = 4;
+  #     hosts.sire-samba.id = 10;
+  #   };
 
-    proxy-home = {
-      cidrv4 = "10.44.0.0/24";
-      cidrv6 = "fd00:44::/120";
-    };
-  };
+  #   proxy-home = {
+  #     cidrv4 = "10.44.0.0/24";
+  #     cidrv6 = "fd00:44::/120";
+  #   };
+  # };
 
-  boot.initrd.systemd.network = {
-    enable = true;
-    networks = {
-      inherit (config.systemd.network.networks) "10-wan";
-      "20-lan" = {
-        address = [
-          globals.net.home-lan.hosts.ward.cidrv4
-          globals.net.home-lan.hosts.ward.cidrv6
-        ];
-        matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
-        networkConfig = {
-          IPForward = "yes";
-          IPv6PrivacyExtensions = "yes";
-          MulticastDNS = true;
-        };
-        linkConfig.RequiredForOnline = "routable";
-      };
-    };
-  };
+  # # Enable NetworkManager
+  # networking = {
+  #   networkmanager.enable = true;
+  #   hostName = "home_server_test";
+  #   useDHCP = false;
+  #   interfaces.enp1s0 = {
+  #     useDHCP = true;
+  #     wakeOnLan.enable = true;
+
+  #     ipv4 = {
+  #       addresses = [
+  #         {
+  #           address = "192.168.122.197";
+  #           prefixLength = 24;
+  #         }
+  #       ];
+  #     };
+  #   };
+  # };
+
+  # boot.initrd.systemd.network = {
+  #   enable = true;
+  #   networks = {
+  #     inherit (config.systemd.network.networks) "10-wan";
+  #     "20-lan" = {
+  #       address = [
+  #         {
+  #           addressConfig.Address = "fd12:3456:789a::1/64";
+  #         }
+  #         {
+  #           addressConfig.Address = "192.168.122.175/24";
+  #         }
+  #         # globals.net.home-lan.hosts.ward.cidrv4
+  #         # globals.net.home-lan.hosts.ward.cidrv6
+  #       ];
+  #       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+  #       networkConfig = {
+  #         IPForward = "yes";
+  #         IPv6PrivacyExtensions = "yes";
+  #         MulticastDNS = true;
+  #       };
+  #       linkConfig.RequiredForOnline = "routable";
+  #     };
+  #   };
+  # };
 
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.
@@ -149,7 +179,8 @@
         from = ["lan"];
         to = ["local"];
 
-        allowedUDPPorts = [config.wireguard.proxy-home.server.port];
+        allowedUDPPorts = [51444];
+        # allowedUDPPorts = [config.wireguard.proxy-home.server.port];
       };
 
       # Forward traffic between participants
