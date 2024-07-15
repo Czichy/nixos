@@ -15,6 +15,7 @@
 {
   pkgs,
   inputs,
+  secrets,
   properties,
   # nodes,
   system,

@@ -164,6 +164,7 @@
         };
       }
     );
+
     specialArgs = {
       inherit lib projectPath properties;
     };
@@ -189,7 +190,8 @@
       #      - myPackage2.nix
       #      - default.nix
       #    - mySimpleModule.nix
-      imports = flatten (mapModules ./parts (x: x));
+      imports = flatten (mapModules ./parts (x: x)) ++ [./parts/globals];
+      # imports = flatten (mapModules ./parts (x: x));
 
       # NOTE We use the default `systems` defined by the `nix-systems` flake, if
       # you need any additional systems, simply add them in the following manner
@@ -197,6 +199,7 @@
       # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
+      # flake.lib = lib;
 
       # NOTE Since the official flakes output schema is unfortunately very
       # limited you can enable the debug mode if you need to inspect certain

@@ -33,24 +33,25 @@ in {
   # };
 
   # # Enable NetworkManager
-  # networking = {
-  #   networkmanager.enable = true;
-  #   hostName = "home_server_test";
-  #   useDHCP = false;
-  #   interfaces.enp1s0 = {
-  #     useDHCP = true;
-  #     wakeOnLan.enable = true;
+  networking = {
+    networkmanager.enable = true;
+    hostName = "home_server_test";
+    useDHCP = false;
+    interfaces.enp1s0 = {
+      useDHCP = true;
+      wakeOnLan.enable = true;
 
-  #     ipv4 = {
-  #       addresses = [
-  #         {
-  #           address = "192.168.122.197";
-  #           prefixLength = 24;
-  #         }
-  #       ];
-  #     };
-  #   };
-  # };
+      ipv4 = {
+        addresses = [
+          {
+            address = globals.net.home-lan.hosts.ward.cidrv4;
+            # address = "192.168.122.197";
+            prefixLength = 24;
+          }
+        ];
+      };
+    };
+  };
 
   # boot.initrd.systemd.network = {
   #   enable = true;

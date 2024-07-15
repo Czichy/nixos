@@ -17,6 +17,7 @@
   inputs,
   withSystem,
   config,
+  pkgs,
   ...
 }: let
   mkHost = args: hostName: {
@@ -30,7 +31,7 @@
       {
         inherit (args) system;
         inherit inputs hostName;
-        # inherit (config) globals;
+        inherit (config) globals;
       }
       // extraSpecialArgs;
   in
@@ -39,7 +40,8 @@
       specialArgs =
         baseSpecialArgs
         // {
-          inherit lib hostName;
+          inherit inputs;
+          inherit hostName;
           host.hostName = hostName;
         };
       modules =
@@ -95,6 +97,17 @@ in {
           extraModules = with inputs; [
             nix-topology.nixosModules.default
             nixos-nftables-firewall.nixosModules.default
+            # nixos-extra-modules.nixosModules.default
+            # {
+            #   # We cannot force the package set via nixpkgs.pkgs and
+            #   # inputs.nixpkgs.nixosModules.readOnlyPkgs, since nixosModules
+            #   # should be able to dynamicall add overlays via nixpkgs.overlays.
+            #   # So we just mimic the options and overlays defined by the passed pkgs set
+            #   # to not lose what we already have defined below.
+            #   nixpkgs.hostPlatform = system;
+            #   nixpkgs.overlays = pkgs.overlays;
+            #   nixpkgs.config = pkgs.config;
+            # }
           ];
         }
     );
@@ -118,6 +131,17 @@ in {
           extraModules = with inputs; [
             nix-topology.nixosModules.default
             nixos-nftables-firewall.nixosModules.default
+            # nixos-extra-modules.nixosModules.default
+            # {
+            #   # We cannot force the package set via nixpkgs.pkgs and
+            #   # inputs.nixpkgs.nixosModules.readOnlyPkgs, since nixosModules
+            #   # should be able to dynamicall add overlays via nixpkgs.overlays.
+            #   # So we just mimic the options and overlays defined by the passed pkgs set
+            #   # to not lose what we already have defined below.
+            #   nixpkgs.hostPlatform = system;
+            #   nixpkgs.overlays = pkgs.overlays;
+            #   nixpkgs.config = pkgs.config;
+            # }
           ];
         }
     );
