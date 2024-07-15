@@ -58,40 +58,40 @@ in {
                       type = types.nullOr types.net.ipv4;
                       description = "The IPv4 of this host";
                       readOnly = true;
-                      default =
-                        if netSubmod.config.cidrv4 == null
-                        then null
-                        else lib.net.cidr.host hostSubmod.config.id netSubmod.config.cidrv4;
+                      default = null;
+                      # if netSubmod.config.cidrv4 == null
+                      # then null
+                      # else lib.net.cidr.host hostSubmod.config.id netSubmod.config.cidrv4;
                     };
 
                     ipv6 = mkOption {
                       type = types.nullOr types.net.ipv6;
                       description = "The IPv6 of this host";
                       readOnly = true;
-                      default =
-                        if netSubmod.config.cidrv6 == null
-                        then null
-                        else lib.net.cidr.host hostSubmod.config.id netSubmod.config.cidrv6;
+                      default = null;
+                      # if netSubmod.config.cidrv6 == null
+                      # then null
+                      # else lib.net.cidr.host hostSubmod.config.id netSubmod.config.cidrv6;
                     };
 
                     cidrv4 = mkOption {
                       type = types.nullOr types.str; # FIXME: this is not types.net.cidr because it would zero out the host part
                       description = "The IPv4 of this host including CIDR mask";
                       readOnly = true;
-                      default =
-                        if netSubmod.config.cidrv4 == null
-                        then null
-                        else lib.net.cidr.hostCidr hostSubmod.config.id netSubmod.config.cidrv4;
+                      default = null;
+                      # if netSubmod.config.cidrv4 == null
+                      # then null
+                      # else lib.net.cidr.hostCidr hostSubmod.config.id netSubmod.config.cidrv4;
                     };
 
                     cidrv6 = mkOption {
                       type = types.nullOr types.str; # FIXME: this is not types.net.cidr because it would zero out the host part
                       description = "The IPv6 of this host including CIDR mask";
                       readOnly = true;
-                      default =
-                        if netSubmod.config.cidrv6 == null
-                        then null
-                        else lib.net.cidr.hostCidr hostSubmod.config.id netSubmod.config.cidrv6;
+                      default = null;
+                      # if netSubmod.config.cidrv6 == null
+                      # then null
+                      # else lib.net.cidr.hostCidr hostSubmod.config.id netSubmod.config.cidrv6;
                     };
                   };
                 }));

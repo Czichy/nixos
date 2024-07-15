@@ -198,8 +198,8 @@
       #
       # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
-      flake.lib = lib.tensorfiles;
-      # flake.lib = lib;
+      flake.lib = lib;
+      # flake.lib = lib.tensorfiles;
 
       # NOTE Since the official flakes output schema is unfortunately very
       # limited you can enable the debug mode if you need to inspect certain
