@@ -150,7 +150,7 @@
     inherit (inputs) nixpkgs;
     inherit (lib.tensorfiles) mapModules flatten;
     self = inputs.self;
-    properties = import (self + /assets/properties);
+    # properties = import (self + /assets/properties);
     # You should ideally use relative paths in each individual part from ./parts,
     # however, if needed you can use the `projectPath` variable that is passed
     # to every flakeModule to properly anchor your absolute paths.
@@ -168,16 +168,16 @@
           pkgs = nixpkgs;
           lib = self;
         };
-        libNet =
-          (import "${inputs.lib-net}/net.nix" {
-            inherit (inputs.nixpkgs) lib;
-          })
-          .lib
-          .net;
+        # libNet =
+        #   (import "${inputs.lib-net}/net.nix" {
+        #     inherit (inputs.nixpkgs) lib;
+        #   })
+        #   .lib
+        #   .net;
       }
     );
     specialArgs = {
-      inherit lib projectPath properties;
+      inherit lib projectPath;
     };
   in
     flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
@@ -208,8 +208,8 @@
       #
       # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
-      # flake.lib = lib;
-      flake.lib = lib.tensorfiles;
+      flake.lib = lib;
+      # flake.lib = lib.tensorfiles;
 
       # NOTE Since the official flakes output schema is unfortunately very
       # limited you can enable the debug mode if you need to inspect certain

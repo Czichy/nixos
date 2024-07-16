@@ -198,36 +198,16 @@ in {
         to = ["proxy-home"];
         verdict = "accept";
       };
-
-      #masquerade-vpn = {
-      #  from = ["wg-home"];
-      #  to = ["lan"];
-      #  masquerade = true;
-      #};
-
-      #outbound-vpn = {
-      #  from = ["wg-home"];
-      #  to = ["lan"];
-      #  late = true; # Only accept after any rejects have been processed
-      #  verdict = "accept";
-      #};
     };
   };
 
-  #wireguard.home.server = {
-  #  host = todo # config.networking.fqdn;
-  #  port = 51192;
-  #  reservedAddresses = ["10.10.0.1/24" "fd00:10::/120"];
-  #  openFirewall = true;
-  #};
-
-  # wireguard.proxy-home.server = {
-  #   # host = globals.net.home-lan.hosts.ward.ipv4;
-  #   port = 51444;
-  #   # reservedAddresses = [
-  #   # globals.net.proxy-home.cidrv4
-  #   # globals.net.proxy-home.cidrv6
-  #   # ];
-  #   openFirewall = false; # Explicitly opened only for lan
-  # };
+  wireguard.proxy-home.server = {
+    host = globals.net.home-lan.hosts.ward.ipv4;
+    port = 51444;
+    reservedAddresses = [
+      globals.net.proxy-home.cidrv4
+      globals.net.proxy-home.cidrv6
+    ];
+    openFirewall = false; # Explicitly opened only for lan
+  };
 }

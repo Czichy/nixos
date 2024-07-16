@@ -20,13 +20,33 @@
   pkgs,
   ...
 }: let
+  # mkPkgs = {
+  #   system,
+  #   flake,
+  #   overlays ? [],
+  # }:
+  #   import flake {
+  #     inherit system overlays;
+  #     config.allowUnfree = true;
+  #     config.permittedInsecurePackages = [
+  #       "electron-25.9.0"
+  #       "electron-24.8.6"
+  #       "electron-27.3.11"
+  #     ];
+  #   };
   mkHost = args: hostName: {
+    system,
     extraSpecialArgs ? {},
     extraModules ? [],
     extraOverlays ? [],
     withHomeManager ? false,
     ...
   }: let
+    # nixpkgs' = mkPkgs {
+    #    inherit system;
+    #    flake = inputs.nixpkgs;
+    #    overlays = extraOverlays;
+    #  };
     baseSpecialArgs =
       {
         inherit (args) system;
@@ -41,8 +61,10 @@
         baseSpecialArgs
         // {
           inherit inputs;
+          inherit system;
           inherit hostName;
           host.hostName = hostName;
+          # lib = nixpkgs'.lib;
         };
       modules =
         [
@@ -121,6 +143,7 @@ in {
     home_server_test = withSystem "x86_64-linux" (
       args:
         mkHost args "home_server_test" {
+          system = "x86_64-linux";
           withHomeManager = true;
           extraOverlays = with inputs; [
             (final: _prev: {nur = import nur {pkgs = final;};})
@@ -133,16 +156,19 @@ in {
             nixos-nftables-firewall.nixosModules.default
             # nixos-extra-modules.nixosModules.default
             # {
-            #   # We cannot force the package set via nixpkgs.pkgs and
-            #   # inputs.nixpkgs.nixosModules.readOnlyPkgs, since nixosModules
-            #   # should be able to dynamicall add overlays via nixpkgs.overlays.
-            #   # So we just mimic the options and overlays defined by the passed pkgs set
-            #   # to not lose what we already have defined below.
+            #   #   # We cannot force the package set via nixpkgs.pkgs and
+            #   #   # inputs.nixpkgs.nixosModules.readOnlyPkgs, since nixosModules
+            #   #   # should be able to dynamicall add overlays via nixpkgs.overlays.
+            #   #   # So we just mimic the options and overlays defined by the passed pkgs set
+            #   #   # to not lose what we already have defined below.
             #   nixpkgs.hostPlatform = system;
             #   nixpkgs.overlays = pkgs.overlays;
             #   nixpkgs.config = pkgs.config;
             # }
           ];
+          # extraSpecialArgs = {
+          #   inherit (pkgs) lib;
+          # };
         }
     );
     spinorbundle = withSystem "x86_64-linux" (
