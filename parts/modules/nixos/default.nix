@@ -71,6 +71,10 @@ in {
       inherit (config.secrets) secretsPath pubkeys;
     };
 
+    globals = importApply ./globals.nix {
+      inherit localFlake;
+    };
+
     # -- tasks --
     tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
     tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix {inherit localFlake;};
