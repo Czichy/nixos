@@ -15,12 +15,7 @@
 {
   pkgs,
   inputs,
-  secrets,
   properties,
-  # nodes,
-  system,
-  config,
-  lib,
   ...
 }: {
   # -----------------
@@ -34,9 +29,10 @@
   imports = with inputs; [
     inputs.home-manager.nixosModules.default
     disko.nixosModules.disko
+    ../../globals
     ./hardware-configuration.nix
     ./disko.nix
-    # ./net.nix
+    ./net.nix
   ];
 
   # networking.nftables = {

@@ -1,11 +1,13 @@
 {
-  lib,
-  modulesPath,
+  globals,
   config,
   ...
-}: let
-  inherit (config.globals) globals;
-in {
+}
+:
+# let
+#  inherit (config) globals;
+# in
+{
   # networking.hostId = config.repo.secrets.local.networking.hostId;
   # networking.hostId = config.repo.secrets.local.networking.hostId;
 
@@ -44,8 +46,8 @@ in {
       ipv4 = {
         addresses = [
           {
-            address = globals.net.home-lan.hosts.ward.cidrv4;
-            # address = "192.168.122.197";
+            address = "${globals.net.v-lan.hosts.ward.ipv4}";
+            # address = "192.168.122.175";
             prefixLength = 24;
           }
         ];
@@ -94,7 +96,7 @@ in {
 
   systemd.network.networks = {
     "10-lan" = {
-      matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+      # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
@@ -112,7 +114,7 @@ in {
       #ipv6AcceptRAConfig.UseDNS = false;
       address = [globals.net.home-wan.hosts.ward.cidrv4];
       gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
-      matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
+      # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
       networkConfig.IPv6PrivacyExtensions = "yes";
       linkConfig.RequiredForOnline = "routable";
     };
@@ -213,13 +215,13 @@ in {
   #  openFirewall = true;
   #};
 
-  wireguard.proxy-home.server = {
-    host = globals.net.home-lan.hosts.ward.ipv4;
-    port = 51444;
-    reservedAddresses = [
-      globals.net.proxy-home.cidrv4
-      globals.net.proxy-home.cidrv6
-    ];
-    openFirewall = false; # Explicitly opened only for lan
-  };
+  # wireguard.proxy-home.server = {
+  #   # host = globals.net.home-lan.hosts.ward.ipv4;
+  #   port = 51444;
+  #   # reservedAddresses = [
+  #   # globals.net.proxy-home.cidrv4
+  #   # globals.net.proxy-home.cidrv6
+  #   # ];
+  #   openFirewall = false; # Explicitly opened only for lan
+  # };
 }

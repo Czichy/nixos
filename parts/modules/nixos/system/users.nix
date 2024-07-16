@@ -16,17 +16,16 @@
   localFlake,
   secretsPath,
   pubkeys,
-}:
-{
+}: {
   config,
   lib,
   hostName,
   ...
 }:
 with builtins;
-with lib;
-let
-  inherit (localFlake.lib)
+with lib; let
+  inherit
+    (localFlake.lib)
     mkOverrideAtModuleLevel
     isModuleLoadedAndEnabled
     mapToAttrsAndMerge
@@ -39,8 +38,7 @@ let
   _ = mkOverrideAtModuleLevel;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
-in
-{
+in {
   # TODO move bluetooth dir to hardware
   options.tensorfiles.system.users = with types; {
     enable = mkEnableOption ''
@@ -78,7 +76,7 @@ in
 
       extraGroups = mkOption {
         type = listOf str;
-        default = [ ];
+        default = [];
         description = ''
           Any additional groups which the user should be a part of. This is
           basically just a passthrough for `users.users.<user>.extraGroups`
@@ -111,7 +109,7 @@ in
 
         keysRaw = mkOption {
           type = listOf str;
-          default = [ ];
+          default = [];
           description = ''
             TODO
           '';
@@ -130,65 +128,61 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    { users.mutableUsers = _ false; }
+    {users.mutableUsers = _ false;}
     # |----------------------------------------------------------------------| #
     {
       users.users = genAttrs (attrNames cfg.usersSettings) (
-        _user:
-        let
+        _user: let
           userCfg = cfg.usersSettings."${_user}";
-        in
-        {
+        in {
           name = _ _user;
           isNormalUser = _ (_user != "root");
           isSystemUser = _ (_user == "root");
           createHome = _ true;
           extraGroups = (optional (_user != "root" && userCfg.isSudoer) "wheel") ++ userCfg.extraGroups;
-          home = _ (if _user == "root" then "/root" else "/home/${_user}");
+          home = _ (
+            if _user == "root"
+            then "/root"
+            else "/home/${_user}"
+          );
 
           hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
             _ config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path
           );
           #initialPassword = "nixos";
 
-          openssh.authorizedKeys.keys =
-            with userCfg.authorizedKeys;
-            (mkIf enable (
-              keysRaw ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [ ] pubkeys)
-            ));
+          openssh.authorizedKeys.keys = with userCfg.authorizedKeys; (mkIf enable (
+            keysRaw ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [] pubkeys)
+          ));
         }
       );
     }
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
       age.secrets = mapToAttrsAndMerge (attrNames cfg.usersSettings) (
-        _user:
-        let
+        _user: let
           userCfg = cfg.usersSettings."${_user}";
         in
-        with userCfg.agenixPassword;
-        {
-          "${passwordSecretsPath}" = mkIf enable {
-            file = _ (secretsPath + "/${passwordSecretsPath}.age");
-            mode = _ "700";
-            owner = _ _user;
-          };
-        }
+          with userCfg.agenixPassword; {
+            "${passwordSecretsPath}" = mkIf enable {
+              file = _ (secretsPath + "/${passwordSecretsPath}.age");
+              mode = _ "700";
+              owner = _ _user;
+            };
+          }
       );
     })
     # |----------------------------------------------------------------------| #
     {
-      nix.settings =
-        let
-          users = filter (_user: cfg.usersSettings."${_user}".isNixTrusted) (attrNames cfg.usersSettings);
-        in
-        {
-          trusted-users = users;
-          allowed-users = users;
-        };
+      nix.settings = let
+        users = filter (_user: cfg.usersSettings."${_user}".isNixTrusted) (attrNames cfg.usersSettings);
+      in {
+        trusted-users = users;
+        allowed-users = users;
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }

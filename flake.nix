@@ -98,6 +98,11 @@
       # nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    lib-net = {
+      url = "https://gist.github.com/duairc/5c9bb3c922e5d501a1edb9e7b3b845ba/archive/3885f7cd9ed0a746a9d675da6f265d41e9fd6704.tar.gz";
+      flake = false;
+    };
+
     nix-alien.url = "github:thiagokokada/nix-alien";
 
     plasma-manager = {
@@ -157,14 +162,20 @@
     # you can use it in your custom modules
     lib = nixpkgs.lib.extend (
       self: _super: {
+        # tt = import ./lib {inherit inputs;};
         tensorfiles = import ./lib {
           inherit inputs projectPath;
           pkgs = nixpkgs;
           lib = self;
         };
+        libNet =
+          (import "${inputs.lib-net}/net.nix" {
+            inherit (inputs.nixpkgs) lib;
+          })
+          .lib
+          .net;
       }
     );
-
     specialArgs = {
       inherit lib projectPath properties;
     };
@@ -190,16 +201,15 @@
       #      - myPackage2.nix
       #      - default.nix
       #    - mySimpleModule.nix
-      imports = flatten (mapModules ./parts (x: x)) ++ [./parts/globals];
-      # imports = flatten (mapModules ./parts (x: x));
+      imports = flatten (mapModules ./parts (x: x));
 
       # NOTE We use the default `systems` defined by the `nix-systems` flake, if
       # you need any additional systems, simply add them in the following manner
       #
       # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
-      flake.lib = lib;
-      # flake.lib = lib.tensorfiles;
+      # flake.lib = lib;
+      flake.lib = lib.tensorfiles;
 
       # NOTE Since the official flakes output schema is unfortunately very
       # limited you can enable the debug mode if you need to inspect certain
