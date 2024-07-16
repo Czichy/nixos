@@ -1,17 +1,11 @@
-{
-  globals,
-  config,
-  ...
-}
-:
-# let
-#  inherit (config) globals;
-# in
-{
+{config, ...}
+: let
+  inherit (config.tensorfiles) globals;
+in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
   # networking.hostId = config.repo.secrets.local.networking.hostId;
 
-  globals.net = {
+  tensorfiles.globals.net = {
     home-wan = {
       cidrv4 = "192.168.178.0/24";
       hosts.fritzbox.id = 1;
@@ -22,6 +16,16 @@
       cidrv4 = "192.168.1.0/24";
       cidrv6 = "fd10::/64";
       hosts.ward.id = 1;
+      hosts.sire.id = 2;
+      hosts.ward-adguardhome.id = 3;
+      hosts.ward-web-proxy.id = 4;
+      hosts.sire-samba.id = 10;
+    };
+
+    v-lan = {
+      cidrv4 = "192.168.122.0/24";
+      cidrv6 = "fd10::/64";
+      hosts.ward.id = 175;
       hosts.sire.id = 2;
       hosts.ward-adguardhome.id = 3;
       hosts.ward-web-proxy.id = 4;
@@ -46,8 +50,8 @@
       ipv4 = {
         addresses = [
           {
+            # "192.168.122.175"
             address = "${globals.net.v-lan.hosts.ward.ipv4}";
-            # address = "192.168.122.175";
             prefixLength = 24;
           }
         ];
@@ -55,31 +59,31 @@
     };
   };
 
-  # boot.initrd.systemd.network = {
-  #   enable = true;
-  #   networks = {
-  #     inherit (config.systemd.network.networks) "10-wan";
-  #     "20-lan" = {
-  #       address = [
-  #         {
-  #           addressConfig.Address = "fd12:3456:789a::1/64";
-  #         }
-  #         {
-  #           addressConfig.Address = "192.168.122.175/24";
-  #         }
-  #         # globals.net.home-lan.hosts.ward.cidrv4
-  #         # globals.net.home-lan.hosts.ward.cidrv6
-  #       ];
-  #       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
-  #       networkConfig = {
-  #         IPForward = "yes";
-  #         IPv6PrivacyExtensions = "yes";
-  #         MulticastDNS = true;
-  #       };
-  #       linkConfig.RequiredForOnline = "routable";
-  #     };
-  #   };
-  # };
+  boot.initrd.systemd.network = {
+    enable = true;
+    networks = {
+      inherit (config.systemd.network.networks) "10-wan";
+      "20-lan" = {
+        address = [
+          {
+            addressConfig.Address = "fd12:3456:789a::1/64";
+          }
+          {
+            addressConfig.Address = "192.168.122.175/24";
+          }
+          # globals.net.home-lan.hosts.ward.cidrv4
+          # globals.net.home-lan.hosts.ward.cidrv6
+        ];
+        # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+        networkConfig = {
+          IPForward = "yes";
+          IPv6PrivacyExtensions = "yes";
+          MulticastDNS = true;
+        };
+        linkConfig.RequiredForOnline = "routable";
+      };
+    };
+  };
 
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.

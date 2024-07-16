@@ -12,25 +12,14 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  localFlake,
+{localFlake, ...}: {
+  config,
   lib,
+  hostName,
   ...
 }:
 with builtins;
 with lib; let
-  inherit
-    (localFlake.lib)
-    options
-    types
-    mkOverrideAtModuleLevel
-    isModuleLoadedAndEnabled
-    mapToAttrsAndMerge
-    mkImpermanenceEnableOption
-    mkUsersSettingsOption
-    mkAgenixEnableOption
-    ;
-
   cfg = config.tensorfiles.globals;
   _ = mkOverrideAtModuleLevel;
 in {
@@ -141,39 +130,4 @@ in {
   # #   readOnly = true;
   # #   internal = true;
   # # };
-
-  # config = {
-  #   globals.net = {
-  #     home-wan = {
-  #       cidrv4 = "192.168.178.0/24";
-  #       hosts.fritzbox.id = 1;
-  #       hosts.ward.id = 2;
-  #     };
-
-  #     home-lan = {
-  #       cidrv4 = "192.168.1.0/24";
-  #       cidrv6 = "fd10::/64";
-  #       hosts.ward.id = 1;
-  #       hosts.sire.id = 2;
-  #       hosts.ward-adguardhome.id = 3;
-  #       hosts.ward-web-proxy.id = 4;
-  #       hosts.sire-samba.id = 10;
-  #     };
-
-  #     v-lan = {
-  #       cidrv4 = "192.168.122.0/24";
-  #       cidrv6 = "fd10::/64";
-  #       hosts.ward.id = 175;
-  #       hosts.sire.id = 2;
-  #       hosts.ward-adguardhome.id = 3;
-  #       hosts.ward-web-proxy.id = 4;
-  #       hosts.sire-samba.id = 10;
-  #     };
-
-  #     proxy-home = {
-  #       cidrv4 = "10.44.0.0/24";
-  #       cidrv6 = "fd00:44::/120";
-  #     };
-  #   };
-  # };
 }
