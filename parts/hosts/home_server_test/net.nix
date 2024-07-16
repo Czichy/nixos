@@ -60,7 +60,7 @@ in {
   };
 
   boot.initrd.systemd.network = {
-    enable = true;
+    # enable = true;
     networks = {
       inherit (config.systemd.network.networks) "10-wan";
       "20-lan" = {
@@ -69,7 +69,9 @@ in {
             addressConfig.Address = "fd12:3456:789a::1/64";
           }
           {
-            addressConfig.Address = "192.168.122.175/24";
+            # "192.168.122.175"
+            address = "${globals.net.v-lan.hosts.ward.ipv4}";
+            prefixLength = 24;
           }
           # globals.net.home-lan.hosts.ward.cidrv4
           # globals.net.home-lan.hosts.ward.cidrv6
