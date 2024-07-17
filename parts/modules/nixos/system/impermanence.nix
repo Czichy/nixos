@@ -17,7 +17,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) isModuleLoadedAndEnabled mkAgenixEnableOption;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkAgenixEnableOption;
 
   cfg = config.tensorfiles.system.impermanence;
 
@@ -355,5 +355,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

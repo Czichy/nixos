@@ -17,7 +17,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (localFlake.lib.tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.file-managers.yazi;
   _ = mkOverrideAtHmModuleLevel;
@@ -131,5 +131,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

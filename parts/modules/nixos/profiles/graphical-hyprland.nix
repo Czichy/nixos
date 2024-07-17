@@ -22,7 +22,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) mkOverrideAtProfileLevel;
+  inherit (localFlake.lib.tensorfiles) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.graphical-hyprland;
   _ = mkOverrideAtProfileLevel;
@@ -74,5 +74,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

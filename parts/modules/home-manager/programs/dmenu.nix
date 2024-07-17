@@ -22,7 +22,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) isModuleLoadedAndEnabled mkPywalEnableOption;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkPywalEnableOption;
 
   cfg = config.tensorfiles.hm.programs.dmenu;
 
@@ -86,5 +86,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

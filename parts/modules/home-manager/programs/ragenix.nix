@@ -23,7 +23,7 @@ with builtins;
 with lib;
 let
   # inherit
-  #   (localFlake.lib)
+  #   (localFlake.lib.tensorfiles)
   #   ;
   cfg = config.tensorfiles.hm.programs.ragenix;
 
@@ -48,5 +48,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

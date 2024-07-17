@@ -23,7 +23,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib)
+  inherit (localFlake.lib.tensorfiles)
     mkOverrideAtHmModuleLevel
     isModuleLoadedAndEnabled
     mkImpermanenceEnableOption
@@ -248,5 +248,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

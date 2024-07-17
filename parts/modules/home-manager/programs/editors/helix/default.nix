@@ -22,7 +22,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) mkOverrideAtHmModuleLevel mkPywalEnableOption;
+  inherit (localFlake.lib.tensorfiles) mkOverrideAtHmModuleLevel mkPywalEnableOption;
 
   cfg = config.tensorfiles.hm.programs.editors.helix;
   _ = mkOverrideAtHmModuleLevel;
@@ -76,5 +76,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

@@ -93,7 +93,7 @@ in {
           age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
         };
 
-        meta.maintainers = with localFlake.lib.maintainers; [czichy];
+        meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
       };
 
     flake.homeModules.security_agenix = {
@@ -135,7 +135,7 @@ in {
           ];
         };
 
-        meta.maintainers = with localFlake.lib.maintainers; [czichy];
+        meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
       };
   };
 }

@@ -17,7 +17,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) isModuleLoadedAndEnabled;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled;
   cfg = config.tensorfiles.hm.hardware.monitors;
 
   hyprlandCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.services.wayland.window-managers.hyprland";
@@ -148,5 +148,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

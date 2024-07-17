@@ -17,7 +17,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) mkOverrideAtHmProfileLevel;
+  inherit (localFlake.lib.tensorfiles) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.minimal;
   _ = mkOverrideAtHmProfileLevel;
@@ -43,5 +43,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

@@ -17,7 +17,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) mkOverrideAtModuleLevel;
+  inherit (localFlake.lib.tensorfiles) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.services.networking.ssh;
   _ = mkOverrideAtModuleLevel;
@@ -86,5 +86,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

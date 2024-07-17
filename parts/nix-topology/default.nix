@@ -21,7 +21,7 @@
 in {
   flake.topology = lib.genAttrs (import inputs.systems) (
     system: let
-      pkgs = localFlake.lib.mkNixpkgs inputs.nixpkgs system [inputs.nix-topology.overlays.default];
+      pkgs = localFlake.lib.tensorfiles.mkNixpkgs inputs.nixpkgs system [inputs.nix-topology.overlays.default];
     in
       import inputs.nix-topology {
         inherit pkgs;

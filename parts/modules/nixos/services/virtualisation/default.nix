@@ -22,7 +22,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.virtualisation;
 
@@ -80,5 +80,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

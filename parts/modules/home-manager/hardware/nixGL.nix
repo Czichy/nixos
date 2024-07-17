@@ -23,7 +23,7 @@
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) isModuleLoadedAndEnabled;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.hardware.nixGL;
   _ = mkOverride 550;
@@ -87,5 +87,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }

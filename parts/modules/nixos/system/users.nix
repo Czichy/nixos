@@ -25,7 +25,7 @@
 with builtins;
 with lib; let
   inherit
-    (localFlake.lib)
+    (localFlake.lib.tensorfiles)
     mkOverrideAtModuleLevel
     isModuleLoadedAndEnabled
     mapToAttrsAndMerge
@@ -184,5 +184,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [czichy];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }

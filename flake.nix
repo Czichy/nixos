@@ -162,7 +162,6 @@
     # you can use it in your custom modules
     lib = nixpkgs.lib.extend (
       self: _super: {
-        # tt = import ./lib {inherit inputs;};
         tensorfiles = import ./lib {
           inherit inputs projectPath;
           pkgs = nixpkgs;

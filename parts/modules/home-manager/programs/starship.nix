@@ -17,7 +17,7 @@
 with builtins;
 with lib;
 let
-  # inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
+  # inherit (localFlake.lib.tensorfiles) mkOverrideAtHmModuleLevel;
   cfg = config.tensorfiles.hm.programs.starship;
 in
 {
@@ -145,5 +145,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
 }
