@@ -32,7 +32,7 @@ with lib; let
   adguardhomeDomain = "adguardhome.czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
 
-  server = "192.168.8.8"; #config.tensorfiles.globals.net.home-lan.hosts.ward-adguardhome.ipv4;
+  server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 
   impermanenceCheck =
@@ -56,7 +56,7 @@ in {
     # |----------------------------------------------------------------------| #
     {
       topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
-      # globals.services.adguardhome.domain = adguardhomeDomain;
+      globals.services.adguardhome.domain = adguardhomeDomain;
       # tensorfiles.globals.monitoring.dns.adguardhome = {
       #   server = server;
       #   domain = ".";
