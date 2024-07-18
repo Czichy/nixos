@@ -167,12 +167,6 @@
           pkgs = nixpkgs;
           lib = self;
         };
-        # libNet =
-        #   (import "${inputs.lib-net}/net.nix" {
-        #     inherit (inputs.nixpkgs) lib;
-        #   })
-        #   .lib
-        #   .net;
       }
     );
     specialArgs = {

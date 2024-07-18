@@ -20,20 +20,20 @@
   pkgs,
   ...
 }: let
-  # mkPkgs = {
-  #   system,
-  #   flake,
-  #   overlays ? [],
-  # }:
-  #   import flake {
-  #     inherit system overlays;
-  #     config.allowUnfree = true;
-  #     config.permittedInsecurePackages = [
-  #       "electron-25.9.0"
-  #       "electron-24.8.6"
-  #       "electron-27.3.11"
-  #     ];
-  #   };
+  mkPkgs = {
+    system,
+    flake,
+    overlays ? [],
+  }:
+    import flake {
+      inherit system overlays;
+      config.allowUnfree = true;
+      config.permittedInsecurePackages = [
+        "electron-25.9.0"
+        "electron-24.8.6"
+        "electron-27.3.11"
+      ];
+    };
   mkHost = args: hostName: {
     system,
     extraSpecialArgs ? {},
@@ -42,11 +42,11 @@
     withHomeManager ? false,
     ...
   }: let
-    # nixpkgs' = mkPkgs {
-    #    inherit system;
-    #    flake = inputs.nixpkgs;
-    #    overlays = extraOverlays;
-    #  };
+    nixpkgs' = mkPkgs {
+      inherit system;
+      flake = inputs.nixpkgs;
+      overlays = extraOverlays;
+    };
     baseSpecialArgs =
       {
         inherit (args) system;
@@ -54,6 +54,11 @@
         inherit (config) globals;
       }
       // extraSpecialArgs;
+    defaultOverlays = with inputs; [
+      (final: _prev: {nur = import nur {pkgs = final;};})
+      nix-topology.overlays.default
+      nixos-extra-modules.overlays.default
+    ];
   in
     lib.nixosSystem {
       inherit (args) system;
@@ -63,13 +68,13 @@
           inherit inputs;
           inherit system;
           inherit hostName;
+          inherit (nixpkgs') lib;
           host.hostName = hostName;
-          # lib = nixpkgs'.lib;
         };
       modules =
         [
           {
-            nixpkgs.overlays = extraOverlays;
+            nixpkgs.overlays = defaultOverlays ++ extraOverlays;
             nixpkgs.config.allowUnfree = true;
             networking.hostName = hostName;
             # node.name = hostName;
@@ -149,22 +154,11 @@ in {
             (final: _prev: {nur = import nur {pkgs = final;};})
             nix-topology.overlays.default
             nixos-extra-modules.overlays.default
-            # (final: _prev: {nixos_extra = import nixos-extra-modules.overlays.default {pkgs = final;};})
+            (final: _prev: {nixos_extra = import nixos-extra-modules.overlays.default {pkgs = final;};})
           ];
           extraModules = with inputs; [
             nix-topology.nixosModules.default
             nixos-nftables-firewall.nixosModules.default
-            # nixos-extra-modules.nixosModules.default
-            # {
-            #   #   # We cannot force the package set via nixpkgs.pkgs and
-            #   #   # inputs.nixpkgs.nixosModules.readOnlyPkgs, since nixosModules
-            #   #   # should be able to dynamicall add overlays via nixpkgs.overlays.
-            #   #   # So we just mimic the options and overlays defined by the passed pkgs set
-            #   #   # to not lose what we already have defined below.
-            #   nixpkgs.hostPlatform = system;
-            #   nixpkgs.overlays = pkgs.overlays;
-            #   nixpkgs.config = pkgs.config;
-            # }
           ];
           # extraSpecialArgs = {
           #   inherit (pkgs) lib;
