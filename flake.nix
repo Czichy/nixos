@@ -199,6 +199,7 @@
         flatten (mapModules ./parts (x: x))
         ++ [
           ./globals
+          ./globals/globals.nix
           inputs.flake-parts.flakeModules.easyOverlay
         ];
 

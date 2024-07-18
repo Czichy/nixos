@@ -31,7 +31,7 @@ in {
     services_adguard = importApply ./adguardhome {
       inherit localFlake;
       inherit (config.secrets) secretsPath pubkeys;
-      inherit (self) globals;
+      inherit (config) globals;
       # inherit properties;
     };
     # services_microvm_influxdb = importApply ./services/virtualisation/microvm/influxdb.nix {

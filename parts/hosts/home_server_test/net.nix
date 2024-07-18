@@ -6,9 +6,10 @@
 : {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
 
-  # globals.monitoring.ping.ward = {
-  #   network = "home-lan";
-  # };
+  globals.monitoring.ping.ward = {
+    hostv4 = "127.0.0.1";
+    network = "home-lan";
+  };
   # # Enable NetworkManager
   networking = {
     networkmanager.enable = true;
