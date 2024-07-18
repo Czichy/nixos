@@ -144,11 +144,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1720853497,
-        "narHash": "sha256-xneFQ+RrIcyCb+MnKQPJx55qEEDr0xh5X6Ne3VcnV20=",
+        "lastModified": 1721213664,
+        "narHash": "sha256-OqQr3ulhVGCBjW7g1DXaI3wB9YtVVUb4cyaQMAJ/2NQ=",
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "7f569a0f2473b9f6000fd9e4c32511fd1b0d37c1",
+        "rev": "1d848fc26376d919458482fa0b4d0e240285a93f",
         "type": "github"
       },
       "original": {
@@ -271,11 +271,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1721138223,
-        "narHash": "sha256-NH2EeCX6Vph3KT0kOelDriPSAuLi8Ml4DjUY4Jsj5HU=",
+        "lastModified": 1721188984,
+        "narHash": "sha256-muLvm4TcNtZtbC71vWpJT84do8xxcX2JDbwZ/GBCbIM=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "a9250ac868999a4ddd4c709859a9eb1d2075c8fd",
+        "rev": "fe4e311097bb57450231e603d7a99f96d147e456",
         "type": "gitlab"
       },
       "original": {
@@ -721,11 +721,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1721100689,
-        "narHash": "sha256-ALcANRhsPzmY8CNvXWWxI5yc72cH9v6t49N7S+spBqs=",
+        "lastModified": 1721201761,
+        "narHash": "sha256-qdJ6lkMNnoTK9280GFvjiM4tD/Rz3ihACwyiJGeSz3o=",
         "owner": "helix-editor",
         "repo": "helix",
-        "rev": "22a051408a467ff8b3e43457961d5497903dc7d0",
+        "rev": "bd5e8931499dc6d4294d825697b9996946045502",
         "type": "github"
       },
       "original": {
@@ -844,11 +844,11 @@
         "spectrum": "spectrum"
       },
       "locked": {
-        "lastModified": 1720034501,
-        "narHash": "sha256-fzZpuVnhw5uOtA4OuXw3a+Otpy8C+QV0Uu5XfhGEPSg=",
+        "lastModified": 1721171275,
+        "narHash": "sha256-GKdodvwT9Suh6V0qJ0N/YWTIADWwto/x3XnFO86iXDs=",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "a808af7775f508a2afedd1e4940a382fe1194f21",
+        "rev": "36e261aa2c15a4020663cef87905f436b15305f7",
         "type": "github"
       },
       "original": {
@@ -1034,11 +1034,11 @@
         "pre-commit-hooks": "pre-commit-hooks_2"
       },
       "locked": {
-        "lastModified": 1720814919,
-        "narHash": "sha256-g1HYi6C+URiou9MoFOPTZUYTPHISgF2g8KbhcqLiJyM=",
+        "lastModified": 1721160643,
+        "narHash": "sha256-ZkjJnwgDUkjzgySZv9GjKnDsDmNJVkU2u2pLD4a1QKA=",
         "owner": "oddlama",
         "repo": "nix-topology",
-        "rev": "e7c64ea75a7dbdf984c0ac25fb44af88244ff5a4",
+        "rev": "fe9ace7f40a63e3eb9b39a20a1032834e090d806",
         "type": "github"
       },
       "original": {

@@ -194,7 +194,12 @@
       #      - myPackage2.nix
       #      - default.nix
       #    - mySimpleModule.nix
-      imports = flatten (mapModules ./parts (x: x));
+      # imports = flatten (mapModules ./parts (x: x));
+      imports =
+        flatten (mapModules ./parts (x: x))
+        ++ [
+          inputs.flake-parts.flakeModules.easyOverlay
+        ];
 
       # NOTE We use the default `systems` defined by the `nix-systems` flake, if
       # you need any additional systems, simply add them in the following manner
@@ -203,7 +208,24 @@
       systems = import inputs.systems;
       flake.lib = lib;
       # flake.lib = lib.tensorfiles;
-
+      # flake.overlays.default = inputs.nixpkgs.lib.composeManyExtensions [
+      #   inputs.nixos-extra-modules.overlays.default
+      # ];
+      # perSystem = {
+      #   config,
+      #   self',
+      #   pkgs,
+      #   lib,
+      #   system,
+      #   ...
+      # }: {
+      #   _module.args.pkgs = import inputs.nixpkgs {
+      #     inherit system;
+      #     overlays = [
+      #       inputs.nixos-extra-modules.overlays.nixos-extra-modules
+      #     ];
+      #   };
+      # };
       # NOTE Since the official flakes output schema is unfortunately very
       # limited you can enable the debug mode if you need to inspect certain
       # outputs of your flake. Simply

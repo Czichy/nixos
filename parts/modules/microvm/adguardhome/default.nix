@@ -25,7 +25,7 @@
 }:
 with builtins;
 with lib; let
-  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+  inherit (localFlake.tensorfiles.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.virtualisation.microvm.adguardhome;
 

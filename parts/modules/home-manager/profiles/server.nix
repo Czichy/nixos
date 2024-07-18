@@ -40,7 +40,6 @@ in {
       tensorfiles.hm = {
         profiles.headless.enable = _ true;
         programs = {
-          terminals.foot.enable = _ true;
           editors.helix.enable = _ true;
         };
       };

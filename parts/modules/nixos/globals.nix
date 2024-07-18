@@ -20,6 +20,7 @@
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib.tensorfiles) libNet;
   cfg = config.tensorfiles.globals;
   _ = mkOverrideAtModuleLevel;
 in {
@@ -31,7 +32,7 @@ in {
           type = types.attrsOf (types.submodule (netSubmod: {
             options = {
               cidrv4 = mkOption {
-                type = types.nullOr lib.tensorfiles.net.libNet.net.types.cidrv4;
+                type = types.nullOr libNet.types.cidrv4;
                 description = "The CIDRv4 of this network";
                 default = null;
               };
@@ -51,7 +52,7 @@ in {
                     };
 
                     ipv4 = mkOption {
-                      type = types.nullOr lib.libNet.types.ipv4;
+                      type = types.nullOr libNet.types.ipv4;
                       description = "The IPv4 of this host";
                       readOnly = true;
                       default =
