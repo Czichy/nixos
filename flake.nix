@@ -77,6 +77,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-inspect.url = "github:bluskript/nix-inspect";
+
     nixos-nftables-firewall = {
       url = "github:thelegy/nixos-nftables-firewall";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -200,6 +202,7 @@
         ++ [
           ./globals
           ./globals/globals.nix
+          ./lib/overlays
           inputs.flake-parts.flakeModules.easyOverlay
         ];
 
