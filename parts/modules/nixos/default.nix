@@ -24,6 +24,8 @@ in {
   flake.nixosModules = {
     # -- misc --
     misc_nix = importApply ./misc/nix.nix {inherit inputs localFlake;};
+    misc_node = importApply ./misc/node.nix {inherit inputs localFlake;};
+    # misc_distributed-config = importApply ./misc/distributed-config.nix {inherit inputs localFlake;};
 
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
@@ -70,11 +72,6 @@ in {
       inherit localFlake;
       inherit (config.secrets) secretsPath pubkeys;
     };
-
-    globals = importApply ./globals.nix {
-      inherit localFlake;
-    };
-
     # -- tasks --
     tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
     tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix {inherit localFlake;};

@@ -16,7 +16,7 @@
   localFlake,
   secretsPath,
   pubkeys,
-  properties,
+  globals,
 }: {
   config,
   lib,
@@ -25,22 +25,16 @@
 }:
 with builtins;
 with lib; let
-  inherit (localFlake.tensorfiles.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.virtualisation.microvm.adguardhome;
 
   adguardhomeDomain = "adguardhome.czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
-  filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
-  port = properties.ports.adguard;
 
-  ipv4 = "10.0.0.148";
-  mainGateway = "10.0.0.1";
-  nameservers = [
-    "119.29.29.29" # DNSPod
-    "223.5.5.5" # AliDNS
-  ];
-  ipv4WithMask = "${ipv4}/24";
+  server = "192.168.8.8"; #config.tensorfiles.globals.net.home-lan.hosts.ward-adguardhome.ipv4;
+  filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
+
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
   impermanence =
@@ -62,13 +56,51 @@ in {
     # |----------------------------------------------------------------------| #
     {
       topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
+      # globals.services.adguardhome.domain = adguardhomeDomain;
+      # tensorfiles.globals.monitoring.dns.adguardhome = {
+      #   server = server;
+      #   domain = ".";
+      #   network = "home-lan";
+      # };
+
+      # wireguard.proxy-sentinel = {
+      #     client.via = "sentinel";
+      #     firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
+      #   };
+
+      #   nodes.sentinel = {
+      #     services.nginx = {
+      #       upstreams.adguardhome = {
+      #         servers."${config.wireguard.proxy-sentinel.ipv4}:${toString config.services.adguardhome.port}" = {};
+      #         extraConfig = ''
+      #           zone adguardhome 64k;
+      #           keepalive 2;
+      #         '';
+      #         monitoring = {
+      #           enable = true;
+      #           expectedBodyRegex = "AdGuard Home";
+      #         };
+      #       };
+      #       virtualHosts.${adguardhomeDomain} = {
+      #         forceSSL = true;
+      #         useACMEWildcardHost = true;
+      #         oauth2.enable = true;
+      #         oauth2.allowedGroups = ["access_adguardhome"];
+      #         locations."/" = {
+      #           proxyPass = "http://adguardhome";
+      #           proxyWebsockets = true;
+      #         };
+      #       };
+      #     };
+      #   };
       microvm.vms.adguardhome = {
         autostart = true;
         restartIfChanged = true;
 
         specialArgs = {
           inherit localFlake;
-          inherit secretsPath pubkeys properties;
+          inherit secretsPath pubkeys;
+          inherit globals;
         };
 
         config = {
@@ -153,32 +185,31 @@ in {
             enable = true;
             settings.PermitRootLogin = "yes";
           };
-
           systemd.network.enable = true;
 
-          systemd.network.networks."20-lan" = {
-            matchConfig.Type = "ether";
-            networkConfig = {
-              Address = [ipv4WithMask];
-              Gateway = mainGateway;
-              DNS = nameservers;
-              DHCP = "no";
-            };
-          };
+          # systemd.network.networks."20-lan" = {
+          #   matchConfig.Type = "ether";
+          #   networkConfig = {
+          #     Address = [ipv4WithMask];
+          #     Gateway = mainGateway;
+          #     DNS = nameservers;
+          #     DHCP = "no";
+          #   };
+          # };
 
           networking.firewall = {
-            allowedTCPPorts = [port];
-            allowedUDPPorts = [properties.ports.dns];
+            allowedTCPPorts = [53];
+            allowedUDPPorts = [53];
           };
 
           services.adguardhome = {
             enable = true;
             mutableSettings = false;
-            # host = "0.0.0.0";
-            port = port;
+            host = "0.0.0.0";
+            port = 3000;
             settings = {
               dns = {
-                port = properties.ports.dns;
+                # port = properties.ports.dns;
                 # allowed_clients = [
                 # ];
                 #trusted_proxies = [];
@@ -206,16 +237,16 @@ in {
               #     }
               #   ]
               # Use the local mirror-proxy for some services (not necessary, just for speed)
-              # ++ map (domain: {
-              #   inherit domain;
-              #   answer = globals.net.home-lan.hosts.ward-web-proxy.ipv4;
-              # }) [
+              # ++
+              # map (domain: {
+              # inherit domain;
+              # answer = globals.net.home-lan.hosts.ward-web-proxy.ipv4;
+              # })
+              #[
               #   # FIXME: dont hardcode, filter global service domains by internal state
               #   globals.services.grafana.domain
-              #   globals.services.immich.domain
               #   globals.services.influxdb.domain
               #   globals.services.loki.domain
-              #   globals.services.paperless.domain
               #   "home.${config.repo.secrets.global.domains.me}"
               #   "fritzbox.${config.repo.secrets.global.domains.me}"
               # ]

@@ -198,6 +198,7 @@
       imports =
         flatten (mapModules ./parts (x: x))
         ++ [
+          ./globals
           inputs.flake-parts.flakeModules.easyOverlay
         ];
 
@@ -208,9 +209,9 @@
       systems = import inputs.systems;
       flake.lib = lib;
       # flake.lib = lib.tensorfiles;
-      # flake.overlays.default = inputs.nixpkgs.lib.composeManyExtensions [
-      #   inputs.nixos-extra-modules.overlays.default
-      # ];
+      flake.overlays.default = inputs.nixpkgs.lib.composeManyExtensions [
+        inputs.nixos-extra-modules.overlays.default
+      ];
       # perSystem = {
       #   config,
       #   self',

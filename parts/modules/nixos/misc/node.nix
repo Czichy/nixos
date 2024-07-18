@@ -1,4 +1,4 @@
-# --- parts/modules/microvm/default.nix
+# --- parts/modules/nixos/misc/node.nix
 #
 # Author:  czichy <christian@czichy.com>
 # URL:     https://github.com/czichy/tensorfiles
@@ -13,30 +13,20 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
-  config,
+  localFlake,
   inputs,
-  self,
-  # properties,
+}: {
+  config,
+  lib,
+  pkgs,
   ...
-}: let
-  inherit (inputs.flake-parts.lib) importApply;
-  localFlake = self;
-in {
-  flake.nixosModules = {
-    services_microvm_test = importApply ./test {
-      inherit localFlake;
-      inherit (config.secrets) secretsPath pubkeys;
+}:
+with builtins;
+with lib; {
+  options.tensorfiles.node = {
+    name = mkOption {
+      description = "A unique name for this node (host) in the repository. Defines the default hostname, but this can be overwritten.";
+      type = types.str;
     };
-
-    services_adguard = importApply ./adguardhome {
-      inherit localFlake;
-      inherit (config.secrets) secretsPath pubkeys;
-      inherit (self) globals;
-      # inherit properties;
-    };
-    # services_microvm_influxdb = importApply ./services/virtualisation/microvm/influxdb.nix {
-    #   inherit localFlake;
-    #   inherit (config.secrets) secretsPath pubkeys;
-    # };
   };
 }

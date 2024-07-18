@@ -15,7 +15,7 @@
 {
   pkgs,
   inputs,
-  properties,
+  # properties,
   ...
 }: {
   # -----------------

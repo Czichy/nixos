@@ -1,43 +1,14 @@
-{config, ...}
-: let
-  inherit (config.tensorfiles) globals;
-in {
+{
+  config,
+  globals,
+  ...
+}
+: {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
-  # networking.hostId = config.repo.secrets.local.networking.hostId;
 
-  tensorfiles.globals.net = {
-    home-wan = {
-      cidrv4 = "192.168.178.0/24";
-      hosts.fritzbox.id = 1;
-      hosts.ward.id = 2;
-    };
-
-    home-lan = {
-      cidrv4 = "192.168.1.0/24";
-      cidrv6 = "fd10::/64";
-      hosts.ward.id = 1;
-      hosts.sire.id = 2;
-      hosts.ward-adguardhome.id = 3;
-      hosts.ward-web-proxy.id = 4;
-      hosts.sire-samba.id = 10;
-    };
-
-    v-lan = {
-      cidrv4 = "192.168.122.0/24";
-      cidrv6 = "fd10::/64";
-      hosts.ward.id = 175;
-      hosts.sire.id = 2;
-      hosts.ward-adguardhome.id = 3;
-      hosts.ward-web-proxy.id = 4;
-      hosts.sire-samba.id = 10;
-    };
-
-    proxy-home = {
-      cidrv4 = "10.44.0.0/24";
-      cidrv6 = "fd00:44::/120";
-    };
-  };
-
+  # globals.monitoring.ping.ward = {
+  #   network = "home-lan";
+  # };
   # # Enable NetworkManager
   networking = {
     networkmanager.enable = true;
@@ -52,6 +23,10 @@ in {
           {
             # "192.168.122.175"
             address = "${globals.net.v-lan.hosts.ward.ipv4}";
+            prefixLength = 24;
+          }
+          {
+            address = "192.168.122.75";
             prefixLength = 24;
           }
         ];
@@ -201,13 +176,13 @@ in {
     };
   };
 
-  wireguard.proxy-home.server = {
-    host = globals.net.home-lan.hosts.ward.ipv4;
-    port = 51444;
-    reservedAddresses = [
-      globals.net.proxy-home.cidrv4
-      globals.net.proxy-home.cidrv6
-    ];
-    openFirewall = false; # Explicitly opened only for lan
-  };
+  # wireguard.proxy-home.server = {
+  #   host = globals.net.home-lan.hosts.ward.ipv4;
+  #   port = 51444;
+  #   reservedAddresses = [
+  #     globals.net.proxy-home.cidrv4
+  #     globals.net.proxy-home.cidrv6
+  #   ];
+  #   openFirewall = false; # Explicitly opened only for lan
+  # };
 }
