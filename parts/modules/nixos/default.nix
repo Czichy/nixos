@@ -68,6 +68,7 @@ in {
     services_microvm-host = importApply ./services/virtualisation/microvm-host.nix {inherit localFlake;};
     services_microvm = importApply ./services/microvm {
       inherit localFlake;
+      inherit (config.secrets) pubkeys;
     };
     # -- system --
     system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};

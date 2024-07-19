@@ -1,5 +1,6 @@
 guestName: guestCfg: {
   config,
+  pubkeys,
   inputs,
   lib,
   pkgs,
@@ -22,7 +23,8 @@ in {
       ++ [
         inputs.nixos-nftables-firewall.nixosModules.default
         (
-          import ./common-guest-config.nix config.modules.users.primaryUser.authorizedKeys guestName
+          import ./common-guest-config.nix pubkeys guestName
+          #import ./common-guest-config.nix config.modules.users.primaryUser.authorizedKeys guestName
           guestCfg
         )
         (
