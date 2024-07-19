@@ -83,7 +83,7 @@
       };
     };
   };
-  modules.services.microvm = {
+  tensorfiles.services.microvm = {
     enable = true;
     guests = let
       mkGuest = guestName: {enableStorageDataset ? false, ...}: {
@@ -98,10 +98,6 @@
           pool = "rpool";
           dataset = "rpool/encrypted/safe/vms/${guestName}";
         };
-        #zfs."/storage" = lib.mkIf enableStorageDataset {
-        #  pool = "storage";
-        #  dataset = "safe/guests/${guestName}";
-        #};
         modules = [
           ./guests/${guestName}.nix
           {

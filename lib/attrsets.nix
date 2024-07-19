@@ -161,4 +161,20 @@ with builtins; rec {
       else (hasAttr elem acc) && (aux acc.${elem} rest);
   in
     aux attr (splitString "." identifier);
+
+  # attrsToList
+  attrsToList = attrs: mapAttrsToList (name: value: {inherit name value;}) attrs;
+
+  # Generate an attribute set by mapping a function over a list of values.
+  genAttrs' = values: f: listToAttrs (map f values);
+
+  # anyAttrs :: (name -> value -> bool) attrs
+  anyAttrs = pred: attrs: any (attr: pred attr.name attr.value) (attrsToList attrs);
+
+  # countAttrs :: (name -> value -> bool) attrs
+  countAttrs = pred: attrs: count (attr: pred attr.name attr.value) (attrsToList attrs);
+
+  # Merges all given attributes from the given attrsets using mkMerge.
+  # Useful to merge several top-level configs in a module.
+  mergeToplevelConfigs = keys: attrs: genAttrs keys (attr: mkMerge (map (x: x.${attr} or {}) attrs));
 }

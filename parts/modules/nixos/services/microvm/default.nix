@@ -20,7 +20,7 @@
   # utils,
   ...
 } @ attrs: let
-  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption mergeToplevelConfigs mapAttrsToList;
   cfg = config.tensorfiles.services.microvm;
 
   generateMacAddress = s: let
@@ -186,43 +186,43 @@ in {
       {
         systemd.tmpfiles.rules = ["d /guests 0700 root root -"];
 
-        modules.zfs.datasets.properties = let
-          zfsDefs = lib.flatten (
-            lib.flip lib.mapAttrsToList cfg.guests (
-              _: guestCfg:
-                lib.flip lib.mapAttrsToList guestCfg.zfs (
-                  _: zfsCfg: {
-                    dataset = "${zfsCfg.dataset}";
-                    inherit (zfsCfg) hostMountpoint;
-                  }
-                )
-            )
-          );
-          zfsAttrSet = lib.listToAttrs (
-            map (zfsDef: {
-              name = zfsDef.dataset;
-              value = {
-                mountpoint = zfsDef.hostMountpoint;
-              };
-            })
-            zfsDefs
-          );
-        in
-          zfsAttrSet;
-        assertions = lib.flatten (
-          lib.flip lib.mapAttrsToList cfg.guests (
-            guestName: guestCfg:
-              lib.flip lib.mapAttrsToList guestCfg.zfs (
-                zfsName: zfsCfg: {
-                  assertion = lib.hasPrefix "/" zfsCfg.guestMountpoint;
-                  message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
-                }
-              )
-          )
-        );
+        # modules.zfs.datasets.properties = let
+        #   zfsDefs = lib.flatten (
+        #     lib.flip lib.mapAttrsToList cfg.guests (
+        #       _: guestCfg:
+        #         lib.flip lib.mapAttrsToList guestCfg.zfs (
+        #           _: zfsCfg: {
+        #             dataset = "${zfsCfg.dataset}";
+        #             inherit (zfsCfg) hostMountpoint;
+        #           }
+        #         )
+        #     )
+        #   );
+        #   zfsAttrSet = lib.listToAttrs (
+        #     map (zfsDef: {
+        #       name = zfsDef.dataset;
+        #       value = {
+        #         mountpoint = zfsDef.hostMountpoint;
+        #       };
+        #     })
+        #     zfsDefs
+        #   );
+        # in
+        #   zfsAttrSet;
+        # assertions = lib.flatten (
+        #   lib.flip lib.mapAttrsToList cfg.guests (
+        #     guestName: guestCfg:
+        #       lib.flip lib.mapAttrsToList guestCfg.zfs (
+        #         zfsName: zfsCfg: {
+        #           assertion = lib.hasPrefix "/" zfsCfg.guestMountpoint;
+        #           message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
+        #         }
+        #       )
+        #   )
+        # );
       }
       # |----------------------------------------------------------------------| #
-      (lib.mergeToplevelConfigs [
+      (mergeToplevelConfigs [
         "microvm"
         "systemd"
       ] (lib.mapAttrsToList defineMicrovm cfg.guests))
