@@ -23,7 +23,7 @@ with builtins;
 with lib; let
   inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
-  cfg = config.tensorfiles.services.virtualisation.microvm;
+  cfg = config.tensorfiles.services.virtualisation.microvm-host;
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
@@ -32,7 +32,7 @@ with lib; let
     then config.tensorfiles.system.impermanence
     else {};
 in {
-  options.tensorfiles.services.virtualisation.microvm = with types; {
+  options.tensorfiles.services.virtualisation.microvm-host = with types; {
     enable = mkEnableOption ''
       Enables Micro-VM host.
     '';
@@ -45,7 +45,6 @@ in {
   imports = [
     # Include the microvm host module
     inputs.microvm.nixosModules.host
-    # inputs.microvm.nixosModules.microvm
   ];
 
   config = mkIf cfg.enable (mkMerge [

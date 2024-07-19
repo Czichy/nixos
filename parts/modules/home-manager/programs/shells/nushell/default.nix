@@ -12,17 +12,16 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib;
-let
-  inherit (localFlake.lib.tensorfiles)
+with lib; let
+  inherit
+    (localFlake.lib.tensorfiles)
     mkOverrideAtHmModuleLevel
     isModuleLoadedAndEnabled
     mkPywalEnableOption
@@ -34,9 +33,11 @@ let
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
-  impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-in
-{
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
+in {
   options.tensorfiles.hm.programs.shells.nushell = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the nushell.
@@ -111,9 +112,8 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages =
-        with pkgs;
-        with cfg.shellAliases;
+      home.packages = with pkgs;
+      with cfg.shellAliases;
         [
           nitch
           nushellPlugins.query
@@ -121,7 +121,6 @@ in
           nushellPlugins.net
           nushellPlugins.formats
           nushellPlugins.polars
-
         ]
         ++ (optional lsToEza eza)
         ++ (optional catToBat bat)
@@ -229,7 +228,7 @@ in
       };
 
       home.shellAliases = mkMerge [
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        {fetch = _ "${pkgs.nitch}/bin/nitch";}
         (mkIf cfg.shellAliases.lsToEza {
           ls = _ "${pkgs.eza}/bin/eza";
           ll = _ "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified";
@@ -243,12 +242,12 @@ in
           find = _ "${pkgs.fd}/bin/fd";
           fd = _ "${pkgs.fd}/bin/fd";
         })
-        (mkIf cfg.shellAliases.grepToRipgrep { grep = _ "${pkgs.ripgrep}/bin/rg"; })
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        (mkIf cfg.shellAliases.grepToRipgrep {grep = _ "${pkgs.ripgrep}/bin/rg";})
+        {fetch = _ "${pkgs.nitch}/bin/nitch";}
       ];
     }
     # |----------------------------------------------------------------------| #
-    (mkIf ((isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable) { })
+    (mkIf ((isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable) {})
     # |----------------------------------------------------------------------| #
     (mkIf cfg.shellAliases.catToBat {
       programs.bat = {
@@ -266,11 +265,15 @@ in
     # |----------------------------------------------------------------------| #
     (mkIf cfg.withAtuin {
       programs.atuin.enableNushellIntegration = true;
-      programs.atuin.settings = {
-        auto_sync = true;
-        sync_frequency = "5m";
-        sync_address = "http://atuin-atuin.tail68e9c.ts.net";
-        sync.records = true;
+      programs.atuin = {
+        enable = true;
+        settings = {
+          auto_sync = true;
+          sync_frequency = "5m";
+          # key_path = ;
+          # sync_address = "http://atuin-atuin.tail68e9c.ts.net";
+          sync.records = true;
+        };
       };
     })
     # |----------------------------------------------------------------------| #
@@ -278,23 +281,22 @@ in
       programs.zoxide = {
         enable = true;
         enableNushellIntegration = true;
-        options = [ "--cmd j" ];
+        options = ["--cmd j"];
       };
     })
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
         directories = [
           ".local/share/atuin"
           ".local/share/zoxide"
         ];
 
-        files = [ ".config/nushell/history.txt" ];
+        files = [".config/nushell/history.txt"];
       };
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }

@@ -29,11 +29,10 @@ with lib; let
 
   cfg = config.tensorfiles.services.virtualisation.microvm.adguardhome;
 
-  adguardhomeDomain = "adguardhome.czichy.com";
+  # adguardhomeDomain = "adguardhome.czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
 
-  server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
-  filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
+  # server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;

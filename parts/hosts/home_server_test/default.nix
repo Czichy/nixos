@@ -15,7 +15,6 @@
 {
   pkgs,
   inputs,
-  # properties,
   ...
 }: {
   # -----------------
@@ -120,15 +119,12 @@
     };
     security.agenix.enable = true;
 
-    services.virtualisation.microvm = {
+    services.virtualisation.microvm-host = {
       enable = true;
       test.enable = true;
     };
 
-    services.virtualisation.microvm.adguardhome.enable = true;
-    # services.adguardhome = {
-    # host = properties.network.micro-infra.local.ip;
-    # };
+    # services.virtualisation.microvm.adguardhome.enable = true;
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
