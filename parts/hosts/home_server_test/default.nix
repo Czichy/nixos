@@ -32,7 +32,6 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
-    ./guests.nix
   ];
 
   # networking.nftables = {
@@ -120,10 +119,9 @@
     };
     security.agenix.enable = true;
 
-    services.virtualisation.microvm-host = {
-      enable = true;
-      test.enable = true;
-    };
+    # services.virtualisation.microvm-host = {
+    #   enable = true;
+    # };
 
     # services.virtualisation.microvm.adguardhome.enable = true;
 
