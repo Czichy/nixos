@@ -104,7 +104,7 @@
             #node.secretsDir = ./secrets/${guestName};
             networking.nftables.firewall = {
               zones.untrusted.interfaces = [
-                config.modules.services.microvm.guests.${guestName}.networking.mainLinkName
+                config.tensorfiles.services.microvm.guests.${guestName}.networking.mainLinkName
               ];
             };
           }

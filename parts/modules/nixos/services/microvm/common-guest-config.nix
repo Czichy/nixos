@@ -18,6 +18,7 @@ in {
       }
     ];
   };
+  users.users.root.password = "";
   users.users.root = {
     openssh.authorizedKeys.keys = authorizedKeys;
   };
