@@ -72,6 +72,18 @@ in
       };
     }
     # |----------------------------------------------------------------------| #
+    {
+      systemd.extraConfig = "DefaultLimitNOFILE=1048576";
+  security.pam.loginLimits = [
+    {
+      domain = "*";
+      type = "hard";
+      item = "nofile";
+      value = "1048576";
+    }
+  ];
+    }
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
