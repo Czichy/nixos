@@ -20,6 +20,7 @@
   # utils,
   ...
 } @ attrs: let
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
   cfg = config.tensorfiles.services.microvm;
 
   generateMacAddress = s: let
@@ -40,9 +41,18 @@
 
     microvm.vms.${guestName} = import ./microvm.nix guestName guestCfg attrs;
   };
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.system.impermanence
+    else {};
 in {
-  options.modules.services.microvm = {
+  options.tensorfiles.services.microvm = {
     enable = lib.mkEnableOption "microvm";
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
     guests = lib.mkOption {
       default = {};
       description = "Defines the actual vms and handles the necessary base setup for them.";
@@ -172,6 +182,7 @@ in {
   imports = [inputs.microvm.nixosModules.host];
   config = lib.mkIf (cfg.enable && cfg.guests != {}) (
     lib.mkMerge [
+      # |----------------------------------------------------------------------| #
       {
         systemd.tmpfiles.rules = ["d /guests 0700 root root -"];
 
@@ -210,10 +221,35 @@ in {
           )
         );
       }
+      # |----------------------------------------------------------------------| #
       (lib.mergeToplevelConfigs [
         "microvm"
         "systemd"
       ] (lib.mapAttrsToList defineMicrovm cfg.guests))
+      # |----------------------------------------------------------------------| #
+      {
+        # environment.etc."machine-id" = {
+        #   mode = "0644";
+        #   text =
+        #     # change this to suit your flake's interface
+        #     self.lib.addresses.machineId.${config.networking.hostName} + "\n";
+        # };
+        # systemd.tmpfiles.rules = map (
+        #   vmHost: let
+        #     machineId = self.lib.addresses.machineId.${vmHost};
+        #   in
+        #     # creates a symlink of each MicroVM's journal under the host's /var/log/journal
+        #     "L+ /var/log/journal/${machineId} - - - - /var/lib/microvms/${vmHost}/journal/${machineId}"
+        # ) (builtins.attrNames self.lib.addresses.machineId);
+      }
+      # |----------------------------------------------------------------------| #
+      (lib.mkIf impermanenceCheck {
+        environment.persistence."${impermanence.persistentRoot}" = {
+          directories = ["/var/lib/microvms"];
+        };
+      })
+      # |----------------------------------------------------------------------| #
     ]
   );
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }
