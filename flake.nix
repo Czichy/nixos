@@ -197,6 +197,7 @@
       #      - default.nix
       #    - mySimpleModule.nix
       # imports = flatten (mapModules ./parts (x: x));
+      _module.args = {inherit lib;};
       imports =
         flatten (mapModules ./parts (x: x))
         ++ [
