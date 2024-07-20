@@ -22,7 +22,6 @@
   flake = let
     inherit config;
     mkHost = args: hostName: {
-      system,
       extraSpecialArgs ? {},
       extraModules ? [],
       extraOverlays ? [],
@@ -46,7 +45,6 @@
           baseSpecialArgs
           // {
             inherit inputs;
-            inherit system;
             inherit hostName;
             host.hostName = hostName;
           };
@@ -116,7 +114,6 @@
       home_server_test = withSystem "x86_64-linux" (
         args:
           mkHost args "home_server_test" {
-            system = "x86_64-linux";
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
