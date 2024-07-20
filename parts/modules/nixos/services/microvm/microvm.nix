@@ -13,10 +13,18 @@ guestName: guestCfg: {
     mkDefault
     mkForce
     ;
+  pubkeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKfYUpuZeYCkKCNL22+jUBroV4gaZYJOjcRVPDZDVXSp root@desktop"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGPMF0Sz9e6JoHudF11U2F9U/S5KFINlU9556C2zA82X czichy@vmtest"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHsXDsMxnu+pECq4+aJyBk59ASKbr8ENLGeb/ncrJ4T8 czichy@homeservertest"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKQgoSENg960XY9wU77q8p1+4WgUhEb10xlc27RWcmNE czichy@desktop"
+  ];
 in {
   specialArgs = guestCfg.extraSpecialArgs;
   #pkgs = inputs.self.pkgs.${guestCfg.microvm.system};
   inherit (guestCfg) autostart;
+
   config = {
     imports =
       guestCfg.modules

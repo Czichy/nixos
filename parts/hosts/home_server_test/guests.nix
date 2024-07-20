@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  globals,
   ...
 }: {
   tensorfiles.services.microvm = {
@@ -21,6 +22,7 @@
         #   dataset = "rpool/encrypted/safe/vms/${guestName}";
         # };
         modules = [
+          ../../../globals/globals.nix
           ./guests/${guestName}.nix
           {
             #node.secretsDir = ./secrets/${guestName};
@@ -43,8 +45,7 @@
               baseMac = "1c:69:7a:00:00:00"; # TODO move to config
             };
             extraSpecialArgs = {
-              #inherit (inputs.self) nodes globals;
-              #inherit (inputs.self.pkgs.x86_64-linux) lib;
+              inherit globals;
               inherit lib;
               inherit inputs;
             };

@@ -9,10 +9,10 @@
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
-  wireguard.proxy-sentinel = {
-    client.via = "sentinel";
-    firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
-  };
+  # wireguard.proxy-sentinel = {
+  #   client.via = "sentinel";
+  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
+  # };
 
   globals.services.adguardhome.domain = adguardhomeDomain;
   globals.monitoring.dns.adguardhome = {
@@ -47,19 +47,19 @@ in {
   #   };
   # };
 
-  environment.persistence."/persist".directories = [
-    {
-      directory = "/var/lib/private/AdGuardHome";
-      mode = "0700";
-    }
-  ];
+  # environment.persistence."/persist".directories = [
+  #   {
+  #     directory = "/var/lib/private/AdGuardHome";
+  #     mode = "0700";
+  #   }
+  # ];
 
   networking.firewall = {
     allowedTCPPorts = [53];
     allowedUDPPorts = [53];
   };
 
-  topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
+  # topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
   services.adguardhome = {
     enable = true;
     mutableSettings = false;
@@ -89,8 +89,8 @@ in {
           # Undo the /etc/hosts entry so we don't answer with the internal
           # wireguard address for influxdb
           {
-            inherit (globals.services.influxdb) domain;
-            answer = config.repo.secrets.global.domains.me;
+            # inherit (globals.services.influxdb) domain;
+            # answer = config.repo.secrets.global.domains.me;
           }
         ]
         # Use the local mirror-proxy for some services (not necessary, just for speed)
@@ -99,13 +99,11 @@ in {
           answer = globals.net.home-lan.hosts.ward-web-proxy.ipv4;
         }) [
           # FIXME: dont hardcode, filter global service domains by internal state
-          globals.services.grafana.domain
-          globals.services.immich.domain
-          globals.services.influxdb.domain
-          globals.services.loki.domain
-          globals.services.paperless.domain
-          "home.${config.repo.secrets.global.domains.me}"
-          "fritzbox.${config.repo.secrets.global.domains.me}"
+          # globals.services.grafana.domain
+          # globals.services.immich.domain
+          # globals.services.influxdb.domain
+          # "home.${config.repo.secrets.global.domains.me}"
+          # "fritzbox.${config.repo.secrets.global.domains.me}"
         ];
       filters = [
         {
