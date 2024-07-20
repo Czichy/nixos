@@ -64,59 +64,58 @@ in {
       ];
 
       # Block device images for persistent storage
-            # microvm use tmpfs for root(/), so everything else
-            # is ephemeral and will be lost on reboot.
-            #
-            # you can check this by running `df -Th` & `lsblk` in the VM.
-            volumes = [
-              {
-                mountPoint = "/var";
-                image = "var.img";
-                size = 512;
-              }
-              {
-                mountPoint = "/etc";
-                image = "etc.img";
-                size = 50;
-              }
-            ];
+      # microvm use tmpfs for root(/), so everything else
+      # is ephemeral and will be lost on reboot.
+      #
+      # you can check this by running `df -Th` & `lsblk` in the VM.
+      volumes = [
+        {
+          mountPoint = "/var";
+          image = "var.img";
+          size = 512;
+        }
+        {
+          mountPoint = "/etc";
+          image = "etc.img";
+          size = 50;
+        }
+      ];
 
-      shares =
-        [
-          {
-            # It is highly recommended to share the host's nix-store
-                # with the VMs to prevent building huge images.
-                # a host's /nix/store will be picked up so that no
-                # squashfs/erofs will be built for it.
-                #
-                # by this way, /nix/store is readonly in the VM,
-                # and thus the VM can't run any command that modifies
-                # the store. such as nix build, nix shell, etc...
-                # if you want to run nix commands in the VM, see
-                # https://github.com/astro/microvm.nix/blob/main/doc/src/shares.md#writable-nixstore-overlay
-            tag = "ro-store"; # Unique virtiofs daemon tag
-                proto = "virtiofs"; # virtiofs is faster than 9p
-                source = "/nix/store";
-                mountPoint = "/nix/.ro-store";
-          }
-            {
-                # On the host
-                source = "/var/lib/microvms/${config.networking.hostName}/journal";
-                # In the MicroVM
-                mountPoint = "/var/log/journal";
-                tag = "journal";
-                proto = "virtiofs";
-                socket = "journal.sock";
-              }
-        ];
-        #++ flip mapAttrsToList guestCfg.zfs (
-        #  _: zfsCfg: {
-        #    source = zfsCfg.hostMountpoint;
-        #    mountPoint = zfsCfg.guestMountpoint;
-        #    tag = builtins.substring 0 16 (builtins.hashString "sha256" zfsCfg.hostMountpoint);
-        #    proto = "virtiofs";
-        #  }
-        );
+      shares = [
+        {
+          # It is highly recommended to share the host's nix-store
+          # with the VMs to prevent building huge images.
+          # a host's /nix/store will be picked up so that no
+          # squashfs/erofs will be built for it.
+          #
+          # by this way, /nix/store is readonly in the VM,
+          # and thus the VM can't run any command that modifies
+          # the store. such as nix build, nix shell, etc...
+          # if you want to run nix commands in the VM, see
+          # https://github.com/astro/microvm.nix/blob/main/doc/src/shares.md#writable-nixstore-overlay
+          tag = "ro-store"; # Unique virtiofs daemon tag
+          proto = "virtiofs"; # virtiofs is faster than 9p
+          source = "/nix/store";
+          mountPoint = "/nix/.ro-store";
+        }
+        {
+          # On the host
+          source = "/var/lib/microvms/${config.networking.hostName}/journal";
+          # In the MicroVM
+          mountPoint = "/var/log/journal";
+          tag = "journal";
+          proto = "virtiofs";
+          socket = "journal.sock";
+        }
+      ];
+      #++ flip mapAttrsToList guestCfg.zfs (
+      #  _: zfsCfg: {
+      #    source = zfsCfg.hostMountpoint;
+      #    mountPoint = zfsCfg.guestMountpoint;
+      #    tag = builtins.substring 0 16 (builtins.hashString "sha256" zfsCfg.hostMountpoint);
+      #    proto = "virtiofs";
+      #  }
+      # );
     };
 
     #networking.renameInterfacesByMac.${guestCfg.networking.mainLinkName} = guestCfg.microvm.mac;

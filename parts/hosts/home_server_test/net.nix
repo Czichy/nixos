@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   globals,
   ...
 }
@@ -10,7 +11,8 @@
     hostv4 = "127.0.0.1";
     network = "home-lan";
   };
-  # # Enable NetworkManager
+
+  # Enable NetworkManager
   networking = {
     networkmanager.enable = true;
     hostName = "home_server_test";
