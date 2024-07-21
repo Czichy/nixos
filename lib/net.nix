@@ -41,7 +41,7 @@
 
   # From misc.nix
   inherit
-    (lib)
+    (lib.tensorfiles)
     hexToDec
     pow
     ;

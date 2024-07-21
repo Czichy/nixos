@@ -15,7 +15,7 @@
 {lib, ...}:
 with lib;
 with builtins;
-with types; {
+with types; rec {
   # Counts how often each element occurrs in xs.
   # Elements must be strings.
   countOccurrences =
