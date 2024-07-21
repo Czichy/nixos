@@ -96,18 +96,18 @@ in {
               };
 
               baseMac = lib.mkOption {
-                type = localFlake.lib.tensorfiles.libNet.types.net.mac;
+                type = localFlake.lib.tensorfiles.types.net.mac;
                 description = "The base mac address from which the guest's mac will be derived. Only the second and third byte are used, so for 02:XX:YY:ZZ:ZZ:ZZ, this specifies XX and YY, while Zs are generated automatically. Not used if the mac is set directly.";
                 default = "02:01:27:00:00:00";
               };
 
               mac = lib.mkOption {
-                type = localFlake.lib.tensorfiles.libNet.types.mac;
+                type = localFlake.lib.tensorfiles.types.net.mac;
                 description = "The MAC address for the guest's macvtap interface";
                 default = let
                   base = "02:${lib.substring 3 5 submod.config.microvm.baseMac}:00:00:00";
                 in
-                  (localFlake.lib.tensorfiles.libNet.mac.assignMacs base 24 [] (lib.attrNames cfg.guests)).${submod.config._module.args.name};
+                  (localFlake.lib.tensorfiles.net.mac.assignMacs base 24 [] (lib.attrNames cfg.guests)).${submod.config._module.args.name};
               };
             };
 
