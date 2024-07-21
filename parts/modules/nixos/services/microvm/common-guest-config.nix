@@ -5,8 +5,6 @@ authorizedKeys: _guestName: guestCfg: {
 }: let
   inherit (lib) mkForce;
 in {
-  #node.name = guestCfg.nodeName;
-  #node.type = guestCfg.backend;
   networking.firewall.allowedTCPPorts = [22];
   services.openssh = {
     enable = true;
@@ -44,7 +42,7 @@ in {
     networkConfig = {
       Address = [guestCfg.networking.address];
       Gateway = guestCfg.networking.gateway;
-      DNS = guestCfg.networking.dns;
+      # DNS = guestCfg.networking.dns;
       #IPv6PrivacyExtensions = "yes";
       #MulticastDNS = true;
       #IPv6AcceptRA = true;

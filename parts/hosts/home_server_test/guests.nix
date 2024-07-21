@@ -34,6 +34,12 @@
           }
         ];
         # networking = config.repo.secrets.home-ops.guests.${guestName}.networking;
+        networking = {
+          mainLinkName = "";
+          address = globals.net.home-wan.hosts.ward.cidrv4;
+          gateway = globals.net.home-wan.hosts.fritzbox.ipv4;
+          dns = "";
+        };
       };
       mkMicrovm = guestName: opts: {
         ${guestName} =
