@@ -47,7 +47,7 @@
           // {
             microvm = {
               system = "x86_64-linux";
-              macvtap = "brprim4";
+              macvtap = "lan";
               baseMac = "1c:69:7a:00:00:00"; # TODO move to config
             };
             extraSpecialArgs = {
