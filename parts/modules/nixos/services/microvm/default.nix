@@ -37,11 +37,11 @@
 
   defineMicrovm = guestName: guestCfg: {
     # Ensure that the zfs dataset exists before it is mounted.
-    systemd.services."microvm@${guestName}" = {
-      unitConfig = {
-        RequiresMountsFor = fsMountUnitsFor guestCfg;
-      };
-    };
+    # systemd.services."microvm@${guestName}" = {
+    #   unitConfig = {
+    #     RequiresMountsFor = fsMountUnitsFor guestCfg;
+    #   };
+    # };
 
     microvm.vms.${guestName} = import ./microvm.nix guestName guestCfg attrs;
   };
@@ -117,18 +117,18 @@ in {
                 description = "The main ethernet link name inside of the guest.";
                 default = submod.config.microvm.macvtap;
               };
-              address = lib.mkOption {
-                type = lib.types.str;
-                description = "The IP address of the guest";
-              };
-              gateway = lib.mkOption {
-                type = lib.types.str;
-                description = "The gateway of the guest";
-              };
-              dns = lib.mkOption {
-                type = lib.types.listOf lib.types.str;
-                description = "The DNS servers of the guest";
-              };
+              # address = lib.mkOption {
+              #   type = lib.types.str;
+              #   description = "The IP address of the guest";
+              # };
+              # gateway = lib.mkOption {
+              #   type = lib.types.str;
+              #   description = "The gateway of the guest";
+              # };
+              # dns = lib.mkOption {
+              #   type = lib.types.listOf lib.types.str;
+              #   description = "The DNS servers of the guest";
+              # };
             };
 
             zfs = lib.mkOption {

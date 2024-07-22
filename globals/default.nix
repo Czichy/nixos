@@ -45,7 +45,7 @@ in {
           #   ...
           # }: {
           #   globals = lib.mkMerge (
-          #     lib.concatLists (lib.flip lib.mapAttrsToList config.tensorfiles.nodes (
+          #     lib.concatLists (lib.flip lib.mapAttrsToList config.nodes (
           #       name: cfg:
           #         builtins.addErrorContext "while aggregating globals from nixosConfigurations.${name} into flake-level globals:"
           #         cfg.config._globalsDefs

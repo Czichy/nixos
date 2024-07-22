@@ -35,7 +35,7 @@
         {
           inherit (args) system;
           inherit inputs hostName;
-          inherit (self) globals;
+          inherit (self) nodes globals;
         }
         // extraSpecialArgs;
     in
@@ -127,6 +127,11 @@
             };
           }
       );
+      # All nixosSystem instanciations are collected here, so that we can refer
+      # to any system via nodes.<name>
+      # nodes = config.nixosConfigurations // config.guestConfigs;
+      # Add a shorthand to easily target toplevel derivations
+      # "@" = self.lib.mapAttrs (_: v: v.config.system.build.toplevel) config.nodes;
     };
   };
 }

@@ -34,12 +34,12 @@
           }
         ];
         # networking = config.repo.secrets.home-ops.guests.${guestName}.networking;
-        networking = {
-          mainLinkName = "";
-          address = globals.net.home-wan.hosts.ward.cidrv4;
-          gateway = globals.net.home-wan.hosts.fritzbox.ipv4;
-          dns = "";
-        };
+        # networking = {
+        #   mainLinkName = "";
+        #   address = globals.net.home-wan.hosts.ward.cidrv4;
+        #   gateway = globals.net.home-wan.hosts.fritzbox.ipv4;
+        #   dns = "";
+        # };
       };
       mkMicrovm = guestName: opts: {
         ${guestName} =
@@ -47,7 +47,7 @@
           // {
             microvm = {
               system = "x86_64-linux";
-              macvtap = "lan";
+              macvtap = "enp1s0";
               baseMac = "1c:69:7a:00:00:00"; # TODO move to config
             };
             extraSpecialArgs = {

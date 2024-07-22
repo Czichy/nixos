@@ -31,17 +31,18 @@ in {
 
   systemd.network.enable = true;
   networking.useNetworkd = true;
+
   systemd.network.networks."10-${guestCfg.networking.mainLinkName}" = {
     matchConfig.Name = guestCfg.networking.mainLinkName;
     #matchConfig.Type = "ether";
-    DHCP = "no";
+    DHCP = "yes";
     # XXX: Do we really want this?
     dhcpV4Config.UseDNS = false;
     dhcpV6Config.UseDNS = false;
     ipv6AcceptRAConfig.UseDNS = false;
     networkConfig = {
-      Address = [guestCfg.networking.address];
-      Gateway = guestCfg.networking.gateway;
+      # Address = [guestCfg.networking.address];
+      # Gateway = guestCfg.networking.gateway;
       # DNS = guestCfg.networking.dns;
       IPv6PrivacyExtensions = "yes";
       MulticastDNS = true;

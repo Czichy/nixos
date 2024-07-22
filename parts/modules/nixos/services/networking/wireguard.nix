@@ -25,11 +25,16 @@
     any
     attrNames
     attrValues
-    concatAttrs
-    concatMap
-    concatMapStrings
-    concatStringsSep
-    duplicates
+    # concatAttrs
+    
+    # concatMap
+    
+    # concatMapStrings
+    
+    # concatStringsSep
+    
+    # duplicates
+    
     filter
     flip
     head
@@ -46,8 +51,7 @@
     optionalAttrs
     optionals
     stringLength
-    # types
-    
+    types
     # wireguard
     
     ;
@@ -60,16 +64,11 @@
     
     # attrValues
     
-    # concatAttrs
-    
-    # concatMap
-    
-    # concatMapStrings
-    
-    # concatStringsSep
-    
-    # duplicates
-    
+    concatAttrs
+    concatMap
+    concatMapStrings
+    concatStringsSep
+    duplicates
     # filter
     
     # flip
@@ -93,7 +92,8 @@
     
     # stringLength
     
-    types
+    # types
+    
     wireguard
     ;
 

@@ -59,7 +59,7 @@ in {
       inherit localFlake;
     };
     services_networking_ssh = importApply ./services/networking/ssh.nix {inherit localFlake;};
-    services_networking_wireguard = importApply ./services/networking/wireguard.nix {inherit localFlake;};
+    services_networking_wireguard = importApply ./services/networking/wireguard {inherit localFlake;};
     services_x11_desktop-managers_startx-home-manager =
       importApply ./services/x11/desktop-managers/startx-home-manager.nix
       {inherit localFlake;};

@@ -46,13 +46,13 @@
           {
             addressConfig.Address = "fd12:3456:789a::1/64";
           }
-          {
-            # "192.168.122.175"
-            address = "${globals.net.v-lan.hosts.ward.ipv4}";
-            prefixLength = 24;
-          }
-          # globals.net.home-lan.hosts.ward.cidrv4
-          # globals.net.home-lan.hosts.ward.cidrv6
+          # {
+          #   # "192.168.122.175"
+          #   address = "${globals.net.v-lan.hosts.ward.ipv4}";
+          #   prefixLength = 24;
+          # }
+          globals.net.home-lan.hosts.ward.cidrv4
+          globals.net.home-lan.hosts.ward.cidrv6
         ];
         # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
         networkConfig = {
@@ -179,7 +179,8 @@
     };
   };
 
-  # wireguard.proxy-home.server = {
+  tensorfiles.services.networking.wireguard.enable = true;
+  # tensorfiles.services.networking.wireguard.proxy-home.server = {
   #   host = globals.net.home-lan.hosts.ward.ipv4;
   #   port = 51444;
   #   reservedAddresses = [

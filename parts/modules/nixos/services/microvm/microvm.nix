@@ -31,9 +31,8 @@ in {
       ++ [
         inputs.nixos-nftables-firewall.nixosModules.default
         (
-          import ./common-guest-config.nix pubkeys guestName
+          import ./common-guest-config.nix pubkeys guestName guestCfg
           #import ./common-guest-config.nix config.modules.users.primaryUser.authorizedKeys guestName
-          guestCfg
         )
         (
           {config, ...}: {
@@ -126,7 +125,7 @@ in {
       # );
     };
 
-    #networking.renameInterfacesByMac.${guestCfg.networking.mainLinkName} = guestCfg.microvm.mac;
+    # networking.renameInterfacesByMac.${guestCfg.networking.mainLinkName} = guestCfg.microvm.mac;
     systemd.network.networks."10-${guestCfg.networking.mainLinkName}".matchConfig = mkForce {
       MACAddress = guestCfg.microvm.mac;
     };

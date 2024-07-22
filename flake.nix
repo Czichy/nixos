@@ -203,6 +203,7 @@
         ++ [
           ./globals
           ./globals/globals.nix
+          ./parts/nix-topology
           # ./lib/overlays
           inputs.flake-parts.flakeModules.easyOverlay
         ];
