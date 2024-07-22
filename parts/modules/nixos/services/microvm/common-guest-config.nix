@@ -36,16 +36,16 @@ in {
     #matchConfig.Type = "ether";
     DHCP = "no";
     # XXX: Do we really want this?
-    #dhcpV4Config.UseDNS = false;
-    #dhcpV6Config.UseDNS = false;
-    #ipv6AcceptRAConfig.UseDNS = false;
+    dhcpV4Config.UseDNS = false;
+    dhcpV6Config.UseDNS = false;
+    ipv6AcceptRAConfig.UseDNS = false;
     networkConfig = {
       Address = [guestCfg.networking.address];
       Gateway = guestCfg.networking.gateway;
       # DNS = guestCfg.networking.dns;
-      #IPv6PrivacyExtensions = "yes";
-      #MulticastDNS = true;
-      #IPv6AcceptRA = true;
+      IPv6PrivacyExtensions = "yes";
+      MulticastDNS = true;
+      IPv6AcceptRA = true;
     };
     linkConfig.RequiredForOnline = "routable";
   };
