@@ -47,6 +47,7 @@ in {
     lib.microvm.mac = guestCfg.microvm.mac;
 
     microvm = {
+      # hypervisor = mkDefault "qemu";
       hypervisor = mkDefault "cloud-hypervisor";
       socket = "control.socket";
 

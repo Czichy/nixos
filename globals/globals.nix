@@ -69,7 +69,7 @@ in {
                       };
 
                       ipv6 = mkOption {
-                        type = types.nullOr lib.tensorfiles.libNet.types.ipv6;
+                        type = types.nullOr lib.tensorfiles.types.net.ipv6;
                         description = "The IPv6 of this host";
                         readOnly = true;
                         default =

@@ -133,4 +133,18 @@ in {
     '';
     serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
   };
+
+  systemd.network.enable = true;
+  networking.hostName = "ward-adguardhome";
+  systemd.network.networks."99-v-lan" = {
+    matchConfig.Type = "ether";
+    networkConfig = {
+      # Address = [globals.net.v-lan.hosts.ward-adguardhome.ipv4];
+      Address = ["192.168.122.3/24"];
+      Gateway = "192.168.122.1";
+      # DNS = nameservers;
+      DHCP = "no";
+    };
+  };
+  system.stateVersion = "24.05";
 }
