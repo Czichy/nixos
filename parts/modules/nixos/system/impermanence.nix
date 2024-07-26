@@ -12,11 +12,16 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
-{ config, lib, ... }:
+{
+  localFlake,
+  inputs,
+}: {
+  config,
+  lib,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkAgenixEnableOption;
 
   cfg = config.tensorfiles.system.impermanence;
@@ -107,8 +112,7 @@ let
   #hostname = config.networking.hostname;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
-in
-{
+in {
   options.tensorfiles.system.impermanence = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the persistence ecosystem.
@@ -250,7 +254,7 @@ in
     };
   };
 
-  imports = [ inputs.impermanence.nixosModules.impermanence ];
+  imports = [inputs.impermanence.nixosModules.impermanence];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
@@ -263,7 +267,7 @@ in
       ];
     }
     # |----------------------------------------------------------------------| #
-    { fileSystems."${cfg.persistentRoot}".neededForBoot = true; }
+    {fileSystems."${cfg.persistentRoot}".neededForBoot = true;}
     # |----------------------------------------------------------------------| #
     # |----------------------------------------------------------------------| #
     {
@@ -277,7 +281,7 @@ in
           ];
           files = [
             "/etc/adjtime"
-            "/etc/machine-id"
+            # "/etc/machine-id"
           ];
         };
       };
@@ -291,17 +295,16 @@ in
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.btrfsWipe.enable {
-
       boot.initrd = {
         enable = true;
-        supportedFilesystems = [ "btrfs" ];
+        supportedFilesystems = ["btrfs"];
         postDeviceCommands = lib.mkIf (!phase1Systemd) (lib.mkBefore wipeScript);
         systemd.services.restore-root = lib.mkIf phase1Systemd {
           description = "Rollback btrfs rootfs";
-          wantedBy = [ "initrd.target" ];
-          requires = [ "dev-disk-by\\x2dlabel-persist.device" ];
-          after = [ "dev-disk-by\\x2dlabel-persist.device" ];
-          before = [ "sysroot.mount" ];
+          wantedBy = ["initrd.target"];
+          requires = ["dev-disk-by\\x2dlabel-persist.device"];
+          after = ["dev-disk-by\\x2dlabel-persist.device"];
+          before = ["sysroot.mount"];
           unitConfig.DefaultDependencies = "no";
           serviceConfig.Type = "oneshot";
           script = wipeScript;
@@ -309,10 +312,10 @@ in
       };
     })
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.allowOther { programs.fuse.userAllowOther = true; })
+    (mkIf cfg.allowOther {programs.fuse.userAllowOther = true;})
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
-      age.identityPaths = [ "${cfg.persistentRoot}/etc/ssh/ssh_host_ed25519_key" ];
+      age.identityPaths = ["${cfg.persistentRoot}/etc/ssh/ssh_host_ed25519_key"];
 
       #environment.persistence = {
       #  "${cfg.persistentRoot}" = {
@@ -339,21 +342,19 @@ in
     # }
     # |----------------------------------------------------------------------| #
     {
-      system.activationScripts.persistent-dirs.text =
-        let
-          mkHomePersist =
-            user:
-            lib.optionalString user.createHome ''
-              mkdir -p /persist/${user.home}
-              chown ${user.name}:${user.group} /persist/${user.home}
-              chmod ${user.homeMode} /persist/${user.home}
-            '';
-          users = lib.attrValues config.users.users;
-        in
+      system.activationScripts.persistent-dirs.text = let
+        mkHomePersist = user:
+          lib.optionalString user.createHome ''
+            mkdir -p /persist/${user.home}
+            chown ${user.name}:${user.group} /persist/${user.home}
+            chmod ${user.homeMode} /persist/${user.home}
+          '';
+        users = lib.attrValues config.users.users;
+      in
         lib.concatLines (map mkHomePersist users);
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }

@@ -12,12 +12,15 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{ config, lib, ... }:
+{localFlake}: {
+  config,
+  lib,
+  ...
+}:
 with builtins;
-with lib;
-let
-  inherit (localFlake.lib.tensorfiles)
+with lib; let
+  inherit
+    (localFlake.lib.tensorfiles)
     mkOverrideAtModuleLevel
     isModuleLoadedAndEnabled
     mkImpermanenceEnableOption
@@ -28,9 +31,11 @@ let
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
-  impermanence = if impermanenceCheck then config.tensorfiles.system.impermanence else { };
-in
-{
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.system.impermanence
+    else {};
+in {
   options.tensorfiles.services.networking.networkmanager = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the networkmanager service.
@@ -43,7 +48,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    { networking.networkmanager.enable = _ true; }
+    {networking.networkmanager.enable = _ true;}
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       systemd.tmpfiles.rules = [
@@ -52,16 +57,16 @@ in
         "L /var/lib/NetworkManager/timestamps - - - - /persist/var/lib/NetworkManager/timestamps"
       ];
       environment.persistence."${impermanence.persistentRoot}" = {
-        directories = [ "/etc/NetworkManager/system-connections" ];
+        directories = ["/etc/NetworkManager/system-connections"];
         files = [
           "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
-          "/var/lib/NetworkManager/seen-bssids"
-          "/var/lib/NetworkManager/timestamps"
+          # "/var/lib/NetworkManager/seen-bssids"
+          # "/var/lib/NetworkManager/timestamps"
         ];
       };
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }
