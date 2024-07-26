@@ -179,7 +179,7 @@
     };
   };
 
-  tensorfiles.services.networking.wireguard.enable = true;
+  # tensorfiles.services.networking.wireguard.enable = true;
   # tensorfiles.services.networking.wireguard.proxy-home.server = {
   #   host = globals.net.home-lan.hosts.ward.ipv4;
   #   port = 51444;

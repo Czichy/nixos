@@ -26,13 +26,13 @@
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = with inputs; [
-    home-manager.nixosModules.default
+    # home-manager.nixosModules.default
     disko.nixosModules.disko
     ../../../globals/globals.nix
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
-    ./guests.nix
+    # ./guests.nix
   ];
 
   topology.self.hardware.image = ../../topology/images/odroid-h3.png;
