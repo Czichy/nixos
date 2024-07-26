@@ -81,7 +81,7 @@ in {
     programs_terminals_foot = importApply ./programs/terminals/foot.nix {inherit localFlake;};
     programs_thunderbird = importApply ./programs/thunderbird.nix {inherit localFlake;};
 
-    programs_steam = importApply ./programs/games/steam.nix {inherit localFlake;};
+    programs_steam = importApply ./programs/games/steam.nix {inherit localFlake inputs;};
     # -- security --
 
     # -- services --
