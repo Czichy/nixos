@@ -29,6 +29,7 @@
       };
       ib-tws.enable = true;
       ragenix.enable = true;
+      games.steam.enable = true;
     };
     hardware.monitors = {
       enable = true;

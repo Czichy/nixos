@@ -117,6 +117,14 @@
     # pcscd.enable = true;
   };
 
+  # Minecraft
+  services.flatpak.enable = true;
+  # TODO move to module
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+  };
+
   # FIXME: the ui is not directly accessible via environment.systemPackages
   # FIXME: to control it as a user (and to allow SSO) we need to be in the netbird-home group
   # services.netbird.ui.enable = true;
