@@ -91,16 +91,16 @@ in {
                     mountpoint = "/.swapvol";
                     swap.swapfile.size = "8G";
                   };
-                  # shared = {
-                  #   type = "filesystem";
-                  #   mountpoint = "/shared";
-                  #   mountOptions = ["compress=zstd"];
-                  # };
-                  # log = {
-                  #   type = "filesystem";
-                  #   mountpoint = "/var/log";
-                  #   mountOptions = ["compress=zstd"];
-                  # };
+                  shared = {
+                    type = "filesystem";
+                    mountpoint = "/shared";
+                    mountOptions = ["compress=zstd"];
+                  };
+                  log = {
+                    type = "filesystem";
+                    mountpoint = "/var/log";
+                    mountOptions = ["compress=zstd"];
+                  };
                 };
               };
             };
