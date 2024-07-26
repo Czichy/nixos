@@ -12,25 +12,25 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.virtualisation;
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
-  impermanence = if impermanenceCheck then config.tensorfiles.system.impermanence else { };
-in
-{
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.system.impermanence
+    else {};
+in {
   options.tensorfiles.services.virtualisation = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the libvirt service.
@@ -45,15 +45,22 @@ in
     # |----------------------------------------------------------------------| #
     {
       virtualisation = {
-        libvirtd.enable = true;
-        libvirtd.onBoot = "ignore";
-        libvirtd.qemu.package = pkgs.qemu_full;
-        libvirtd.qemu.ovmf.enable = true;
-        libvirtd.qemu.ovmf.packages =
-          if pkgs.stdenv.isx86_64 then [ pkgs.OVMFFull.fd ] else [ pkgs.OVMF.fd ];
-        libvirtd.qemu.swtpm.enable = true;
-        libvirtd.qemu.swtpm.package = pkgs.swtpm;
-        libvirtd.qemu.runAsRoot = false;
+        libvirtd = {
+          enable = true;
+          onBoot = "ignore";
+
+          qemu = {
+            package = pkgs.qemu_full;
+            ovmf.enable = true;
+            ovmf.packages =
+              if pkgs.stdenv.isx86_64
+              then [pkgs.OVMFFull.fd]
+              else [pkgs.OVMF.fd];
+            swtpm.enable = true;
+            swtpm.package = pkgs.swtpm;
+            runAsRoot = false;
+          };
+        };
         spiceUSBRedirection.enable = true; # Note that this allows users arbitrary access to USB devices.
         podman.enable = true;
       };
@@ -70,15 +77,24 @@ in
         gnome3.adwaita-icon-theme # default gnome cursors
         glib
       ];
+      environment.etc = {
+        "ovmf/edk2-x86_64-secure-code.fd" = {
+          source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-x86_64-secure-code.fd";
+        };
+
+        "ovmf/edk2-i386-vars.fd" = {
+          source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-i386-vars.fd";
+        };
+      };
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       environment.persistence."${impermanence.persistentRoot}" = {
-        directories = [ "/var/lib/libvirt" ];
+        directories = ["/var/lib/libvirt"];
       };
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }
