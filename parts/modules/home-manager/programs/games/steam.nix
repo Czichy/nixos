@@ -94,6 +94,12 @@ in {
         allowOther = true;
         directories = [
           ".local/share/Steam"
+          # Minecraft Bedrock Launcher
+          # https://mcpelauncher.readthedocs.io/en/latest/index.html
+          ".config/Minecraft Linux Launcher"
+          ".local/share/mcpelauncher"
+          ".local/share/mcpelauncher-webview"
+          ".local/share/Minecraft Linux Launcher"
         ];
       };
     })

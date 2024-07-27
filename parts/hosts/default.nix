@@ -101,6 +101,7 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
+              nix-flatpak.nixosModules.nix-flatpak
             ];
           }
       );

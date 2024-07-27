@@ -26,10 +26,10 @@
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = with inputs; [
-    inputs.hardware.nixosModules.common-cpu-amd
-    inputs.hardware.nixosModules.common-gpu-amd
-    inputs.hardware.nixosModules.common-pc-ssd
-    inputs.home-manager.nixosModules.default
+    hardware.nixosModules.common-cpu-amd
+    hardware.nixosModules.common-gpu-amd
+    hardware.nixosModules.common-pc-ssd
+    home-manager.nixosModules.default
     disko.nixosModules.disko
     ./hardware-configuration.nix
     ./disko.nix
@@ -120,6 +120,10 @@
   # Minecraft
   services.flatpak.enable = true;
   # TODO move to module
+  # Minecraft bedrock
+  services.flatpak.packages = [
+    "io.mrarm.mcpelauncher"
+  ];
   xdg.portal = {
     enable = true;
     wlr.enable = true;

@@ -26,7 +26,7 @@
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = with inputs; [
-    # home-manager.nixosModules.default
+    home-manager.nixosModules.default
     disko.nixosModules.disko
     ../../../globals/globals.nix
     ./hardware-configuration.nix
@@ -48,10 +48,6 @@
           {
             address = "192.168.122.175";
             # address = "${globals.net.v-lan.hosts.ward.ipv4}";
-            prefixLength = 24;
-          }
-          {
-            address = "192.168.122.75";
             prefixLength = 24;
           }
         ];
@@ -80,23 +76,23 @@
     profiles.server.enable = true;
     profiles.packages-extra.enable = true;
 
-    # system.impermanence = {
-    #   enable = true;
-    #   allowOther = true;
-    #   btrfsWipe = {
-    #     enable = true;
-    #     rootPartition = "/dev/vda2";
-    #   };
-    # };
-    # security.agenix.enable = true;
+    system.impermanence = {
+      enable = true;
+      allowOther = true;
+      # btrfsWipe = {
+      #   enable = true;
+      #   rootPartition = "/dev/vda2";
+      # };
+    };
+    security.agenix.enable = false;
 
     system.users.usersSettings."root" = {
-      # agenixPassword.enable = true;
+      agenixPassword.enable = false;
     };
     system.users.usersSettings."czichy" = {
       isSudoer = true;
       isNixTrusted = true;
-      # agenixPassword.enable = true;
+      agenixPassword.enable = false;
       extraGroups = [
         "networkmanager"
         "input"

@@ -128,7 +128,7 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    # {users.mutableUsers = _ false;}
+    {users.mutableUsers = _ false;}
     # |----------------------------------------------------------------------| #
     {
       users.users = genAttrs (attrNames cfg.usersSettings) (
@@ -149,7 +149,7 @@ in {
           # hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
           #   _ config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path
           # );
-          initialPassword = "nixos";
+          password = "nixos";
 
           openssh.authorizedKeys.keys = with userCfg.authorizedKeys; (mkIf enable (
             keysRaw ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [] pubkeys)

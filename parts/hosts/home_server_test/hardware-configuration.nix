@@ -15,9 +15,12 @@
 {
   lib,
   pkgs,
+  inputs,
   ...
 }: {
-  #imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+  imports = with inputs.nixos-hardware.nixosModules; [
+    (modulesPath + "/profiles/qemu-guest.nix")
+  ];
 
   #environment.systemPackages = with pkgs; [ libva-utils ];
 
@@ -45,28 +48,28 @@
   # Scrub btrfs to protect data integrity
   services.btrfs.autoScrub.enable = true;
 
-  services.btrbk.instances."btrbk" = {
-    onCalendar = "*:0/10";
-    settings = {
-      snapshot_preserve = "14d";
-      snapshot_preserve_min = "2d";
+  # services.btrbk.instances."btrbk" = {
+  #   onCalendar = "*:0/10";
+  #   settings = {
+  #     snapshot_preserve = "14d";
+  #     snapshot_preserve_min = "2d";
 
-      target_preserve_min = "no";
-      target_preserve = "no";
+  #     target_preserve_min = "no";
+  #     target_preserve = "no";
 
-      preserve_day_of_week = "monday";
-      timestamp_format = "long-iso";
-      snapshot_create = "onchange";
+  #     preserve_day_of_week = "monday";
+  #     timestamp_format = "long-iso";
+  #     snapshot_create = "onchange";
 
-      volume."/" = {
-        subvolume = {
-          "home" = {
-            snapshot_dir = "/.snapshots/data/home";
-          };
-        };
-      };
-    };
-  };
+  #     volume."/" = {
+  #       subvolume = {
+  #         "home" = {
+  #           snapshot_dir = "/.snapshots/data/home";
+  #         };
+  #       };
+  #     };
+  #   };
+  # };
 
   # ensure snapshots_dir exists
   systemd.tmpfiles.rules = ["d /.snapshots/data/home 0755 root root - -"];
