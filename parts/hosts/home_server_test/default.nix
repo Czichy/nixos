@@ -31,10 +31,33 @@
     ../../../globals/globals.nix
     ./hardware-configuration.nix
     ./disko.nix
-    ./net.nix
+    # ./net.nix
     # ./guests.nix
   ];
 
+  networking = {
+    networkmanager.enable = true;
+    hostName = "home_server_test";
+    useDHCP = false;
+    interfaces.enp1s0 = {
+      useDHCP = true;
+      wakeOnLan.enable = true;
+
+      ipv4 = {
+        addresses = [
+          {
+            address = "192.168.122.175";
+            # address = "${globals.net.v-lan.hosts.ward.ipv4}";
+            prefixLength = 24;
+          }
+          {
+            address = "192.168.122.75";
+            prefixLength = 24;
+          }
+        ];
+      };
+    };
+  };
   topology.self.hardware.image = ../../topology/images/odroid-h3.png;
   topology.self.hardware.info = "O-Droid H3, 64GB RAM";
   # ------------------------------
@@ -57,23 +80,23 @@
     profiles.server.enable = true;
     profiles.packages-extra.enable = true;
 
-    system.impermanence = {
-      enable = true;
-      allowOther = true;
-      btrfsWipe = {
-        enable = true;
-        rootPartition = "/dev/vda2";
-      };
-    };
-    security.agenix.enable = true;
+    # system.impermanence = {
+    #   enable = true;
+    #   allowOther = true;
+    #   btrfsWipe = {
+    #     enable = true;
+    #     rootPartition = "/dev/vda2";
+    #   };
+    # };
+    # security.agenix.enable = true;
 
     system.users.usersSettings."root" = {
-      agenixPassword.enable = true;
+      # agenixPassword.enable = true;
     };
     system.users.usersSettings."czichy" = {
       isSudoer = true;
       isNixTrusted = true;
-      agenixPassword.enable = true;
+      # agenixPassword.enable = true;
       extraGroups = [
         "networkmanager"
         "input"
@@ -89,5 +112,5 @@
   # of rpfilter. You can either disable rpfilter altogether:
   networking.firewall.checkReversePath = false;
 
-  home-manager.users."czichy" = import (../../homes + "/czichy@home_server");
+  # home-manager.users."czichy" = import (../../homes + "/czichy@home_server");
 }

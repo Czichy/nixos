@@ -123,6 +123,8 @@
       url = "github:headblockhead/nix-mcpelauncher";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
     #stylix = {
     #  url = "github:danth/stylix";
     #  inputs.nixpkgs.follows = "nixpkgs";
