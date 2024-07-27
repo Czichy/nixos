@@ -15,10 +15,10 @@
 {
   lib,
   pkgs,
-  inputs,
+  modulesPath,
   ...
 }: {
-  imports = with inputs.nixos-hardware.nixosModules; [
+  imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
