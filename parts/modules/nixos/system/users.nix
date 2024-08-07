@@ -146,10 +146,10 @@ in {
             else "/home/${_user}"
           );
 
-          # hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
-          #   _ config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path
-          # );
-          password = "nixos";
+          hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
+            _ config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path
+          );
+          # password = "nixos";
 
           openssh.authorizedKeys.keys = with userCfg.authorizedKeys; (mkIf enable (
             keysRaw ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [] pubkeys)
