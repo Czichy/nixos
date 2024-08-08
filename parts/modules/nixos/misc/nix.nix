@@ -12,22 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib.tensorfiles) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.misc.nix;
   _ = mkOverrideAtModuleLevel;
-in
-{
+in {
   options.tensorfiles.misc.nix = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles defaults regarding nix
@@ -41,7 +41,7 @@ in
       nix = {
         enable = _ true;
         checkConfig = _ true;
-        nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+        nixPath = ["nixpkgs=${inputs.nixpkgs}"];
         package = _ pkgs.nixVersions.latest;
         registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {
@@ -73,18 +73,34 @@ in
     }
     # |----------------------------------------------------------------------| #
     {
+      # https://github.com/NixOS/nixpkgs/issues/45492
+      # Set limits for esync.
       systemd.extraConfig = "DefaultLimitNOFILE=1048576";
-  security.pam.loginLimits = [
-    {
-      domain = "*";
-      type = "hard";
-      item = "nofile";
-      value = "1048576";
-    }
-  ];
+      systemd.user.extraConfig = "DefaultLimitNOFILE=32000";
+      # Increase open file limit for sudoers
+      security.pam.loginLimits = [
+        {
+          domain = "@czichy";
+          item = "stack";
+          type = "-";
+          value = "unlimited";
+        }
+        {
+          domain = "*";
+          item = "nofile";
+          type = "soft";
+          value = "1048576";
+        }
+        {
+          domain = "*";
+          item = "nofile";
+          type = "hard";
+          value = "1048576";
+        }
+      ];
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }

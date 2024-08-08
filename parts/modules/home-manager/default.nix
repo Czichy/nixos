@@ -82,7 +82,7 @@ in {
     programs_thunderbird = importApply ./programs/thunderbird.nix {inherit localFlake;};
 
     programs_steam = importApply ./programs/games/steam.nix {inherit localFlake inputs;};
-    # programs_minecraft = importApply ./programs/games/minecraft.nix {inherit localFlake;};
+    programs_minecraft = importApply ./programs/games/minecraft.nix {inherit localFlake;};
     # -- security --
 
     # -- services --

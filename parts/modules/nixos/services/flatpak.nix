@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/programs/games/minecraft.nix
+# --- parts/modules/nixos/system/flatpak.nix
 #
 # Author:  czichy <christian@czichy.com>
 # URL:     https://github.com/czichy/tensorfiles
@@ -20,55 +20,49 @@
 }:
 with builtins;
 with lib; let
-  inherit
-    (localFlake.lib.tensorfiles)
-    isModuleLoadedAndEnabled
-    mkImpermanenceEnableOption
-    mkAgenixEnableOption
-    ;
-  cfg = config.tensorfiles.hm.programs.games.minecraft;
-
+  inherit (localFlake.lib.tensorfiles) mkOverrideAtModuleLevel;
+  inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+  cfg = config.tensorfiles.services.flatpak;
   impermanenceCheck =
-    (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+
   impermanence =
     if impermanenceCheck
-    then config.tensorfiles.hm.system.impermanence
+    then config.tensorfiles.system.impermanence
     else {};
+  _ = mkOverrideAtModuleLevel;
 in {
-  # TODO maybe use toINIWithGlobalSection generator? however the ini config file
-  # also contains some initial keys? I should investigate this more
-  options.tensorfiles.hm.programs.games.minecraft = with types; {
+  options.tensorfiles.services.flatpak = with types; {
     enable = mkEnableOption ''
-      TODO
+
+      Enables NixOS module that sets up the basis for the userspace, that is
+      declarative management, basis for the home directories and also
+      configures home-manager, persistence, agenix if they are enabled.
     '';
     impermanence = {
       enable = mkImpermanenceEnableOption;
-    };
-    agenix = {
-      enable = mkAgenixEnableOption;
     };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      services.flatpak.enable = _ true;
+
+      # Minecraft
       # Minecraft bedrock
-      # services.flatpak.packages = [
-      # "io.mrarm.mcpelauncher"
-      # ];
+      services.flatpak.packages = [
+        "io.mrarm.mcpelauncher"
+      ];
+      xdg.portal = {
+        enable = true;
+        wlr.enable = true;
+      };
     }
     # |----------------------------------------------------------------------| #
-    (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        allowOther = true;
-        directories = [
-          # Minecraft Bedrock Launcher
-          # https://mcpelauncher.readthedocs.io/en/latest/index.html
-          ".config/Minecraft Linux Launcher"
-          ".local/share/mcpelauncher"
-          ".local/share/mcpelauncher-webview"
-          ".local/share/Minecraft Linux Launcher"
-        ];
+    (lib.mkIf impermanenceCheck {
+      environment.persistence."${impermanence.persistentRoot}" = {
+        directories = ["/var/lib/flatpak"];
       };
     })
     # |----------------------------------------------------------------------| #

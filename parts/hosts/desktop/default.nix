@@ -91,9 +91,11 @@
         "podman"
         "qemu-libvirtd"
         "wireshark"
+        "flatpak"
       ];
     };
     services = {
+      flatpak.enable = true;
       printing.enable = true;
       syncthing = {
         enable = true;
@@ -115,18 +117,6 @@
     udev.extraRules = "KERNEL==\"i2c-[0-9]*\", GROUP+=\"users\"";
     # Needed for gpg pinetry
     # pcscd.enable = true;
-  };
-
-  # Minecraft
-  services.flatpak.enable = true;
-  # TODO move to module
-  # Minecraft bedrock
-  services.flatpak.packages = [
-    "io.mrarm.mcpelauncher"
-  ];
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
   };
 
   # FIXME: the ui is not directly accessible via environment.systemPackages
