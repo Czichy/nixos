@@ -240,6 +240,9 @@ nix flake update
 ```
 
 install nixos
+```bash
+sudo nixos-install --root /mnt --flake '/installer/#nixos'
+```
 
 ```bash
 sudo nixos-install --root /mnt --flake .#vm_test --show-trace --verbose --impure
