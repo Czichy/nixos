@@ -37,7 +37,7 @@
 
   networking = {
     networkmanager.enable = true;
-    hostName = "home_server_test";
+    hostName = "homeservertest";
     useDHCP = false;
     interfaces.enp1s0 = {
       useDHCP = true;
@@ -60,7 +60,7 @@
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = with pkgs; [
-    # networkmanagerapplet # need this to configure L2TP ipsec
+    networkmanagerapplet # need this to configure L2TP ipsec
     wireguard-tools
   ];
 

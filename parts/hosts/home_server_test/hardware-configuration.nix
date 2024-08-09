@@ -46,7 +46,7 @@
 
   # BTRFS stuff
   # Scrub btrfs to protect data integrity
-  services.btrfs.autoScrub.enable = true;
+  # services.btrfs.autoScrub.enable = true;
 
   # services.btrbk.instances."btrbk" = {
   #   onCalendar = "*:0/10";
