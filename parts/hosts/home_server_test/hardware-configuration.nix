@@ -84,7 +84,7 @@
       };
       systemd-boot = {
         enable = true;
-        configurationLimit = 3;
+        configurationLimit = 8;
       };
     };
     #binfmt.emulatedSystems = [ "aarch64-linux" ];
