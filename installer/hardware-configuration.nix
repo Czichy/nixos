@@ -91,9 +91,9 @@
     kernelPackages = pkgs.linuxPackages_latest;
   };
 
-  hardware = {
-    enableAllFirmware = true;
-  };
+  # hardware = {
+  #   enableAllFirmware = true;
+  # };
   # Hardware hybrid decoding
   #nixpkgs.config.packageOverrides = pkgs: {
   #  vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };

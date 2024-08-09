@@ -13,33 +13,6 @@
   console.keyMap = "de";
   time.timeZone = "Europe/Berlin";
 
-  # boot = {
-  #   loader = {
-  #     timeout = lib.mkForce 1;
-  #     grub.enable = false;
-  #     efi = {
-  #       canTouchEfiVariables = true;
-  #       efiSysMountPoint = "/boot";
-  #     };
-  #     systemd-boot = {
-  #       enable = true;
-  #       configurationLimit = 10;
-  #     };
-  #   };
-  #   #binfmt.emulatedSystems = [ "aarch64-linux" ];
-  #   kernelPackages = pkgs.linuxPackages_latest;
-  #   supportedFilesystems = lib.mkForce [
-  #     "btrfs"
-  #     "cifs"
-  #     "f2fs"
-  #     "jfs"
-  #     "ntfs"
-  #     "reiserfs"
-  #     "vfat"
-  #     "xfs"
-  #   ];
-  # };
-
   users.users.czichy = {
     isNormalUser = true;
     extraGroups = [
