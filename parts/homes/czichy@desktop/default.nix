@@ -30,7 +30,7 @@
       ib-tws.enable = true;
       ragenix.enable = true;
       games.steam.enable = true;
-      games.minecraft.enable = true;
+      # games.minecraft.enable = true;
     };
     hardware.monitors = {
       enable = true;
