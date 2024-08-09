@@ -79,10 +79,10 @@
     system.impermanence = {
       enable = true;
       allowOther = true;
-      # btrfsWipe = {
-      #   enable = true;
-      #   rootPartition = "/dev/vda2";
-      # };
+      btrfsWipe = {
+        enable = false;
+        #   rootPartition = "/dev/vda2";
+      };
     };
     security.agenix.enable = false;
 

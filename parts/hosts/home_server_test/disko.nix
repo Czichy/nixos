@@ -81,7 +81,12 @@ in {
                   "/persist" = {
                     type = "filesystem";
                     mountpoint = "/persist";
-                    mountOptions = ["compress=zstd"];
+                    mountOptions = ["compress=zstd" "noatime"];
+                  };
+                  "/log" = {
+                    type = "filesystem";
+                    mountpoint = "/var/log";
+                    mountOptions = ["compress=zstd" "noatime"];
                   };
                   "/snapshots" = {
                     mountpoint = "/snapshots";
