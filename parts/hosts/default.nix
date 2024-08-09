@@ -115,7 +115,7 @@
       home_server_test = withSystem "x86_64-linux" (
         args:
           mkHost args "home_server_test" {
-            withHomeManager = false;
+            withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
             ];
