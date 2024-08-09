@@ -37,7 +37,7 @@
 
   networking = {
     networkmanager.enable = true;
-    hostName = "homeservertest";
+    # hostName = "homeservertest";
     useDHCP = false;
     interfaces.enp1s0 = {
       useDHCP = true;
