@@ -50,6 +50,7 @@
   environment.variables.EDITOR = "hx";
 
   environment.systemPackages = with pkgs; [
+    nh
     git
     nixos-install-tools
     btrfs-progs
