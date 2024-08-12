@@ -81,7 +81,7 @@
       allowOther = true;
       btrfsWipe = {
         enable = false;
-        #   rootPartition = "/dev/vda2";
+        rootPartition = "/dev/vda2";
       };
     };
     security.agenix.enable = false;
@@ -108,5 +108,5 @@
   # of rpfilter. You can either disable rpfilter altogether:
   networking.firewall.checkReversePath = false;
 
-  # home-manager.users."czichy" = import (../../homes + "/czichy@home_server");
+  home-manager.users."czichy" = import (../../homes + "/czichy@server");
 }

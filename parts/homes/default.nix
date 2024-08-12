@@ -54,13 +54,6 @@ in {
 
   config = {
     flake.homeConfigurations = {
-      "czichy@jetbundle" = withSystem "x86_64-linux" (
-        args:
-          mkHome args "czichy@jetbundle" {
-            extraOverlays = with inputs; [(final: _prev: {nur = import inputs.nur {pkgs = final;};})];
-          }
-      );
-
       "czichy@vm_test " = withSystem "x86_64-linux" (
         args:
           mkHome args "czichy@vm_test" {
@@ -74,11 +67,19 @@ in {
             extraOverlays = with inputs; [(final: _prev: {nur = import inputs.nur {pkgs = final;};})];
           }
       );
+
+      "czichy@server" = withSystem "x86_64-linux" (
+        args:
+          mkHome args "czichy@server" {
+            extraOverlays = with inputs; [(final: _prev: {nur = import inputs.nur {pkgs = final;};})];
+          }
+      );
     };
 
     flake.checks."x86_64-linux" = {
       "home-czichy@jetbundle" = config.flake.homeConfigurations."czichy@jetbundle".config.home.path;
       "home-czichy@desktop" = config.flake.homeConfigurations."czichy@desktop".config.home.path;
+      "home-czichy@server" = config.flake.homeConfigurations."czichy@server".config.home.path;
     };
   };
 }

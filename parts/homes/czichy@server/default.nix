@@ -12,23 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   tensorfiles.hm = {
-    profiles.graphical-xmonad.enable = true;
-    # enable patches since we arent on NixOS
-    hardware.nixGL.programPatches.enable = true;
-    hardware.nixGL.enable = true;
+    profiles.server.enable = true;
+    security.agenix.enable = true;
 
-    # security.agenix.enable = true;
-    programs.shadow-nix.enable = true;
-    services.keepassxc.enable = true;
-  };
-
-  programs.shadow-client.forceDriver = "iHD";
-  services.syncthing = {
-    enable = true;
-    tray.enable = true;
+    system.impermanence = {
+      enable = true;
+      allowOther = true;
+    };
+    programs = {
+      ssh = {
+        enable = true;
+        sshKey.enable = false;
+      };
+      ragenix.enable = true;
+    };
   };
 
   home.username = "czichy";
@@ -39,26 +38,6 @@
   };
 
   home.packages = with pkgs; [
-    thunderbird # A full-featured e-mail client
-    beeper # Universal chat app.
-    armcord # Lightweight, alternative desktop client for Discord
-    anki # Spaced repetition flashcard program
-    libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
-    texlive.combined.scheme-medium # TeX Live environment
-    zotero # Collect, organize, cite, and share your research sources
-    lapack # openblas with just the LAPACK C and FORTRAN ABI
-    ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
-    zoom-us # Player for Z-Code, TADS and HUGO stories or games
-
-    slack # Desktop client for Slack
-    signal-desktop # Private, simple, and secure messenger
-
-    todoist # Todoist CLI Client
-    todoist-electron # The official Todoist electron app
-
-    mpv # General-purpose media player, fork of MPlayer and mplayer2
-    zathura # A highly customizable and functional PDF viewer
-
     # NOTE: the packages below are typically part of a NixOS base installation
     # under root, hardware related utils should probably be installed manually
     # using the default package manager of the system instead of home-manager,
@@ -69,9 +48,6 @@
     jq # A lightweight and flexible command-line JSON processor
     killall
     vim # The most popular clone of the VI editor
-    calcurse # A calendar and scheduling application for the command line
-    w3m # A text-mode web browser
-    neofetch # A fast, highly customizable system info script
 
     # ARCHIVING UTILS --
     atool # Archive command line helper
@@ -89,14 +65,12 @@
     zstd # Zstandard real-time compression algorithm
 
     # -- MISC --
-    sqlite # A self-contained, serverless, zero-configuration, transactional SQL database engine
-    sqlitebrowser # DB Browser for SQLite
     libarchive # Multi-format archive and compression library
-    libbtbb # Bluetooth baseband decoding library
 
     # -- NIX UTILS --
     nix-index # A files database for nixpkgs
     nix-du # A tool to determine which gc-roots take space in your nix store
+    nix-inspect # A ranger-like TUI for inspecting your nixos config and other arbitrary nix expressions.
     nix-tree # Interactively browse a Nix store paths dependencies
     nix-health # Check the health of your Nix setup
     nix-update # Swiss-knife for updating nix packages
