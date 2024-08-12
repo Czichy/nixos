@@ -183,7 +183,7 @@ in {
     };
   };
 
-  imports = [inputs.microvm.nixosModules.host];
+  # imports = [inputs.microvm.nixosModules.host];
   config = lib.mkIf (cfg.enable && cfg.guests != {}) (
     lib.mkMerge [
       # |----------------------------------------------------------------------| #
