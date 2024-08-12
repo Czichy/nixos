@@ -36,7 +36,7 @@ in {
       tensorfiles = {
         profiles.headless.enable = _ true;
 
-        #services.x11.desktop-managers.startx-home-manager.enable = _ true;
+        services.x11.desktop-managers.startx-home-manager.enable = _ true;
       };
 
       # environment.systemPackages = with pkgs; [

@@ -12,17 +12,18 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{ config, lib, ... }:
+{localFlake}: {
+  config,
+  lib,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib.tensorfiles) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.base;
   _ = mkOverrideAtProfileLevel;
-in
-{
+in {
   options.tensorfiles.profiles.base = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the base system profile.
@@ -36,9 +37,9 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    { system.stateVersion = _ "24.05"; }
+    {system.stateVersion = _ "24.11";}
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }
