@@ -105,16 +105,62 @@
             ];
           }
       );
-      vm_test = withSystem "x86_64-linux" (
+      "HL-1-OZ-PC-01" = withSystem "x86_64-linux" (
         args:
-          mkHost args "vm_test" {
+          mkHost args "HL-1-OZ-PC-01" {
             withHomeManager = true;
-            extraOverlays = with inputs; [(final: _prev: {nur = import nur {pkgs = final;};})];
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+              nix-topology.overlays.default
+              nixos-extra-modules.overlays.default
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              nix-flatpak.nixosModules.nix-flatpak
+            ];
           }
       );
       home_server_test = withSystem "x86_64-linux" (
         args:
           mkHost args "home_server_test" {
+            withHomeManager = true;
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              nix-flatpak.nixosModules.nix-flatpak
+            ];
+            extraSpecialArgs = {
+              inherit (self) globals;
+            };
+          }
+      );
+      #ward
+      "HL-1-DMZ-SBC-01" = withSystem "x86_64-linux" (
+        args:
+          mkHost args "HL-1-DMZ-SBC-01" {
+            withHomeManager = true;
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              nix-flatpak.nixosModules.nix-flatpak
+            ];
+            extraSpecialArgs = {
+              inherit (self) globals;
+            };
+          }
+      );
+
+      #sentinel
+      "HL-4-PAZ-PROXY-01" = withSystem "x86_64-linux" (
+        args:
+          mkHost args "HL-4-PAZ-PROXY-01" {
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
