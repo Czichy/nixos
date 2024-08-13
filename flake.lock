@@ -161,11 +161,11 @@
         "pre-commit-hooks": "pre-commit-hooks"
       },
       "locked": {
-        "lastModified": 1723476799,
-        "narHash": "sha256-cNyA6woGfmU2Ej7I0soNCgCcl8QDMREDRljJIQkuVik=",
+        "lastModified": 1723487333,
+        "narHash": "sha256-jqi/hVQL6S9lj/HkWaPPZQW/BfP0D0Veb45cpSvfRVE=",
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "142531d28dc152815045fff0432d43137cbec9d7",
+        "rev": "b285601679c7686f623791ad93a8e0debc322633",
         "type": "github"
       },
       "original": {
@@ -334,11 +334,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1723435406,
-        "narHash": "sha256-K4jgaRjQ0tfTn9qdSIq2/lzqXSP5Syy5vP0wpOwUlI0=",
+        "lastModified": 1723521794,
+        "narHash": "sha256-mmcakr+6z7/SDg+e2p1TYQorjYvUzWqG2KUIsmikARM=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "4be5365e06d9e8aa20901bdf11d4384870dbecd6",
+        "rev": "abafaabfa893ac432bae898a8652bc4a83c49d27",
         "type": "gitlab"
       },
       "original": {
@@ -784,11 +784,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1723389891,
-        "narHash": "sha256-Rhz/z24ypns3866igeKU+ZL8UtSQOAktzoXiCA3Wt9s=",
+        "lastModified": 1723549983,
+        "narHash": "sha256-8lya0y9tR3dtVk++nUjVaPbSb5+Ah+vKgcX+3R556BQ=",
         "owner": "helix-editor",
         "repo": "helix",
-        "rev": "e46cedfc267c7651462f92a1b822de439c0024a8",
+        "rev": "f65ec32a1c2e09b3b32b521617f4a3ef19bc71c5",
         "type": "github"
       },
       "original": {
@@ -1434,11 +1434,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1723472424,
-        "narHash": "sha256-p/Kgq0hyHemFTZMdd6ehO6aEhu/eN0XrICc4Qwbjc6A=",
+        "lastModified": 1723573444,
+        "narHash": "sha256-5R7cF01OqkULUZ/qpAjgs712UGM+N0xFqOk/eYd3V+4=",
         "owner": "nix-community",
         "repo": "nixpkgs-wayland",
-        "rev": "6d1c004b346b6a80d851cc2a66ef4f4c22be0f19",
+        "rev": "d281d56bda9456bb8c0a22a608575926fb9a656d",
         "type": "github"
       },
       "original": {
@@ -1513,11 +1513,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1723175592,
-        "narHash": "sha256-M0xJ3FbDUc4fRZ84dPGx5VvgFsOzds77KiBMW/mMTnI=",
+        "lastModified": 1723362943,
+        "narHash": "sha256-dFZRVSgmJkyM0bkPpaYRtG/kRMRTorUIDj8BxoOt1T4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "5e0ca22929f3342b19569b21b2f3462f053e497b",
+        "rev": "a58bc8ad779655e790115244571758e8de055e3d",
         "type": "github"
       },
       "original": {
@@ -1545,11 +1545,11 @@
     },
     "nixpkgs_8": {
       "locked": {
-        "lastModified": 1723175592,
-        "narHash": "sha256-M0xJ3FbDUc4fRZ84dPGx5VvgFsOzds77KiBMW/mMTnI=",
+        "lastModified": 1723362943,
+        "narHash": "sha256-dFZRVSgmJkyM0bkPpaYRtG/kRMRTorUIDj8BxoOt1T4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "5e0ca22929f3342b19569b21b2f3462f053e497b",
+        "rev": "a58bc8ad779655e790115244571758e8de055e3d",
         "type": "github"
       },
       "original": {
@@ -1628,11 +1628,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1723462913,
-        "narHash": "sha256-cfwBU/FNhzVXuWVVpJ9ZsISgdePbfKVNAnjRWfObWsE=",
+        "lastModified": 1723572873,
+        "narHash": "sha256-Uw+ZpKJ0E5m5gj+rhrDT4labMGRM6ZD6alELVg+9Dp0=",
         "owner": "pjones",
         "repo": "plasma-manager",
-        "rev": "dff427dd04c4a27d9e461c279b258da7f5673534",
+        "rev": "4caa4d1e59e302eddddc3fb1658d3d663631aefe",
         "type": "github"
       },
       "original": {
@@ -1753,10 +1753,10 @@
     "private": {
       "flake": false,
       "locked": {
-        "lastModified": 1723478681,
-        "narHash": "sha256-ALf8CwJoPI06lN8HTUldKHwUH4BuRg4ta20XhISOsBE=",
+        "lastModified": 1723578079,
+        "narHash": "sha256-3mr2ExurujErz46TcXTnP1qrIBtAmzTShHDJ0oAcC+A=",
         "ref": "refs/heads/main",
-        "rev": "87d3a8418b9ba2aafb6c27adc968deed384e2140",
+        "rev": "c0a863afbf16762145fad42891ab2b64f165b5e6",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/czichy/nix-secrets.git"

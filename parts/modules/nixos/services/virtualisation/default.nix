@@ -74,7 +74,7 @@ in {
         win-virtio
         win-spice
         looking-glass-client
-        gnome3.adwaita-icon-theme # default gnome cursors
+        adwaita-icon-theme # default gnome cursors
         glib
       ];
       environment.etc = {

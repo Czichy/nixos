@@ -147,7 +147,6 @@
   # Enable NetworkManager
   networking = {
     networkmanager.enable = true;
-    hostName = "desktop";
     useDHCP = false;
     interfaces.enp39s0 = {
       useDHCP = true;
