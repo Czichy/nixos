@@ -16,31 +16,63 @@ As for Flakes, refer to
 You don't have to go through the pain I've experienced again! Check out my
 [NixOS & Nix Flakes Book - 🛠️ ❤️ An unofficial & opinionated :book: for beginners](https://github.com/ryan4yin/nixos-and-flakes-book)!**
 
-## Components
+## Hosts
 
-|                             | NixOS(Wayland)                                                                                         | NixOS(Xorg)                                                                                            |
-| --------------------------- | :----------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| **Window Manager**          | [Hyprland]                                                                                             | [i3]                                                                                                   |
-| **Terminal Emulator**       | [Zellij] + [Kitty]                                                                                     | [Zellij] + [Kitty]                                                                                     |
-| **Bar**                     | [Waybar]                                                                                               | [polybar]                                                                                              |
-| **Application Launcher**    | [anyrun]                                                                                               | [rofi]                                                                                                 |
-| **Notification Daemon**     | [Mako]                                                                                                 | [Dunst]                                                                                                |
-| **Display Manager**         | [GDM]                                                                                                  | [GDM]                                                                                                  |
-| **Color Scheme**            | [Catppuccin]                                                                                           | [Catppuccin]                                                                                           |
-| **network management tool** | [NetworkManager]                                                                                       | [NetworkManager]                                                                                       |
-| **Input method framework**  | [Fcitx5]                                                                                               | [Fcitx5]                                                                                               |
-| **System resource monitor** | [Btop]                                                                                                 | [Btop]                                                                                                 |
-| **File Manager**            | [Yazi] + [thunar]                                                                                      | [Yazi] + [thunar]                                                                                      |
-| **Shell**                   | [Nushell] + [Starship]                                                                                 | [Nushell] + [Starship]                                                                                 |
-| **Music Player**            | [mpd], [ncmpcpp], [mpc], [Netease-cloud-music-gtk]                                                     | [Netease-cloud-music-gtk]                                                                              |
-| **Media Player**            | [mpv]                                                                                                  | [mpv]                                                                                                  |
-| **Text Editor**             | [Neovim] + [DoomEmacs]                                                                                 | [Neovim] + [DoomEmacs]                                                                                 |
-| **Fonts**                   | [Nerd fonts]                                                                                           | [Nerd fonts]                                                                                           |
-| **Image Viewer**            | [imv]                                                                                                  | [imv]                                                                                                  |
-| **Screenshot Software**     | [flameshot] + [grim]                                                                                   | [flameshot]                                                                                            |
-| **Screen Recording**        | [OBS]                                                                                                  | [OBS]                                                                                                  |
-| **Filesystem & Encryption** | tmpfs on `/`, [Btrfs] subvolumes on a [LUKS] encrypted partition for persistent, unlock via passphrase | tmpfs on `/`, [Btrfs] subvolumes on a [LUKS] encrypted partition for persistent, unlock via passphrase |
-| **Secure Boot**             | [lanzaboote]                                                                                           | [lanzaboote]                                                                                           |
+|  | Type | Name | Hardware | Purpose
+---|---|---|---|---
+💻 | Laptop | nom | Gigabyte AERO 15-W8 (i7-8750H) | My laptop and my main portable development machine <sub>Framework when?</sub>
+🖥️ | Desktop | kroma | PC (AMD Ryzen 9 5900X) | Main workstation and development machine, also for some occasional gaming
+🖥️ | Server | ward | ODROID H3 | Energy efficient SBC for my home firewall and some lightweight services using containers and microvms.
+🖥️ | Server | sire | Threadripper 1950X | Home media server and data storage. Runs all services as microvms.
+🥔 | Server | zackbiene | ODROID N2+ | ARM SBC for home automation, isolating the sketchy stuff from my main network
+☁️  | VPS | sentinel | Hetzner Cloud server | Proxies and protects my local services
+☁️  | VPS | envoy | Hetzner Cloud server | Mailserver
+
+### Host Naming Convention
+ HL#ZZZFFF$$
+
+HL - Homelab
+
+# - A number for the physical characteristics of the server
+
+    1 is for physical servers at my house
+
+    2 is for physical servers at my offsite location
+
+    3 is for virtual servers hosted in my infrastructure
+
+    4 is for virtual servers hosted in the cloud
+
+ZZZ - Which security zone it belongs in, PAZ, RZ, etc
+
+FFF - Function of the server, WEB, DNS, FW, etc
+
+$$ - Serial number for duplicates 
+
+### Security Zones
+I operate 10 zones
+
+    PAZ - Public Access Zone (also known as a DMZ by some), where anything public-facing lives, such as my reverse proxy and Mumble server
+
+    OZ - Operations Zone, where my users live
+
+    MRZ - Management Restricted Zone, where my management devices live, such as my hypervisors, switches, firewalls, etc
+
+    RZ - Restricted Zone, a catch-all for general purpose servers such as Plex, OpenEats, etc
+
+    IOG - Internet of Garbage, where all of my Google Homes, Roku, Chromecast, and basically all my "smart" shit lives
+
+    GUEST - No servers in this one, but for guest internet access
+
+    ZOO - Specially segregated zone I built for my malware zoo
+
+    DEV - Development VMs that I don't want mingling with the general population
+
+    HRZ - Highly Restricted Zone, very sensitive things such as my intermediate CA
+
+    VPN - If you're VPNing into my infrastructure, you're dumped into here
+
+Most of the zones I run are outlined in ITSG-22 and ITSG-38, which are the Canadian Government's guidelines for network zoning. I work IT Security for the federal government, so it only makes sense that I practice what I preach. 
 
 ## :wrench: <samp>Installation</samp>
 
