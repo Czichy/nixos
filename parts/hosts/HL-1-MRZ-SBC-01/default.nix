@@ -68,15 +68,15 @@
     services = {
       virtualisation.enable = true;
     };
-    security.agenix.enable = false;
+    security.agenix.enable = true;
 
     system.users.usersSettings."root" = {
-      agenixPassword.enable = false;
+      agenixPassword.enable = true;
     };
     system.users.usersSettings."czichy" = {
       isSudoer = true;
       isNixTrusted = true;
-      agenixPassword.enable = false;
+      agenixPassword.enable = true;
       extraGroups = [
         "networkmanager"
         "input"
