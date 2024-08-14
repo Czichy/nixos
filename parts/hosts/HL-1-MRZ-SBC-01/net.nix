@@ -24,7 +24,7 @@
       ipv4 = {
         addresses = [
           {
-            address = "${globals.net.v-lan.hosts.HL-1-MRZ-SBC-01.ipv4}";
+            address = "${globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4}";
             prefixLength = 24;
           }
           {

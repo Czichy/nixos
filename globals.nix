@@ -21,14 +21,24 @@ in {
         # hosts.sire-samba.id = 10;
       };
 
-      v-lan = {
-        cidrv4 = "192.168.122.0/24";
+      # v-lan = {
+      #   cidrv4 = "10.15.40.0/24";
+      #   cidrv6 = "fd10::/64";
+      #   hosts.HL-1-MRZ-SBC-01.id = 1;
+      #   hosts.sire.id = 2;
+      #   hosts.HL-1-MRZ-SBC-01-adguardhome.id = 10;
+      #   hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
+      #   hosts.sire-samba.id = 20;
+      # };
+
+      vlan40 = {
+        cidrv4 = "10.15.40.0/24";
         cidrv6 = "fd10::/64";
-        hosts.HL-1-DMZ-SBC-01.id = 175;
+        hosts.HL-1-MRZ-SBC-01.id = 1;
         hosts.sire.id = 2;
-        hosts.HL-1-DMZ-SBC-01-adguardhome.id = 3;
-        hosts.HL-1-DMZ-SBC-01-web-proxy.id = 4;
-        hosts.sire-samba.id = 10;
+        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 10;
+        hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
+        hosts.sire-samba.id = 20;
       };
 
       proxy-home = {
