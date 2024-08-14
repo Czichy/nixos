@@ -135,13 +135,13 @@ in {
   };
 
   systemd.network.enable = true;
-  networking.hostName = "ward-adguardhome";
+  networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
   systemd.network.networks."99-v-lan" = {
     matchConfig.Type = "ether";
     networkConfig = {
-      # Address = [globals.net.v-lan.hosts.ward-adguardhome.ipv4];
-      Address = ["192.168.122.3/24"];
-      Gateway = "192.168.122.1";
+      Address = [globals.net.v-lan.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4];
+      # Address = ["192.168.1.3/24"];
+      Gateway = "192.168.1.1";
       # DNS = nameservers;
       DHCP = "no";
     };
