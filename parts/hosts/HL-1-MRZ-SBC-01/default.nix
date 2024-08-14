@@ -62,7 +62,7 @@
       allowOther = true;
       btrfsWipe = {
         enable = false;
-        rootPartition = "/dev/vda2";
+        rootPartition = "/dev/nvme0n1";
       };
     };
     services = {

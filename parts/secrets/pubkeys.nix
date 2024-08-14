@@ -33,6 +33,19 @@ in {
         };
       };
     };
+
+    HL-1-OZ-PC-01 = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [];
+        };
+        czichy = {
+          sshKey = null;
+          authorizedKeys = [czichy];
+        };
+      };
+    };
     home_server_test = {
       users = {
         root = {
@@ -46,7 +59,7 @@ in {
       };
     };
 
-    spinorbundle = {
+    HL-1-MRZ-SBC-01 = {
       users = {
         root = {
           sshKey = null;
@@ -58,7 +71,8 @@ in {
         };
       };
     };
-    jetbundle = {
+
+    HL-4-PAZ-PROXY-01 = {
       users = {
         root = {
           sshKey = null;
