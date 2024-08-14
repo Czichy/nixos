@@ -53,6 +53,7 @@ $$ - Serial number for duplicates
 
 Name| Zone | VLAN | IP-Range |Purpose
 ---|---|---|---|---
+Internet|  | VLAN1 | 10.15.1.254/24 | ISP
 Trust | OZ | VLAN10 | 10.15.10.0/24 | Operations Zone, Family
 Guest | GUEST | VLAN20 | 10.15.20.0/24 | No servers in this, internet only
 Security | RZ | VLAN30 | 10.15.30.0/24 | MAC based access, internet only

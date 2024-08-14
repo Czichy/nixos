@@ -139,9 +139,9 @@
           }
       );
       #ward
-      "HL-1-DMZ-SBC-01" = withSystem "x86_64-linux" (
+      "HL-1-MRZ-SBC-01" = withSystem "x86_64-linux" (
         args:
-          mkHost args "HL-1-DMZ-SBC-01" {
+          mkHost args "HL-1-MRZ-SBC-01" {
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})

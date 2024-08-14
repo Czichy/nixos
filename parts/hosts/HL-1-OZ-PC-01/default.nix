@@ -43,7 +43,6 @@
     libva-utils
     networkmanagerapplet # need this to configure L2TP ipsec
     wireguard-tools
-    #mcpelauncher # Not in nixpkgs, defined by override in flake.nix (source: github.com/headblockhead/nix-mcpelauncher)
   ];
 
   # ----------------------------

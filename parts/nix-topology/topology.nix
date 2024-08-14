@@ -55,7 +55,7 @@ in {
     };
   };
 
-  nodes.switch-attic = mkSwitch "Switch Attic" {
+  nodes.switch-attic = mkSwitch "Switch Office" {
     info = "D-Link DGS-1016D";
     image = ./images/dlink-dgs1016d.png;
     interfaceGroups = [
@@ -74,7 +74,7 @@ in {
     connections.eth7 = mkConnection "zackbiene" "lan1";
   };
 
-  nodes.switch-bedroom-1 = mkSwitch "Switch Bedroom 1" {
+  nodes.switch-bedroom-1 = mkSwitch "Switch Keller" {
     info = "D-Link DGS-105";
     image = ./images/dlink-dgs105.png;
     interfaceGroups = [
@@ -86,45 +86,45 @@ in {
         "eth5"
       ]
     ];
-    connections.eth1 = mkConnection "switch-attic" "eth3";
+    connections.eth1 = mkConnection "switch-office" "eth3";
     connections.eth2 = mkConnection "kroma" "lan1";
     connections.eth3 = mkConnection "nom" "lan1";
-    connections.eth4 = mkConnection "switch-livingroom" "eth1";
+    # connections.eth4 = mkConnection "switch-livingroom" "eth1";
   };
 
-  nodes.switch-livingroom = mkSwitch "Switch Livingroom" {
-    info = "Sitecom LN-121";
-    image = ./images/sitecom-ln-121.png;
-    interfaceGroups = [
-      [
-        "eth1"
-        "eth2"
-        "eth3"
-        "eth4"
-      ]
-    ];
-    connections.eth2 = mkConnection "tv-livingroom" "eth1";
-    connections.eth3 = mkConnection "soundbar-livingroom" "eth1";
-    connections.eth4 = mkConnection "sat-receiver-livingroom" "eth1";
-  };
+  # nodes.switch-livingroom = mkSwitch "Switch Livingroom" {
+  #   info = "Sitecom LN-121";
+  #   image = ./images/sitecom-ln-121.png;
+  #   interfaceGroups = [
+  #     [
+  #       "eth1"
+  #       "eth2"
+  #       "eth3"
+  #       "eth4"
+  #     ]
+  #   ];
+  #   connections.eth2 = mkConnection "tv-livingroom" "eth1";
+  #   connections.eth3 = mkConnection "soundbar-livingroom" "eth1";
+  #   connections.eth4 = mkConnection "sat-receiver-livingroom" "eth1";
+  # };
 
-  nodes.tv-livingroom = mkDevice "TV Livingroom" {
-    info = "LG OLED65B6D";
-    image = ./images/lg-oled65b6d.png;
-    interfaces.eth1 = {};
-  };
+  # nodes.tv-livingroom = mkDevice "TV Livingroom" {
+  #   info = "LG OLED65B6D";
+  #   image = ./images/lg-oled65b6d.png;
+  #   interfaces.eth1 = {};
+  # };
 
-  nodes.soundbar-livingroom = mkDevice "Soundbar Livingroom" {
-    info = "Bose SoundTouch 300";
-    image = ./images/bose-soundtouch-300.png;
-    interfaces.eth1 = {};
-  };
+  # nodes.soundbar-livingroom = mkDevice "Soundbar Livingroom" {
+  #   info = "Bose SoundTouch 300";
+  #   image = ./images/bose-soundtouch-300.png;
+  #   interfaces.eth1 = {};
+  # };
 
-  nodes.sat-receiver-livingroom = mkDevice "Sat Receiver Livingroom" {
-    info = "TechniSat DIGIT ISIO STC+";
-    image = ./images/technisat-digit-isio-stcplus.png;
-    interfaces.eth1 = {};
-  };
+  # nodes.sat-receiver-livingroom = mkDevice "Sat Receiver Livingroom" {
+  #   info = "TechniSat DIGIT ISIO STC+";
+  #   image = ./images/technisat-digit-isio-stcplus.png;
+  #   interfaces.eth1 = {};
+  # };
 
   nodes.ruckus-ap = mkSwitch "Wi-Fi AP" {
     info = "Ruckus R600";
@@ -135,32 +135,12 @@ in {
         "wifi"
       ]
     ];
-    connections.eth1 = mkConnection "switch-attic" "eth4";
+    connections.eth1 = mkConnection "switch-office" "eth4";
   };
 
-  nodes.printer = mkDevice "Printer Attic" {
-    info = "Epson XP-7100";
-    image = ./images/epson-xp-7100.png;
-    connections.eth1 = mkConnection "switch-attic" "eth5";
-  };
-
-  nodes.dect-repeater = mkSwitch "DECT Repeater" {
-    info = "FRITZ!Box 7490";
-    image = ./images/fritzbox.png;
-    interfaceGroups = [
-      [
-        "eth1"
-        "eth2"
-        "eth3"
-        "eth4"
-      ]
-    ];
-    connections.eth1 = mkConnection "switch-attic" "eth6";
-  };
-
-  nodes.wallbox = mkDevice "Wallbox" {
-    info = "Mennekes Amtron";
-    image = ./images/mennekes-wallbox.png;
-    connections.eth1 = mkConnection "dect-repeater" "eth2";
+  nodes.printer = mkDevice "Drucker Büro" {
+    info = "Brother MFC3750-cdf";
+    image = ./images/brother-mfc-l3750cdw.JPG;
+    connections.eth1 = mkConnection "switch-office" "eth5";
   };
 }
