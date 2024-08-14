@@ -50,29 +50,32 @@ FFF - Function of the server, WEB, DNS, FW, etc
 $$ - Serial number for duplicates 
 
 ### Security Zones
-I operate 10 zones
 
-    PAZ - Public Access Zone (also known as a DMZ by some), where anything public-facing lives, such as my reverse proxy and Mumble server
+Name| Zone | VLAN | IP-Range |Purpose
+---|---|---|---
+Trust | OZ | VLAN10 | 10.15.10.0/24 | Operations Zone, Family
+Guest | GUEST | VLAN20 | 10.15.20.0/24 | No servers in this, internet only
+Security | RZ | VLAN30 | 10.15.30.0/24 | MAC based access, internet only
+Servers | RZ | VLAN40 | 10.15.40.0/24 | Restricted access
+IoT | RZ | VLAN60 | 10.15.60.0/24 | Internet only
+DMZ | DMZ | VLAN70 | 10.15.70.0/24 | Port specific access to servers
+MGMT | MRZ |VLAN100 | 10.15.100.0/24 | Management Restricted Zone, where my management devices live, such as my hypervisors, switches, firewalls, etc
 
-    OZ - Operations Zone, where my users live
+<!-- I operate 10 zones -->
 
-    MRZ - Management Restricted Zone, where my management devices live, such as my hypervisors, switches, firewalls, etc
+    <!-- PAZ - Public Access Zone (also known as a DMZ by some), where anything public-facing lives, such as my reverse proxy and Mumble server -->
 
-    RZ - Restricted Zone, a catch-all for general purpose servers such as Plex, OpenEats, etc
+    <!-- RZ - Restricted Zone, a catch-all for general purpose servers such as Plex, OpenEats, etc -->
 
-    IOG - Internet of Garbage, where all of my Google Homes, Roku, Chromecast, and basically all my "smart" shit lives
+    <!-- IOG - Internet of Garbage, where all of my Google Homes, Roku, Chromecast, and basically all my "smart" shit lives -->
 
-    GUEST - No servers in this one, but for guest internet access
+    <!-- DEV - Development VMs that I don't want mingling with the general population -->
 
-    ZOO - Specially segregated zone I built for my malware zoo
+    <!-- HRZ - Highly Restricted Zone, very sensitive things such as my intermediate CA -->
 
-    DEV - Development VMs that I don't want mingling with the general population
+    <!-- VPN - If you're VPNing into my infrastructure, you're dumped into here -->
 
-    HRZ - Highly Restricted Zone, very sensitive things such as my intermediate CA
-
-    VPN - If you're VPNing into my infrastructure, you're dumped into here
-
-Most of the zones I run are outlined in ITSG-22 and ITSG-38, which are the Canadian Government's guidelines for network zoning. I work IT Security for the federal government, so it only makes sense that I practice what I preach. 
+<!-- Most of the zones I run are outlined in ITSG-22 and ITSG-38, which are the Canadian Government's guidelines for network zoning. I work IT Security for the federal government, so it only makes sense that I practice what I preach. --> 
 
 ## :wrench: <samp>Installation</samp>
 

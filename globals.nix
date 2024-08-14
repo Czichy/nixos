@@ -14,7 +14,7 @@ in {
       home-lan = {
         cidrv4 = "192.168.1.0/24";
         cidrv6 = "fd10::/64";
-        hosts."HL-1-DMZ-SBC-01".id = 1;
+        hosts.HL-1-DMZ-SBC-01.id = 1;
         hosts.sire.id = 2;
         hosts.HL-1-DMZ-SBC-01-adguardhome.id = 3;
         hosts.HL-1-DMZ-SBC-01-web-proxy.id = 4;
