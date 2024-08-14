@@ -13,7 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 let
-  rawdisk = "/dev/vda";
+  rawdisk = "/dev/nvme0n1";
 in {
   disko.devices = {
     #nodev = {
