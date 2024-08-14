@@ -26,7 +26,7 @@ in {
       #   cidrv6 = "fd10::/64";
       #   hosts.HL-1-MRZ-SBC-01.id = 1;
       #   hosts.sire.id = 2;
-      hosts.HL-1-MRZ-SBC-01-adguardhome.id = 10;
+      # hosts.HL-1-MRZ-SBC-01-adguardhome.id = 10;
       #   hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
       #   hosts.sire-samba.id = 20;
       # };

@@ -140,7 +140,7 @@ in {
     matchConfig.Type = "ether";
     networkConfig = {
       Address = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4];
-      Gateway = [globals.net.vlan40.ipv4];
+      Gateway = [globals.net.vlan40.cidrv4];
       # DNS = nameservers;
       DHCP = "no";
     };
