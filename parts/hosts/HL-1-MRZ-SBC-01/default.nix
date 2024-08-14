@@ -32,7 +32,7 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
-    # ./guests.nix
+    ./guests.nix
   ];
 
   topology.self.hardware.image = ../../topology/images/Topton.webp;

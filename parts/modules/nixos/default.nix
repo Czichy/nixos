@@ -67,7 +67,7 @@ in {
 
     services_virtualisation = importApply ./services/virtualisation {inherit localFlake;};
     # -- micro vm --
-    services_microvm-host = importApply ./services/virtualisation/microvm-host.nix {inherit localFlake;};
+    # services_microvm-host = importApply ./services/virtualisation/microvm-host.nix {inherit localFlake;};
     services_microvm = importApply ./services/microvm {
       inherit localFlake;
       inherit (config.secrets) pubkeys;

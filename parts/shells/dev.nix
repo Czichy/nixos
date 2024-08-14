@@ -41,7 +41,6 @@
     # -- GIT RELATED UTILS --
     commitizen # Tool to create committing rules for projects, auto bump versions, and generate changelogs
     cz-cli # The commitizen command line utility
-    fh # The official FlakeHub CLI
     gh # GitHub CLI tool
     gh-dash # Github Cli extension to display a dashboard with pull requests and issues
 
