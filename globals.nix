@@ -7,36 +7,26 @@ in {
       home-wan = {
         cidrv4 = "192.168.1.0/24";
         hosts.fritzbox.id = 1;
-        hosts.HL-1-MRZ-SBC-01.id = 2;
+        hosts.HL-1-MRZ-SBC-01.id = 254;
         hosts.HL-1-OZ-PC-01.id = 62;
       };
 
       home-lan = {
         cidrv4 = "192.168.1.0/24";
         cidrv6 = "fd10::/64";
-        hosts.HL-1-MRZ-SBC-01.id = 1;
+        hosts.HL-1-MRZ-SBC-01.id = 254;
         # hosts.sire.id = 2;
-        hosts.HL-1-DMZ-SBC-01-adguardhome.id = 3;
+        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 148;
         # hosts.HL-1-DMZ-SBC-01-web-proxy.id = 4;
         # hosts.sire-samba.id = 10;
       };
 
-      # v-lan = {
-      #   cidrv4 = "10.15.40.0/24";
-      #   cidrv6 = "fd10::/64";
-      #   hosts.HL-1-MRZ-SBC-01.id = 1;
-      #   hosts.sire.id = 2;
-      # hosts.HL-1-MRZ-SBC-01-adguardhome.id = 10;
-      #   hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
-      #   hosts.sire-samba.id = 20;
-      # };
-
       vlan40 = {
         cidrv4 = "10.15.40.0/24";
         cidrv6 = "fd10::/64";
-        hosts.HL-1-MRZ-SBC-01.id = 1;
+        hosts.HL-1-MRZ-SBC-01.id = 254;
         hosts.sire.id = 2;
-        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 10;
+        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 148;
         hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
         hosts.sire-samba.id = 20;
       };

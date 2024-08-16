@@ -4,53 +4,84 @@
   globals,
   ...
 }
-: {
+: let
+  macAddress_enp1s0 = "60:be:b4:19:a8:4c";
+  macAddress_enp2s0 = "60:be:b4:19:a8:4d";
+in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
 
   globals.monitoring.ping.HL-1-MRZ-SBC-01 = {
-    hostv4 = lib.net.cidr.ip globals.net.home-lan.hosts.HL-1-MRZ-SBC-01.cidrv4;
-    hostv6 = lib.net.cidr.ip globals.net.home-lan.hosts.HL-1-MRZ-SBC-01.cidrv6;
-    network = "home-lan";
+    hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4;
+    hostv6 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6;
+    network = "vlan40";
+  };
+  networking = {
+    useNetworkd = true;
+    dhcpcd.enable = false;
+    useDHCP = false;
+    # allow mdns port
+    firewall.allowedUDPPorts = [5353];
+    # renameInterfacesByMac = lib.mkIf (!config.boot.isContainer) (
+    #   lib.mapAttrs (_: v: v.mac) (config.secrets.secrets.local.networking.interfaces or {})
+    # );
+  };
+  systemd.network = {
+    enable = true;
+    wait-online.anyInterface = true;
+  };
+  services.resolved = {
+    enable = true;
+    # man I whish dnssec would be viable to use
+    dnssec = "false";
+    llmnr = "false";
+    extraConfig = ''
+      Domains=~.
+      MulticastDNS=true
+    '';
   };
 
   # Enable NetworkManager
-  networking = {
-    networkmanager.enable = true;
-    useDHCP = false;
-    interfaces.enp2s0 = {
-      useDHCP = true;
-      wakeOnLan.enable = true;
-
-      ipv4 = {
-        addresses = [
-          {
-            address = "${globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4}";
-            prefixLength = 24;
-          }
-          {
-            address = "192.168.1.254";
-            prefixLength = 24;
-          }
-        ];
-      };
-    };
-  };
+  # networking = {
+  #   networkmanager.enable = true;
+  #   interfaces.enp2s0 = {
+  #     ipv4 = {
+  #       addresses = [
+  #         # {
+  #         #   address = "${globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4}";
+  #         #   prefixLength = 24;
+  #         # }
+  #         {
+  #           address = "192.168.1.254";
+  #           prefixLength = 24;
+  #         }
+  #       ];
+  #     };
+  #   };
+  # };
 
   boot.initrd.systemd.network = {
-    # enable = true;
+    enable = true;
     networks = {
-      inherit (config.systemd.network.networks) "10-wan";
+      "10-wan" = {
+        address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
+        gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
+        # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
+        matchConfig.MACAddress = macAddress_enp1s0;
+        networkConfig.IPv6PrivacyExtensions = "yes";
+        linkConfig.RequiredForOnline = "routable";
+      };
       "20-lan" = {
         address = [
-          {
-            addressConfig.Address = "fd12:3456:789a::1/64";
-          }
-          globals.net.home-lan.hosts.HL-1-MRZ-SBC-01.cidrv4
-          globals.net.home-lan.hosts.HL-1-MRZ-SBC-01.cidrv6
+          # {
+          #   addressConfig.Address = "fd12:3456:789a::1/64";
+          # }
+          globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
+          globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
         ];
         # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+        matchConfig.MACAddress = macAddress_enp2s0;
         networkConfig = {
-          IPForward = "yes";
+          IPv4Forwarding = "yes";
           IPv6PrivacyExtensions = "yes";
           MulticastDNS = true;
         };
@@ -75,6 +106,7 @@
   systemd.network.networks = {
     "10-lan" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+      matchConfig.MACAddress = macAddress_enp2s0;
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
@@ -93,17 +125,18 @@
       address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
       gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
+      matchConfig.MACAddress = macAddress_enp1s0;
       networkConfig.IPv6PrivacyExtensions = "yes";
       linkConfig.RequiredForOnline = "routable";
     };
     "20-lan-self" = {
       address = [
-        globals.net.home-lan.hosts.HL-1-MRZ-SBC-01.cidrv4
-        globals.net.home-lan.hosts.HL-1-MRZ-SBC-01.cidrv6
+        globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
+        globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
       ];
       matchConfig.Name = "lan-self";
       networkConfig = {
-        IPForward = "yes";
+        IPv4Forwarding = "yes";
         IPv6PrivacyExtensions = "yes";
         IPv6SendRA = true;
         IPv6AcceptRA = false;
@@ -112,7 +145,7 @@
       };
       # Announce a static prefix
       ipv6Prefixes = [
-        {ipv6PrefixConfig.Prefix = globals.net.home-lan.cidrv6;}
+        {ipv6PrefixConfig.Prefix = globals.net.vlan40.cidrv6;}
       ];
       # Delegate prefix
       dhcpPrefixDelegationConfig = {
@@ -121,7 +154,7 @@
       # Provide a DNS resolver
       ipv6SendRAConfig = {
         EmitDNS = true;
-        DNS = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
+        DNS = globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4;
       };
       linkConfig.RequiredForOnline = "routable";
     };
@@ -175,7 +208,7 @@
 
   # tensorfiles.services.networking.wireguard.enable = true;
   # tensorfiles.services.networking.wireguard.proxy-home.server = {
-  #   host = globals.net.home-lan.hosts.HL-1-MRZ-SBC-01.ipv4;
+  #   host = globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4;
   #   port = 51444;
   #   reservedAddresses = [
   #     globals.net.proxy-home.cidrv4

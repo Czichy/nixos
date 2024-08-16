@@ -12,17 +12,18 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{ config, lib, ... }:
+{localFlake}: {
+  config,
+  lib,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib.tensorfiles) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.headless;
   _ = mkOverrideAtProfileLevel;
-in
-{
+in {
   options.tensorfiles.profiles.headless = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the headless system profile.
@@ -41,14 +42,14 @@ in
 
         security.agenix.enable = _ true;
 
-        services.networking.networkmanager.enable = _ true;
+        # services.networking.networkmanager.enable = _ true;
         services.networking.ssh.enable = _ true;
         services.networking.ssh.genHostKey.enable = _ true;
 
         system.users = {
           enable = _ true;
           usersSettings = {
-            "root" = { };
+            "root" = {};
           };
         };
       };
@@ -56,5 +57,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }

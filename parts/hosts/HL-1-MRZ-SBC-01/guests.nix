@@ -5,7 +5,10 @@
   inputs,
   globals,
   ...
-}: {
+}: let
+  macAddress_enp1s0 = "60:be:b4:19:a8:4c";
+  macAddress_enp2s0 = "60:be:b4:19:a8:4d";
+in {
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
@@ -47,8 +50,8 @@
           // {
             microvm = {
               system = "x86_64-linux";
-              macvtap = "enp1s0";
-              baseMac = "1c:69:7a:00:00:00"; # TODO move to config
+              macvtap = "lan";
+              baseMac = macAddress_enp2s0; # TODO move to config
             };
             extraSpecialArgs = {
               inherit globals;
