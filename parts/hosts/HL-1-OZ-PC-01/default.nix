@@ -33,6 +33,7 @@
     disko.nixosModules.disko
     ./hardware-configuration.nix
     ./disko.nix
+    ./net.nix
     # ./syncthing.nix
   ];
 
