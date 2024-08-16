@@ -31,6 +31,7 @@
     hardware.nixosModules.common-pc-ssd
     home-manager.nixosModules.default
     disko.nixosModules.disko
+    ./boot.nix
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
