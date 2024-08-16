@@ -17,11 +17,10 @@
   modulesPath,
   pkgs,
   ...
-}:
-{
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+}: {
+  imports = [(modulesPath + "/installer/scan/not-detected.nix")];
 
-  environment.systemPackages = with pkgs; [ libva-utils ];
+  environment.systemPackages = with pkgs; [libva-utils];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -40,7 +39,21 @@
         "amdgpu"
         "i2c-dev"
       ];
+      systemd = {
+        enable = true;
+        # emergencyAccess = globals.root.hashedPassword;
+        # TODO good idea? targets.emergency.wants = ["network.target" "sshd.service"];
+        extraBin.ip = "${pkgs.iproute2}/bin/ip";
+        extraBin.ping = "${pkgs.iputils}/bin/ping";
+        extraBin.cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
+        # Give me a usable shell please
+        users.root.shell = "${pkgs.bashInteractive}/bin/bash";
+        storePaths = ["${pkgs.bashInteractive}/bin/bash"];
+      };
     };
+    # NOTE: Add "rd.systemd.unit=rescue.target" to debug initrd
+    kernelParams = ["log_buf_len=16M"]; # must be {power of two}[KMG]
+    tmp.useTmpfs = true;
   };
 
   #powerManagement = {
@@ -79,7 +92,7 @@
   };
 
   # ensure snapshots_dir exists
-  systemd.tmpfiles.rules = [ "d /.snapshots/data/home 0755 root root - -" ];
+  systemd.tmpfiles.rules = ["d /.snapshots/data/home 0755 root root - -"];
 
   boot = {
     loader = {
