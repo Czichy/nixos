@@ -55,7 +55,7 @@ in {
     };
   };
 
-  nodes.switch-attic = mkSwitch "Switch Office" {
+  nodes.switch-office = mkSwitch "Switch Office" {
     info = "D-Link DGS-1016D";
     image = ./images/dlink-dgs1016d.png;
     interfaceGroups = [

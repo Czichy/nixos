@@ -15,6 +15,7 @@ in {
         cidrv4 = "192.168.1.0/24";
         cidrv6 = "fd10::/64";
         hosts.HL-1-MRZ-SBC-01.id = 254;
+        hosts.HL-1-OZ-PC-01.id = 62;
         # hosts.sire.id = 2;
         hosts.HL-1-MRZ-SBC-01-adguardhome.id = 148;
         # hosts.HL-1-DMZ-SBC-01-web-proxy.id = 4;
@@ -24,6 +25,7 @@ in {
       vlan40 = {
         cidrv4 = "10.15.40.0/24";
         cidrv6 = "fd10::/64";
+        hosts.HL-1-OZ-PC-01.id = 100;
         hosts.HL-1-MRZ-SBC-01.id = 254;
         hosts.sire.id = 2;
         hosts.HL-1-MRZ-SBC-01-adguardhome.id = 148;

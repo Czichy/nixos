@@ -146,23 +146,23 @@
   topology.self.icon = "devices.desktop";
 
   # Enable NetworkManager
-  networking = {
-    networkmanager.enable = true;
-    useDHCP = false;
-    interfaces.enp39s0 = {
-      useDHCP = true;
-      wakeOnLan.enable = true;
+  # networking = {
+  #   networkmanager.enable = true;
+  #   useDHCP = false;
+  #   interfaces.enp39s0 = {
+  #     useDHCP = true;
+  #     wakeOnLan.enable = true;
 
-      ipv4 = {
-        addresses = [
-          {
-            address = "192.168.1.62";
-            prefixLength = 24;
-          }
-        ];
-      };
-    };
-  };
+  #     ipv4 = {
+  #       addresses = [
+  #         {
+  #           address = "192.168.1.62";
+  #           prefixLength = 24;
+  #         }
+  #       ];
+  #     };
+  #   };
+  # };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because
