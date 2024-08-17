@@ -31,7 +31,7 @@
     hardware.nixosModules.common-pc-ssd
     home-manager.nixosModules.default
     disko.nixosModules.disko
-    ./boot.nix
+    # ./boot.nix
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
@@ -102,7 +102,7 @@
         enable = true;
         user = "czichy";
       };
-      virtualisation.enable = true;
+      # virtualisation.enable = true;
     };
   };
 
@@ -145,34 +145,10 @@
   programs.nix-ld.enable = true;
   topology.self.icon = "devices.desktop";
 
-  # Enable NetworkManager
-  # networking = {
-  #   networkmanager.enable = true;
-  #   useDHCP = false;
-  #   interfaces.enp39s0 = {
-  #     useDHCP = true;
-  #     wakeOnLan.enable = true;
-
-  #     ipv4 = {
-  #       addresses = [
-  #         {
-  #           address = "192.168.1.62";
-  #           prefixLength = 24;
-  #         }
-  #       ];
-  #     };
-  #   };
-  # };
-
-  # If you intend to route all your traffic through the wireguard tunnel, the
-  # default configuration of the NixOS firewall will block the traffic because
-  # of rpfilter. You can either disable rpfilter altogether:
-  networking.firewall.checkReversePath = false;
-
   home-manager.users."czichy" = import (../../homes + "/czichy@desktop");
 
-  users.users.qemu-libvirtd.group = "qemu-libvirtd";
-  users.groups.qemu-libvirtd = {};
+  # users.users.qemu-libvirtd.group = "qemu-libvirtd";
+  # users.groups.qemu-libvirtd = {};
 
   security.pam.services = {
     swaylock = {};
