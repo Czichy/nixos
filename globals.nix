@@ -4,6 +4,7 @@
 in {
   globals = {
     net = {
+      #VLAN1
       home-wan = {
         cidrv4 = "192.168.1.0/24";
         hosts.fritzbox.id = 1;
@@ -11,17 +12,28 @@ in {
         hosts.HL-1-OZ-PC-01.id = 62;
       };
 
-      home-lan = {
-        cidrv4 = "192.168.1.0/24";
-        cidrv6 = "fd10::/64";
+      #TRUST
+      vlan10 = {
+        cidrv4 = "10.15.10.0/24";
+        # cidrv6 = "fd10::/64";
+        hosts.HL-1-OZ-PC-01.id = 100;
         hosts.HL-1-MRZ-SBC-01.id = 254;
-        hosts.HL-1-OZ-PC-01.id = 62;
-        # hosts.sire.id = 2;
-        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 148;
-        # hosts.HL-1-DMZ-SBC-01-web-proxy.id = 4;
-        # hosts.sire-samba.id = 10;
       };
 
+      #GUEST
+      vlan20 = {
+        cidrv4 = "10.15.20.0/24";
+        # cidrv6 = "fd10::/64";
+        hosts.HL-1-MRZ-SBC-01.id = 254;
+      };
+
+      #Security
+      vlan30 = {
+        cidrv4 = "10.15.30.0/24";
+        # cidrv6 = "fd10::/64";
+        hosts.HL-1-MRZ-SBC-01.id = 254;
+      };
+      #Server
       vlan40 = {
         cidrv4 = "10.15.40.0/24";
         cidrv6 = "fd10::/64";
@@ -31,6 +43,28 @@ in {
         hosts.HL-1-MRZ-SBC-01-adguardhome.id = 148;
         hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
         hosts.sire-samba.id = 20;
+      };
+
+      #IoT
+      vlan60 = {
+        cidrv4 = "10.15.60.0/24";
+        # cidrv6 = "fd10::/64";
+        hosts.HL-1-MRZ-SBC-01.id = 254;
+      };
+
+      #DMZ
+      vlan70 = {
+        cidrv4 = "10.15.70.0/24";
+        # cidrv6 = "fd10::/64";
+        hosts.HL-1-MRZ-SBC-01.id = 254;
+      };
+
+      #Management
+      vlan100 = {
+        cidrv4 = "10.15.100.0/24";
+        # cidrv6 = "fd10::/64";
+        hosts.HL-1-OZ-PC-01.id = 100;
+        hosts.HL-1-MRZ-SBC-01.id = 254;
       };
 
       proxy-home = {
