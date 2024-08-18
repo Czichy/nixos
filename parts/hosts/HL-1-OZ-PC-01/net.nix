@@ -62,61 +62,119 @@ in {
   # };
   boot.initrd.systemd.network = {
     enable = true;
+    # netdevs = {
+    #   "20-vlan10" = {
+    #     netdevConfig = {
+    #       Kind = "vlan";
+    #       Name = "vlan10";
+    #     };
+    #     vlanConfig.Id = 10;
+    #   };
+    #   "20-vlan100" = {
+    #     netdevConfig = {
+    #       Kind = "vlan";
+    #       Name = "vlan100";
+    #     };
+    #     vlanConfig.Id = 100;
+    #   };
+    # };
     networks = {
       "10-lan1" = {
-        address = [globals.net.home-wan.hosts.HL-1-OZ-PC-01.cidrv4];
-        gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
+        address = [
+          globals.net.home-wan.hosts.HL-1-OZ-PC-01.cidrv4
+          globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv4
+        ];
+        # gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
         # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
         matchConfig.MACAddress = macAddress_enp39s0;
         networkConfig.IPv6PrivacyExtensions = "yes";
-        linkConfig.RequiredForOnline = "routable";
-      };
-      "40-lan1" = {
-        address = [
-          globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv4
-          globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv6
+        routes = [
+          # create default routes for both IPv6 and IPv4
+          # {routeConfig.Gateway = "fe80::1";}
+          {Gateway = globals.net.home-wan.hosts.fritzbox.ipv4;}
+          # or when the gateway is not on the same network
+          # {
+          #   routeConfig = {
+          #     Gateway = "172.31.1.1";
+          #     GatewayOnLink = true;
+          #   };
+          # }
         ];
-        # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
-        matchConfig.MACAddress = macAddress_enp39s0;
-        networkConfig = {
-          IPv4Forwarding = "yes";
-          IPv6PrivacyExtensions = "yes";
-          MulticastDNS = true;
-        };
+        # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
       };
+      # "40-lan1" = {
+      #   address = [
+      #     globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv4
+      #     globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv6
+      #   ];
+      #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+      #   matchConfig.MACAddress = macAddress_enp39s0;
+      #   networkConfig = {
+      #     IPv4Forwarding = "yes";
+      #     IPv6PrivacyExtensions = "yes";
+      #     MulticastDNS = true;
+      #   };
+      #   linkConfig.RequiredForOnline = "routable";
+      # };
     };
   };
   systemd.network.networks = {
     "10-lan1" = {
-      # DHCP = "yes";
       address = [
         globals.net.home-wan.hosts.HL-1-OZ-PC-01.cidrv4
-      ];
-      gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
-      matchConfig.MACAddress = macAddress_enp39s0; # config.repo.secrets.local.networking.interfaces.lan1.mac;
-      networkConfig = {
-        IPv6PrivacyExtensions = "yes";
-        MulticastDNS = true;
-      };
-      dhcpV4Config.RouteMetric = 10;
-      dhcpV6Config.RouteMetric = 10;
-    };
-
-    "40-lan1" = {
-      # DHCP = "yes";
-      address = [
         globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv4
-        # globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv6
+        "192.168.0.62/24"
+        "10.15.100.62/24"
       ];
-      matchConfig.MACAddress = macAddress_enp39s0; # config.repo.secrets.local.networking.interfaces.lan1.mac;
-      networkConfig = {
-        IPv6PrivacyExtensions = "yes";
-        MulticastDNS = true;
-      };
-      dhcpV4Config.RouteMetric = 10;
-      dhcpV6Config.RouteMetric = 10;
+      # gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
+      # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
+      matchConfig.MACAddress = macAddress_enp39s0;
+      networkConfig.IPv6PrivacyExtensions = "yes";
+      routes = [
+        # create default routes for both IPv6 and IPv4
+        # {routeConfig.Gateway = "fe80::1";}
+        {Gateway = globals.net.home-wan.hosts.fritzbox.ipv4;}
+        # or when the gateway is not on the same network
+        # {
+        #   routeConfig = {
+        #     Gateway = "172.31.1.1";
+        #     GatewayOnLink = true;
+        #   };
+        # }
+      ];
+      # make the routes on this interface a dependency for network-online.target
+      linkConfig.RequiredForOnline = "routable";
     };
+    # "10-lan1" = {
+    #   # DHCP = "yes";
+    #   address = [
+    #     globals.net.home-wan.hosts.HL-1-OZ-PC-01.cidrv4
+    #   ];
+    #   gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
+    #   matchConfig.MACAddress = macAddress_enp39s0; # config.repo.secrets.local.networking.interfaces.lan1.mac;
+    #   networkConfig = {
+    #     IPv6PrivacyExtensions = "yes";
+    #     MulticastDNS = true;
+    #   };
+    #   dhcpV4Config.RouteMetric = 10;
+    #   dhcpV6Config.RouteMetric = 10;
+    # };
+
+    # "40-lan1" = {
+    #   # DHCP = "yes";
+    #   address = [
+    #     globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv4
+    #     # globals.net.vlan40.hosts.HL-1-OZ-PC-01.cidrv6
+    #   ];
+    #   matchConfig.MACAddress = macAddress_enp39s0; # config.repo.secrets.local.networking.interfaces.lan1.mac;
+    #   networkConfig = {
+    #     IPv6PrivacyExtensions = "yes";
+    #     MulticastDNS = true;
+    #   };
+    #   dhcpV4Config.RouteMetric = 10;
+    #   dhcpV6Config.RouteMetric = 10;
+    # };
     # "10-wlan1" = {
     #   DHCP = "yes";
     #   matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wlan1.mac;

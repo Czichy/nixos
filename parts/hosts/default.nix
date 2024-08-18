@@ -132,7 +132,7 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
-              nix-flatpak.nixosModules.nix-flatpak
+              # nix-flatpak.nixosModules.nix-flatpak
             ];
             extraSpecialArgs = {
               inherit (self) globals;
@@ -150,7 +150,7 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
-              nix-flatpak.nixosModules.nix-flatpak
+              # nix-flatpak.nixosModules.nix-flatpak
               microvm.nixosModules.host
             ];
             extraSpecialArgs = {
@@ -170,7 +170,7 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
-              nix-flatpak.nixosModules.nix-flatpak
+              # nix-flatpak.nixosModules.nix-flatpak
             ];
             extraSpecialArgs = {
               inherit (self) globals;

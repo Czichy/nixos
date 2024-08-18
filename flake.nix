@@ -119,10 +119,10 @@
     };
     firefox-addons.url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
 
-    mcpelauncher = {
-      url = "github:headblockhead/nix-mcpelauncher";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # mcpelauncher = {
+    #   url = "github:headblockhead/nix-mcpelauncher";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
     #stylix = {
