@@ -12,16 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, secretsPath }:
 {
+  localFlake,
+  secretsPath,
+}: {
   config,
   lib,
   hostName,
   ...
 }:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkAgenixEnableOption;
 
   cfg = config.tensorfiles.services.syncthing;
@@ -50,8 +51,7 @@ let
       id = "MJ7QFHU-TIMOUSL-6NNC55J-ADQ64CZ-DJOWJU3-HHQLCOQ-5WUXVXS-WHLCAQB";
     };
   };
-in
-{
+in {
   options.tensorfiles.services.syncthing = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the networkmanager service.
@@ -127,7 +127,11 @@ in
 
     {
       # Add main user to the syncthing group
-      users.users.${cfg.user}.extraGroups = mkIf (!cfg.isServer) [ "syncthing" ];
+      users.users.${cfg.user}.extraGroups = mkIf (!cfg.isServer) ["syncthing"];
+      systemd.tmpfiles.rules = [
+        "d ${cfg.configDir} - czichy users"
+      "d /home/${cfg.user}/.config - czichy users"
+      ];
       # systemd.services.syncthing-init = {
       #   after = [ "${mountServiceName}" ];
       #   requires = [ "${mountServiceName}" ];
@@ -156,7 +160,7 @@ in
 
       services.syncthing = {
         enable = true;
-        #configDir = "${cfg.configDir}";
+        configDir = "${cfg.configDir}";
         user = "${cfg.user}";
         group = "users";
 
@@ -180,17 +184,17 @@ in
             "iykxy-ruk4y" = {
               # Name of folder in Syncthing, also the folder ID
               path = "${cfg.dataDir}/Dokumente"; # Which folder to add to Syncthing
-              devices = [ "nas" ]; # Which devices to share the folder with
+              devices = ["nas"]; # Which devices to share the folder with
             };
             "lhqxb-zc6qj" = {
               # Name of folder in Syncthing, also the folder ID
               path = "${cfg.dataDir}/Trading"; # Which folder to add to Syncthing
-              devices = [ "nas" ]; # Which devices to share the folder with
+              devices = ["nas"]; # Which devices to share the folder with
             };
             "nandi-sj5en" = {
               # Name of folder in Syncthing, also the folder ID
               path = "${cfg.dataDir}/.credentials"; # Which folder to add to Syncthing
-              devices = [ "nas" ]; # Which devices to share the folder with
+              devices = ["nas"]; # Which devices to share the folder with
             };
           };
           options.globalAnnounceEnabled = false; # Only sync on LAN
@@ -239,5 +243,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.tensorfiles.maintainers; [czichy];
 }
