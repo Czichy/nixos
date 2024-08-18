@@ -81,14 +81,6 @@
       };
   in {
     nixosConfigurations = {
-      installer = withSystem "x86_64-linux" (
-        args:
-          mkHost args "installer" {
-            withHomeManager = false;
-            extraOverlays = with inputs; [(final: _prev: {nur = import nur {pkgs = final;};})];
-          }
-      );
-
       desktop = withSystem "x86_64-linux" (
         args:
           mkHost args "desktop" {
@@ -101,7 +93,8 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
-              nix-flatpak.nixosModules.nix-flatpak
+              microvm.nixosModules.host
+              # nix-flatpak.nixosModules.nix-flatpak
             ];
           }
       );
@@ -117,7 +110,7 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
-              nix-flatpak.nixosModules.nix-flatpak
+              # nix-flatpak.nixosModules.nix-flatpak
               microvm.nixosModules.host
             ];
           }
@@ -132,6 +125,7 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
+              microvm.nixosModules.host
               # nix-flatpak.nixosModules.nix-flatpak
             ];
             extraSpecialArgs = {
@@ -170,6 +164,7 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
+              microvm.nixosModules.host
               # nix-flatpak.nixosModules.nix-flatpak
             ];
             extraSpecialArgs = {

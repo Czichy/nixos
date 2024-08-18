@@ -56,26 +56,7 @@ in {
   };
 
   nodes.switch-office = mkSwitch "Switch Office" {
-    info = "D-Link DGS-1016D";
-    image = ./images/dlink-dgs1016d.png;
-    interfaceGroups = [
-      [
-        "eth1"
-        "eth2"
-        "eth3"
-        "eth4"
-        "eth5"
-        "eth6"
-        "eth7"
-      ]
-    ];
-    connections.eth1 = mkConnection "ward" "lan-self";
-    connections.eth2 = mkConnection "sire" "lan-self";
-    connections.eth7 = mkConnection "zackbiene" "lan1";
-  };
-
-  nodes.switch-bedroom-1 = mkSwitch "Switch Keller" {
-    info = "D-Link DGS-105";
+    info = "NETGEAR GS105Ev2 - 5 Port Switch";
     image = ./images/dlink-dgs105.png;
     interfaceGroups = [
       [
@@ -86,26 +67,29 @@ in {
         "eth5"
       ]
     ];
-    connections.eth1 = mkConnection "switch-office" "eth3";
-    connections.eth2 = mkConnection "kroma" "lan1";
-    connections.eth3 = mkConnection "nom" "lan1";
-    # connections.eth4 = mkConnection "switch-livingroom" "eth1";
+    connections.eth1 = mkConnection "ward" "lan-self";
+    connections.eth2 = mkConnection "sire" "lan-self";
+    connections.eth7 = mkConnection "zackbiene" "lan1";
   };
 
-  # nodes.switch-livingroom = mkSwitch "Switch Livingroom" {
-  #   info = "Sitecom LN-121";
-  #   image = ./images/sitecom-ln-121.png;
+  # nodes.switch-office = mkSwitch "Switch Office" {
+  #   info = "NETGEAR GS108Ev3 - 8 Port Switch";
+  #   image = ./images/dlink-dgs1016d.png;
   #   interfaceGroups = [
   #     [
   #       "eth1"
   #       "eth2"
   #       "eth3"
   #       "eth4"
+  #       "eth5"
+  #       "eth6"
+  #       "eth7"
+  #       "eth8"
   #     ]
   #   ];
-  #   connections.eth2 = mkConnection "tv-livingroom" "eth1";
-  #   connections.eth3 = mkConnection "soundbar-livingroom" "eth1";
-  #   connections.eth4 = mkConnection "sat-receiver-livingroom" "eth1";
+  #   connections.eth1 = mkConnection "ward" "lan-self";
+  #   connections.eth2 = mkConnection "sire" "lan-self";
+  #   connections.eth7 = mkConnection "zackbiene" "lan1";
   # };
 
   # nodes.tv-livingroom = mkDevice "TV Livingroom" {
