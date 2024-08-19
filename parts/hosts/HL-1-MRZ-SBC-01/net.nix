@@ -20,8 +20,8 @@ in {
     dhcpcd.enable = false;
     useDHCP = false;
     # allow mdns port
-    firewall.allowedUDPPorts = [5353 53];
-    firewall.allowedTCPPorts = [3000 80 53 443];
+    firewall.allowedUDPPorts = [5353];
+    # firewall.allowedTCPPorts = [3000 80 53 443];
     # renameInterfacesByMac = lib.mkIf (!config.boot.isContainer) (
     #   lib.mapAttrs (_: v: v.mac) (config.secrets.secrets.local.networking.interfaces or {})
     # );
@@ -35,9 +35,11 @@ in {
     # man I whish dnssec would be viable to use
     dnssec = "false";
     llmnr = "false";
+    # Disable local DNS stub listener on 127.0.0.53
     extraConfig = ''
       Domains=~.
       MulticastDNS=true
+      DNSStubListener=no
     '';
   };
 

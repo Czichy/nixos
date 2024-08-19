@@ -67,12 +67,12 @@ in {
     port = 3000;
     settings = {
       dns = {
-        port = 5353;
+        # port = 53;
         # allowed_clients = [
         # ];
         #trusted_proxies = [];
         ratelimit = 300;
-        bind_hosts = ["0.0.0.0" "::"];
+        bind_hosts = ["::"];
         upstream_dns = [
           "https://dns.cloudflare.com/dns-query"
           "https://dns.google/dns-query"
