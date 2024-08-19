@@ -55,7 +55,7 @@ in {
   # ];
 
   networking.firewall = {
-    allowedTCPPorts = [53];
+    allowedTCPPorts = [53 80 443 3000];
     allowedUDPPorts = [53];
   };
 
@@ -67,10 +67,12 @@ in {
     port = 3000;
     settings = {
       dns = {
+        port = 5353;
         # allowed_clients = [
         # ];
         #trusted_proxies = [];
         ratelimit = 300;
+        bind_hosts = ["0.0.0.0" "::"];
         upstream_dns = [
           "https://dns.cloudflare.com/dns-query"
           "https://dns.google/dns-query"
@@ -125,25 +127,25 @@ in {
     };
   };
 
-  systemd.services.adguardhome = {
-    preStart = lib.mkAfter ''
-      INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
-        ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
-        "$STATE_DIRECTORY/AdGuardHome.yaml"
-    '';
-    serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
-  };
+  # systemd.services.adguardhome = {
+  #   preStart = lib.mkAfter ''
+  #     INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
+  #       ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
+  #       "$STATE_DIRECTORY/AdGuardHome.yaml"
+  #   '';
+  #   serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
+  # };
 
   systemd.network.enable = true;
   networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
-  systemd.network.networks."99-v-lan" = {
-    matchConfig.Type = "ether";
-    networkConfig = {
-      Address = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4];
-      Gateway = [globals.net.vlan40.cidrv4];
-      # DNS = nameservers;
-      DHCP = "no";
-    };
-  };
+  # systemd.network.networks."99-v-lan" = {
+  #   matchConfig.Type = "ether";
+  #   DHCP = "yes";
+  #   networkConfig = {
+  #     Address = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4];
+  #     # Gateway = [globals.net.vlan40.cidrv4];
+  #     # DNS = nameservers;
+  #   };
+  # };
   system.stateVersion = "24.05";
 }

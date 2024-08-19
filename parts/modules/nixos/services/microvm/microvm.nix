@@ -47,8 +47,8 @@ in {
     lib.microvm.mac = guestCfg.microvm.mac;
 
     microvm = {
-      # hypervisor = mkDefault "qemu";
-      hypervisor = mkDefault "cloud-hypervisor";
+      hypervisor = mkDefault "qemu";
+      # hypervisor = mkDefault "cloud-hypervisor";
       socket = "control.socket";
 
       mem = mkDefault 1024;
@@ -68,6 +68,11 @@ in {
             link = guestCfg.microvm.macvtap;
             mode = "bridge";
           };
+        }
+        {
+          type = "user";
+          id = "qemu";
+          mac = "02:00:00:01:01:01";
         }
       ];
 

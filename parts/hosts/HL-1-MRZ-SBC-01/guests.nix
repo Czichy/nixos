@@ -36,13 +36,6 @@ in {
             };
           }
         ];
-        # networking = config.repo.secrets.home-ops.guests.${guestName}.networking;
-        # networking = {
-        #   mainLinkName = "";
-        #   address = globals.net.home-wan.hosts.ward.cidrv4;
-        #   gateway = globals.net.home-wan.hosts.fritzbox.ipv4;
-        #   dns = "";
-        # };
       };
       mkMicrovm = guestName: opts: {
         ${guestName} =
@@ -50,9 +43,11 @@ in {
           // {
             microvm = {
               system = "x86_64-linux";
-              macvtap = "lan";
+              macvtap = "enp2s0";
+              # macvtap = "lan";
               baseMac = macAddress_enp2s0; # TODO move to config
             };
+            # networking.address = "10.15.40.148/24";
             extraSpecialArgs = {
               inherit globals;
               inherit lib;

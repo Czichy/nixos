@@ -118,8 +118,11 @@ in {
                 default = submod.config.microvm.macvtap;
               };
               # address = lib.mkOption {
-              #   type = lib.types.str;
-              #   description = "The IP address of the guest";
+              #   type = lib.types.nullOr lib.types.net.cidrv4;
+              #   description = "The CIDRv4 of the guest";
+              #   default = null;
+              # type = lib.types.str;
+              # description = "The IP address of the guest";
               # };
               # gateway = lib.mkOption {
               #   type = lib.types.str;

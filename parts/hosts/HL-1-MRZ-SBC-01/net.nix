@@ -20,7 +20,8 @@ in {
     dhcpcd.enable = false;
     useDHCP = false;
     # allow mdns port
-    firewall.allowedUDPPorts = [5353];
+    firewall.allowedUDPPorts = [5353 53];
+    firewall.allowedTCPPorts = [3000 80 53 443];
     # renameInterfacesByMac = lib.mkIf (!config.boot.isContainer) (
     #   lib.mapAttrs (_: v: v.mac) (config.secrets.secrets.local.networking.interfaces or {})
     # );
@@ -40,25 +41,6 @@ in {
     '';
   };
 
-  # Enable NetworkManager
-  # networking = {
-  #   networkmanager.enable = true;
-  #   interfaces.enp2s0 = {
-  #     ipv4 = {
-  #       addresses = [
-  #         # {
-  #         #   address = "${globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4}";
-  #         #   prefixLength = 24;
-  #         # }
-  #         {
-  #           address = "192.168.1.254";
-  #           prefixLength = 24;
-  #         }
-  #       ];
-  #     };
-  #   };
-  # };
-
   boot.initrd.systemd.network = {
     enable = true;
     networks = {
@@ -70,7 +52,7 @@ in {
         networkConfig.IPv6PrivacyExtensions = "yes";
         linkConfig.RequiredForOnline = "routable";
       };
-      "20-lan" = {
+      "20-lan40" = {
         address = [
           # {
           #   addressConfig.Address = "fd12:3456:789a::1/64";
@@ -143,19 +125,29 @@ in {
         DHCPPrefixDelegation = true;
         MulticastDNS = true;
       };
+      dhcpPrefixDelegationConfig.UplinkInterface = "wan";
+      dhcpPrefixDelegationConfig.Token = "::ff";
       # Announce a static prefix
-      ipv6Prefixes = [
-        {ipv6PrefixConfig.Prefix = globals.net.vlan40.cidrv6;}
-      ];
+      # ipv6Prefixes = [
+      #   {Prefix = globals.net.home-lan.cidrv6;}
+      # ];
       # Delegate prefix
       dhcpPrefixDelegationConfig = {
         SubnetId = "22";
       };
-      # Provide a DNS resolver
-      ipv6SendRAConfig = {
-        EmitDNS = true;
-        DNS = globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4;
-      };
+      # # Announce a static prefix
+      # ipv6Prefixes = [
+      #   {ipv6PrefixConfig.Prefix = globals.net.vlan40.cidrv6;}
+      # ];
+      # # Delegate prefix
+      # dhcpPrefixDelegationConfig = {
+      #   SubnetId = "22";
+      # };
+      # # Provide a DNS resolver
+      # ipv6SendRAConfig = {
+      #   EmitDNS = true;
+      #   DNS = globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4;
+      # };
       linkConfig.RequiredForOnline = "routable";
     };
     # Remaining macvtap interfaces should not be touched.
