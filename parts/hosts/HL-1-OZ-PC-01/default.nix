@@ -100,7 +100,7 @@
         enable = true;
         user = "czichy";
       };
-      # virtualisation.enable = true;
+      virtualisation.enable = true;
     };
   };
 
