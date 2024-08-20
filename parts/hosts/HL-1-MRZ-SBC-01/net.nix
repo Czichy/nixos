@@ -6,7 +6,7 @@
 }
 : let
   macAddress_enp1s0 = "60:be:b4:19:a8:4c";
-  macAddress_enp2s0 = "60:be:b4:19:a8:4d";
+  macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
 
@@ -63,7 +63,7 @@ in {
           globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
         ];
         # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
-        matchConfig.MACAddress = macAddress_enp2s0;
+        matchConfig.MACAddress = macAddress_enp4s0;
         networkConfig = {
           IPv4Forwarding = "yes";
           IPv6PrivacyExtensions = "yes";
@@ -90,7 +90,7 @@ in {
   systemd.network.networks = {
     "10-lan" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
-      matchConfig.MACAddress = macAddress_enp2s0;
+      matchConfig.MACAddress = macAddress_enp4s0;
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.

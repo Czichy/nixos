@@ -17,7 +17,7 @@ let
   # jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
   czichy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com";
   vm_test = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHDjI1ua3F0+HmVmctChbmMt1LBFbrrf8lP0H5NDy5gP czichy@vmtest";
-  czichy-vm_test = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGPMF0Sz9e6JoHudF11U2F9U/S5KFINlU9556C2zA82X czichy@vmtest";
+  czichy-HL-1-MRZ-SBC-01 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINOIqr6KsojkEyyYItPBXcWUfacQY54rWkIGTXUdl27k czichy@HL-1-MRZ-SBC-01";
 in {
   common = {};
   hosts = {
@@ -43,18 +43,6 @@ in {
         czichy = {
           sshKey = null;
           authorizedKeys = [czichy];
-        };
-      };
-    };
-    home_server_test = {
-      users = {
-        root = {
-          sshKey = null;
-          authorizedKeys = [];
-        };
-        czichy = {
-          sshKey = czichy-vm_test;
-          authorizedKeys = [czichy vm_test czichy-vm_test];
         };
       };
     };

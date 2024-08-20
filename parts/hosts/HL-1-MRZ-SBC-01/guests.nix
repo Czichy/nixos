@@ -6,8 +6,7 @@
   globals,
   ...
 }: let
-  macAddress_enp1s0 = "60:be:b4:19:a8:4c";
-  macAddress_enp2s0 = "60:be:b4:19:a8:4d";
+  macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {
   tensorfiles.services.microvm = {
     enable = true;
@@ -43,9 +42,9 @@ in {
           // {
             microvm = {
               system = "x86_64-linux";
-              macvtap = "enp2s0";
+              macvtap = "enp4s0";
               # macvtap = "lan";
-              baseMac = macAddress_enp2s0; # TODO move to config
+              baseMac = macAddress_enp4s0; # TODO move to config
             };
             networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
             # networking.address = "10.15.40.148/24";

@@ -17,7 +17,7 @@
     <controller type='pci' index='0' model='pci-root'/>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='none'/>
-      <source file='/var/lib/libvirt/images/opnsense231.qcow2'/>
+      <source file='/var/lib/libvirt/images/opnsense247.qcow2'/>
       <target dev='vda' bus='virtio'/>
     </disk>
     <interface type='bridge'>
