@@ -145,8 +145,8 @@
 
   home-manager.users."czichy" = import (../../homes + "/czichy@desktop");
 
-  # users.users.qemu-libvirtd.group = "qemu-libvirtd";
-  # users.groups.qemu-libvirtd = {};
+  users.users.qemu-libvirtd.group = "qemu-libvirtd";
+  users.groups.qemu-libvirtd = {};
 
   security.pam.services = {
     swaylock = {};
