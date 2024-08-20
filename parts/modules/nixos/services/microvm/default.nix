@@ -24,6 +24,11 @@
   # utils,
   ...
 } @ attrs: let
+  inherit
+    (lib)
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.tensorfiles) isModuleLoadedAndEnabled mkImpermanenceEnableOption mergeToplevelConfigs mapAttrsToList;
   cfg = config.tensorfiles.services.microvm;
 
@@ -117,12 +122,15 @@ in {
                 description = "The main ethernet link name inside of the guest.";
                 default = submod.config.microvm.macvtap;
               };
-              # address = lib.mkOption {
-              #   type = lib.types.nullOr lib.types.net.cidrv4;
+              address = lib.mkOption {
+                description = "The CIDRv4 of the guest";
+                default = null;
+                type = lib.types.str;
+              };
+              # address = mkOption {
+              #   type = lib.tensorfiles.types.net.cidrv4;
+              #   # default = null;
               #   description = "The CIDRv4 of the guest";
-              #   default = null;
-              # type = lib.types.str;
-              # description = "The IP address of the guest";
               # };
               # gateway = lib.mkOption {
               #   type = lib.types.str;
