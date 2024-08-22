@@ -22,42 +22,48 @@
     ;
 in {
   # TODO: collect networks from globals
-  networks.ward-kea.name = "Home LAN";
-  networks.zackbiene-kea.name = "Isolated IoT Network";
-  networks.home-fritzbox = {
-    name = "Home Fritzbox";
+  networks.trust.name = "Trust VLAN10";
+  networks.guest.name = "Guest VLAN20";
+  networks.security.name = "Security VLAN30";
+  networks.servers.name = "Trust VLAN40";
+  networks.iot.name = "Trust VLAN60";
+  networks.dmz.name = "Trust VLAN70";
+  networks.mgmt.name = "Trust VLAN100";
+
+  networks.internet = {
+    name = "Internet VLAN1";
     cidrv4 = "192.168.178.0/24";
   };
 
   nodes.internet = mkInternet {
     connections = [
-      (mkConnection "sentinel" "wan")
-      (mkConnection "fritzbox" "wan1")
+      # (mkConnection "sentinel" "wan")
+      (mkConnection "vigor" "wan")
     ];
   };
 
-  nodes.fritzbox = mkRouter "FritzBox" {
-    info = "FRITZ!Box 7520";
-    image = ./images/fritzbox.png;
+  nodes.vigor = mkRouter "Vigor 166" {
+    info = "DrayTek Vigor 166";
+    image = ./images/Vigor166.jpg;
     interfaceGroups = [
       [
-        "eth1"
-        "eth2"
-        "eth3"
-        "eth4"
+        "p1"
+        # "eth2"
+        # "eth3"
+        # "eth4"
       ]
-      ["wan1"]
+      ["wan"]
     ];
-    connections.eth1 = mkConnection "ward" "wan";
-    interfaces.eth1 = {
+    # connections.p1 = mkConnection "internet" "wan";
+    interfaces.wan = {
       addresses = ["192.168.178.1"];
-      network = "home-fritzbox";
+      network = "internet";
     };
   };
 
   nodes.switch-office = mkSwitch "Switch Office" {
     info = "NETGEAR GS105Ev2 - 5 Port Switch";
-    image = ./images/dlink-dgs105.png;
+    # image = ./images/dlink-dgs105.png;
     interfaceGroups = [
       [
         "eth1"
@@ -67,9 +73,9 @@ in {
         "eth5"
       ]
     ];
-    connections.eth1 = mkConnection "ward" "lan-self";
-    connections.eth2 = mkConnection "sire" "lan-self";
-    connections.eth7 = mkConnection "zackbiene" "lan1";
+    # connections.eth1 = mkConnection "ward" "lan-self";
+    # connections.eth2 = mkConnection "sire" "lan-self";
+    # connections.eth7 = mkConnection "zackbiene" "lan1";
   };
 
   # nodes.switch-office = mkSwitch "Switch Office" {
@@ -87,9 +93,9 @@ in {
   #       "eth8"
   #     ]
   #   ];
-  #   connections.eth1 = mkConnection "ward" "lan-self";
-  #   connections.eth2 = mkConnection "sire" "lan-self";
-  #   connections.eth7 = mkConnection "zackbiene" "lan1";
+  #   # connections.eth1 = mkConnection "ward" "lan-self";
+  #   # connections.eth2 = mkConnection "sire" "lan-self";
+  #   # connections.eth7 = mkConnection "zackbiene" "lan1";
   # };
 
   # nodes.tv-livingroom = mkDevice "TV Livingroom" {
@@ -110,9 +116,9 @@ in {
   #   interfaces.eth1 = {};
   # };
 
-  nodes.ruckus-ap = mkSwitch "Wi-Fi AP" {
-    info = "Ruckus R600";
-    image = ./images/ruckus-r600.png;
+  nodes.uap-lr-ap = mkSwitch "Wi-Fi AP" {
+    info = "Unifi UAP-AC-LR";
+    # image = "./images/Unifi UAP-AC-LR.webp";
     interfaceGroups = [
       [
         "eth1"
@@ -124,7 +130,7 @@ in {
 
   nodes.printer = mkDevice "Drucker Büro" {
     info = "Brother MFC3750-cdf";
-    image = ./images/brother-mfc-l3750cdw.JPG;
+    # image = ./images/brother-mfc-l3750cdw.JPG;
     connections.eth1 = mkConnection "switch-office" "eth5";
   };
 }

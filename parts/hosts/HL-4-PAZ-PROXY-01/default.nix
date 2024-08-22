@@ -54,7 +54,7 @@
       };
     };
   };
-  topology.self.hardware.image = ../../topology/images/odroid-h3.png;
+  # topology.self.hardware.image = ../../topology/images/odroid-h3.png;
   topology.self.hardware.info = "O-Droid H3, 64GB RAM";
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |

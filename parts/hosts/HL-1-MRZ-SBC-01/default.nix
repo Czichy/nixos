@@ -35,7 +35,7 @@
     ./guests.nix
   ];
 
-  topology.self.hardware.image = ../../topology/images/Topton.webp;
+  # topology.self.hardware.image = ../../topology/images/Topton.webp;
   topology.self.hardware.info = "Topton, 16GB RAM";
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
