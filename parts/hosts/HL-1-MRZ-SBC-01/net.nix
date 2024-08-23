@@ -48,7 +48,7 @@ in {
     networks = {
       "10-wan" = {
         address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
-        gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
+        gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
         # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
         matchConfig.MACAddress = macAddress_enp1s0;
         networkConfig.IPv6PrivacyExtensions = "yes";
@@ -107,7 +107,7 @@ in {
       #dhcpV6Config.UseDNS = false;
       #ipv6AcceptRAConfig.UseDNS = false;
       address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
-      gateway = [globals.net.home-wan.hosts.fritzbox.ipv4];
+      gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
       matchConfig.MACAddress = macAddress_enp1s0;
       networkConfig.IPv6PrivacyExtensions = "yes";

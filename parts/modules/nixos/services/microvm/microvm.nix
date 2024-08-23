@@ -29,6 +29,7 @@ in {
     imports =
       guestCfg.modules
       ++ [
+        inputs.nix-topology.nixosModules.default
         inputs.nixos-nftables-firewall.nixosModules.default
         (
           import ./common-guest-config.nix pubkeys guestName guestCfg

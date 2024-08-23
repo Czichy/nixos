@@ -56,14 +56,14 @@ in {
     ];
     # connections.p1 = mkConnection "internet" "wan";
     interfaces.wan = {
-      addresses = ["192.168.178.1"];
+      addresses = ["10.15.100.1"];
       network = "internet";
     };
   };
 
   nodes.switch-office = mkSwitch "Switch Office" {
     info = "NETGEAR GS105Ev2 - 5 Port Switch";
-    # image = ./images/dlink-dgs105.png;
+    image = ./images/dlink-dgs105.png;
     interfaceGroups = [
       [
         "eth1"
@@ -98,23 +98,17 @@ in {
   #   # connections.eth7 = mkConnection "zackbiene" "lan1";
   # };
 
-  # nodes.tv-livingroom = mkDevice "TV Livingroom" {
-  #   info = "LG OLED65B6D";
-  #   image = ./images/lg-oled65b6d.png;
-  #   interfaces.eth1 = {};
-  # };
+  nodes.tv-livingroom = mkDevice "TV Wohnzimmer" {
+    info = "LG OLED65B6D";
+    # image = ./images/lg-oled65b6d.png;
+    interfaces.eth1 = {};
+  };
 
-  # nodes.soundbar-livingroom = mkDevice "Soundbar Livingroom" {
-  #   info = "Bose SoundTouch 300";
-  #   image = ./images/bose-soundtouch-300.png;
-  #   interfaces.eth1 = {};
-  # };
-
-  # nodes.sat-receiver-livingroom = mkDevice "Sat Receiver Livingroom" {
-  #   info = "TechniSat DIGIT ISIO STC+";
-  #   image = ./images/technisat-digit-isio-stcplus.png;
-  #   interfaces.eth1 = {};
-  # };
+  nodes.tv-hobby = mkDevice "TV Hobbyraum" {
+    info = "LG OLED65B6D";
+    # image = ./images/lg-oled65b6d.png;
+    interfaces.eth1 = {};
+  };
 
   nodes.uap-lr-ap = mkSwitch "Wi-Fi AP" {
     info = "Unifi UAP-AC-LR";

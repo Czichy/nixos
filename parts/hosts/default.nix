@@ -81,23 +81,6 @@
       };
   in {
     nixosConfigurations = {
-      desktop = withSystem "x86_64-linux" (
-        args:
-          mkHost args "desktop" {
-            withHomeManager = true;
-            extraOverlays = with inputs; [
-              (final: _prev: {nur = import nur {pkgs = final;};})
-              nix-topology.overlays.default
-              nixos-extra-modules.overlays.default
-            ];
-            extraModules = with inputs; [
-              nix-topology.nixosModules.default
-              nixos-nftables-firewall.nixosModules.default
-              microvm.nixosModules.host
-              # nix-flatpak.nixosModules.nix-flatpak
-            ];
-          }
-      );
       "HL-1-OZ-PC-01" = withSystem "x86_64-linux" (
         args:
           mkHost args "HL-1-OZ-PC-01" {
@@ -113,24 +96,6 @@
               # nix-flatpak.nixosModules.nix-flatpak
               microvm.nixosModules.host
             ];
-          }
-      );
-      home_server_test = withSystem "x86_64-linux" (
-        args:
-          mkHost args "home_server_test" {
-            withHomeManager = true;
-            extraOverlays = with inputs; [
-              (final: _prev: {nur = import nur {pkgs = final;};})
-            ];
-            extraModules = with inputs; [
-              nix-topology.nixosModules.default
-              nixos-nftables-firewall.nixosModules.default
-              microvm.nixosModules.host
-              # nix-flatpak.nixosModules.nix-flatpak
-            ];
-            extraSpecialArgs = {
-              inherit (self) globals;
-            };
           }
       );
       #ward
