@@ -16,6 +16,10 @@ As for Flakes, refer to
 You don't have to go through the pain I've experienced again! Check out my
 [NixOS & Nix Flakes Book - 🛠️ ❤️ An unofficial & opinionated :book: for beginners](https://github.com/ryan4yin/nixos-and-flakes-book)!**
 
+## Setup OPNSense & Unifi
+
+https://homenetworkguy.com/how-to/set-up-a-fully-functioning-home-network-using-opnsense/
+
 ## Hosts
 
 |  | Type | Name | Hardware | Purpose

@@ -25,10 +25,10 @@ in {
   networks.trust.name = "Trust VLAN10";
   networks.guest.name = "Guest VLAN20";
   networks.security.name = "Security VLAN30";
-  networks.servers.name = "Trust VLAN40";
-  networks.iot.name = "Trust VLAN60";
-  networks.dmz.name = "Trust VLAN70";
-  networks.mgmt.name = "Trust VLAN100";
+  networks.servers.name = "Servers VLAN40";
+  networks.iot.name = "IoT VLAN60";
+  networks.dmz.name = "DMZ VLAN70";
+  networks.mgmt.name = "MGMT VLAN100";
 
   networks.internet = {
     name = "Internet VLAN1";
@@ -61,8 +61,10 @@ in {
     };
   };
 
-  nodes.switch-office = mkSwitch "Switch Office" {
-    info = "NETGEAR GS105Ev2 - 5 Port Switch";
+  # |----------------------------------------------------------------------| #
+  nodes.switch-keller = mkSwitch "Switch Keller" {
+    info = "TP-Link TL-SG2218 - 16 Port Switch";
+    # address: 10.15.100.251/24
     image = ./images/dlink-dgs105.png;
     interfaceGroups = [
       [
@@ -71,6 +73,41 @@ in {
         "eth3"
         "eth4"
         "eth5"
+        "eth6"
+        "eth7"
+        "eth8"
+      ]
+      [
+        "eth9"
+        "eth10"
+        "eth11"
+        "eth12"
+        "eth13"
+        "eth14"
+        "eth15"
+        "eth16"
+      ]
+      ["sfp1" "sfp2"]
+    ];
+    # connections.eth1 = mkConnection "ward" "lan-self";
+    # connections.eth2 = mkConnection "sire" "lan-self";
+    # connections.eth7 = mkConnection "zackbiene" "lan1";
+  };
+
+  nodes.switch-office = mkSwitch "Switch Office" {
+    info = "NETGEAR GS108Ev3 - 8 Port Switch";
+    # address: 10.15.100.252/24
+    image = ./images/dlink-dgs1016d.png;
+    interfaceGroups = [
+      [
+        "eth1"
+        "eth2"
+        "eth3"
+        "eth4"
+        "eth5"
+        "eth6"
+        "eth7"
+        "eth8"
       ]
     ];
     # connections.eth1 = mkConnection "ward" "lan-self";
@@ -79,8 +116,8 @@ in {
   };
 
   # nodes.switch-office = mkSwitch "Switch Office" {
-  #   info = "NETGEAR GS108Ev3 - 8 Port Switch";
-  #   image = ./images/dlink-dgs1016d.png;
+  #   info = "NETGEAR GS105Ev2 - 5 Port Switch";
+  #   image = ./images/dlink-dgs105.png;
   #   interfaceGroups = [
   #     [
   #       "eth1"
@@ -88,15 +125,13 @@ in {
   #       "eth3"
   #       "eth4"
   #       "eth5"
-  #       "eth6"
-  #       "eth7"
-  #       "eth8"
   #     ]
   #   ];
   #   # connections.eth1 = mkConnection "ward" "lan-self";
   #   # connections.eth2 = mkConnection "sire" "lan-self";
   #   # connections.eth7 = mkConnection "zackbiene" "lan1";
   # };
+  # |----------------------------------------------------------------------| #
 
   nodes.tv-livingroom = mkDevice "TV Wohnzimmer" {
     info = "LG OLED65B6D";
