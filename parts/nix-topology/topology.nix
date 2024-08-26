@@ -65,7 +65,7 @@ in {
   nodes.switch-keller = mkSwitch "Switch Keller" {
     info = "TP-Link TL-SG2218 - 16 Port Switch";
     # address: 10.15.100.251/24
-    image = ./images/dlink-dgs105.png;
+    image = ./images/TPLINK_TL-SG2218_02.png;
     interfaceGroups = [
       [
         "eth1"
@@ -89,6 +89,34 @@ in {
       ]
       ["sfp1" "sfp2"]
     ];
+
+    interfaces = {
+      trust = {
+        network = "trust";
+        addresse = [];
+        virtual = true;
+      };
+
+      guest = {
+        network = "guest";
+        addresse = [];
+        virtual = true;
+      };
+      # guest.name = "Guest VLAN20";
+      # security.name = "Security VLAN30";
+      # servers.name = "Servers VLAN40";
+      # iot.name = "IoT VLAN60";
+      # dmz.name = "DMZ VLAN70";
+      # mgmt.name = "MGMT VLAN100";
+    };
+    # connections.eth16 = mkConnection "HL-1-OZ-PC-01" "trust";
+    connections.trust = mkConnection "HL-1-MRZ-SBC-01" "trust";
+    connections.guest = mkConnection "HL-1-MRZ-SBC-01" "guest";
+    # connections.eth16 = mkConnection "HL-1-MRZ-SBC-01" "security";
+    # connections.eth16 = mkConnection "HL-1-MRZ-SBC-01" "servers";
+    # connections.eth16 = mkConnection "HL-1-MRZ-SBC-01" "iot";
+    # connections.eth16 = mkConnection "HL-1-MRZ-SBC-01" "dmz";
+    # connections.eth16 = mkConnection "HL-1-MRZ-SBC-01" "mgmt";
     # connections.eth1 = mkConnection "ward" "lan-self";
     # connections.eth2 = mkConnection "sire" "lan-self";
     # connections.eth7 = mkConnection "zackbiene" "lan1";
@@ -110,8 +138,8 @@ in {
         "eth8"
       ]
     ];
-    # connections.eth1 = mkConnection "ward" "lan-self";
-    # connections.eth2 = mkConnection "sire" "lan-self";
+
+    connections.eth1 = mkConnection "switch-keller" "eth1";
     # connections.eth7 = mkConnection "zackbiene" "lan1";
   };
 
@@ -145,9 +173,33 @@ in {
     interfaces.eth1 = {};
   };
 
+  nodes.uap-ap-pro = mkSwitch "Wi-Fi AP" {
+    info = "Unifi UAP-AP-PRO";
+    # image = "./images/UAP-Pro1.png";
+    interfaceGroups = [
+      [
+        "eth1"
+        "wifi"
+      ]
+    ];
+    connections.eth1 = mkConnection "switch-keller" "eth2";
+  };
+
   nodes.uap-lr-ap = mkSwitch "Wi-Fi AP" {
     info = "Unifi UAP-AC-LR";
-    # image = "./images/Unifi UAP-AC-LR.webp";
+    # image = "./images/UAP-LR.png";
+    interfaceGroups = [
+      [
+        "eth1"
+        "wifi"
+      ]
+    ];
+    connections.eth1 = mkConnection "switch-keller" "eth4";
+  };
+
+  nodes.printer = mkDevice "Drucker Büro" {
+    info = "Brother MFC3750-cdf";
+    # image = "./images/brother-mfc-l3750cdw.JPG";
     interfaceGroups = [
       [
         "eth1"
@@ -155,11 +207,5 @@ in {
       ]
     ];
     connections.eth1 = mkConnection "switch-office" "eth4";
-  };
-
-  nodes.printer = mkDevice "Drucker Büro" {
-    info = "Brother MFC3750-cdf";
-    # image = ./images/brother-mfc-l3750cdw.JPG;
-    connections.eth1 = mkConnection "switch-office" "eth5";
   };
 }
