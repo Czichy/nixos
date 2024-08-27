@@ -127,15 +127,10 @@ in {
                 default = null;
                 type = lib.types.str;
               };
-              # address = mkOption {
-              #   type = lib.tensorfiles.types.net.cidrv4;
-              #   # default = null;
-              #   description = "The CIDRv4 of the guest";
-              # };
-              # gateway = lib.mkOption {
-              #   type = lib.types.str;
-              #   description = "The gateway of the guest";
-              # };
+              gateway = lib.mkOption {
+                type = lib.types.str;
+                description = "The gateway of the guest";
+              };
               # dns = lib.mkOption {
               #   type = lib.types.listOf lib.types.str;
               #   description = "The DNS servers of the guest";

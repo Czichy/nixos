@@ -158,11 +158,11 @@ in {
       matchConfig.Name = "mgmt";
       matchConfig.Type = "vlan";
       bridgeConfig = {};
-      address = ["10.15.100.20/24"];
-      gateway = ["10.15.100.99"];
+      # address = ["10.15.100.20/24"];
+      # gateway = ["10.15.100.99"];
       networkConfig = {
         ConfigureWithoutCarrier = true;
-        DHCP = "no";
+        DHCP = "yes";
       };
       linkConfig.RequiredForOnline = "routable";
     };

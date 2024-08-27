@@ -29,7 +29,7 @@
       ragenix.enable = true;
     };
   };
-
+  home.persistence."/persist/home/czichy".allowOther = true;
   home.username = "czichy";
   home.homeDirectory = "/home/czichy";
   home.sessionVariables = {

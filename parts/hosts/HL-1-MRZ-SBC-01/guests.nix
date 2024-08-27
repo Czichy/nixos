@@ -47,7 +47,7 @@ in {
               baseMac = macAddress_enp4s0; # TODO move to config
             };
             networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
-            # networking.address = "10.15.40.148/24";
+            networking.gateway = "10.15.40.99";
             extraSpecialArgs = {
               inherit globals;
               inherit lib;

@@ -67,9 +67,10 @@ in
       }
       # |----------------------------------------------------------------------| #
       {
-        home.persistence."${cfg.persistentRoot}" = {
-          inherit (cfg) allowOther;
-        };
+        home.persistence."${cfg.persistentRoot}".allowOther = true;
+        # home.persistence."${cfg.persistentRoot}" = {
+        #   inherit (cfg) allowOther;
+        # };
       }
       # |----------------------------------------------------------------------| #
     ]);
