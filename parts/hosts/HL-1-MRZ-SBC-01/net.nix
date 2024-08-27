@@ -62,7 +62,7 @@ in {
           globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
           globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
         ];
-        gateway = [globals.net.vlan.hosts.opnsense.ipv4];
+        gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
         # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
         matchConfig.MACAddress = macAddress_enp4s0;
         networkConfig = {
@@ -75,6 +75,7 @@ in {
     };
   };
 
+  # |----------------------------------------------------------------------| #
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.
   systemd.network.netdevs."10-lan-self" = {
@@ -87,21 +88,54 @@ in {
       Mode=bridge
     '';
   };
+  systemd.network.netdevs."10-servers" = {
+    netdevConfig = {
+      Kind = "vlan";
+      Name = "servers";
+      Description = "Servers VLAN40 RZ";
+    };
+    vlanConfig.Id = 40;
+  };
 
+  systemd.network.netdevs."10-mgmt" = {
+    netdevConfig = {
+      Kind = "vlan";
+      Name = "mgmt";
+      Description = "Management VLAN100 MRZ";
+    };
+    vlanConfig.Id = 100;
+  };
+
+  # |----------------------------------------------------------------------| #
   systemd.network.networks = {
-    "10-lan" = {
+    "10-enp4s0-untagged" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
-      gateway = [globals.net.vlan.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
+      vlan = [
+        "servers"
+        "mgmt"
+      ];
       networkConfig.LinkLocalAddressing = "no";
       linkConfig.RequiredForOnline = "carrier";
       extraConfig = ''
         [Network]
         MACVLAN=lan-self
       '';
+    };
+    "30-servers" = {
+      matchConfig.Name = "servers";
+      matchConfig.Type = "vlan";
+      address = ["10.15.40.10/24"];
+      gateway = ["10.15.40.99"];
+      networkConfig = {
+        ConfigureWithoutCarrier = true;
+        DHCP = "yes";
+      };
+      linkConfig.RequiredForOnline = "routable";
     };
     # "10-wan" = {
     #   #DHCP = "yes";
@@ -115,6 +149,19 @@ in {
     #   networkConfig.IPv6PrivacyExtensions = "yes";
     #   linkConfig.RequiredForOnline = "routable";
     # };
+    "30-mgmt" = {
+      matchConfig.Name = "mgmt";
+      matchConfig.Type = "vlan";
+      bridgeConfig = {};
+      address = ["10.15.100.10/24"];
+      gateway = ["10.15.100.99"];
+      networkConfig = {
+        ConfigureWithoutCarrier = true;
+        DHCP = "yes";
+      };
+      linkConfig.RequiredForOnline = "routable";
+    };
+
     "20-lan-self" = {
       address = [
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
@@ -130,7 +177,7 @@ in {
         DHCPPrefixDelegation = true;
         MulticastDNS = true;
       };
-      dhcpPrefixDelegationConfig.UplinkInterface = "wan";
+      # dhcpPrefixDelegationConfig.UplinkInterface = "wan";
       dhcpPrefixDelegationConfig.Token = "::ff";
       # Announce a static prefix
       # ipv6Prefixes = [
@@ -163,45 +210,45 @@ in {
     };
   };
 
-  networking.nftables.firewall = {
-    snippets.nnf-icmp.ipv6Types = ["mld-listener-query" "nd-router-solicit"];
+  # networking.nftables.firewall = {
+  #   snippets.nnf-icmp.ipv6Types = ["mld-listener-query" "nd-router-solicit"];
 
-    zones = {
-      untrusted.interfaces = ["wan"];
-      lan.interfaces = ["lan-self"];
-      proxy-home.interfaces = ["proxy-home"];
-    };
+  #   zones = {
+  #     untrusted.interfaces = ["wan"];
+  #     lan.interfaces = ["lan-self"];
+  #     proxy-home.interfaces = ["proxy-home"];
+  #   };
 
-    rules = {
-      masquerade = {
-        from = ["lan"];
-        to = ["untrusted"];
-        masquerade = true;
-      };
+  #   rules = {
+  #     masquerade = {
+  #       from = ["lan"];
+  #       to = ["untrusted"];
+  #       masquerade = true;
+  #     };
 
-      outbound = {
-        from = ["lan"];
-        to = ["lan" "untrusted"];
-        late = true; # Only accept after any rejects have been processed
-        verdict = "accept";
-      };
+  #     outbound = {
+  #       from = ["lan"];
+  #       to = ["lan" "untrusted"];
+  #       late = true; # Only accept after any rejects have been processed
+  #       verdict = "accept";
+  #     };
 
-      lan-to-local = {
-        from = ["lan"];
-        to = ["local"];
+  #     lan-to-local = {
+  #       from = ["lan"];
+  #       to = ["local"];
 
-        allowedUDPPorts = [51444];
-        # allowedUDPPorts = [config.wireguard.proxy-home.server.port];
-      };
+  #       allowedUDPPorts = [51444];
+  #       # allowedUDPPorts = [config.wireguard.proxy-home.server.port];
+  #     };
 
-      # Forward traffic between participants
-      forward-proxy-home-vpn-traffic = {
-        from = ["proxy-home"];
-        to = ["proxy-home"];
-        verdict = "accept";
-      };
-    };
-  };
+  #     # Forward traffic between participants
+  #     forward-proxy-home-vpn-traffic = {
+  #       from = ["proxy-home"];
+  #       to = ["proxy-home"];
+  #       verdict = "accept";
+  #     };
+  #   };
+  # };
 
   # tensorfiles.services.networking.wireguard.enable = true;
   # tensorfiles.services.networking.wireguard.proxy-home.server = {
