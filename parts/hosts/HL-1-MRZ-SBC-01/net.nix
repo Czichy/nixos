@@ -167,7 +167,7 @@ in {
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
       ];
-      gateway = [globals.net.vlan.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       matchConfig.Name = "lan-self";
       networkConfig = {
         IPv4Forwarding = "yes";
