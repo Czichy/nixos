@@ -43,37 +43,37 @@ in {
     '';
   };
 
-  boot.initrd.systemd.network = {
-    enable = true;
-    networks = {
-      # "10-wan" = {
-      #   address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
-      #   gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
-      #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
-      #   matchConfig.MACAddress = macAddress_enp1s0;
-      #   networkConfig.IPv6PrivacyExtensions = "yes";
-      #   linkConfig.RequiredForOnline = "routable";
-      # };
-      "20-lan40" = {
-        address = [
-          # {
-          #   addressConfig.Address = "fd12:3456:789a::1/64";
-          # }
-          globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
-          globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
-        ];
-        gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
-        # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
-        matchConfig.MACAddress = macAddress_enp4s0;
-        networkConfig = {
-          IPv4Forwarding = "yes";
-          IPv6PrivacyExtensions = "yes";
-          MulticastDNS = true;
-        };
-        linkConfig.RequiredForOnline = "routable";
-      };
-    };
-  };
+  # boot.initrd.systemd.network = {
+  #   enable = true;
+  #   networks = {
+  #     # "10-wan" = {
+  #     #   address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
+  #     #   gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
+  #     #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
+  #     #   matchConfig.MACAddress = macAddress_enp1s0;
+  #     #   networkConfig.IPv6PrivacyExtensions = "yes";
+  #     #   linkConfig.RequiredForOnline = "routable";
+  #     # };
+  #     "20-lan40" = {
+  #       address = [
+  #         # {
+  #         #   addressConfig.Address = "fd12:3456:789a::1/64";
+  #         # }
+  #         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
+  #         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
+  #       ];
+  #       gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+  #       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+  #       matchConfig.MACAddress = macAddress_enp4s0;
+  #       networkConfig = {
+  #         IPv4Forwarding = "yes";
+  #         IPv6PrivacyExtensions = "yes";
+  #         MulticastDNS = true;
+  #       };
+  #       linkConfig.RequiredForOnline = "routable";
+  #     };
+  #   };
+  # };
 
   # |----------------------------------------------------------------------| #
   # Create a MACVTAP for ourselves too, so that we can communicate with
@@ -108,7 +108,7 @@ in {
 
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {
-    "10-enp4s0-untagged" = {
+    "20-enp4s0-untagged" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
       gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
