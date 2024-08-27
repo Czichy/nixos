@@ -111,6 +111,7 @@ in {
     "20-enp4s0-untagged" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
+      address = ["10.15.40.254/24"];
       gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
@@ -129,7 +130,7 @@ in {
     "30-servers" = {
       matchConfig.Name = "servers";
       matchConfig.Type = "vlan";
-      address = ["10.15.40.10/24"];
+      address = ["10.15.40.20/24"];
       gateway = ["10.15.40.99"];
       networkConfig = {
         ConfigureWithoutCarrier = true;
@@ -153,7 +154,7 @@ in {
       matchConfig.Name = "mgmt";
       matchConfig.Type = "vlan";
       bridgeConfig = {};
-      address = ["10.15.100.10/24"];
+      address = ["10.15.100.20/24"];
       gateway = ["10.15.100.99"];
       networkConfig = {
         ConfigureWithoutCarrier = true;
@@ -162,7 +163,7 @@ in {
       linkConfig.RequiredForOnline = "routable";
     };
 
-    "20-lan-self" = {
+    "30-lan-self" = {
       address = [
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
@@ -184,9 +185,9 @@ in {
       #   {Prefix = globals.net.home-lan.cidrv6;}
       # ];
       # Delegate prefix
-      dhcpPrefixDelegationConfig = {
-        SubnetId = "22";
-      };
+      # dhcpPrefixDelegationConfig = {
+      #   SubnetId = "22";
+      # };
       # # Announce a static prefix
       # ipv6Prefixes = [
       #   {ipv6PrefixConfig.Prefix = globals.net.vlan40.cidrv6;}
