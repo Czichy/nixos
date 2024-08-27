@@ -111,7 +111,7 @@ in {
     "20-enp4s0-untagged" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
-      address = ["10.15.40.254/24"];
+      address = ["10.15.40.154/24"];
       gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
