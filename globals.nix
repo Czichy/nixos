@@ -69,6 +69,7 @@ in {
       vlan100 = {
         cidrv4 = "10.15.100.0/24";
         # cidrv6 = "fd10::/64";
+        hosts.opnsense.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 254;
       };

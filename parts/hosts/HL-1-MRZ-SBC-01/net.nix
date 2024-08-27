@@ -74,6 +74,7 @@ in {
     };
   };
 
+  # |----------------------------------------------------------------------| #
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.
   systemd.network.netdevs."10-lan-self" = {
@@ -87,10 +88,41 @@ in {
     '';
   };
 
+  systemd.network.netdevs."10-trust" = {
+    netdevConfig = {
+      Kind = "vlan";
+      Name = "trust";
+      Description = "Trust VLAN10 OZ";
+    };
+    vlanConfig.Id = 10;
+  };
+
+  systemd.network.netdevs."10-servers" = {
+    netdevConfig = {
+      Kind = "vlan";
+      Name = "servers";
+      Description = "Servers VLAN40 RZ";
+    };
+    vlanConfig.Id = 40;
+  };
+
+  systemd.network.netdevs."10-mgmt" = {
+    netdevConfig = {
+      Kind = "vlan";
+      Name = "mgmt";
+      Description = "Management VLAN100 MRZ";
+    };
+    vlanConfig.Id = 100;
+  };
+  # |----------------------------------------------------------------------| #
   systemd.network.networks = {
     "10-lan" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
+      vlan = [
+        "servers"
+        "mgmt"
+      ];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
@@ -100,6 +132,30 @@ in {
         [Network]
         MACVLAN=lan-self
       '';
+    };
+    "30-servers" = {
+      matchConfig.Name = "servers";
+      matchConfig.Type = "vlan";
+      # address = ["10.15.40.62/24"];
+      # gateway = ["10.15.40.99"];
+      networkConfig = {
+        ConfigureWithoutCarrier = true;
+        DHCP = "yes";
+      };
+      linkConfig.RequiredForOnline = "routable";
+    };
+
+    "30-mgmt" = {
+      matchConfig.Name = "mgmt";
+      matchConfig.Type = "vlan";
+      bridgeConfig = {};
+      address = ["10.15.100.10/24"];
+      gateway = ["10.15.100.99"];
+      networkConfig = {
+        ConfigureWithoutCarrier = true;
+        DHCP = "yes";
+      };
+      linkConfig.RequiredForOnline = "routable";
     };
     "10-wan" = {
       #DHCP = "yes";

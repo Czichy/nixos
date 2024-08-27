@@ -134,11 +134,11 @@ in {
     "30-trust" = {
       matchConfig.Name = "trust";
       matchConfig.Type = "vlan";
-      # address = ["10.15.10.62/24"];
-      # gateway = ["10.15.10.99"];
+      address = ["10.15.10.62/24"];
+      gateway = ["10.15.10.99"];
       networkConfig = {
         ConfigureWithoutCarrier = true;
-        DHCP = "yes";
+        DHCP = "no";
       };
       linkConfig.RequiredForOnline = "routable";
     };
