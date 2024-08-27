@@ -5,7 +5,7 @@
   ...
 }
 : let
-  macAddress_enp1s0 = "60:be:b4:19:a8:4c";
+  # macAddress_enp1s0 = "60:be:b4:19:a8:4c";
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
@@ -46,14 +46,14 @@ in {
   boot.initrd.systemd.network = {
     enable = true;
     networks = {
-      "10-wan" = {
-        address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
-        gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
-        # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
-        matchConfig.MACAddress = macAddress_enp1s0;
-        networkConfig.IPv6PrivacyExtensions = "yes";
-        linkConfig.RequiredForOnline = "routable";
-      };
+      # "10-wan" = {
+      #   address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
+      #   gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
+      #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
+      #   matchConfig.MACAddress = macAddress_enp1s0;
+      #   networkConfig.IPv6PrivacyExtensions = "yes";
+      #   linkConfig.RequiredForOnline = "routable";
+      # };
       "20-lan40" = {
         address = [
           # {
@@ -62,6 +62,7 @@ in {
           globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
           globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
         ];
+        gateway = [globals.net.vlan.hosts.opnsense.ipv4];
         # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
         matchConfig.MACAddress = macAddress_enp4s0;
         networkConfig = {
@@ -74,7 +75,6 @@ in {
     };
   };
 
-  # |----------------------------------------------------------------------| #
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.
   systemd.network.netdevs."10-lan-self" = {
@@ -88,41 +88,11 @@ in {
     '';
   };
 
-  systemd.network.netdevs."10-trust" = {
-    netdevConfig = {
-      Kind = "vlan";
-      Name = "trust";
-      Description = "Trust VLAN10 OZ";
-    };
-    vlanConfig.Id = 10;
-  };
-
-  systemd.network.netdevs."10-servers" = {
-    netdevConfig = {
-      Kind = "vlan";
-      Name = "servers";
-      Description = "Servers VLAN40 RZ";
-    };
-    vlanConfig.Id = 40;
-  };
-
-  systemd.network.netdevs."10-mgmt" = {
-    netdevConfig = {
-      Kind = "vlan";
-      Name = "mgmt";
-      Description = "Management VLAN100 MRZ";
-    };
-    vlanConfig.Id = 100;
-  };
-  # |----------------------------------------------------------------------| #
   systemd.network.networks = {
     "10-lan" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
-      vlan = [
-        "servers"
-        "mgmt"
-      ];
+      gateway = [globals.net.vlan.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
@@ -133,47 +103,24 @@ in {
         MACVLAN=lan-self
       '';
     };
-    "30-servers" = {
-      matchConfig.Name = "servers";
-      matchConfig.Type = "vlan";
-      # address = ["10.15.40.62/24"];
-      # gateway = ["10.15.40.99"];
-      networkConfig = {
-        ConfigureWithoutCarrier = true;
-        DHCP = "yes";
-      };
-      linkConfig.RequiredForOnline = "routable";
-    };
-
-    "30-mgmt" = {
-      matchConfig.Name = "mgmt";
-      matchConfig.Type = "vlan";
-      bridgeConfig = {};
-      address = ["10.15.100.10/24"];
-      gateway = ["10.15.100.99"];
-      networkConfig = {
-        ConfigureWithoutCarrier = true;
-        DHCP = "yes";
-      };
-      linkConfig.RequiredForOnline = "routable";
-    };
-    "10-wan" = {
-      #DHCP = "yes";
-      #dhcpV4Config.UseDNS = false;
-      #dhcpV6Config.UseDNS = false;
-      #ipv6AcceptRAConfig.UseDNS = false;
-      address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
-      gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
-      # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
-      matchConfig.MACAddress = macAddress_enp1s0;
-      networkConfig.IPv6PrivacyExtensions = "yes";
-      linkConfig.RequiredForOnline = "routable";
-    };
+    # "10-wan" = {
+    #   #DHCP = "yes";
+    #   #dhcpV4Config.UseDNS = false;
+    #   #dhcpV6Config.UseDNS = false;
+    #   #ipv6AcceptRAConfig.UseDNS = false;
+    #   address = [globals.net.home-wan.hosts.HL-1-MRZ-SBC-01.cidrv4];
+    #   gateway = [globals.net.home-wan.hosts.opnsense.ipv4];
+    #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
+    #   matchConfig.MACAddress = macAddress_enp1s0;
+    #   networkConfig.IPv6PrivacyExtensions = "yes";
+    #   linkConfig.RequiredForOnline = "routable";
+    # };
     "20-lan-self" = {
       address = [
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
       ];
+      gateway = [globals.net.vlan.hosts.opnsense.ipv4];
       matchConfig.Name = "lan-self";
       networkConfig = {
         IPv4Forwarding = "yes";
