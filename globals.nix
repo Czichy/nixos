@@ -42,9 +42,9 @@ in {
         cidrv6 = "fd10::/64";
         hosts.opnsense.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
+        hosts.HL-1-MRZ-SBC-01.id = 20;
         # hosts.sire.id = 2;
-        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 148;
+        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 21;
         hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
         # hosts.sire-samba.id = 20;
       };
@@ -53,16 +53,16 @@ in {
       vlan60 = {
         cidrv4 = "10.15.60.0/24";
         # cidrv6 = "fd10::/64";
-        hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
+        # hosts.HL-1-OZ-PC-01.id = 62;
+        # hosts.HL-1-MRZ-SBC-01.id = 254;
       };
 
       #DMZ
       vlan70 = {
         cidrv4 = "10.15.70.0/24";
         # cidrv6 = "fd10::/64";
-        hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
+        # hosts.HL-1-OZ-PC-01.id = 62;
+        # hosts.HL-1-MRZ-SBC-01.id = 254;
       };
 
       #Management
@@ -71,7 +71,7 @@ in {
         # cidrv6 = "fd10::/64";
         hosts.opnsense.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
+        hosts.HL-1-MRZ-SBC-01.id = 20;
       };
 
       proxy-home = {

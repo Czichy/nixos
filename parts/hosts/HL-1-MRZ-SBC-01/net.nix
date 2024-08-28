@@ -111,6 +111,8 @@ in {
     "20-enp4s0-untagged" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
+      # to prevent conflicts with vlan networks as they have the same MAC
+      matchConfig.Type = "ether";
       address = [
         "10.15.40.154/24"
         "10.15.1.42/24"
@@ -134,8 +136,13 @@ in {
     "30-servers" = {
       matchConfig.Name = "servers";
       matchConfig.Type = "vlan";
-      address = ["10.15.40.20/24"];
-      gateway = ["10.15.40.99"];
+      address = [
+        globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
+        # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
+      ];
+      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      # address = ["10.15.40.20/24"];
+      # gateway = ["10.15.40.99"];
       networkConfig = {
         ConfigureWithoutCarrier = true;
         DHCP = "yes";
@@ -158,11 +165,16 @@ in {
       matchConfig.Name = "mgmt";
       matchConfig.Type = "vlan";
       bridgeConfig = {};
+      address = [
+        globals.net.vlan100.hosts.HL-1-MRZ-SBC-01.cidrv4
+        # globals.net.vlan100.hosts.HL-1-MRZ-SBC-01.cidrv6
+      ];
+      gateway = [globals.net.vlan100.hosts.opnsense.ipv4];
       # address = ["10.15.100.20/24"];
       # gateway = ["10.15.100.99"];
       networkConfig = {
         ConfigureWithoutCarrier = true;
-        DHCP = "yes";
+        DHCP = "no";
       };
       linkConfig.RequiredForOnline = "routable";
     };
@@ -170,7 +182,7 @@ in {
     "30-lan-self" = {
       address = [
         globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
-        globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
+        # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
       ];
       gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       matchConfig.Name = "lan-self";

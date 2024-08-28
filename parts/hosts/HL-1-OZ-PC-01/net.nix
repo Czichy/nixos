@@ -105,6 +105,7 @@ in {
     "20-enp30s0-untagged" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
       matchConfig.MACAddress = macAddress_enp39s0;
+      # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
       # address = ["10.15.1.62/24"];
       address = [
@@ -134,8 +135,8 @@ in {
     "30-trust" = {
       matchConfig.Name = "trust";
       matchConfig.Type = "vlan";
-      address = ["10.15.10.62/24"];
-      gateway = ["10.15.10.99"];
+      address = [globals.net.vlan10.hosts.HL-1-OZ-PC-01.cidrv4];
+      gateway = [globals.net.vlan10.hosts.opnsense.ipv4];
       networkConfig = {
         ConfigureWithoutCarrier = true;
         DHCP = "no";
