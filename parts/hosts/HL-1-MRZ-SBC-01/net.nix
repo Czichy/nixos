@@ -96,6 +96,10 @@ in {
     };
     vlanConfig.Id = 40;
   };
+  systemd.network.netdevs."10-br40" = {
+    netdevConfig.Kind = "bridge";
+    netdevConfig.Name = "br40";
+  };
 
   systemd.network.netdevs."10-mgmt" = {
     netdevConfig = {
@@ -128,26 +132,42 @@ in {
       ];
       networkConfig.LinkLocalAddressing = "no";
       linkConfig.RequiredForOnline = "carrier";
-      extraConfig = ''
-        [Network]
-        MACVLAN=lan-self
-      '';
+      # extraConfig = ''
+      #   [Network]
+      #   MACVLAN=lan-self
+      # '';
     };
-    "30-servers" = {
-      matchConfig.Name = "servers";
-      matchConfig.Type = "vlan";
-      address = [
-        globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
-        # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
-      ];
-      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
-      # address = ["10.15.40.20/24"];
-      # gateway = ["10.15.40.99"];
-      networkConfig = {
-        ConfigureWithoutCarrier = true;
-        DHCP = "yes";
-      };
-      linkConfig.RequiredForOnline = "routable";
+    # "30-servers" = {
+    #   matchConfig.Name = "servers";
+    #   matchConfig.Type = "vlan";
+    #   address = [
+    #     globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
+    #     # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
+    #   ];
+    #   gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+    #   # address = ["10.15.40.20/24"];
+    #   # gateway = ["10.15.40.99"];
+    #   networkConfig.Bridge = "br20";
+    #   networkConfig = {
+    #     ConfigureWithoutCarrier = true;
+    #     DHCP = "yes";
+    #   };
+    #   linkConfig.RequiredForOnline = "routable";
+    # };
+
+    "30-vm40-bridge" = {
+      matchConfig.Name = ["servers" "vm-40-*"];
+      networkConfig.Bridge = "br20";
+      networkConfig.DHCP = "no";
+      networkConfig.LinkLocalAddressing = "no";
+      networkConfig.IPv6PrivacyExtensions = "kernel";
+    };
+
+    "20-br40" = {
+      matchConfig.Name = "br40";
+      networkConfig.DHCP = "no";
+      networkConfig.LinkLocalAddressing = "no";
+      networkConfig.IPv6PrivacyExtensions = "kernel";
     };
     # "10-wan" = {
     #   #DHCP = "yes";

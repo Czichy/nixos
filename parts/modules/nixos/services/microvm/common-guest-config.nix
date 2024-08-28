@@ -42,7 +42,7 @@ in {
 
   systemd.network.networks."30-${guestCfg.networking.mainLinkName}" = {
     matchConfig.Name = guestCfg.networking.mainLinkName;
-    #matchConfig.Type = "ether";
+    # matchConfig.Type = "ether";
     DHCP = "yes";
     # XXX: Do we really want this?
     dhcpV4Config.UseDNS = false;

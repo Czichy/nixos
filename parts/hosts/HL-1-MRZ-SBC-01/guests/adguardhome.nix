@@ -20,7 +20,17 @@ in {
     domain = ".";
     network = "home-lan";
   };
-
+  systemd.network.networks."20-tap" = {
+    matchConfig.Type = "ether";
+    matchConfig.MACAddress = "5E:A4:B9:D2:F8:03";
+    networkConfig = {
+      Address = ["10.15.40.40/24"];
+      Gateway = "10.15.40.99";
+      DNS = ["8.8.8.8"];
+      IPv6AcceptRA = true;
+      DHCP = "yes";
+    };
+  };
   # nodes.sentinel = {
   #   services.nginx = {
   #     upstreams.adguardhome = {
