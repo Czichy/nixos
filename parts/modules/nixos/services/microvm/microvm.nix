@@ -70,16 +70,16 @@ in {
             mode = "bridge";
           };
         }
-        {
-          type = "user";
-          id = "qemu";
-          mac = "02:00:00:01:01:01";
-        }
-        {
-          type = "tap";
-          id = "vm-40-${builtins.substring 0 9 guestName}";
-          mac = "5E:A4:B9:D2:F8:03";
-        }
+        # {
+        #   type = "user";
+        #   id = "qemu";
+        #   mac = "02:00:00:01:01:01";
+        # }
+        # {
+        #   type = "tap";
+        #   id = "vm-40-${builtins.substring 0 9 guestName}";
+        #   mac = "5E:A4:B9:D2:F8:03";
+        # }
       ];
 
       # Block device images for persistent storage

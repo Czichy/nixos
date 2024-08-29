@@ -9,13 +9,19 @@ in {
   services.openssh = {
     enable = true;
     settings.PermitRootLogin = "yes";
-    hostKeys = [
-      {
-        path = "/etc/ssh/ssh_host_ed25519_key";
-        type = "ed25519";
-      }
-    ];
+    settings.PasswordAuthentication = true;
+    # hostKeys = [
+    #   {
+    #     path = "/etc/ssh/ssh_host_ed25519_key";
+    #     type = "ed25519";
+    #   }
+    # ];
   };
+
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKQgoSENg960XY9wU77q8p1+4WgUhEb10xlc27RWcmNE czichy@desktop"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
+  ];
 
   services.resolved = {
     # Disable local DNS stub listener on 127.0.0.53
@@ -24,10 +30,10 @@ in {
     '';
   };
 
-  users.users.root.password = "";
-  users.users.root = {
-    openssh.authorizedKeys.keys = authorizedKeys;
-  };
+  users.users.root.password = "1234";
+  # users.users.root = {
+  #   openssh.authorizedKeys.keys = authorizedKeys;
+  # };
 
   nix = {
     settings.auto-optimise-store = mkForce false;
@@ -40,7 +46,7 @@ in {
   systemd.network.enable = true;
   networking.useNetworkd = true;
 
-  systemd.network.networks."30-${guestCfg.networking.mainLinkName}" = {
+  systemd.network.networks."10-${guestCfg.networking.mainLinkName}" = {
     matchConfig.Name = guestCfg.networking.mainLinkName;
     # matchConfig.Type = "ether";
     DHCP = "yes";
@@ -50,12 +56,12 @@ in {
     ipv6AcceptRAConfig.UseDNS = false;
     networkConfig = {
       # Address = ["10.15.40.148/24"];
-      Address = [guestCfg.networking.address];
-      Gateway = guestCfg.networking.gateway;
+      # Address = [guestCfg.networking.address];
+      # Gateway = guestCfg.networking.gateway;
       # DNS = guestCfg.networking.dns;
-      # IPv6PrivacyExtensions = "yes";
-      # MulticastDNS = true;
-      # IPv6AcceptRA = true;
+      IPv6PrivacyExtensions = "yes";
+      MulticastDNS = true;
+      IPv6AcceptRA = true;
     };
     linkConfig.RequiredForOnline = "routable";
   };

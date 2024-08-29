@@ -99,4 +99,10 @@
   networking.firewall.checkReversePath = false;
 
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
+  users.users.qemu-libvirtd.group = "qemu-libvirtd";
+  users.groups.qemu-libvirtd = {};
+
+  security.pam.services = {
+    swaylock = {};
+  };
 }

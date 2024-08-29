@@ -33,7 +33,16 @@
         "sd_mod"
         "sdhci_pci"
       ];
-      kernelModules = [];
+      kernelModules = [
+        "kvm-amd"
+        "amdgpu"
+        "i2c-dev"
+        "vfio"
+        "vfio_iommu_type1"
+        "vfio_pci"
+        # "vfio_virqfd"
+        "xhci_pci"
+      ];
 
       systemd = {
         enable = true;
@@ -50,7 +59,7 @@
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
     # NOTE: Add "rd.systemd.unit=rescue.target" to debug initrd
-    kernelParams = ["log_buf_len=16M"]; # must be {power of two}[KMG]
+    kernelParams = ["intel_iommu=on" "iommu=pt" "log_buf_len=16M"]; # must be {power of two}[KMG]
     tmp.useTmpfs = true;
 
     # loader.timeout = lib.mkDefault 2;

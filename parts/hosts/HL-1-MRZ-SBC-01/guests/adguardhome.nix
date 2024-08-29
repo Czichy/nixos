@@ -13,24 +13,23 @@ in {
   #   client.via = "sentinel";
   #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
   # };
-
   globals.services.adguardhome.domain = adguardhomeDomain;
-  globals.monitoring.dns.adguardhome = {
-    server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
-    domain = ".";
-    network = "home-lan";
-  };
-  systemd.network.networks."20-tap" = {
-    matchConfig.Type = "ether";
-    matchConfig.MACAddress = "5E:A4:B9:D2:F8:03";
-    networkConfig = {
-      Address = ["10.15.40.40/24"];
-      Gateway = "10.15.40.99";
-      DNS = ["8.8.8.8"];
-      IPv6AcceptRA = true;
-      DHCP = "yes";
-    };
-  };
+  # globals.monitoring.dns.adguardhome = {
+  #   server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
+  #   domain = ".";
+  #   network = "home-lan";
+  # };
+  # systemd.network.networks."20-tap" = {
+  #   matchConfig.Type = "ether";
+  #   matchConfig.MACAddress = "60:be:b4:19:a8:4f";
+  #   networkConfig = {
+  #     Address = ["10.15.1.40/24"];
+  #     Gateway = "10.15.1.99";
+  #     DNS = ["8.8.8.8"];
+  #     IPv6AcceptRA = true;
+  #     DHCP = "yes";
+  #   };
+  # };
   # nodes.sentinel = {
   #   services.nginx = {
   #     upstreams.adguardhome = {

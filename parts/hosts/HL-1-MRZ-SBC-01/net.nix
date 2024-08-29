@@ -112,7 +112,20 @@ in {
 
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {
-    "20-enp4s0-untagged" = {
+    # "20-lan" = {
+    #   matchConfig.MACAddress = macAddress_enp4s0;
+    #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+    #   # This interface should only be used from attached macvtaps.
+    #   # So don't acquire a link local address and only wait for
+    #   # this interface to gain a carrier.
+    #   networkConfig.LinkLocalAddressing = "no";
+    #   linkConfig.RequiredForOnline = "carrier";
+    #   extraConfig = ''
+    #     [Network]
+    #     MACVLAN=lan-self
+    #   '';
+    # };
+    "30-lan" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
       # to prevent conflicts with vlan networks as they have the same MAC
@@ -121,7 +134,7 @@ in {
         "10.15.40.154/24"
         "10.15.1.42/24"
       ];
-      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
@@ -132,43 +145,44 @@ in {
       ];
       networkConfig.LinkLocalAddressing = "no";
       linkConfig.RequiredForOnline = "carrier";
-      # extraConfig = ''
-      #   [Network]
-      #   MACVLAN=lan-self
-      # '';
+      extraConfig = ''
+        [Network]
+        MACVLAN=lan-self
+      '';
     };
-    # "30-servers" = {
-    #   matchConfig.Name = "servers";
-    #   matchConfig.Type = "vlan";
-    #   address = [
-    #     globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
-    #     # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
-    #   ];
-    #   gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
-    #   # address = ["10.15.40.20/24"];
-    #   # gateway = ["10.15.40.99"];
+    "30-servers" = {
+      # matchConfig.Name = ["servers" "lan-self"];
+      matchConfig.Name = "servers";
+      matchConfig.Type = "vlan";
+      # address = [
+      # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
+      # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
+      # ];
+      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      # address = ["10.15.40.20/24"];
+      # gateway = ["10.15.40.99"];
+      # networkConfig.Bridge = "br20";
+      # networkConfig = {
+      #   ConfigureWithoutCarrier = true;
+      #   DHCP = "yes";
+      # };
+      linkConfig.RequiredForOnline = "routable";
+    };
+
+    # "30-vm40-bridge" = {
+    #   matchConfig.Name = ["servers" "vm-40-*"];
     #   networkConfig.Bridge = "br20";
-    #   networkConfig = {
-    #     ConfigureWithoutCarrier = true;
-    #     DHCP = "yes";
-    #   };
-    #   linkConfig.RequiredForOnline = "routable";
+    #   networkConfig.DHCP = "no";
+    #   networkConfig.LinkLocalAddressing = "no";
+    #   networkConfig.IPv6PrivacyExtensions = "kernel";
     # };
 
-    "30-vm40-bridge" = {
-      matchConfig.Name = ["servers" "vm-40-*"];
-      networkConfig.Bridge = "br20";
-      networkConfig.DHCP = "no";
-      networkConfig.LinkLocalAddressing = "no";
-      networkConfig.IPv6PrivacyExtensions = "kernel";
-    };
-
-    "20-br40" = {
-      matchConfig.Name = "br40";
-      networkConfig.DHCP = "no";
-      networkConfig.LinkLocalAddressing = "no";
-      networkConfig.IPv6PrivacyExtensions = "kernel";
-    };
+    # "20-br40" = {
+    #   matchConfig.Name = "br40";
+    #   networkConfig.DHCP = "no";
+    #   networkConfig.LinkLocalAddressing = "no";
+    #   networkConfig.IPv6PrivacyExtensions = "kernel";
+    # };
     # "10-wan" = {
     #   #DHCP = "yes";
     #   #dhcpV4Config.UseDNS = false;
@@ -200,12 +214,18 @@ in {
     };
 
     "30-lan-self" = {
-      address = [
-        globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
-        # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
-      ];
-      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       matchConfig.Name = "lan-self";
+      # address = [
+      # "10.15.40.177/24"
+      # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4
+      # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
+      # ];
+      # gateway = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4];
+      # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      vlan = [
+        "servers"
+        # "mgmt"
+      ];
       networkConfig = {
         IPv4Forwarding = "yes";
         IPv6PrivacyExtensions = "yes";
@@ -239,6 +259,7 @@ in {
       # };
       linkConfig.RequiredForOnline = "routable";
     };
+
     # Remaining macvtap interfaces should not be touched.
     "90-macvtap-ignore" = {
       matchConfig.Kind = "macvtap";
