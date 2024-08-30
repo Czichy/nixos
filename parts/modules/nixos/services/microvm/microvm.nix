@@ -64,9 +64,12 @@ in {
         {
           type = "macvtap";
           id = "vm-${guestName}";
+          # MAC address of the guest’s network interface
+          # mac = "60:be:b4:19:a8:4f";
           inherit (guestCfg.microvm) mac;
           macvtap = {
-            link = guestCfg.microvm.macvtap;
+            # Attach network interface to host interface for type = “macvlan”
+            link = "servers"; #guestCfg.microvm.macvtap;
             mode = "bridge";
           };
         }

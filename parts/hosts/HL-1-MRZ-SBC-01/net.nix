@@ -83,6 +83,7 @@ in {
       Name = "lan-self";
       Kind = "macvlan";
     };
+    vlanConfig.Id = 40;
     extraConfig = ''
       [MACVLAN]
       Mode=bridge
@@ -96,10 +97,10 @@ in {
     };
     vlanConfig.Id = 40;
   };
-  systemd.network.netdevs."10-br40" = {
-    netdevConfig.Kind = "bridge";
-    netdevConfig.Name = "br40";
-  };
+  # systemd.network.netdevs."10-br40" = {
+  #   netdevConfig.Kind = "bridge";
+  #   netdevConfig.Name = "br40";
+  # };
 
   systemd.network.netdevs."10-mgmt" = {
     netdevConfig = {
@@ -221,11 +222,11 @@ in {
       # globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6
       # ];
       # gateway = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4];
-      # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
-      vlan = [
-        "servers"
-        # "mgmt"
-      ];
+      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      # vlan = [
+      #   "servers"
+      #   # "mgmt"
+      # ];
       networkConfig = {
         IPv4Forwarding = "yes";
         IPv6PrivacyExtensions = "yes";

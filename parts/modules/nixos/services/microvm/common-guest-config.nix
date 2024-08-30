@@ -48,14 +48,16 @@ in {
 
   systemd.network.networks."10-${guestCfg.networking.mainLinkName}" = {
     matchConfig.Name = guestCfg.networking.mainLinkName;
+    matchConfig.Mac = "";
     # matchConfig.Type = "ether";
-    DHCP = "yes";
+    DHCP = "no";
     # XXX: Do we really want this?
     dhcpV4Config.UseDNS = false;
     dhcpV6Config.UseDNS = false;
     ipv6AcceptRAConfig.UseDNS = false;
     networkConfig = {
-      # Address = ["10.15.40.148/24"];
+      Address = ["10.15.40.148/24"];
+      Gateway = "10.15.40.99";
       # Address = [guestCfg.networking.address];
       # Gateway = guestCfg.networking.gateway;
       # DNS = guestCfg.networking.dns;

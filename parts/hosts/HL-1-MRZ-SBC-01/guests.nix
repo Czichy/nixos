@@ -44,10 +44,11 @@ in {
               system = "x86_64-linux";
               macvtap = "enp4s0";
               # macvtap = "lan";
-              baseMac = macAddress_enp4s0; # TODO move to config
+              # baseMac = macAddress_enp4s0; # TODO move to config
             };
             networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
-            networking.gateway = "10.15.40.99";
+            networking.gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+            # networking.gateway = "10.15.40.99";
             extraSpecialArgs = {
               inherit globals;
               inherit lib;
