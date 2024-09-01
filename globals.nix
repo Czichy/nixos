@@ -45,6 +45,7 @@ in {
         hosts.HL-1-MRZ-SBC-01.id = 20;
         # hosts.sire.id = 2;
         hosts.HL-1-MRZ-SBC-01-adguardhome.id = 21;
+        hosts.HL-1-MRZ-SBC-01-unifi.id = 22;
         hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
         # hosts.sire-samba.id = 20;
       };

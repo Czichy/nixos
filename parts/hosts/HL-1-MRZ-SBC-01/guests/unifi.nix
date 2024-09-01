@@ -5,21 +5,48 @@
   pkgs,
   ...
 }: let
-  unifiDomain = "unifi.czichy.com";
+  adguardhomeDomain = "unifi.czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
+  allowedRules = {
+    # https://help.ui.com/hc/en-us/articles/218506997-UniFi-Ports-Used
+    allowedTCPPorts = [
+      8080 # Port for UAP to inform controller.
+      8880 # Port used for HTTP portal redirection.
+      8843 # Port used for HTTPS portal redirection.
+      8443 # Port used for application GUI/API as seen in a web browser.
+      6789 # Port for UniFi mobile speed test.
+    ];
+    allowedUDPPorts = [
+      3478 # UDP port used for STUN.
+      1900 # Port used for "Make application discoverable on L2 network" in the UniFi Network settings.
+      10001 # Port used for device discovery.
+    ];
+  };
+  # allowedInterfaces = [
+  #   "enp57s0u1u3" # sighx2.1
+  # ];
 in {
   # wireguard.proxy-sentinel = {
   #   client.via = "sentinel";
   #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
   # };
-
-  globals.services.unifi.domain = unifiDomain;
+  globals.services.unifi.domain = adguardhomeDomain;
   # globals.monitoring.dns.adguardhome = {
   #   server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
   #   domain = ".";
   #   network = "home-lan";
   # };
-
+  # systemd.network.networks."20-tap" = {
+  #   matchConfig.Type = "ether";
+  #   matchConfig.MACAddress = "60:be:b4:19:a8:4f";
+  #   networkConfig = {
+  #     Address = ["10.15.1.40/24"];
+  #     Gateway = "10.15.1.99";
+  #     DNS = ["8.8.8.8"];
+  #     IPv6AcceptRA = true;
+  #     DHCP = "yes";
+  #   };
+  # };
   # nodes.sentinel = {
   #   services.nginx = {
   #     upstreams.adguardhome = {
@@ -53,32 +80,19 @@ in {
   #   }
   # ];
 
-  # networking.firewall = {
-  #   allowedTCPPorts = [53 80 443 3000];
-  #   allowedUDPPorts = [53];
-  # };
+  networking.firewall = {
+    allowedTCPPorts = allowedRules.allowedTCPPorts;
+    allowedUDPPorts = allowedRules.allowedUDPPorts;
+  };
 
-  # topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
   services.unifi = {
     enable = true;
-    unifiPackage = pkgs.unifi8;
-    openFirewall = true;
-    mongodbPackage = pkgs.hello; # use ferretdb instead
+    openFirewall = false;
+    unifiPackage = pkgs.unifi6;
+    jrePackage = pkgs.jdk8_headless;
+    # mongodbPackage = pkgs.mongodb-3_4;
+    maximumJavaHeapSize = 256;
   };
-  services.ferretdb = {
-    enable = true;
-    package = pkgs.unstable.ferretdb;
-  };
-
-  # systemd.services.adguardhome = {
-  #   preStart = lib.mkAfter ''
-  #     INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
-  #       ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
-  #       "$STATE_DIRECTORY/AdGuardHome.yaml"
-  #   '';
-  #   serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
-  # };
-
   systemd.network.enable = true;
   networking.hostName = "HL-1-MRZ-SBC-01-unifi";
   # systemd.network.networks."99-v-lan" = {
