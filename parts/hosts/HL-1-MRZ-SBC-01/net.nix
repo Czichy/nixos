@@ -36,6 +36,12 @@ in {
     dnssec = "false";
     llmnr = "false";
     # Disable local DNS stub listener on 127.0.0.53
+    fallbackDns = [
+      "1.1.1.1"
+      "2606:4700:4700::1111"
+      "8.8.8.8"
+      "2001:4860:4860::8844"
+    ];
     extraConfig = ''
       Domains=~.
       MulticastDNS=true
