@@ -56,10 +56,10 @@ in {
     dhcpV6Config.UseDNS = false;
     ipv6AcceptRAConfig.UseDNS = false;
     networkConfig = {
-      Address = ["10.15.40.148/24"];
-      Gateway = "10.15.40.99";
-      # Address = [guestCfg.networking.address];
-      # Gateway = guestCfg.networking.gateway;
+      # Address = ["10.15.40.148/24"];
+      # Gateway = "10.15.40.99";
+      Address = [guestCfg.networking.address];
+      Gateway = guestCfg.networking.gateway;
       # DNS = guestCfg.networking.dns;
       IPv6PrivacyExtensions = "yes";
       MulticastDNS = true;

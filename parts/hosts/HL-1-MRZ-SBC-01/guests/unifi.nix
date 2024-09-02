@@ -5,96 +5,117 @@
   pkgs,
   ...
 }: let
-  adguardhomeDomain = "unifi.czichy.com";
-  # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
-  allowedRules = {
-    # https://help.ui.com/hc/en-us/articles/218506997-UniFi-Ports-Used
-    allowedTCPPorts = [
-      8080 # Port for UAP to inform controller.
-      8880 # Port used for HTTP portal redirection.
-      8843 # Port used for HTTPS portal redirection.
-      8443 # Port used for application GUI/API as seen in a web browser.
-      6789 # Port for UniFi mobile speed test.
-    ];
-    allowedUDPPorts = [
-      3478 # UDP port used for STUN.
-      1900 # Port used for "Make application discoverable on L2 network" in the UniFi Network settings.
-      10001 # Port used for device discovery.
-    ];
-  };
-  # allowedInterfaces = [
-  #   "enp57s0u1u3" # sighx2.1
-  # ];
+  # vaultwardenDomain = "pw.${globals.domains.personal}";
+  vaultwardenDomain = "unifi.czichy.com";
 in {
   # wireguard.proxy-sentinel = {
   #   client.via = "sentinel";
-  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
+  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
   # };
-  globals.services.unifi.domain = adguardhomeDomain;
-  # globals.monitoring.dns.adguardhome = {
-  #   server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
-  #   domain = ".";
-  #   network = "home-lan";
+
+  # age.secrets.vaultwarden-env = {
+  #   rekeyFile = config.node.secretsDir + "/vaultwarden-env.age";
+  #   mode = "440";
+  #   group = "vaultwarden";
   # };
-  # systemd.network.networks."20-tap" = {
-  #   matchConfig.Type = "ether";
-  #   matchConfig.MACAddress = "60:be:b4:19:a8:4f";
-  #   networkConfig = {
-  #     Address = ["10.15.1.40/24"];
-  #     Gateway = "10.15.1.99";
-  #     DNS = ["8.8.8.8"];
-  #     IPv6AcceptRA = true;
-  #     DHCP = "yes";
-  #   };
-  # };
+
+  environment.persistence."/persist".directories = [
+    {
+      directory = "/var/lib/vaultwarden";
+      user = "vaultwarden";
+      group = "vaultwarden";
+      mode = "0700";
+    }
+  ];
+
+  globals.services.vaultwarden.domain = vaultwardenDomain;
+  globals.monitoring.http.vaultwarden = {
+    url = "https://${vaultwardenDomain}";
+    expectedBodyRegex = "Vaultwarden Web";
+    network = "internet";
+  };
+
   # nodes.sentinel = {
   #   services.nginx = {
-  #     upstreams.adguardhome = {
-  #       # servers."${config.wireguard.proxy-sentinel.ipv4}:${toString config.services.adguardhome.port}" = {};
+  #     upstreams.vaultwarden = {
+  #       servers."${config.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
   #       extraConfig = ''
-  #         zone adguardhome 64k;
+  #         zone vaultwarden 64k;
   #         keepalive 2;
   #       '';
   #       monitoring = {
   #         enable = true;
-  #         expectedBodyRegex = "AdGuard Home";
+  #         expectedBodyRegex = "Vaultwarden Web";
   #       };
   #     };
-  #     virtualHosts.${adguardhomeDomain} = {
+  #     virtualHosts.${vaultwardenDomain} = {
   #       forceSSL = true;
   #       useACMEWildcardHost = true;
-  #       oauth2.enable = true;
-  #       oauth2.allowedGroups = ["access_adguardhome"];
+  #       extraConfig = ''
+  #         client_max_body_size 256M;
+  #       '';
   #       locations."/" = {
-  #         proxyPass = "http://adguardhome";
+  #         proxyPass = "http://vaultwarden";
   #         proxyWebsockets = true;
+  #         X-Frame-Options = "SAMEORIGIN";
   #       };
   #     };
   #   };
   # };
 
-  # environment.persistence."/persist".directories = [
-  #   {
-  #     directory = "/var/lib/private/AdGuardHome";
-  #     mode = "0700";
-  #   }
-  # ];
+  services.vaultwarden = {
+    enable = true;
+    dbBackend = "sqlite";
+    # WARN: Careful! The backup script does not remove files in the backup location
+    # if they were removed in the original location! Therefore, we use a directory
+    # that is not persisted and thus clean on every reboot.
+    backupDir = "/var/cache/vaultwarden-backup";
+    config = {
+      dataFolder = lib.mkForce "/var/lib/vaultwarden";
+      extendedLogging = true;
+      useSyslog = true;
+      webVaultEnabled = true;
 
-  networking.firewall = {
-    allowedTCPPorts = allowedRules.allowedTCPPorts;
-    allowedUDPPorts = allowedRules.allowedUDPPorts;
+      rocketAddress = "0.0.0.0";
+      rocketPort = 8012;
+
+      signupsAllowed = false;
+      passwordIterations = 1000000;
+      invitationsAllowed = true;
+      invitationOrgName = "Vaultwarden";
+      domain = "https://${vaultwardenDomain}";
+
+      smtpEmbedImages = true;
+      smtpSecurity = "force_tls";
+      smtpPort = 465;
+    };
+    environmentFile = config.age.secrets.vaultwarden-env.path;
   };
 
-  services.unifi = {
-    enable = true;
-    openFirewall = false;
-    unifiPackage = pkgs.unifi6;
-    jrePackage = pkgs.jdk8_headless;
-    # mongodbPackage = pkgs.mongodb-3_4;
-    maximumJavaHeapSize = 256;
+  # Replace uses of old name
+  systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
+  systemd.services.vaultwarden.serviceConfig = {
+    StateDirectory = lib.mkForce "vaultwarden";
+    RestartSec = "60"; # Retry every minute
+  };
+
+  # Needed so we don't run out of tmpfs space for large backups.
+  # Technically this could be cleared each boot but whatever.
+  environment.persistence."/state".directories = [
+    {
+      directory = config.services.vaultwarden.backupDir;
+      user = "vaultwarden";
+      group = "vaultwarden";
+      mode = "0700";
+    }
+  ];
+
+  backups.storageBoxes.dusk = {
+    subuser = "vaultwarden";
+    paths = [config.services.vaultwarden.backupDir];
   };
   systemd.network.enable = true;
-  networking.hostName = "HL-1-MRZ-SBC-01-unifi";
+  networking.hostName = "HL-1-MRZ-SBC-01-vw";
   # systemd.network.networks."99-v-lan" = {
   #   matchConfig.Type = "ether";
   #   DHCP = "yes";

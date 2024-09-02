@@ -8,6 +8,8 @@
 }: let
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {
+  microvm.mem = 1024 * 2;
+  # microvm.vcpu = 20;
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
@@ -47,8 +49,7 @@ in {
               # baseMac = macAddress_enp4s0; # TODO move to config
             };
             networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
-            networking.gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
-            # networking.gateway = "10.15.40.99";
+            networking.gateway = globals.net.vlan40.hosts.opnsense.ipv4;
             extraSpecialArgs = {
               inherit globals;
               inherit lib;
@@ -56,6 +57,10 @@ in {
             };
           };
       };
-    in ({} // mkMicrovm "adguardhome" {enableStorageDataset = true;});
+    in (
+      {}
+      // mkMicrovm "adguardhome" {enableStorageDataset = true;}
+      # // mkMicrovm "unifi" {enableStorageDataset = true;}
+    );
   };
 }
