@@ -117,10 +117,10 @@ in {
     }
   ];
 
-  backups.storageBoxes.dusk = {
-    subuser = "vaultwarden";
-    paths = [config.services.vaultwarden.backupDir];
-  };
+  # backups.storageBoxes.dusk = {
+  #   subuser = "vaultwarden";
+  #   paths = [config.services.vaultwarden.backupDir];
+  # };
   systemd.network.enable = true;
   networking.hostName = "HL-1-MRZ-SBC-01-vw";
   # systemd.network.networks."99-v-lan" = {
