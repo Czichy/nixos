@@ -4,12 +4,11 @@
   pkgs,
   inputs,
   globals,
+  secretsPath,
   ...
 }: let
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {
-  microvm.mem = 1024 * 2;
-  # microvm.vcpu = 20;
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
@@ -26,6 +25,7 @@ in {
         #   dataset = "rpool/encrypted/safe/vms/${guestName}";
         # };
         modules = [
+          ../../config/default.nix
           ../../../globals/globals.nix
           ./guests/${guestName}.nix
           {
@@ -37,6 +37,7 @@ in {
             };
           }
         ];
+        # ++ (inputs.nixpkgs.lib.attrValues config.flake.nixosModules);
       };
       mkMicrovm = guestName: opts: {
         ${guestName} =
@@ -51,6 +52,7 @@ in {
             networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
             networking.gateway = globals.net.vlan40.hosts.opnsense.ipv4;
             extraSpecialArgs = {
+              inherit secretsPath;
               inherit globals;
               inherit lib;
               inherit inputs;
@@ -60,6 +62,7 @@ in {
     in (
       {}
       // mkMicrovm "adguardhome" {enableStorageDataset = true;}
+      // mkMicrovm "vaultwarden" {enableStorageDataset = true;}
       # // mkMicrovm "unifi" {enableStorageDataset = true;}
     );
   };

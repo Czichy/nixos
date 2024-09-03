@@ -29,4 +29,8 @@ with lib; {
       type = types.str;
     };
   };
+  options.node.secretsDir = mkOption {
+    description = "Path to the secrets directory for this node.";
+    type = lib.types.path;
+  };
 }

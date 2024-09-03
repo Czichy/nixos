@@ -114,6 +114,7 @@
             ];
             extraSpecialArgs = {
               inherit (self) globals;
+              inherit (config.secrets) secretsPath;
             };
           }
       );
