@@ -25,7 +25,7 @@ in {
         #   dataset = "rpool/encrypted/safe/vms/${guestName}";
         # };
         modules = [
-          ../../config/default.nix
+          ../config/default.nix
           ../../../globals/globals.nix
           ./guests/${guestName}.nix
           {
