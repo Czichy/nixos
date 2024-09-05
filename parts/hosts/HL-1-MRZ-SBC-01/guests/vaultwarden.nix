@@ -39,33 +39,33 @@ in {
     network = "internet";
   };
 
-  # nodes.sentinel = {
-  #   services.nginx = {
-  #     upstreams.vaultwarden = {
-  #       servers."${config.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
-  #       extraConfig = ''
-  #         zone vaultwarden 64k;
-  #         keepalive 2;
-  #       '';
-  #       monitoring = {
-  #         enable = true;
-  #         expectedBodyRegex = "Vaultwarden Web";
-  #       };
-  #     };
-  #     virtualHosts.${vaultwardenDomain} = {
-  #       forceSSL = true;
-  #       useACMEWildcardHost = true;
-  #       extraConfig = ''
-  #         client_max_body_size 256M;
-  #       '';
-  #       locations."/" = {
-  #         proxyPass = "http://vaultwarden";
-  #         proxyWebsockets = true;
-  #         X-Frame-Options = "SAMEORIGIN";
-  #       };
-  #     };
-  #   };
-  # };
+  nodes.sentinel = {
+    services.nginx = {
+      upstreams.vaultwarden = {
+        servers."${config.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
+        extraConfig = ''
+          zone vaultwarden 64k;
+          keepalive 2;
+        '';
+        monitoring = {
+          enable = true;
+          expectedBodyRegex = "Vaultwarden Web";
+        };
+      };
+      virtualHosts.${vaultwardenDomain} = {
+        forceSSL = true;
+        useACMEWildcardHost = true;
+        extraConfig = ''
+          client_max_body_size 256M;
+        '';
+        locations."/" = {
+          proxyPass = "http://vaultwarden";
+          proxyWebsockets = true;
+          X-Frame-Options = "SAMEORIGIN";
+        };
+      };
+    };
+  };
 
   services.vaultwarden = {
     enable = true;
@@ -122,7 +122,7 @@ in {
   #   paths = [config.services.vaultwarden.backupDir];
   # };
   systemd.network.enable = true;
-  networking.hostName = "HL-1-MRZ-SBC-01-vw";
+  networking.hostName = "HL-1-MRZ-SBC-01-vaultwarden";
   # systemd.network.networks."99-v-lan" = {
   #   matchConfig.Type = "ether";
   #   DHCP = "yes";

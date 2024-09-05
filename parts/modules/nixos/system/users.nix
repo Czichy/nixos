@@ -74,6 +74,17 @@ in {
         '';
       };
 
+      uid = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "The uid to assign if it is missing in `users.users.<name>`.";
+      };
+      gid = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "The gid to assign if it is missing in `users.groups.<name>`.";
+      };
+
       extraGroups = mkOption {
         type = listOf str;
         default = [];
@@ -126,6 +137,7 @@ in {
     });
   };
 
+  imports = [../../../hosts/config/users.nix];
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {users.mutableUsers = _ false;}
@@ -138,6 +150,9 @@ in {
           name = _ _user;
           isNormalUser = _ (_user != "root");
           isSystemUser = _ (_user == "root");
+          uid = userCfg.uid;
+          group = _user;
+          autoSubUidGidRange = false;
           createHome = _ true;
           extraGroups = (optional (_user != "root" && userCfg.isSudoer) "wheel") ++ userCfg.extraGroups;
           home = _ (
@@ -154,6 +169,16 @@ in {
           openssh.authorizedKeys.keys = with userCfg.authorizedKeys; (mkIf enable (
             keysRaw ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [] pubkeys)
           ));
+        }
+      );
+    }
+    # |----------------------------------------------------------------------| #
+    {
+      users.groups = mapToAttrsAndMerge (attrNames cfg.usersSettings) (
+        _user: let
+          userCfg = cfg.usersSettings."${_user}";
+        in {
+          ${_user}.gid = userCfg.gid;
         }
       );
     }
@@ -181,6 +206,43 @@ in {
         allowed-users = users;
       };
     }
+    # |----------------------------------------------------------------------| #
+    # {
+    #   users.deterministicIds = let
+    #     uidGid = id: {
+    #       uid = id;
+    #       gid = id;
+    #     };
+    #   in {
+    #     systemd-oom = uidGid 999;
+    #     systemd-coredump = uidGid 998;
+    #     sshd = uidGid 997;
+    #     nscd = uidGid 996;
+    #     polkituser = uidGid 995;
+    #     microvm = uidGid 994;
+    #     promtail = uidGid 993;
+    #     grafana = uidGid 992;
+    #     acme = uidGid 991;
+    #     kanidm = uidGid 990;
+    #     loki = uidGid 989;
+    #     vaultwarden = uidGid 988;
+    #     oauth2-proxy = uidGid 987;
+    #     influxdb2 = uidGid 986;
+    #     telegraf = uidGid 985;
+    #     rtkit = uidGid 984;
+    #     git = uidGid 983;
+    #     redis-paperless = uidGid 982;
+    #     nixseparatedebuginfod = uidGid 981;
+    #     msr = uidGid 980;
+    #     fwupd-refresh = uidGid 979;
+    #     radicale = uidGid 978;
+    #     podman = uidGid 977;
+    #     maddy = uidGid 976;
+    #     minecraft = uidGid 975;
+    #     stalwart-mail = uidGid 974;
+    #     netbird-home = uidGid 973;
+    #   };
+    # }
     # |----------------------------------------------------------------------| #
   ]);
 

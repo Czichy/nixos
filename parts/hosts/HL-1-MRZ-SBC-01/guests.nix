@@ -26,6 +26,7 @@ in {
         # };
         modules = [
           ../config/default.nix
+          ../../../modules/core/deterministic_ids.nix
           ../../../globals/globals.nix
           ./guests/${guestName}.nix
           {

@@ -78,6 +78,10 @@ in {
       inherit localFlake;
       inherit (config.secrets) secretsPath pubkeys;
     };
+
+    system_deterministic_users = importApply ./system/deterministic-ids.nix {
+      inherit localFlake;
+    };
     # -- tasks --
     tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
     tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix {inherit localFlake;};

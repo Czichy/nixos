@@ -31,29 +31,10 @@
     ../../../globals/globals.nix
     ./hardware-configuration.nix
     ./disko.nix
-    # ./net.nix
-    # ./guests.nix
+    ./net.nix
+    ./acme.nix
   ];
 
-  networking = {
-    networkmanager.enable = true;
-    # hostName = "homeservertest";
-    useDHCP = false;
-    interfaces.enp1s0 = {
-      useDHCP = true;
-      wakeOnLan.enable = true;
-
-      ipv4 = {
-        addresses = [
-          {
-            address = "192.168.122.175";
-            # address = "${globals.net.v-lan.hosts.ward.ipv4}";
-            prefixLength = 24;
-          }
-        ];
-      };
-    };
-  };
   # topology.self.hardware.image = ../../topology/images/odroid-h3.png;
   topology.self.hardware.info = "O-Droid H3, 64GB RAM";
   # ------------------------------
@@ -63,6 +44,25 @@
     networkmanagerapplet # need this to configure L2TP ipsec
     wireguard-tools
   ];
+
+  wireguard.proxy-sentinel.firewallRuleForAll.allowedTCPPorts = [80 443];
+
+  users.groups.acme.members = ["nginx"];
+  services.nginx.enable = true;
+  services.nginx.recommendedSetup = true;
+
+  # services.nginx.virtualHosts.${globals.domains.me} = {
+  #   forceSSL = true;
+  #   useACMEWildcardHost = true;
+  #   locations."/".root = pkgs.runCommand "index.html" {} ''
+  #     mkdir -p $out
+  #     cat > $out/index.html <<EOF
+  #     <html>
+  #       <body>Not empty soon TM. Until then please go here: <a href="https://github.com/oddlama">oddlama</a></body>
+  #     </html>
+  #     EOF
+  #   '';
+  # };
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -109,4 +109,20 @@
   networking.firewall.checkReversePath = false;
 
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
+
+  # Connect safely via wireguard to skip authentication
+  # networking.hosts.${config.wireguard.proxy-sentinel.ipv4} = [globals.services.influxdb.domain];
+  # meta.telegraf = {
+  #   enable = true;
+  #   scrapeSensors = false;
+  #   influxdb2 = {
+  #     inherit (globals.services.influxdb) domain;
+  #     organization = "machines";
+  #     bucket = "telegraf";
+  #     node = "sire-influxdb";
+  #   };
+
+  #   # This node shall monitor the infrastructure
+  #   availableMonitoringNetworks = ["internet"];
+  # };
 }

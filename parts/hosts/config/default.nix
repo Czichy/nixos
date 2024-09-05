@@ -15,7 +15,7 @@
     # ./nix.nix
     # ./ssh.nix
     # ./system.nix
-    # ./users.nix
+    ./users.nix
     # ./xdg.nix
 
     # ../../users/root

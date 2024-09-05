@@ -3,6 +3,7 @@
   inherit (config) globals;
 in {
   globals = {
+    domains.me = "czichy.com";
     net = {
       #VLAN1
       home-wan = {

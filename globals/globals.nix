@@ -209,6 +209,56 @@ in {
               });
             };
           };
+
+          domains = {
+            me = mkOption {
+              type = types.str;
+              description = "My main domain.";
+            };
+
+            personal = mkOption {
+              type = types.str;
+              description = "My personal domain.";
+            };
+          };
+
+          macs = mkOption {
+            default = {};
+            type = types.attrsOf types.str;
+            description = "Known MAC addresses for external devices.";
+          };
+
+          # Mirror of the kanidm.persons option.
+          kanidm.persons = mkOption {
+            description = "Provisioning of kanidm persons";
+            default = {};
+            type = types.attrsOf (types.submodule {
+              options = {
+                displayName = mkOption {
+                  description = "Display name";
+                  type = types.str;
+                };
+
+                legalName = mkOption {
+                  description = "Full legal name";
+                  type = types.nullOr types.str;
+                  default = null;
+                };
+
+                mailAddresses = mkOption {
+                  description = "Mail addresses. First given address is considered the primary address.";
+                  type = types.listOf types.str;
+                  default = [];
+                };
+
+                groups = mkOption {
+                  description = "List of groups this person should belong to.";
+                  type = types.listOf types.str;
+                  default = [];
+                };
+              };
+            });
+          };
         };
       };
     };

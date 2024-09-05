@@ -15,17 +15,9 @@
 {
   lib,
   pkgs,
-  modulesPath,
   ...
 }: {
-  imports = [
-    (modulesPath + "/profiles/qemu-guest.nix")
-  ];
-
-  #environment.systemPackages = with pkgs; [ libva-utils ];
-
-  networking.useDHCP = lib.mkDefault true;
-
+  topology.self.icon = "devices.cloud-server";
   boot = {
     initrd = {
       availableKernelModules = [

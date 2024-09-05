@@ -72,11 +72,15 @@
     security.agenix.enable = true;
 
     system.users.usersSettings."root" = {
+      uid = 0;
+      gid = 0;
       agenixPassword.enable = true;
     };
     system.users.usersSettings."czichy" = {
       isSudoer = true;
       isNixTrusted = true;
+      uid = 1000;
+      gid = 1000;
       agenixPassword.enable = true;
       extraGroups = [
         "networkmanager"
