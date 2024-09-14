@@ -65,10 +65,14 @@
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
+      uid = 0;
+      gid = 0;
     };
     system.users.usersSettings."czichy" = {
       isSudoer = true;
       isNixTrusted = true;
+      uid = 1000;
+      gid = 1000;
       agenixPassword.enable = true;
       extraGroups = [
         "video"

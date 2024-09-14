@@ -61,7 +61,7 @@ in {
     # TODO maybe use config using latest and/or stable
     passwordSecretsPath = mkOption {
       type = str;
-      default = "hosts/${hostName}/users/${config.home.username}/ibkr/password";
+      default = "ibkr/password";
       description = ''
         TODO
       '';
@@ -69,7 +69,7 @@ in {
 
     userSecretsPath = mkOption {
       type = str;
-      default = "hosts/${hostName}/users/${config.home.username}/ibkr/user";
+      default = "ibkr/user";
       description = ''
         TODO
       '';
@@ -83,48 +83,6 @@ in {
         inputs.self.packages.${system}.ib-tws-native
         inputs.self.packages.${system}.ib-tws-native-latest
       ];
-
-  #      environment.systemPackages = with pkgs; [
-  #   (
-  #     pkgs.writeShellApplication {
-  #       name = "wallabag-add";
-  #       runtimeInputs = with pkgs; [ curl ];
-  #       text = ''
-  #         url=$1
-
-  #         # It's ridiculous that wallabag needs a username and password in *addition* to
-  #         # api tokens. See https://github.com/wallabag/wallabag/issues/2800 for a
-  #         # discussion about this.
-  #         # shellcheck source=/dev/null
-  #         WALLABAG_CLIENT_ID=$(cat ${config.age.secrets.wallabag-jfly-client-id.path})
-  #         WALLABAG_CLIENT_SECRET=$(cat ${config.age.secrets.wallabag-jfly-client-secret.path})
-  #         WALLABAG_USERNAME=$(cat ${config.age.secrets.wallabag-jfly-username.path})
-  #         WALLABAG_PASSWORD=$(cat ${config.age.secrets.wallabag-jfly-password.path})
-
-  #         base_url=https://wallabag.snow.jflei.com
-  #         payload=$(curl -sX POST "$base_url/oauth/v2/token" \
-  #             -H "Content-Type: application/json" \
-  #             -H "Accept: application/json" \
-  #             -d '{
-  #                 "grant_type": "password",
-  #                 "client_id": "'"$WALLABAG_CLIENT_ID"'",
-  #                 "client_secret": "'"$WALLABAG_CLIENT_SECRET"'",
-  #                 "username": "'"$WALLABAG_USERNAME"'",
-  #                 "password": "'"$WALLABAG_PASSWORD"'"
-  #             }')
-
-  #         access_token=$(echo "$payload" | jq --raw-output '.access_token')
-  #         curl -sX POST "$base_url/api/entries.json" \
-  #             -H "Content-Type: application/json" \
-  #             -H "Accept: application/json" \
-  #             -H "Authorization: Bearer $access_token" \
-  #             -d '{"url":"'"$url"'"}' >/dev/null
-
-  #         echo "Added! $base_url"
-  #       '';
-  #     }
-  #   )
-  # ];
     }
     # |----------------------------------------------------------------------| #
     (
