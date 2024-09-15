@@ -15,6 +15,43 @@
 {
   description = "czichy's fully covariant tensorfiles";
 
+  outputs = inputs @ {
+    flake-parts,
+    nixpkgs,
+    ...
+  }: let
+    inherit (inputs) nixpkgs;
+
+    # properties = import (self + /assets/properties);
+    # You should ideally use relative paths in each individual part from ./parts,
+    # however, if needed you can use the `projectPath` variable that is passed
+    # to every flakeModule to properly anchor your absolute paths.
+    projectPath = ./.;
+
+    # We extend the base <nixpkgs> library with our own custom helpers as well
+    # as override any of the nixpkgs default functions that we'd like
+    # to override. This instance is then passed to every part in ./parts so that
+    # you can use it in your custom modules
+    lib = import ./parts/lib {inherit inputs;} // nixpkgs.lib;
+    specialArgs = {
+      inherit lib projectPath;
+    };
+  in
+    flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
+      # Systems for which attributes of perSystem will be built. As
+      # a rule of thumb, only systems provided by available hosts
+      # should go in this list. More systems will increase evaluation
+      # duration.
+      systems = import inputs.systems;
+
+      imports = [
+        ./parts # Parts of the flake that are used to construct the final flake.
+        ./hosts # Entrypoint for host configurations of my systems.
+        ./homes
+        ./topology/flake-module.nix
+      ];
+      debug = true;
+    };
   inputs = {
     # --- BASE DEPENDENCIES ---
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -149,100 +186,4 @@
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
     ];
   };
-
-  outputs = inputs @ {flake-parts, ...}: let
-    inherit (inputs) nixpkgs;
-    inherit (lib.tensorfiles) mapModules flatten;
-    self = inputs.self;
-    # properties = import (self + /assets/properties);
-    # You should ideally use relative paths in each individual part from ./parts,
-    # however, if needed you can use the `projectPath` variable that is passed
-    # to every flakeModule to properly anchor your absolute paths.
-    projectPath = ./.;
-
-    # We extend the base <nixpkgs> library with our own custom helpers as well
-    # as override any of the nixpkgs default functions that we'd like
-    # to override. This instance is then passed to every part in ./parts so that
-    # you can use it in your custom modules
-    lib = nixpkgs.lib.extend (
-      self: _super: {
-        tensorfiles = import ./lib {
-          inherit inputs projectPath;
-          pkgs = nixpkgs;
-          lib = self;
-        };
-      }
-    );
-    specialArgs = {
-      inherit lib projectPath;
-    };
-  in
-    flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
-      # We recursively traverse all of the flakeModules in ./parts and import only
-      # the final modules, meaning that you can have an arbitrary nested structure
-      # that suffices your needs. For example
-      #
-      # - ./parts
-      #   - modules/
-      #     - nixos/
-      #       - myNixosModule1.nix
-      #       - myNixosModule2.nix
-      #       - default.nix
-      #     - home-manager/
-      #       - myHomeModule1.nix
-      #       - myHomeModule2.nix
-      #       - default.nix
-      #     - sharedModules.nix
-      #    - pkgs/
-      #      - myPackage1.nix
-      #      - myPackage2.nix
-      #      - default.nix
-      #    - mySimpleModule.nix
-      # imports = flatten (mapModules ./parts (x: x));
-      _module.args = {inherit lib;};
-      imports =
-        flatten (mapModules ./parts (x: x))
-        ++ [
-          ./globals
-          ./globals/globals.nix
-          ./parts/nix-topology
-          # ./lib/overlays
-          inputs.flake-parts.flakeModules.easyOverlay
-        ];
-
-      # NOTE We use the default `systems` defined by the `nix-systems` flake, if
-      # you need any additional systems, simply add them in the following manner
-      #
-      # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
-      systems = import inputs.systems;
-      flake.lib = lib;
-      # flake.lib = lib.tensorfiles;
-      flake.overlays.default = inputs.nixpkgs.lib.composeManyExtensions [
-        inputs.nixos-extra-modules.overlays.default
-      ];
-      # perSystem = {
-      #   config,
-      #   self',
-      #   pkgs,
-      #   lib,
-      #   system,
-      #   ...
-      # }: {
-      #   _module.args.pkgs = import inputs.nixpkgs {
-      #     inherit system;
-      #     overlays = [
-      #       inputs.nixos-extra-modules.overlays.nixos-extra-modules
-      #     ];
-      #   };
-      # };
-      # NOTE Since the official flakes output schema is unfortunately very
-      # limited you can enable the debug mode if you need to inspect certain
-      # outputs of your flake. Simply
-      # 1. uncomment the following line
-      # 2. hop into a repl from the project root - `nix repl`
-      # 3. load the flake - `:lf .`
-      # After that you can inspect the flake from the root attribute `debug.flake`
-      #
-      debug = true;
-    };
 }
