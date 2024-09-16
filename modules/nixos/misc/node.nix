@@ -29,8 +29,10 @@ with lib; {
       type = types.str;
     };
   };
-  # options.node.secretsDir = mkOption {
-  #   description = "Path to the secrets directory for this node.";
-  #   type = lib.types.path;
-  # };
+
+  options.node.secretsPath = lib.mkOption {
+    type = path;
+    default = "${inputs.private}";
+    description = "Path to the actual secrets directory";
+  };
 }

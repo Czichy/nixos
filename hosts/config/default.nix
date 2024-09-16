@@ -15,12 +15,11 @@
     # ./nix.nix
     # ./ssh.nix
     # ./system.nix
-    ./users.nix
     # ./xdg.nix
 
     # ../../users/root
 
-    # ../../modules/deterministic-ids.nix
+    # ../../modules/nixos/system/users/deterministic-ids.nix
     # ../../modules/distributed-config.nix
     # ../../modules/meta.nix
     # ../../modules/iwd.nix

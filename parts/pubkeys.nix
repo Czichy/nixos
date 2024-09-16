@@ -30,7 +30,7 @@ let
 
   all = foldl' (a: b: concatLists [a b]) [users.czichy] (attrValues machines);
 in {
-    inherit (users) czichy;
+  inherit (users) czichy;
   inherit (machines) HL-1-MRZ-SBC-01 HL-1-OZ-PC-01;
   inherit servers workstations all;
 

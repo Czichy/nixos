@@ -28,7 +28,7 @@
   imports = with inputs; [
     home-manager.nixosModules.default
     disko.nixosModules.disko
-    ../../modules/options/globals/module.nix
+    ../../modules/globals.nix
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix

@@ -20,6 +20,7 @@
   ...
 }: let
   inherit (inputs.flake-parts.lib) importApply;
+  inherit (self) secretsPath pubkeys;
   localFlake = self;
 in {
   options.flake.homeModules = lib.mkOption {
@@ -60,7 +61,7 @@ in {
     programs_gpg = importApply ./programs/gpg.nix {inherit localFlake;};
     programs_ibtws = importApply ./programs/ib-tws.nix {
       inherit localFlake inputs;
-      inherit (config.secrets) secretsPath;
+      inherit secretsPath;
     };
     programs_newsboat = importApply ./programs/newsboat.nix {inherit localFlake;};
     programs_pywal = importApply ./programs/pywal.nix {inherit localFlake;};
@@ -68,7 +69,7 @@ in {
     programs_shells_zsh = importApply ./programs/shells/zsh {inherit localFlake;};
     programs_shells_nushell = importApply ./programs/shells/nushell {inherit localFlake;};
     programs_ssh = importApply ./programs/ssh.nix {
-      inherit (config.secrets) secretsPath pubkeys;
+      inherit secretsPath pubkeys;
       inherit localFlake;
     };
     programs_starship = importApply ./programs/starship.nix {inherit localFlake;};

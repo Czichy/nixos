@@ -12,7 +12,7 @@
           inherit inputs;
         };
         modules = [
-          ../modules/options/globals/module.nix
+          ../modules/globals.nix
           ../globals.nix
           ({lib, ...}: {
             globals = lib.mkMerge (

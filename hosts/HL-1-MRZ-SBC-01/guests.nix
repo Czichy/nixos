@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   inputs,
   globals,
   secretsPath,
@@ -26,8 +25,7 @@ in {
         # };
         modules = [
           ../config/default.nix
-          ../../modules/core/deterministic_ids.nix
-          ../../modules/options/globals/module.nix
+          ../../modules/globals.nix
           ./guests/${guestName}.nix
           {
             #node.secretsDir = ./secrets/${guestName};

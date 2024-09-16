@@ -380,7 +380,7 @@ in {
           };
 
           externalPeers = mkOption {
-            type = types.attrsOf (types.listOf (types.net.ip-in config.addresses));
+            type = types.attrsOf (types.listOf (net.types.ip-in config.addresses));
             default = {};
             example = {my-android-phone = ["10.0.0.97"];};
             description = ''
@@ -394,7 +394,7 @@ in {
           };
 
           reservedAddresses = mkOption {
-            type = types.listOf types.net.cidr;
+            type = types.listOf net.types.cidr;
             default = [];
             example = ["10.0.0.0/24" "fd00:cafe::/64"];
             description = ''
@@ -450,7 +450,7 @@ in {
         };
 
         ipv4 = mkOption {
-          type = types.lazyOf types.net.ipv4;
+          type = types.lazyOf net.types.ipv4;
           default = types.lazyValue (wireguard inputs name).assignedIpv4Addresses.${nodeName};
           description = ''
             The ipv4 address for this machine. If you do not set this explicitly,
@@ -462,7 +462,7 @@ in {
         };
 
         ipv6 = mkOption {
-          type = types.lazyOf types.net.ipv6;
+          type = types.lazyOf net.types.ipv6;
           default = types.lazyValue (wireguard inputs name).assignedIpv6Addresses.${nodeName};
           description = ''
             The ipv6 address for this machine. If you do not set this explicitly,
@@ -474,7 +474,7 @@ in {
         };
 
         addresses = mkOption {
-          type = types.listOf (types.lazyOf types.net.ip);
+          type = types.listOf (types.lazyOf net.types.ip);
           default = [
             (head options.ipv4.definitions)
             (head options.ipv6.definitions)

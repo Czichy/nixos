@@ -27,11 +27,9 @@
     inherit
       (lib)
       concatMapAttrs
-      # filterAttrs
-      
+      filterAttrs
       flip
-      # genAttrs
-      
+      genAttrs
       mapAttrs
       mapAttrs'
       nameValuePair
@@ -78,6 +76,7 @@
               nixpkgs.config.allowUnfree = true;
               networking.hostName = hostName;
               # node.name = hostName;
+              # node.secrets
             }
             ./${hostName}
           ]
@@ -139,7 +138,7 @@
             ];
             extraSpecialArgs = {
               inherit (self) globals;
-              inherit (self.secrets) secretsPath;
+              inherit (self) secretsPath;
             };
           }
       );
@@ -163,24 +162,25 @@
       #       };
       #     }
       # );
-      # True NixOS nodes can define additional guest nodes that are built
-      # together with it. We collect all defined guests from each node here
-      # to allow accessing any node via the unified attribute `nodes`.
-      guestConfigs = flip concatMapAttrs config.nixosConfigurations (_: node:
-        flip mapAttrs' (node.config.tensorfiles.guests or {}) (
-          guestName: guestDef:
-            nameValuePair guestDef.nodeName (
-              if guestDef.backend == "microvm"
-              then node.config.microvm.vms.${guestName}.config
-              else node.config.containers.${guestName}.nixosConfiguration
-            )
-        ));
-
-      # All nixosSystem instanciations are collected here, so that we can refer
-      # to any system via nodes.<name>
-      # nodes = config.nixosConfigurations // config.guestConfigs;
-      # Add a shorthand to easily target toplevel derivations
-      # "@" = mapAttrs (_: v: v.config.system.build.toplevel) config.nodes;
     };
+    # True NixOS nodes can define additional guest nodes that are built
+    # together with it. We collect all defined guests from each node here
+    # to allow accessing any node via the unified attribute `nodes`.
+    guestConfigs = flip concatMapAttrs config.nixosConfigurations (_: node:
+      flip mapAttrs' (node.config.tensorfiles.services.microvm.guests or {}) (
+        guestName: guestDef:
+          nameValuePair guestDef.nodeName (
+            node.config.microvm.vms.${guestName}.config
+            # if guestDef.backend == "microvm"
+            # then node.config.microvm.vms.${guestName}.config
+            # else node.config.containers.${guestName}.nixosConfiguration
+          )
+      ));
+
+    # All nixosSystem instanciations are collected here, so that we can refer
+    # to any system via nodes.<name>
+    nodes = config.nixosConfigurations // config.guestConfigs;
+    # Add a shorthand to easily target toplevel derivations
+    "@" = mapAttrs (_: v: v.config.system.build.toplevel) config.nodes;
   };
 }

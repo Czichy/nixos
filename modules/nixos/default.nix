@@ -19,6 +19,7 @@
   ...
 }: let
   inherit (inputs.flake-parts.lib) importApply;
+  inherit (self) secretsPath pubkeys;
   localFlake = self;
 in {
   flake.nixosModules = {
@@ -53,7 +54,7 @@ in {
     services_printing = importApply ./services/printing.nix {inherit localFlake;};
     services_syncthing = importApply ./services/syncthing.nix {
       inherit localFlake;
-      inherit (config.secrets) secretsPath;
+      inherit secretsPath;
     };
 
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {
@@ -74,14 +75,11 @@ in {
     };
     # -- system --
     system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};
-    system_users = importApply ./system/users.nix {
+    system_users = importApply ./system/users {
       inherit localFlake;
-      inherit (config.secrets) secretsPath pubkeys;
+      inherit secretsPath pubkeys;
     };
 
-    system_deterministic_users = importApply ./system/deterministic-ids.nix {
-      inherit localFlake;
-    };
     # -- tasks --
     tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
     tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix {inherit localFlake;};

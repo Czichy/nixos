@@ -14,7 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   pkgs,
-  secretsPath,
+  # secretsPath,
   inputs,
   ...
 }: {
@@ -29,7 +29,7 @@
   imports = with inputs; [
     home-manager.nixosModules.default
     disko.nixosModules.disko
-    ../../modules/options/globals/module.nix
+    ../../modules/globals.nix
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix

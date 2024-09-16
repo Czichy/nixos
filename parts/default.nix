@@ -12,7 +12,6 @@
     ./pkgs # Per-system packages exposed by the flake
     ./pre-commit # Pre-commit hooks, to be ran before changes are committed.
     ./templates # Templates for initiating flakes with `nix flake init -t ...`
-    ./secrets # Global secrets
 
     ./args.nix # Args for the flake, consumed or propagated to parts by flake-parts
     ./ci.nix # GitHub actions matrices generated via Nix
@@ -23,5 +22,6 @@
     ./shell.nix # devShells exposed by the flake
 
     ./globals.nix # Global parameters
+    ./secrets.nix # Global secrets
   ];
 }

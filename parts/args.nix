@@ -4,7 +4,7 @@
   # Pinned sources can be updated via `npins update` in `flake/`
   # which will automatically bump all sources in the `npins`
   # directory relatvie to this file.
-  # pinnedSources = import ./npins;
+  pinnedSources = import ./npins;
   # Add a collection of SSH keys to the keys so that
   #  1. My public keys are more easily obtainable from outside
   #  2. It's easy to share key names and values internally especially
