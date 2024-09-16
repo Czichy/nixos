@@ -1,6 +1,10 @@
 let
   inherit (builtins) attrValues concatLists foldl' map;
 
+  czichy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com";
+  vm_test = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHDjI1ua3F0+HmVmctChbmMt1LBFbrrf8lP0H5NDy5gP czichy@vmtest";
+  czichy-HL-1-MRZ-SBC-01 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINOIqr6KsojkEyyYItPBXcWUfacQY54rWkIGTXUdl27k czichy@HL-1-MRZ-SBC-01";
+
   # Users
   users = {
     czichy = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKQgoSENg960XY9wU77q8p1+4WgUhEb10xlc27RWcmNE czichy@desktop"];
@@ -26,10 +30,64 @@ let
 
   all = foldl' (a: b: concatLists [a b]) [users.czichy] (attrValues machines);
 in {
-  inherit (users) czichy;
+    inherit (users) czichy;
   inherit (machines) HL-1-MRZ-SBC-01 HL-1-OZ-PC-01;
   inherit servers workstations all;
 
   # Additional utilities
   mkGlobal = list: concatLists [list users.czichy];
+  common = {};
+  hosts = {
+    desktop = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [];
+        };
+        czichy = {
+          sshKey = null;
+          authorizedKeys = [czichy];
+        };
+      };
+    };
+
+    HL-1-OZ-PC-01 = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [];
+        };
+        czichy = {
+          sshKey = null;
+          authorizedKeys = [czichy];
+        };
+      };
+    };
+
+    HL-1-MRZ-SBC-01 = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [];
+        };
+        czichy = {
+          sshKey = null;
+          authorizedKeys = [czichy];
+        };
+      };
+    };
+
+    HL-4-PAZ-PROXY-01 = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [];
+        };
+        czichy = {
+          sshKey = null;
+          authorizedKeys = [czichy];
+        };
+      };
+    };
+  };
 }
