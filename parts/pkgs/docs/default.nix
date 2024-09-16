@@ -233,6 +233,6 @@ stdenv.mkDerivation {
     homepage = "https://github.com/czichy/tensorfiles";
     description = "The combined Documentation of the whole tensorfiles flake.";
     license = licenses.mit;
-    maintainers = with lib.tensorfiles.maintainers; [ czichy ];
+    maintainers = with lib.maintainers; [ czichy ];
   };
 }

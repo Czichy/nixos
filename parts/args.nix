@@ -4,8 +4,7 @@
   # Pinned sources can be updated via `npins update` in `flake/`
   # which will automatically bump all sources in the `npins`
   # directory relatvie to this file.
-  pinnedSources = import ./npins;
-
+  # pinnedSources = import ./npins;
   # Add a collection of SSH keys to the keys so that
   #  1. My public keys are more easily obtainable from outside
   #  2. It's easy to share key names and values internally especially
@@ -29,14 +28,14 @@ in {
         allowUnsupportedSystem = true;
       };
 
-      overlays = [inputs.self.overlays.default];
+      # overlays = [inputs.self.overlays.default];
     };
 
     _module.args = {
       # Pass `pins` and `keys` to flake-parts' module args. This allows
       # parts of the module system to refer to them in a more concise
       # way than importing them directly.
-      pins = pinnedSources;
+      # pins = pinnedSources;
       pubkeys = publicKeys;
       # globals = globals;
 
@@ -50,7 +49,7 @@ in {
   };
 
   flake = {
-    pins = pinnedSources;
+    # pins = pinnedSources;
     pubkeys = publicKeys;
     # globals = globals;
   };

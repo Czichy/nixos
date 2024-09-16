@@ -46,6 +46,7 @@
 
       imports = [
         ./parts # Parts of the flake that are used to construct the final flake.
+        ./modules
         ./hosts # Entrypoint for host configurations of my systems.
         ./homes
         ./topology/flake-module.nix
@@ -156,17 +157,29 @@
     };
     firefox-addons.url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
 
-    # mcpelauncher = {
-    #   url = "github:headblockhead/nix-mcpelauncher";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
-    #stylix = {
-    #  url = "github:danth/stylix";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #  inputs.home-manager.follows = "home-manager";
-    #};
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+      };
+    };
+
+    # Sandbox wrappers for programs
+    nixpak = {
+      url = "github:nixpak/nixpak";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
+    };
+
+    # This exists, I guess
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
   };
 
   # NOTE Here you can add additional binary cache substituers that you trust.
