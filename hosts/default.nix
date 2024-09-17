@@ -79,6 +79,7 @@
               # node.name = hostName;
               # node.secrets
             }
+            ../modules/globals.nix
             ./${hostName}
           ]
           ++ extraModules

@@ -1,9 +1,10 @@
 {
-  lib,
+  inputs,
   globals,
   ...
 }
 : let
+  inherit (inputs.self) lib;
   # macAddress_enp1s0 = "60:be:b4:19:a8:4c";
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {

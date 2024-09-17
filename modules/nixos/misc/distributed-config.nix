@@ -54,7 +54,7 @@ with lib; let
 
   attrsForEachOption = f: foldl' (acc: path: recursiveUpdate acc (setAttrByPath path (f path))) {} forwardedOptions;
 in {
-  options.tensorfiles.nodes = mkOption {
+  options.nodes = mkOption {
     description = "Options forwareded to the given node.";
     default = {};
     type = types.attrsOf (types.submodule {
