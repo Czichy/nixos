@@ -156,38 +156,40 @@
     inherit (self.extendedLib.secrets) mkAgenixSecret;
     inherit (self.extendedLib.systemd) hardenService mkGraphicalService mkHyprlandService;
     inherit (self.extendedLib.themes) serializeTheme compileSCSS;
+    inherit (self.extendedLib.types) isLazyValue lazyValue lazyValueOf lazyOf;
     inherit (self.extendedLib.validators) ifTheyExist ifGroupsExist isAcceptedDevice isWayland ifOneEnabled;
-    #wireguard
-    #   inherit
-    # allExternalPeers
-    # allPeers
-    # assignedIpv4Addresses
-    # assignedIpv6Addresses
-    # explicitlyUsedAddresses
-    # externalPeerName
-    # externalPeerNamesRaw
-    # externalPeersForNode
-    # networkAddresses
-    # networkCidrs
-    # nodePeers
-    # participatingClientNodes
-    # participatingNodes
-    # participatingServerNodes
-    # peerPresharedKeyFile
-    # peerPresharedKeyPath
-    # peerPresharedKeySecret
-    # peerPrivateKeyFile
-    # peerPrivateKeyPath
-    # peerPrivateKeySecret
-    # peerPublicKeyFile
-    # peerPublicKeyPath
-    # sortedPeers
-    # spannedReservedNetwork
-    # toNetworkAddr
-    # usedAddresses
-    # wgCfgOf
-    # wgQuickConfigScript
-    # ;
+    inherit (self.extendedLib) wireguard;
+    # inherit
+    #   (self.extendedLib.wireguard)
+    #   allExternalPeers
+    #   allPeers
+    #   assignedIpv4Addresses
+    #   assignedIpv6Addresses
+    #   explicitlyUsedAddresses
+    #   externalPeerName
+    #   externalPeerNamesRaw
+    #   externalPeersForNode
+    #   networkAddresses
+    #   networkCidrs
+    #   nodePeers
+    #   participatingClientNodes
+    #   participatingNodes
+    #   participatingServerNodes
+    #   peerPresharedKeyFile
+    #   peerPresharedKeyPath
+    #   peerPresharedKeySecret
+    #   peerPrivateKeyFile
+    #   peerPrivateKeyPath
+    #   peerPrivateKeySecret
+    #   peerPublicKeyFile
+    #   peerPublicKeyPath
+    #   sortedPeers
+    #   spannedReservedNetwork
+    #   toNetworkAddr
+    #   usedAddresses
+    #   wgCfgOf
+    #   wgQuickConfigScript
+    #   ;
   };
 
   # Merge layers of libraries into one as a subject of convenience

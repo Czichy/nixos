@@ -1,9 +1,9 @@
 {
   config,
   secretsPath,
-  globals,
+  # globals,
   lib,
-  pkgs,
+  # pkgs,
   ...
 }: let
   # vaultwardenDomain = "pw.${globals.domains.personal}";
@@ -11,7 +11,7 @@
 in {
   microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
-  # wireguard.proxy-sentinel = {
+  # tensorfiles.services.networking.wireguard.proxy-sentinel = {
   #   client.via = "sentinel";
   #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
   # };
@@ -39,33 +39,33 @@ in {
     network = "internet";
   };
 
-  nodes.sentinel = {
-    services.nginx = {
-      upstreams.vaultwarden = {
-        servers."${config.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
-        extraConfig = ''
-          zone vaultwarden 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "Vaultwarden Web";
-        };
-      };
-      virtualHosts.${vaultwardenDomain} = {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        extraConfig = ''
-          client_max_body_size 256M;
-        '';
-        locations."/" = {
-          proxyPass = "http://vaultwarden";
-          proxyWebsockets = true;
-          X-Frame-Options = "SAMEORIGIN";
-        };
-      };
-    };
-  };
+  # nodes.sentinel = {
+  #   services.nginx = {
+  #     upstreams.vaultwarden = {
+  #       # servers."${config.tensorfiles.services.networking.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
+  #       extraConfig = ''
+  #         zone vaultwarden 64k;
+  #         keepalive 2;
+  #       '';
+  #       monitoring = {
+  #         enable = true;
+  #         expectedBodyRegex = "Vaultwarden Web";
+  #       };
+  #     };
+  #     virtualHosts.${vaultwardenDomain} = {
+  #       forceSSL = true;
+  #       useACMEWildcardHost = true;
+  #       extraConfig = ''
+  #         client_max_body_size 256M;
+  #       '';
+  #       locations."/" = {
+  #         proxyPass = "http://vaultwarden";
+  #         proxyWebsockets = true;
+  #         X-Frame-Options = "SAMEORIGIN";
+  #       };
+  #     };
+  #   };
+  # };
 
   services.vaultwarden = {
     enable = true;

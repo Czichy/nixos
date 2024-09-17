@@ -23,19 +23,23 @@ in {
         #   pool = "rpool";
         #   dataset = "rpool/encrypted/safe/vms/${guestName}";
         # };
-        modules = [
-          ../config/default.nix
-          ../../modules/globals.nix
-          ./guests/${guestName}.nix
-          {
-            #node.secretsDir = ./secrets/${guestName};
-            networking.nftables.firewall = {
-              zones.untrusted.interfaces = [
-                config.tensorfiles.services.microvm.guests.${guestName}.networking.mainLinkName
-              ];
-            };
-          }
-        ];
+        modules =
+          [
+            # inputs.self.globals
+            ../config/default.nix
+            ../../modules/globals.nix
+            ./guests/${guestName}.nix
+            # ../../modules/wireguard.nix
+            {
+              #node.secretsDir = ./secrets/${guestName};
+              networking.nftables.firewall = {
+                zones.untrusted.interfaces = [
+                  config.tensorfiles.services.microvm.guests.${guestName}.networking.mainLinkName
+                ];
+              };
+            }
+          ]
+          ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
         # ++ (inputs.nixpkgs.lib.attrValues config.flake.nixosModules);
       };
       mkMicrovm = guestName: opts: {
