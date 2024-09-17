@@ -16,7 +16,7 @@
           ../globals.nix
           ({lib, ...}: {
             globals = lib.mkMerge (
-              lib.concatLists (lib.flip lib.mapAttrsToList config.nodes (
+              lib.concatLists (lib.flip lib.mapAttrsToList inputs.self.nodes (
                 name: cfg:
                   builtins.addErrorContext "while aggregating globals from nixosConfigurations.${name} into flake-level globals:"
                   cfg.config._globalsDefs

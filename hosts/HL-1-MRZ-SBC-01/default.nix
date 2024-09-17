@@ -15,6 +15,7 @@
 {
   pkgs,
   # secretsPath,
+  lib,
   inputs,
   ...
 }: {

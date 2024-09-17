@@ -62,6 +62,7 @@
     in
       inputs.nixpkgs.lib.nixosSystem {
         inherit (args) system;
+        inherit (inputs.self) lib;
         specialArgs =
           baseSpecialArgs
           // {
