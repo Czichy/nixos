@@ -3,7 +3,6 @@
   lib,
   inputs,
   globals,
-  secretsPath,
   ...
 }: let
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";

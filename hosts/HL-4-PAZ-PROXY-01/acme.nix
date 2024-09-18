@@ -1,9 +1,10 @@
 {
   config,
-  secretsPath,
+  inputs,
   hostName,
   ...
 }: let
+  inherit (inputs.self) secretsPath;
   # inherit (config.repo.secrets.local) acme;
   passwordSecretsPath = secretsPath + "hosts/${hostName}/";
 in {
@@ -22,6 +23,7 @@ in {
   security.acme = {
     acceptTerms = true;
     defaults = {
+      email = "christian@czichy.com";
       credentialFiles = {
         CF_DNS_API_TOKEN_FILE = config.age.secrets.acme-cloudflare-dns-token.path;
         CF_ZONE_API_TOKEN_FILE = config.age.secrets.acme-cloudflare-zone-token.path;
