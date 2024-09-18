@@ -55,7 +55,7 @@ in {
             networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
             networking.gateway = globals.net.vlan40.hosts.opnsense.ipv4;
             extraSpecialArgs = {
-              inherit secretsPath;
+              inherit (inputs.self) secretsPath;
               inherit globals;
               inherit lib;
               inherit inputs;

@@ -34,6 +34,7 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
+    ./modules
   ];
 
   topology.self.icon = "devices.desktop";
@@ -50,64 +51,6 @@
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
   # home-manager.users.${user} = {home.packages = with pkgs; [];};
-
-  # ---------------------
-  # | ADDITIONAL CONFIG |
-  # ---------------------
-  tensorfiles = {
-    profiles.packages-extra.enable = true;
-    profiles.graphical-hyprland.enable = true;
-
-    system.impermanence = {
-      enable = true;
-      allowOther = true;
-    };
-    security.agenix.enable = true;
-
-    system.users.usersSettings."root" = {
-      agenixPassword.enable = true;
-      uid = 0;
-      gid = 0;
-    };
-    system.users.usersSettings."czichy" = {
-      isSudoer = true;
-      isNixTrusted = true;
-      uid = 1000;
-      gid = 1000;
-      agenixPassword.enable = true;
-      extraGroups = [
-        "video"
-        "audio"
-        "networkmanager"
-        "input"
-        # ]
-        # ++ ifTheyExist [
-        "camera"
-        "deluge"
-        "docker"
-        "git"
-        "i2c"
-        "kvm"
-        "libvirt"
-        "libvirtd"
-        "network"
-        "nitrokey"
-        "podman"
-        "qemu-libvirtd"
-        "wireshark"
-        "flatpak"
-      ];
-    };
-    services = {
-      flatpak.enable = true;
-      printing.enable = true;
-      syncthing = {
-        enable = true;
-        user = "czichy";
-      };
-      virtualisation.enable = true;
-    };
-  };
 
   users.defaultUserShell = pkgs.nushell;
 

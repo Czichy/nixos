@@ -119,7 +119,6 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
-              # nix-flatpak.nixosModules.nix-flatpak
               microvm.nixosModules.host
             ];
           }
@@ -135,35 +134,33 @@
             extraModules = with inputs; [
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
-              # nix-flatpak.nixosModules.nix-flatpak
               microvm.nixosModules.host
             ];
-            extraSpecialArgs = {
-              inherit (self) globals;
-              inherit (self) secretsPath;
-            };
+            # extraSpecialArgs = {
+            #   inherit (self) globals;
+            #   inherit (self) secretsPath;
+            # };
           }
       );
 
       #sentinel
-      # "HL-4-PAZ-PROXY-01" = withSystem "x86_64-linux" (
-      #   args:
-      #     mkHost args "HL-4-PAZ-PROXY-01" {
-      #       withHomeManager = true;
-      #       extraOverlays = with inputs; [
-      #         (final: _prev: {nur = import nur {pkgs = final;};})
-      #       ];
-      #       extraModules = with inputs; [
-      #         nix-topology.nixosModules.default
-      #         nixos-nftables-firewall.nixosModules.default
-      #         microvm.nixosModules.host
-      #         # nix-flatpak.nixosModules.nix-flatpak
-      #       ];
-      #       extraSpecialArgs = {
-      #         inherit (self) globals;
-      #       };
-      #     }
-      # );
+      "HL-4-PAZ-PROXY-01" = withSystem "x86_64-linux" (
+        args:
+          mkHost args "HL-4-PAZ-PROXY-01" {
+            withHomeManager = true;
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              microvm.nixosModules.host
+            ];
+            # extraSpecialArgs = {
+            #   inherit (self) globals;
+            # };
+          }
+      );
     };
     # True NixOS nodes can define additional guest nodes that are built
     # together with it. We collect all defined guests from each node here

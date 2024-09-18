@@ -1,4 +1,8 @@
 {
+  localFlake,
+  secretsPath,
+  # inputs,
+}: {
   config,
   lib,
   ...
@@ -11,8 +15,20 @@
     mkOption
     types
     ;
+  inherit
+    (localFlake.lib)
+    isModuleLoadedAndEnabled
+    mkAgenixEnableOption
+    ;
+
+  cfg = config.services.nginx;
+
+  agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in {
   options.services.nginx = {
+    agenix = {
+      enable = mkAgenixEnableOption;
+    };
     recommendedSetup = mkEnableOption "recommended setup parameters.";
     recommendedSecurityHeaders = mkEnableOption "additional security headers by default in each location block. Can be overwritten in each location with `recommendedSecurityHeaders`.";
     virtualHosts = mkOption {
@@ -51,55 +67,60 @@ in {
     };
   };
 
-  config = mkIf (config.services.nginx.enable && config.services.nginx.recommendedSetup) {
-    age.secrets."dhparams.pem" = mkIf (config ? age) {
-      generator.script = "dhparams";
-      mode = "440";
-      group = "nginx";
-    };
+  config = mkIf (config.services.nginx.enable && config.services.nginx.recommendedSetup) (
+    lib.mkMerge [
+      # |----------------------------------------------------------------------| #
+      (mkIf (config.services.nginx.recommendedSetup && agenixCheck) {
+        age.secrets."dhparams.pem" = mkIf (config ? age) {
+          file = secretsPath + "/nginx/dhparams.pem.age";
+          mode = "440";
+          group = "nginx";
+        };
 
-    networking.firewall.allowedTCPPorts = [80 443];
+        networking.firewall.allowedTCPPorts = [80 443];
 
-    # Sensible defaults for nginx
-    services.nginx = {
-      recommendedBrotliSettings = true;
-      recommendedGzipSettings = true;
-      recommendedOptimisation = true;
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-      recommendedSecurityHeaders = true;
+        # Sensible defaults for nginx
+        services.nginx = {
+          recommendedBrotliSettings = true;
+          recommendedGzipSettings = true;
+          recommendedOptimisation = true;
+          recommendedProxySettings = true;
+          recommendedTlsSettings = true;
+          recommendedSecurityHeaders = true;
 
-      # SSL config
-      sslCiphers = "EECDH+AESGCM:EDH+AESGCM:!aNULL";
-      sslDhparam = mkIf (config ? age) config.age.secrets."dhparams.pem".path;
-      commonHttpConfig = ''
-        log_format json_combined escape=json '{'
-          '"time": $msec,'
-          '"remote_addr":"$remote_addr",'
-          '"status":$status,'
-          '"method":"$request_method",'
-          '"host":"$host",'
-          '"uri":"$request_uri",'
-          '"request_size":$request_length,'
-          '"response_size":$body_bytes_sent,'
-          '"response_time":$request_time,'
-          '"referrer":"$http_referer",'
-          '"user_agent":"$http_user_agent"'
-        '}';
-        error_log syslog:server=unix:/dev/log,nohostname;
-        access_log syslog:server=unix:/dev/log,nohostname json_combined;
-        ssl_ecdh_curve secp384r1;
-      '';
+          # SSL config
+          sslCiphers = "EECDH+AESGCM:EDH+AESGCM:!aNULL";
+          sslDhparam = mkIf agenixCheck config.age.secrets."dhparams.pem".path;
+          commonHttpConfig = ''
+            log_format json_combined escape=json '{'
+              '"time": $msec,'
+              '"remote_addr":"$remote_addr",'
+              '"status":$status,'
+              '"method":"$request_method",'
+              '"host":"$host",'
+              '"uri":"$request_uri",'
+              '"request_size":$request_length,'
+              '"response_size":$body_bytes_sent,'
+              '"response_time":$request_time,'
+              '"referrer":"$http_referer",'
+              '"user_agent":"$http_user_agent"'
+            '}';
+            error_log syslog:server=unix:/dev/log,nohostname;
+            access_log syslog:server=unix:/dev/log,nohostname json_combined;
+            ssl_ecdh_curve secp384r1;
+          '';
 
-      # Default host that rejects everything.
-      # This is selected when no matching host is found for a request.
-      virtualHosts.dummy = {
-        default = true;
-        rejectSSL = true;
-        locations."/".extraConfig = ''
-          deny all;
-        '';
-      };
-    };
-  };
+          # Default host that rejects everything.
+          # This is selected when no matching host is found for a request.
+          virtualHosts.dummy = {
+            default = true;
+            rejectSSL = true;
+            locations."/".extraConfig = ''
+              deny all;
+            '';
+          };
+        };
+      })
+    ]
+  );
 }

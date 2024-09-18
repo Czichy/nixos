@@ -8,13 +8,13 @@
   passwordSecretsPath = secretsPath + "hosts/${hostName}/";
 in {
   age.secrets.acme-cloudflare-dns-token = {
-    file = passwordSecretsPath + "/secrets/acme-cloudflare-dns-token.age";
+    file = passwordSecretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
     mode = "440";
     group = "acme";
   };
 
   age.secrets.acme-cloudflare-zone-token = {
-    file = passwordSecretsPath + "/secrets/acme-cloudflare-dns-token.age";
+    file = passwordSecretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
     mode = "440";
     group = "acme";
   };

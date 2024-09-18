@@ -62,6 +62,15 @@ in {
     };
     services_networking_ssh = importApply ./services/networking/ssh.nix {inherit localFlake;};
     services_networking_wireguard = importApply ./services/networking/wireguard {inherit localFlake;};
+    services_nginx = importApply ./services/networking/nginx.nix {
+      inherit localFlake;
+      inherit secretsPath;
+    };
+
+    services_acme = importApply ./services/networking/acme-wildcard.nix {
+      inherit localFlake;
+    };
+
     services_x11_desktop-managers_startx-home-manager =
       importApply ./services/x11/desktop-managers/startx-home-manager.nix
       {inherit localFlake;};
@@ -79,6 +88,7 @@ in {
       inherit localFlake;
       inherit secretsPath pubkeys;
     };
+    system_zfs = importApply ./system/zfs.nix {inherit localFlake;};
 
     # -- tasks --
     tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
