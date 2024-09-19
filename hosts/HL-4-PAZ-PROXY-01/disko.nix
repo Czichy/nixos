@@ -1,40 +1,117 @@
-{
-  # config,
-  # lib,
-  ...
-}:
-# let
-# inherit (config.repo.secrets.local) disks;
-# in
-{
-  tensorfiles.system.zfs.disks = {
-    enable = true;
-    zfs = {
-      enable = true;
-      root = {
-        disk1 = "vda";
+{...}: let
+  maindisk = "/dev/vda";
+in {
+  disko.devices = {
+    disk = {
+      main = {
+        device = "${maindisk}";
+        type = "disk";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              size = "1G";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+              };
+            };
+            zfs = {
+              size = "100%";
+              content = {
+                type = "zfs";
+                pool = "zroot";
+              };
+            };
+          };
+        };
+      };
+    };
+    zpool = {
+      zroot = {
+        type = "zpool";
+        rootFsOptions = {
+          # https://wiki.archlinux.org/title/Install_Arch_Linux_on_ZFS
+          acltype = "posixacl";
+          atime = "off";
+          checksum = "edonr";
+          compression = "zstd";
+          mountpoint = "none";
+          canmount = "off";
+          devices = "off";
+          xattr = "sa";
+          normalization = "formD";
+          relatime = "on";
+          "com.sun:auto-snapshot" = "false";
+        };
+        options = {
+          ashift = "12";
+          autotrim = "on";
+        };
+
+        datasets = {
+          reserved = {
+            options = {
+              canmount = "off";
+              mountpoint = "none";
+              reservation = "20GiB";
+              # reservation = "${cfg.zfs.root.reservation}";
+            };
+            type = "zfs_fs";
+          };
+          etcssh = {
+            type = "zfs_fs";
+            options.mountpoint = "legacy";
+            mountpoint = "/etc/ssh";
+            options."com.sun:auto-snapshot" = "false";
+            postCreateHook = "zfs snapshot zroot/etcssh@empty";
+          };
+          persist = {
+            type = "zfs_fs";
+            options.mountpoint = "legacy";
+            mountpoint = "/persist";
+            options."com.sun:auto-snapshot" = "false";
+            postCreateHook = "zfs snapshot zroot/persist@empty";
+          };
+          persistSave = {
+            type = "zfs_fs";
+            options.mountpoint = "legacy";
+            mountpoint = "/persist/save";
+            options."com.sun:auto-snapshot" = "false";
+            postCreateHook = "zfs snapshot zroot/persistSave@empty";
+          };
+          nix = {
+            type = "zfs_fs";
+            options.mountpoint = "legacy";
+            mountpoint = "/nix";
+            options = {
+              atime = "off";
+              canmount = "on";
+              "com.sun:auto-snapshot" = "false";
+            };
+            postCreateHook = "zfs snapshot zroot/nix@empty";
+          };
+          root = {
+            type = "zfs_fs";
+            options.mountpoint = "legacy";
+            options."com.sun:auto-snapshot" = "false";
+            mountpoint = "/";
+            postCreateHook = ''
+              zfs snapshot zroot/root@empty
+            '';
+          };
+        };
       };
     };
   };
-  # disko.devices = {
-  #   disk = {
-  #     main = {
-  #       type = "disk";
-  #       device = "/dev/disk/by-id/${disks.main}";
-  #       content = {
-  #         type = "gpt";
-  #         partitions = {
-  #           grub = lib.disko.gpt.partGrub;
-  #           bios = lib.disko.gpt.partBoot "512M";
-  #           rpool = lib.disko.gpt.partLuksZfs disks.main "rpool" "100%";
-  #         };
-  #       };
-  #     };
-  #   };
-  #   zpool = {
-  #     rpool = lib.disko.zfs.mkZpool {datasets = lib.disko.zfs.impermanenceZfsDatasets;};
-  #   };
-  # };
-
-  # boot.loader.grub.devices = ["/dev/disk/by-id/${disks.main}"];
+  # Needed for agenix.
+  # nixos-anywhere currently has issues with impermanence so agenix keys are lost during the install process.
+  # as such we give /etc/ssh its own zfs dataset rather than using impermanence to save the keys when we wipe the root directory on boot
+  # agenix needs the keys available before the zfs datasets are mounted, so we need this to make sure they are available.
+  fileSystems."/etc/ssh".neededForBoot = true;
+  # Needed for impermanence, because we mount /persist/save on /persist, we need to make sure /persist is mounted before /persist/save
+  fileSystems."/persist".neededForBoot = true;
+  fileSystems."/persist/save".neededForBoot = true;
 }

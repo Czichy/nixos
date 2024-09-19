@@ -23,9 +23,10 @@
       zfs = {
         enable = true;
         hostId = builtins.substring 0 8 (builtins.hashString "md5" config.networking.hostName);
-        root = {
-          disk1 = "nvme0n1";
-        };
+        root.impermanenceRoot = true;
+        # root = {
+        #   disk1 = "nvme0n1";
+        # };
       };
     };
   };

@@ -18,7 +18,7 @@
     disko.nixosModules.disko
     ../../modules/globals.nix
     ./hardware-configuration.nix
-    # ./disko.nix
+    ./disko.nix
     # ./net.nix
     ./acme.nix
     ./modules
