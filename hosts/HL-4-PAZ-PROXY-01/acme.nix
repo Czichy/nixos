@@ -1,21 +1,19 @@
 {
   config,
   inputs,
-  hostName,
   ...
 }: let
   inherit (inputs.self) secretsPath;
   # inherit (config.repo.secrets.local) acme;
-  passwordSecretsPath = secretsPath + "hosts/${hostName}/";
 in {
   age.secrets.acme-cloudflare-dns-token = {
-    file = passwordSecretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
+    file = secretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
     mode = "440";
     group = "acme";
   };
 
   age.secrets.acme-cloudflare-zone-token = {
-    file = passwordSecretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
+    file = secretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
     mode = "440";
     group = "acme";
   };
