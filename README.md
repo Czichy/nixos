@@ -233,6 +233,10 @@ Switch to root
 ```bash
 sudo -su
 ```
+Switch to root
+```bash
+HOST=HL-4-PAZ-PROXY-01
+```
 
 # Clone Repo
 
