@@ -286,17 +286,8 @@ nix flake update
 
 install nixos
 ```bash
-sudo nixos-install --root /mnt --flake '/installer/#nixos'
+sudo nixos-install --root /mnt --flake .#vm_test --show-trace --verbose --impure --no-root-passwd
 ```
-
-```bash
-sudo nixos-install --root /mnt --flake .#vm_test --show-trace --verbose --impure
-```
-
-```bash
-nixos-install --flake .#test --no-root-passwd --option accept-flake-config true
-```
-
 Move Repo
 
 ```bash
