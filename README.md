@@ -256,7 +256,7 @@ cd nixos
 1. partition & format the disk via disko
 
 ```bash
-sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./hosts/vm_test/disko.nix
+sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko ./hosts/"${HOST}"/disko.nix
 ```
 
 Check Disk Layout
@@ -290,7 +290,7 @@ nix flake update
 
 install nixos
 ```bash
-sudo nixos-install --root /mnt --flake .#vm_test --show-trace --verbose --impure --no-root-passwd
+sudo nixos-install --root /mnt --flake .#"${HOST}" --show-trace --verbose --impure --no-root-passwd
 ```
 Move Repo
 
