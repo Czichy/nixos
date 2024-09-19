@@ -33,7 +33,7 @@ https://homenetworkguy.com/how-to/set-up-a-fully-functioning-home-network-using-
 ☁️  | VPS | envoy | Hetzner Cloud server | Mailserver
 
 ### Host Naming Convention
- HL#ZZZFFF$$
+ HL-#-ZZZ-FFF-$$
 
 HL - Homelab
 
