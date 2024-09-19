@@ -18,26 +18,23 @@
         "virtio_scsi"
       ];
       kernelModules = [];
+      systemd = {
+        enable = true;
+        # emergencyAccess = globals.root.hashedPassword;
+        # TODO good idea? targets.emergency.wants = ["network.target" "sshd.service"];
+        extraBin.ip = "${pkgs.iproute2}/bin/ip";
+        extraBin.ping = "${pkgs.iputils}/bin/ping";
+        extraBin.cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
+        # Give me a usable shell please
+        users.root.shell = "${pkgs.bashInteractive}/bin/bash";
+        storePaths = ["${pkgs.bashInteractive}/bin/bash"];
+      };
     };
     kernelModules = [];
     extraModulePackages = [];
-    systemd = {
-      enable = true;
-      # emergencyAccess = globals.root.hashedPassword;
-      # TODO good idea? targets.emergency.wants = ["network.target" "sshd.service"];
-      extraBin.ip = "${pkgs.iproute2}/bin/ip";
-      extraBin.ping = "${pkgs.iputils}/bin/ping";
-      extraBin.cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
-      # Give me a usable shell please
-      users.root.shell = "${pkgs.bashInteractive}/bin/bash";
-      storePaths = ["${pkgs.bashInteractive}/bin/bash"];
-    };
   };
 
   services.fwupd.enable = true;
-
-  # ensure snapshots_dir exists
-  systemd.tmpfiles.rules = ["d /.snapshots/data/home 0755 root root - -"];
 
   boot = {
     loader = {
