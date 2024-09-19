@@ -66,21 +66,21 @@ in {
             options.mountpoint = "legacy";
             mountpoint = "/etc/ssh";
             options."com.sun:auto-snapshot" = "false";
-            postCreateHook = "zfs snapshot zroot/etcssh@empty";
+            postCreateHook = "zfs snapshot zroot/etcssh@blank";
           };
           persist = {
             type = "zfs_fs";
             options.mountpoint = "legacy";
             mountpoint = "/persist";
             options."com.sun:auto-snapshot" = "false";
-            postCreateHook = "zfs snapshot zroot/persist@empty";
+            postCreateHook = "zfs snapshot zroot/persist@blank";
           };
           persistSave = {
             type = "zfs_fs";
             options.mountpoint = "legacy";
             mountpoint = "/persist/save";
             options."com.sun:auto-snapshot" = "false";
-            postCreateHook = "zfs snapshot zroot/persistSave@empty";
+            postCreateHook = "zfs snapshot zroot/persistSave@blank";
           };
           nix = {
             type = "zfs_fs";
@@ -91,7 +91,7 @@ in {
               canmount = "on";
               "com.sun:auto-snapshot" = "false";
             };
-            postCreateHook = "zfs snapshot zroot/nix@empty";
+            postCreateHook = "zfs snapshot zroot/nix@blank";
           };
           root = {
             type = "zfs_fs";
@@ -99,7 +99,7 @@ in {
             options."com.sun:auto-snapshot" = "false";
             mountpoint = "/";
             postCreateHook = ''
-              zfs snapshot zroot/root@empty
+              zfs snapshot zroot/root@blank
             '';
           };
         };
