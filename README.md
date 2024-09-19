@@ -226,7 +226,12 @@ tmpfs          tmpfs     394M  4.0K  394M   1% /run/user/1000
 login via ssh
 
 ```bash
-ssh root@<ip-addr>
+ssh nixos@<ip-addr>
+```
+
+Switch to root
+```bash
+sudo -su
 ```
 
 # Clone Repo
