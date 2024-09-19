@@ -11,9 +11,8 @@
     enable = true;
     zfs = {
       enable = true;
-      # hostID = "hostsid";
       root = {
-        disk1 = "nvme0n1";
+        disk1 = "vda";
       };
     };
   };
