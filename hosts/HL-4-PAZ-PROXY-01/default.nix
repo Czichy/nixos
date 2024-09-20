@@ -45,7 +45,6 @@
   # | ADDITIONAL CONFIG |
   # ---------------------
 
-  users.groups.acme.members = ["nginx"];
   services.nginx = {
     enable = true;
     recommendedSetup = true;

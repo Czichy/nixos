@@ -67,8 +67,9 @@ in {
       inherit secretsPath;
     };
 
-    services_acme = importApply ./services/networking/acme-wildcard.nix {
+    services_acme = importApply ./services/networking/acme.nix {
       inherit localFlake;
+      inherit secretsPath;
     };
 
     services_x11_desktop-managers_startx-home-manager =
