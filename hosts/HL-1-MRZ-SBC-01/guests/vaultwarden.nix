@@ -71,37 +71,37 @@ in {
   #   allowedUDPPorts = [22 8012];
   # };
 
-  # services.vaultwarden = {
-  #   enable = true;
-  #   dbBackend = "sqlite";
-  #   # WARN: Careful! The backup script does not remove files in the backup location
-  #   # if they were removed in the original location! Therefore, we use a directory
-  #   # that is not persisted and thus clean on every reboot.
-  #   backupDir = "/var/cache/vaultwarden-backup";
-  #   config = {
-  #     dataFolder = lib.mkForce "/var/lib/vaultwarden";
-  #     extendedLogging = true;
-  #     useSyslog = true;
-  #     webVaultEnabled = true;
+  services.vaultwarden = {
+    enable = true;
+    dbBackend = "sqlite";
+    # WARN: Careful! The backup script does not remove files in the backup location
+    # if they were removed in the original location! Therefore, we use a directory
+    # that is not persisted and thus clean on every reboot.
+    backupDir = "/var/cache/vaultwarden-backup";
+    config = {
+      dataFolder = lib.mkForce "/var/lib/vaultwarden";
+      extendedLogging = true;
+      useSyslog = true;
+      webVaultEnabled = true;
 
-  #     rocketAddress = "0.0.0.0";
-  #     rocketPort = 8012;
+      rocketAddress = "0.0.0.0";
+      rocketPort = 8012;
 
-  #     signupsAllowed = false;
-  #     passwordIterations = 1000000;
-  #     invitationsAllowed = true;
-  #     invitationOrgName = "Vaultwarden";
-  #     domain = "https://${vaultwardenDomain}";
+      signupsAllowed = false;
+      passwordIterations = 1000000;
+      invitationsAllowed = true;
+      invitationOrgName = "Vaultwarden";
+      domain = "https://${vaultwardenDomain}";
 
-  #     smtpEmbedImages = true;
-  #     smtpSecurity = "force_tls";
-  #     smtpPort = 465;
-  #   };
-  #   # Admin secret token, see
-  #   # https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
-  #   #ADMIN_TOKEN=...copy-paste a unique generated secret token here...
-  #   environmentFile = config.age.secrets.vaultwarden-env.path;
-  # };
+      smtpEmbedImages = true;
+      smtpSecurity = "force_tls";
+      smtpPort = 465;
+    };
+    # Admin secret token, see
+    # https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+    #ADMIN_TOKEN=...copy-paste a unique generated secret token here...
+    environmentFile = config.age.secrets.vaultwarden-env.path;
+  };
 
   # Replace uses of old name
   # systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
