@@ -21,6 +21,7 @@
   pkgs,
   pubkeys,
   inputs,
+  self,
   # utils,
   ...
 } @ attrs: let

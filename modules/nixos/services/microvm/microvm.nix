@@ -13,6 +13,7 @@ guestName: guestCfg: {
     mkDefault
     mkForce
     ;
+  inherit (inputs) self;
   pubkeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKfYUpuZeYCkKCNL22+jUBroV4gaZYJOjcRVPDZDVXSp root@desktop"
@@ -25,6 +26,9 @@ in {
   #pkgs = inputs.self.pkgs.${guestCfg.microvm.system};
   inherit (guestCfg) autostart;
 
+  # flake = self;
+  # # Specify from where to let `microvm -u` update later on
+  # updateFlake = "git+file:///etc/nixos";
   config = {
     imports =
       guestCfg.modules
