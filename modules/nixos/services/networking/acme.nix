@@ -1,7 +1,6 @@
 {
   localFlake,
   secretsPath,
-  pubkeys,
 }: {
   config,
   lib,
@@ -59,12 +58,12 @@ in {
         # If no such domain is found then an assertion is triggered.
         domain = submod.config._module.args.name;
         matchingCerts =
-          if elem domain config.security.acme.wildcardDomains
+          if elem domain cfg.wildcardDomains
           then [domain]
           else
             filter
             (x: !hasInfix "." (removeSuffix ".${x}" domain))
-            config.security.acme.wildcardDomains;
+            cfg.wildcardDomains;
       in
         mkIf submod.config.useACMEWildcardHost {
           useACMEHost = assert assertMsg (matchingCerts != []) "No wildcard certificate was defined that matches ${domain}";
