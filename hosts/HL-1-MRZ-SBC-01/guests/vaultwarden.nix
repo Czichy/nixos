@@ -104,21 +104,21 @@ in {
 
   # Replace uses of old name
   # systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
-  # systemd.services.vaultwarden.serviceConfig = {
-  #   StateDirectory = lib.mkForce "vaultwarden";
-  #   RestartSec = "60"; # Retry every minute
-  # };
+  systemd.services.vaultwarden.serviceConfig = {
+    StateDirectory = lib.mkForce "vaultwarden";
+    RestartSec = "60"; # Retry every minute
+  };
 
   # Needed so we don't run out of tmpfs space for large backups.
   # Technically this could be cleared each boot but whatever.
-  # environment.persistence."/state".directories = [
-  #   {
-  #     directory = config.services.vaultwarden.backupDir;
-  #     user = "vaultwarden";
-  #     group = "vaultwarden";
-  #     mode = "0700";
-  #   }
-  # ];
+  environment.persistence."/state".directories = [
+    {
+      directory = config.services.vaultwarden.backupDir;
+      user = "vaultwarden";
+      group = "vaultwarden";
+      mode = "0700";
+    }
+  ];
 
   # backups.storageBoxes.dusk = {
   #   subuser = "vaultwarden";
