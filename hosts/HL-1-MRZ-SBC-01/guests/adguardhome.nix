@@ -136,14 +136,14 @@ in {
     };
   };
 
-  # systemd.services.adguardhome = {
-  #   preStart = lib.mkAfter ''
-  #     INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
-  #       ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
-  #       "$STATE_DIRECTORY/AdGuardHome.yaml"
-  #   '';
-  #   serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
-  # };
+  systemd.services.adguardhome = {
+    preStart = lib.mkAfter ''
+      INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
+        ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
+        "$STATE_DIRECTORY/AdGuardHome.yaml"
+    '';
+    serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
+  };
 
   systemd.network.enable = true;
   networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
