@@ -9,7 +9,7 @@
   # vaultwardenDomain = "pw.${globals.domains.personal}";
   vaultwardenDomain = "vaultwarden.czichy.com";
 in {
-  microvm.mem = 1024 * 2;
+  # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
   # tensorfiles.services.networking.wireguard.proxy-sentinel = {
   #   client.via = "sentinel";
