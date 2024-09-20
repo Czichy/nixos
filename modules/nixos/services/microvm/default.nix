@@ -256,7 +256,7 @@ in {
       # |----------------------------------------------------------------------| #
       (lib.mkIf impermanenceCheck {
         environment.persistence."${impermanence.persistentRoot}" = {
-          directories = ["/var/lib/microvms"];
+          directories = ["/var/lib/microvms" "/etc/vm-persist"];
         };
       })
       # |----------------------------------------------------------------------| #

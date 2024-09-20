@@ -10,12 +10,31 @@ in {
     enable = true;
     settings.PermitRootLogin = "yes";
     settings.PasswordAuthentication = true;
-    # hostKeys = [
-    #   {
-    #     path = "/etc/ssh/ssh_host_ed25519_key";
-    #     type = "ed25519";
-    #   }
-    # ];
+    hostKeys = [
+      {
+        path = "/persist/etc/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }
+      {
+        path = "/persist/etc/ssh/ssh_host_rsa_key";
+        type = "rsa";
+        bits = 4096;
+      }
+    ];
+  };
+
+  fileSystems."/persist".neededForBoot = mkForce true;
+  environment.persistence."/persist" = {
+    directories = [
+      "/var/lib/systemd/coredump"
+      "/var/lib/nixos" # contains user/group id map
+      "/var/log"
+    ];
+
+    files = [
+      "/etc/machine-id"
+      "/root/.bash_history"
+    ];
   };
 
   users.users.root.openssh.authorizedKeys.keys = [
