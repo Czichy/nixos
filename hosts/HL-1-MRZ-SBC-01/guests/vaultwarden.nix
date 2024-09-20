@@ -17,8 +17,7 @@ in {
   # };
 
   age.secrets.vaultwarden-env = {
-    file = secretsPath + "/vaultwarden-env.age";
-    # rekeyFile = config.node.secretsDir + "/vaultwarden-env.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/guests/vaultwarden/vaultwarden-env.age";
     mode = "440";
     group = "vaultwarden";
   };
