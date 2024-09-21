@@ -285,7 +285,7 @@ sudo ragenix -r -i ~/.ssh/czichy_desktop_ed25519
 Update Flake
 
 ```bash
-nix flake update
+nix flake lock --update-input private
 ```
 
 install nixos
