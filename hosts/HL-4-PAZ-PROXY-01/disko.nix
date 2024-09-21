@@ -58,11 +58,11 @@ in {
 
         # Take a snapshot of the empty pool
         # this will let us delete darlings
-        postCreateHook = "" "
+        postCreateHook = ''
           zfs list -t snapshot -H -o name \
             | grep -E '^${pool}@blank$' \
             || zfs snapshot ${pool}@blank
-        " "";
+        '';
 
         datasets = {
           reserved = {
