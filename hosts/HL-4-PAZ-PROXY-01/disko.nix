@@ -1,5 +1,9 @@
 {...}: let
   maindisk = "/dev/vda";
+  disk-id = id: "/dev/disk/by-id/${id}";
+  d1 = disk-id "wwn-0x5000cca25ed3025e";
+  d2 = disk-id "wwn-0x5000cca25ed2e8e8";
+  pool = "tank";
 in {
   disko.devices = {
     disk = {
@@ -23,7 +27,7 @@ in {
               size = "100%";
               content = {
                 type = "zfs";
-                pool = "zroot";
+                inherit pool;
               };
             };
           };
@@ -31,7 +35,7 @@ in {
       };
     };
     zpool = {
-      zroot = {
+      "${pool}" = {
         type = "zpool";
         rootFsOptions = {
           # https://wiki.archlinux.org/title/Install_Arch_Linux_on_ZFS
@@ -52,6 +56,14 @@ in {
           autotrim = "on";
         };
 
+        # Take a snapshot of the empty pool
+        # this will let us delete darlings
+        postCreateHook = "" "
+          zfs list -t snapshot -H -o name \
+            | grep -E '^${pool}@blank$' \
+            || zfs snapshot ${pool}@blank
+        " "";
+
         datasets = {
           reserved = {
             options = {
@@ -67,41 +79,41 @@ in {
             options.mountpoint = "legacy";
             mountpoint = "/etc/ssh";
             options."com.sun:auto-snapshot" = "false";
-            postCreateHook = "zfs snapshot zroot/etcssh@blank";
+            postCreateHook = "zfs snapshot ${pool}/etcssh@blank";
           };
           persist = {
             type = "zfs_fs";
             options.mountpoint = "legacy";
             mountpoint = "/persist";
             options."com.sun:auto-snapshot" = "false";
-            postCreateHook = "zfs snapshot zroot/persist@blank";
+            postCreateHook = "zfs snapshot ${pool}/persist@blank";
           };
           persistSave = {
             type = "zfs_fs";
             options.mountpoint = "legacy";
             mountpoint = "/persist/save";
             options."com.sun:auto-snapshot" = "false";
-            postCreateHook = "zfs snapshot zroot/persistSave@blank";
+            postCreateHook = "zfs snapshot ${pool}/persistSave@blank";
           };
           nix = {
             type = "zfs_fs";
             options.mountpoint = "legacy";
             mountpoint = "/nix";
             options = {
+              # Nix does not use atime (impure)
+              # might as well turn it off
               atime = "off";
               canmount = "on";
               "com.sun:auto-snapshot" = "false";
             };
-            postCreateHook = "zfs snapshot zroot/nix@blank";
+            postCreateHook = "zfs snapshot ${pool}/nix@blank";
           };
           root = {
             type = "zfs_fs";
             options.mountpoint = "legacy";
             options."com.sun:auto-snapshot" = "false";
             mountpoint = "/";
-            postCreateHook = ''
-              zfs snapshot zroot/root@blank
-            '';
+            postCreateHook = "zfs snapshot ${pool}/root@blank";
           };
         };
       };
