@@ -117,6 +117,5 @@ in {
   fileSystems."/nix".neededForBoot = true;
   fileSystems."/home".neededForBoot = true;
   fileSystems."/persist".neededForBoot = true;
-  fileSystems."/state".neededForBoot = true;
   fileSystems."/snapshots".neededForBoot = true;
 }
