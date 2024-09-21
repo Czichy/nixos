@@ -136,10 +136,6 @@
               nixos-nftables-firewall.nixosModules.default
               microvm.nixosModules.host
             ];
-            # extraSpecialArgs = {
-            #   inherit (self) globals;
-            #   inherit (self) secretsPath;
-            # };
           }
       );
 
@@ -156,9 +152,6 @@
               nixos-nftables-firewall.nixosModules.default
               microvm.nixosModules.host
             ];
-            # extraSpecialArgs = {
-            #   inherit (self) globals;
-            # };
           }
       );
     };

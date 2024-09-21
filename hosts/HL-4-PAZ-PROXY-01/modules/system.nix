@@ -4,14 +4,22 @@
   ...
 }: {
   config.tensorfiles.system = {
-    users.usersSettings."czichy" = lib.mkForce {
+    users.usersSettings."czichy" = {
       isSudoer = true;
       isNixTrusted = true;
+      uid = 1000;
+      gid = 1000;
       agenixPassword.enable = true;
       extraGroups = [
         "networkmanager"
         "input"
         "docker"
+        "kvm"
+        "libvirt"
+        "libvirtd"
+        "network"
+        "podman"
+        "qemu-libvirtd"
       ];
     };
     impermanence = {

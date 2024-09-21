@@ -25,7 +25,7 @@
   ];
 
   # topology.self.hardware.image = ../../topology/images/odroid-h3.png;
-  topology.self.hardware.info = "O-Droid H3, 64GB RAM";
+  topology.self.hardware.info = "NetCup VPS";
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
