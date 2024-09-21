@@ -77,7 +77,6 @@ in {
     };
 
     flake.checks."x86_64-linux" = {
-      "home-czichy@jetbundle" = config.flake.homeConfigurations."czichy@jetbundle".config.home.path;
       "home-czichy@desktop" = config.flake.homeConfigurations."czichy@desktop".config.home.path;
       "home-czichy@server" = config.flake.homeConfigurations."czichy@server".config.home.path;
     };

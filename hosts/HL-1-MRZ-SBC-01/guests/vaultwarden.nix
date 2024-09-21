@@ -65,10 +65,10 @@ in {
   #     };
   #   };
   # };
-  # networking.firewall = {
-  #   allowedTCPPorts = [22 8012];
-  #   allowedUDPPorts = [22 8012];
-  # };
+  networking.firewall = {
+    allowedTCPPorts = [22 8012];
+    allowedUDPPorts = [22 8012];
+  };
 
   services.vaultwarden = {
     enable = true;
