@@ -231,7 +231,7 @@ ssh nixos@<ip-addr>
 
 Switch to root
 ```bash
-sudo -su
+sudo su
 ```
 Switch to root
 ```bash
