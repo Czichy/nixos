@@ -26,9 +26,6 @@ in {
   #pkgs = inputs.self.pkgs.${guestCfg.microvm.system};
   inherit (guestCfg) autostart;
 
-  flake = self;
-  # # Specify from where to let `microvm -u` update later on
-  updateFlake = "git+file:///etc/nixos";
   config = {
     imports =
       guestCfg.modules
