@@ -1,8 +1,7 @@
 {...}: let
-  maindisk = "/dev/vda";
-  disk-id = id: "/dev/disk/by-id/${id}";
-  d1 = disk-id "wwn-0x5000cca25ed3025e";
-  d2 = disk-id "wwn-0x5000cca25ed2e8e8";
+  disk-id = id: "/dev/disk/by-path/${id}";
+  maindisk = disk-id "virtio-pci-0000:00:10.0";
+  # d2 = disk-id "wwn-0x5000cca25ed2e8e8";
   pool = "tank";
 in {
   disko.devices = {
