@@ -141,6 +141,15 @@ in {
           tag = "persist";
           proto = "virtiofs";
         }
+
+        {
+          # On the host
+          source = "/state/${config.networking.hostName}";
+          # In the MicroVM
+          mountPoint = "/state";
+          tag = "state";
+          proto = "virtiofs";
+        }
       ];
       #++ flip mapAttrsToList guestCfg.zfs (
       #  _: zfsCfg: {

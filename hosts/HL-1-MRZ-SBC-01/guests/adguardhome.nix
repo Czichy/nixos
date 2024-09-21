@@ -56,19 +56,19 @@ in {
   #   };
   # };
 
-  # environment.persistence."/persist".directories = [
-  #   {
-  #     directory = "/var/lib/private/AdGuardHome";
-  #     mode = "0700";
-  #   }
-  # ];
+  environment.persistence."/persist".directories = [
+    {
+      directory = "/var/lib/private/AdGuardHome";
+      mode = "0700";
+    }
+  ];
 
   networking.firewall = {
     allowedTCPPorts = [53 80 443 3000];
     allowedUDPPorts = [53];
   };
 
-  # topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
+  topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
   services.adguardhome = {
     enable = true;
     mutableSettings = false;
