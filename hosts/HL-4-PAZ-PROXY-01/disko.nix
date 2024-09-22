@@ -1,6 +1,7 @@
 {...}: let
   disk-id = id: "/dev/disk/by-path/${id}";
-  maindisk = disk-id "virtio-pci-0000:00:10.0";
+  # maindisk = disk-id "virtio-pci-0000:00:10.0";
+  maindisk = "/dev/vda";
   # d2 = disk-id "wwn-0x5000cca25ed2e8e8";
   pool = "tank";
 in {

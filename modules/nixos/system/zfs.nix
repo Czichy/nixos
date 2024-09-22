@@ -138,7 +138,7 @@ in {
           "zfs"
         ];
         zfs = {
-          devNodes = "/dev/disk/by-path/";
+          # devNodes = "/dev/disk/by-path/";
           # The root pool should never be imported forcefully.
           # Failure to import is important to notice!
           forceImportRoot = false;
