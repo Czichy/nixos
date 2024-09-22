@@ -1,6 +1,6 @@
 {...}: let
   disk-id = id: "/dev/disk/by-path/${id}";
-  disk-uuid = id: "/dev/disk/by-path/${id}";
+  disk-uuid = id: "/dev/disk/by-partuuid/${id}";
   # maindisk = disk-id "virtio-pci-0000:00:10.0";
   maindisk-uuid = disk-uuid "9d2fcb3d-f0b1-4a94-b9b9-5697be8c629c";
   maindisk = "/dev/vda";
@@ -10,7 +10,7 @@ in {
   disko.devices = {
     disk = {
       main = {
-        device = "${maindisk-uuid}";
+        device = "${maindisk}";
         type = "disk";
         content = {
           type = "gpt";
