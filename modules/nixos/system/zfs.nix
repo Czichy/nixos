@@ -142,6 +142,7 @@ in {
           # The root pool should never be imported forcefully.
           # Failure to import is important to notice!
           forceImportRoot = false;
+          extraPools = ["tank"];
           # forceImportAll = true;
           # requestEncryptionCredentials = true;
         };
@@ -165,18 +166,18 @@ in {
       # TODO remove once this is upstreamed
       # boot.initrd.systemd.services."zfs-import-rpool".after = ["cryptsetup.target"];
       # After importing the rpool, rollback the root system to be empty.
-      boot.initrd.systemd.services.impermanence-root = {
-        description = "Rollback root fs";
-        wantedBy = ["initrd.target"];
-        after = ["zfs-import-rpool.service"];
-        requires = ["zfs-import-rpool.service"];
-        before = ["sysroot.mount"];
-        unitConfig.DefaultDependencies = "no";
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart = "${pkgs.zfs}/bin/zfs rollback -r tank/root@blank";
-        };
-      };
+      # boot.initrd.systemd.services.impermanence-root = {
+      #   description = "Rollback root fs";
+      #   wantedBy = ["initrd.target"];
+      #   after = ["zfs-import-rpool.service"];
+      #   requires = ["zfs-import-rpool.service"];
+      #   before = ["sysroot.mount"];
+      #   unitConfig.DefaultDependencies = "no";
+      #   serviceConfig = {
+      #     Type = "oneshot";
+      #     ExecStart = "${pkgs.zfs}/bin/zfs rollback -r tank/root@blank";
+      #   };
+      # };
       # boot.initrd.postDeviceCommands =
       #   #wipe / and /var on boot
       #   lib.mkAfter ''
