@@ -4,6 +4,11 @@
   ...
 }: {
   config.tensorfiles.system = {
+    users.usersSettings."root" = {
+      uid = 0;
+      gid = 0;
+      agenixPassword.enable = true;
+    };
     users.usersSettings."czichy" = {
       isSudoer = true;
       isNixTrusted = true;
