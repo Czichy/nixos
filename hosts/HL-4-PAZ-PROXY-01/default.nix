@@ -44,7 +44,7 @@
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
-
+  services.qemuGuest.enable = true;
   services.nginx = {
     enable = true;
     recommendedSetup = true;
