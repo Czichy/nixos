@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}: {
+{config, ...}: {
   config.tensorfiles.system = {
     users.usersSettings."root" = {
       uid = 0;
