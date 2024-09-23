@@ -1,4 +1,5 @@
-{lib, ...}: let
+{inputs, ...}: let
+  inherit (inputs.self) lib;
   disk-path = id: "/dev/disk/by-path/${id}";
   maindisk_path = disk-path "pci-0000:00:10.0";
   luksName = "vda";

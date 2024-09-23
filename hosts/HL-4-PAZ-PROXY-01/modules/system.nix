@@ -31,16 +31,9 @@
       enable = true;
       allowOther = true;
     };
-    zfs.disks = {
+    zfs = {
       enable = true;
-      zfs = {
-        enable = true;
-        hostId = builtins.substring 0 8 (builtins.hashString "md5" config.networking.hostName);
-        root.impermanenceRoot = true;
-        # root = {
-        #   disk1 = "nvme0n1";
-        # };
-      };
+      hostId = builtins.substring 0 8 (builtins.hashString "md5" config.networking.hostName);
     };
   };
 }

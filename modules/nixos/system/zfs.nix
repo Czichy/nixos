@@ -9,7 +9,7 @@
   #   "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDF1TFwXbqdC1UyG75q3HO1n7/L3yxpeRLIq2kQ9DalI"
   #   "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHYSJ9ywFRJ747tkhvYWFkx/Y9SkLqv3rb7T1UuXVBWo"
   # ];
-  cfg = config.tensorfiles.system.zfs.disks;
+  cfg = config.tensorfiles.system.zfs;
   inherit (config.networking) hostName;
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
@@ -20,7 +20,7 @@
     then config.tensorfiles.system.impermanence
     else {};
 in {
-  options.tensorfiles.system.zfs.disks = {
+  options.tensorfiles.system.zfs = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -39,22 +39,16 @@ in {
         am I reinstalling and want to save the storage pool + keep /persist/save unused so I can restore data
       '';
     };
-    zfs = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-      };
-      hostId = lib.mkOption {
-        type = lib.types.str;
-        default = "";
-      };
+    hostId = lib.mkOption {
+      type = lib.types.str;
+      default = builtins.substring 0 8 (builtins.hashString "md5" hostName);
     };
   };
 
   config = lib.mkMerge [
     # |----------------------------------------------------------------------| #
-    (lib.mkIf cfg.zfs.enable {
-      networking.hostId = cfg.zfs.hostId;
+    (lib.mkIf cfg.enable {
+      networking.hostId = cfg.hostId;
       environment.systemPackages = with pkgs; [zfs-prune-snapshots zfs];
       boot = {
         # Newest kernels might not be supported by ZFS
@@ -96,7 +90,7 @@ in {
     #   };
     # }
     # |----------------------------------------------------------------------| #
-    (lib.mkIf (cfg.zfs.root.impermanenceRoot) {
+    (lib.mkIf impermanenceCheck {
       # TODO remove once this is upstreamed
       boot.initrd.systemd.services."zfs-import-rpool".after = ["cryptsetup.target"];
       # After importing the rpool, rollback the root system to be empty.
