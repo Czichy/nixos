@@ -61,6 +61,8 @@
       # Functions for working with deployment tools, such as deploy-rs
       deploy = callLibs ./deploy.nix;
 
+      disko = callLibs ./disko.nix;
+
       # Helpers for working with the firewall, which is currently nftables. The
       # below library contains helpers for building nftables chains and tables
       # from nix attribute sets.
@@ -135,6 +137,7 @@
     inherit (self.extendedLib.ci) mkGithubMatrix;
     inherit (self.extendedLib.dag) entryBefore entryBetween entryAfter entryAnywhere topoSort dagOf;
     inherit (self.extendedLib.deploy) mkNode;
+    inherit (self.extendedLib.disko) disko;
     inherit (self.extendedLib.firewall) mkTable mkRuleset mkIngressChain mkPrerouteChain mkInputChain mkForwardChain mkOutputChain mkPostrouteChain;
     inherit (self.extendedLib.fs) mkBtrfs;
     inherit (self.extendedLib.hardware) isx86Linux primaryMonitor;

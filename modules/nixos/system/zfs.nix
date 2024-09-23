@@ -48,75 +48,6 @@ in {
         type = lib.types.str;
         default = "";
       };
-      root = {
-        #   encrypt = lib.mkOption {
-        #     type = lib.types.bool;
-        #     default = true;
-        #   };
-        #   disk1 = lib.mkOption {
-        #     type = lib.types.str;
-        #     default = "";
-        #     description = ''
-        #       device name
-        #     '';
-        #   };
-        #   disk2 = lib.mkOption {
-        #     type = lib.types.str;
-        #     default = "";
-        #     description = ''
-        #       device name
-        #     '';
-        #   };
-        reservation = lib.mkOption {
-          type = lib.types.str;
-          default = "20GiB";
-          description = ''
-            zfs reservation
-          '';
-        };
-        mirror = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = ''
-            mirror the zfs pool
-          '';
-        };
-        impermanenceRoot = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = ''
-            wipe the root directory on boot
-          '';
-        };
-      };
-      storage = {
-        # enable = lib.mkOption {
-        #   type = lib.types.bool;
-        #   default = false;
-        # };
-        #   disks = lib.mkOption {
-        #     type = lib.types.listOf lib.types.str;
-        #     default = [];
-        #     description = ''
-        #       device names
-        #     '';
-        #   };
-        #   reservation = lib.mkOption {
-        #     type = lib.types.str;
-        #     default = "20GiB";
-        #     description = ''
-        #       zfs reservation
-        #     '';
-        #   };
-        #   mirror = lib.mkOption {
-        #     type = lib.types.bool;
-        #     default = false;
-        #     description = ''
-        #       mirror the zfs pool
-        #     '';
-        #   };
-        # };
-      };
     };
   };
 
@@ -148,7 +79,10 @@ in {
         };
       };
       services.zfs = {
-        autoScrub.enable = true;
+        autoScrub = {
+          enable = true;
+          interval = "weekly";
+        };
         trim = {
           enable = true;
           interval = "weekly";
@@ -164,20 +98,20 @@ in {
     # |----------------------------------------------------------------------| #
     (lib.mkIf (cfg.zfs.root.impermanenceRoot) {
       # TODO remove once this is upstreamed
-      # boot.initrd.systemd.services."zfs-import-rpool".after = ["cryptsetup.target"];
+      boot.initrd.systemd.services."zfs-import-rpool".after = ["cryptsetup.target"];
       # After importing the rpool, rollback the root system to be empty.
-      # boot.initrd.systemd.services.impermanence-root = {
-      #   description = "Rollback root fs";
-      #   wantedBy = ["initrd.target"];
-      #   after = ["zfs-import-rpool.service"];
-      #   requires = ["zfs-import-rpool.service"];
-      #   before = ["sysroot.mount"];
-      #   unitConfig.DefaultDependencies = "no";
-      #   serviceConfig = {
-      #     Type = "oneshot";
-      #     ExecStart = "${pkgs.zfs}/bin/zfs rollback -r tank/root@blank";
-      #   };
-      # };
+      boot.initrd.systemd.services.impermanence-root = {
+        description = "Rollback root fs";
+        wantedBy = ["initrd.target"];
+        after = ["zfs-import-rpool.service"];
+        requires = ["zfs-import-rpool.service"];
+        before = ["sysroot.mount"];
+        unitConfig.DefaultDependencies = "no";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.zfs}/bin/zfs rollback -r tank/root@blank";
+        };
+      };
       # boot.initrd.postDeviceCommands =
       #   #wipe / and /var on boot
       #   lib.mkAfter ''
