@@ -15,7 +15,7 @@ in {
           partitions = {
             grub = lib.disko.gpt.partGrub;
             bios = lib.disko.gpt.partBoot "512M";
-            rpool = lib.disko.gpt.partLuksZfs "${luksName}" "${pool}" "100%";
+            "${pool}" = lib.disko.gpt.partLuksZfs "${luksName}" "${pool}" "100%";
           };
         };
       };
