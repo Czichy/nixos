@@ -21,7 +21,7 @@ in {
       };
     };
     zpool = {
-      rpool = lib.disko.zfs.mkZpool {datasets = lib.disko.zfs.impermanenceZfsDatasets;};
+      rpool = lib.disko.zfs.mkZpool {datasets = lib.disko.zfs.impermanenceZfsDatasets "${pool}";};
     };
   };
 

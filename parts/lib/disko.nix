@@ -61,12 +61,12 @@
         options.ashift = "12";
       };
 
-      impermanenceZfsDatasets = {
+      impermanenceZfsDatasets = pool: {
         "local" = unmountable;
         "local/root" =
           filesystem "/"
           // {
-            postCreateHook = "zfs snapshot rpool/local/root@blank";
+            postCreateHook = "zfs snapshot ${pool}/local/root@blank";
           };
         "local/nix" = filesystem "/nix";
         "local/state" = filesystem "/state";
