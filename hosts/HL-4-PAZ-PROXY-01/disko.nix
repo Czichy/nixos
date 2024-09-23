@@ -7,10 +7,11 @@
   # d2 = disk-id "wwn-0x5000cca25ed2e8e8";
   pool = "tank";
 in {
+  disko.extraRootModules = ["zfs"];
   disko.devices = {
     disk = {
       main = {
-        device = "${maindisk}";
+        device = "/dev/disk/by-path/pci-0000:00:10.0";
         type = "disk";
         content = {
           type = "gpt";
