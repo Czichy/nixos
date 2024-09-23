@@ -305,14 +305,19 @@ if login failed, check the password you set in install-1, and try again
 ```bash
 nixos-enter
 ```
+** Unmount filesystems:
+```bash
+umount -Rl /mnt
+zpool export -a
+```
 
-And then reboot.
-
-## Update Nixos
+** Reboot:
 
 ```bash
-nh os switch --ask --hostname vm_test .
+reboot
 ```
+
+
 
 ## Deploying the main flake's NixOS configuration
 
