@@ -292,11 +292,16 @@ install nixos
 ```bash
 sudo nixos-install --root /mnt --flake .#"${HOST}" --show-trace --verbose --impure --no-root-passwd
 ```
+
+Create SSH Key for initrd-ssh (LUKS)
+```bash
+ssh-keygen -t ed25519 -N "" -C "" -f /mnt/nix/secret/initrd/ssh_host_ed25519_key
+```
+
 Move Repo
 
 ```bash
 mv /root/nixos /mnt/persist/etc/
-
 ```
 
 enter into the installed system, check password & users
