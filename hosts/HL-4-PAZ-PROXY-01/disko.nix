@@ -7,7 +7,7 @@
       path = "pci-0000:00:10.0";
     };
   };
-  luksName = "zfs";
+  # luksName = "zfs";
   pool = "tank";
 in {
   disko.devices = {
@@ -30,6 +30,10 @@ in {
     };
   };
 
+  # Now this is hairy! The format is more or less:
+  # IP:<ignore>:GATEWAY:NETMASK:HOSTNAME:NIC:AUTCONF?
+  # See: https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt
+  # boot.kernelParams = ["ip=1.2.3.4::1.2.3.1:255.255.255.192:myhostname:enp35s0:off"];
   # boot.loader.grub.devices = ["/dev/disk/by-id/${disks.main}"];
   # disko.devices = {
   #   disk = {
@@ -152,8 +156,8 @@ in {
   # nixos-anywhere currently has issues with impermanence so agenix keys are lost during the install process.
   # as such we give /etc/ssh its own zfs dataset rather than using impermanence to save the keys when we wipe the root directory on boot
   # agenix needs the keys available before the zfs datasets are mounted, so we need this to make sure they are available.
-  fileSystems."/etc/ssh".neededForBoot = true;
+  # fileSystems."/etc/ssh".neededForBoot = true;
   # Needed for impermanence, because we mount /persist/save on /persist, we need to make sure /persist is mounted before /persist/save
   fileSystems."/persist".neededForBoot = true;
-  fileSystems."/persist/save".neededForBoot = true;
+  # fileSystems."/persist/save".neededForBoot = true;
 }

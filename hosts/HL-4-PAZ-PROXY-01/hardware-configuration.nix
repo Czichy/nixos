@@ -16,6 +16,8 @@
         "sr_mod"
         "virtio_blk"
         "virtio_scsi"
+        "virtio_net"
+        "virtio_scsi"
       ];
       kernelModules = [];
       systemd = {

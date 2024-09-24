@@ -84,6 +84,10 @@ in {
       inherit (config.secrets) pubkeys;
     };
     # -- system --
+    system_initrd-ssh = importApply ./system/initrd-ssh.nix {
+      inherit localFlake;
+      inherit pubkeys;
+    };
     system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};
     system_users = importApply ./system/users {
       inherit localFlake;
