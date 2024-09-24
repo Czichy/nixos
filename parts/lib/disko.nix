@@ -51,7 +51,7 @@
         type = "zpool";
         rootFsOptions = {
           compression = "zstd";
-          acltype = "posix";
+          acltype = "posixacl";
           atime = "off";
           xattr = "sa";
           dnodesize = "auto";
@@ -59,7 +59,10 @@
           canmount = "off";
           devices = "off";
         };
-        options.ashift = "12";
+        options = {
+          ashift = "12";
+          autotim = "on";
+        };
       };
 
       impermanenceZfsDatasets = pool: {
@@ -80,6 +83,7 @@
         type = "zfs_fs";
         options = {
           canmount = "noauto";
+          "com.sun:auto-snapshot" = "false";
           inherit mountpoint;
         };
         # Required to add dependencies for initrd
