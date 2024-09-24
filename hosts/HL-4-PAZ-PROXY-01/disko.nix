@@ -1,7 +1,12 @@
 {inputs, ...}: let
   inherit (inputs.self) lib;
   disk-path = id: "/dev/disk/by-path/${id}";
-  maindisk_path = disk-path "pci-0000:00:10.0";
+  disks = {
+    main = {
+      name = "main";
+      path = "pci-0000:00:10.0";
+    };
+  };
   luksName = "zfs";
   pool = "tank";
 in {
@@ -9,13 +14,13 @@ in {
     disk = {
       main = {
         type = "disk";
-        device = "${maindisk_path}";
+        device = disk-path "${disks.main.path}";
         content = {
           type = "gpt";
           partitions = {
             grub = lib.disko.gpt.partGrub;
             bios = lib.disko.gpt.partBoot "512M";
-            "${pool}" = lib.disko.gpt.partLuksZfs "${luksName}" "${pool}" "100%";
+            "${pool}" = lib.disko.gpt.partLuksZfs disks.main.name "${pool}" "100%";
           };
         };
       };
