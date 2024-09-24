@@ -12,22 +12,19 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.minimal;
   _ = mkOverrideAtProfileLevel;
-in
-{
+in {
   options.tensorfiles.profiles.minimal = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the minimal system profile.
@@ -70,11 +67,11 @@ in
       console = {
         enable = _ true;
         useXkbConfig = _ true;
-        font = _ "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
+        font = _ "${pkgs.terminus_font}/share/consolefonts/ter-112n.psf.gz";
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }
