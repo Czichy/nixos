@@ -99,129 +99,7 @@ The ISO file will be generated in a directory called result.
 
 ## How to install NixOS
 
-1. Boot into the installer.
-
-1. Partitioning
-
-Planning the disk layout
-
-In this case we’re going to make two main partitions in a GPT partition table:
-
-- /dev/sda1, the ESP (UEFI Boot Partition) that will hold our kernel and the bootloader. Formatted as FAT32 with a size of 512MB with mkfs.fat -F 32 /dev/sda1
-- /dev/sda2, is a partition that will contain an encrypted container which at the same time will contain an LVM physical volume which at the same time will contain logical volumes for both the root and swap filesystems. Yeah, this seems a little bit crazy but it is a very flexible configuration :)
-
-### Partition the SSD & install NixOS via disko
-
-Disk layout:
-
-desktop
-
-```bash
-czichy@desktop
-nixos on  main [$✘!?]
-~~> : lsblk
-NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-sda           8:0    0 931,5G  0 disk
-└─sda1        8:1    0 931,5G  0 part /backup
-sdb           8:16   0 931,5G  0 disk
-└─sdb1        8:17   0 931,5G  0 part
-nvme0n1     259:0    0 894,3G  0 disk
-nvme1n1     259:1    0 931,5G  0 disk
-├─nvme1n1p1 259:2    0  1023M  0 part /boot
-└─nvme1n1p2 259:3    0 930,5G  0 part /var/lib/systemd
-                                      /var/lib/libvirt
-                                      /srv
-                                      /nix/store
-                                      /var/log
-                                      /var/lib/nixos
-                                      /persist
-                                      /nix
-
-czichy@desktop
-nixos on  main [$✘!?]
-->> : df -Th
-Dateisystem                                Typ      Größe Benutzt Verf. Verw% Eingehängt auf
-devtmpfs                                   devtmpfs  1,6G       0  1,6G    0% /dev
-tmpfs                                      tmpfs      16G    444K   16G    1% /dev/shm
-tmpfs                                      tmpfs     7,9G    6,4M  7,9G    1% /run
-tmpfs                                      tmpfs      16G    1,1M   16G    1% /run/wrappers
-none                                       tmpfs     2,0G    932K  2,0G    1% /
-/dev/nvme1n1p2                             btrfs     931G     83G  845G    9% /nix
-/dev/nvme1n1p2                             btrfs     931G     83G  845G    9% /persist
-efivarfs                                   efivarfs  128K     38K   86K   31% /sys/firmware/efi/efivars
-none                                       tmpfs     2,0G    149M  1,9G    8% /home/czichy
-/dev/nvme1n1p1                             vfat     1021M    117M  905M   12% /boot
-/dev/sda1                                  ext4      916G     28K  870G    1% /backup
-tmpfs                                      tmpfs     3,2G     24K  3,2G    1% /run/user/1000
-/persist/home/czichy/Dokumente             fuse      931G     83G  845G    9% /home/czichy/Dokumente
-/persist/home/czichy/Music                 fuse      931G     83G  845G    9% /home/czichy/Music
-/persist/home/czichy/Games                 fuse      931G     83G  845G    9% /home/czichy/Games
-/persist/home/czichy/Trading               fuse      931G     83G  845G    9% /home/czichy/Trading
-/persist/home/czichy/Downloads             fuse      931G     83G  845G    9% /home/czichy/Downloads
-/persist/home/czichy/Pictures              fuse      931G     83G  845G    9% /home/czichy/Pictures
-/persist/home/czichy/.cache/keepassxc      fuse      931G     83G  845G    9% /home/czichy/.cache/keepassxc
-/persist/home/czichy/VirtualBox VMs        fuse      931G     83G  845G    9% /home/czichy/VirtualBox VMs
-/persist/home/czichy/Sync                  fuse      931G     83G  845G    9% /home/czichy/Sync
-/persist/home/czichy/.config/OpenRGB       fuse      931G     83G  845G    9% /home/czichy/.config/OpenRGB
-/persist/home/czichy/.cargo                fuse      931G     83G  845G    9% /home/czichy/.cargo
-/persist/home/czichy/.config/dolphin       fuse      931G     83G  845G    9% /home/czichy/.config/dolphin
-/persist/home/czichy/.config/keepassxc     fuse      931G     83G  845G    9% /home/czichy/.config/keepassxc
-/persist/home/czichy/.config/obsidian      fuse      931G     83G  845G    9% /home/czichy/.config/obsidian
-/persist/home/czichy/.config/syncthing     fuse      931G     83G  845G    9% /home/czichy/.config/syncthing
-/persist/home/czichy/.config/lutris        fuse      931G     83G  845G    9% /home/czichy/.config/lutris
-/persist/home/czichy/.credentials          fuse      931G     83G  845G    9% /home/czichy/.credentials
-/persist/home/czichy/dev                   fuse      931G     83G  845G    9% /home/czichy/dev
-/persist/home/czichy/.ib-tws-native        fuse      931G     83G  845G    9% /home/czichy/.ib-tws-native
-/persist/home/czichy/.ib-tws-native_latest fuse      931G     83G  845G    9% /home/czichy/.ib-tws-native_latest
-/persist/home/czichy/.local/bin            fuse      931G     83G  845G    9% /home/czichy/.local/bin
-/persist/home/czichy/.local/share/Steam    fuse      931G     83G  845G    9% /home/czichy/.local/share/Steam
-/persist/home/czichy/.local/share/zoxide   fuse      931G     83G  845G    9% /home/czichy/.local/share/zoxide
-/persist/home/czichy/.local/share/lutris   fuse      931G     83G  845G    9% /home/czichy/.local/share/lutris
-/persist/home/czichy/.local/share/fish     fuse      931G     83G  845G    9% /home/czichy/.local/share/fish
-/persist/home/czichy/.mozilla/firefox      fuse      931G     83G  845G    9% /home/czichy/.mozilla/firefox
-/persist/home/czichy/.ssh                  fuse      931G     83G  845G    9% /home/czichy/.ssh
-```
-
-virtual_nas
-
-```bash
-NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-loop0    7:0    0 923.6M  1 loop /nix/.ro-store
-sr0     11:0    1   969M  0 rom  /iso
-vda    253:0    0    60G  0 disk
-├─vda1 253:1    0     1G  0 part /mnt/boot
-├─vda2 253:2    0     4G  0 part [SWAP]
-└─vda3 253:3    0    55G  0 part /mnt/var/log
-                                 /mnt/var/local/.snapshots
-                                 /mnt/var/local
-                                 /mnt/nix
-                                 /mnt/home/.snapshots
-                                 /mnt/home
-                                 /mnt/.snapshots
-                                 /mnt
-vdb    253:16   0    60G  0 disk
-
-Filesystem     Type      Size  Used Avail Use% Mounted on
-tmpfs          tmpfs     2.0G   43M  1.9G   3% /
-/dev/root      iso9660   969M  969M     0 100% /iso
-/dev/loop0     squashfs  924M  924M     0 100% /nix/.ro-store
-tmpfs          tmpfs     2.0G  1.2G  775M  61% /nix/.rw-store
-overlay        overlay   2.0G  1.2G  775M  61% /nix/store
-devtmpfs       devtmpfs  197M     0  197M   0% /dev
-tmpfs          tmpfs     2.0G     0  2.0G   0% /dev/shm
-tmpfs          tmpfs     983M  3.3M  980M   1% /run
-tmpfs          tmpfs     2.0G  1.1M  2.0G   1% /run/wrappers
-tmpfs          tmpfs     394M  4.0K  394M   1% /run/user/1000
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt/.snapshots
-/dev/vda1      vfat     1022M  4.0K 1022M   1% /mnt/boot
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt/home
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt/home/.snapshots
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt/nix
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt/var/local
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt/var/local/.snapshots
-/dev/vda3      btrfs      58G  3.9M   54G   1% /mnt/var/log
-```
+#Boot into the installer.
 
 login via ssh
 
@@ -295,6 +173,7 @@ sudo nixos-install --root /mnt --flake .#"${HOST}" --show-trace --verbose --impu
 
 Create SSH Key for initrd-ssh (LUKS)
 ```bash
+mkdir /mnt/nix/secret/initrd -p
 ssh-keygen -t ed25519 -N "" -C "" -f /mnt/nix/secret/initrd/ssh_host_ed25519_key
 ```
 
