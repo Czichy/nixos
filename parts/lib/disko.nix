@@ -20,7 +20,7 @@
       partEfi = size: {
         inherit size;
         priority = 1000;
-        type = "ef00";
+        type = "EF00";
         content = {
           type = "filesystem";
           mountOptions = ["umask=0077"];

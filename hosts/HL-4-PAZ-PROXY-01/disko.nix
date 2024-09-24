@@ -19,7 +19,7 @@ in {
           type = "gpt";
           partitions = {
             # grub = lib.disko.gpt.partGrub;
-            bios = lib.disko.gpt.partBoot "512M";
+            ESP = lib.disko.gpt.partBoot "1G";
             "${pool}" = lib.disko.gpt.partLuksZfs disks.main.name "${pool}" "100%";
           };
         };
