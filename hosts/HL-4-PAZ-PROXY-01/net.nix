@@ -5,7 +5,8 @@
   ...
 }: let
   inherit (inputs.self) lib;
-  config.repo.secrets.local = {
+  # config.repo.secrets.local = {
+  local = {
     networking = {
       interfaces = {
         wan = {
@@ -20,7 +21,8 @@
       };
     };
   };
-  icfg = config.repo.secrets.local.networking.interfaces.wan;
+  icfg = local.networking.interfaces.wan;
+  # icfg = config.repo.secrets.local.networking.interfaces.wan;
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
   networking.domain = globals.domains.me;
