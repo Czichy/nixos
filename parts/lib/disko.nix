@@ -84,7 +84,8 @@
         options = {
           canmount = "noauto";
           "com.sun:auto-snapshot" = "false";
-          inherit mountpoint;
+          mountpoint = "legacy";
+          # inherit mountpoint;
         };
         # Required to add dependencies for initrd
         inherit mountpoint;
