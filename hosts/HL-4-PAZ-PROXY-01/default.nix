@@ -1,5 +1,5 @@
 {
-  # config,
+  config,
   globals,
   pkgs,
   inputs,
