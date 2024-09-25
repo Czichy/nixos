@@ -19,7 +19,7 @@
     ../../modules/globals.nix
     ./hardware-configuration.nix
     ./disko.nix
-    # ./net.nix
+    ./net.nix
     # ./acme.nix
     ./modules
   ];
