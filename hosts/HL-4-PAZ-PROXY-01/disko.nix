@@ -29,6 +29,7 @@ in {
       "${pool}" = lib.disko.zfs.mkZpool {datasets = lib.disko.zfs.impermanenceZfsDatasets "${pool}";};
     };
   };
+  boot.initrd.systemd.services."zfs-import-${pool}".after = ["cryptsetup.target"];
 
   # Construct the partition table for the system's primary disk.
   # disko.devices.disk.main = {
@@ -163,8 +164,6 @@ in {
   #     };
   #   };
   # };
-
-  boot.initrd.systemd.services."zfs-import-${pool}".after = ["cryptsetup.target"];
 
   # Now this is hairy! The format is more or less:
   # IP:<ignore>:GATEWAY:NETMASK:HOSTNAME:NIC:AUTCONF?
