@@ -63,7 +63,7 @@ in {
                 settings = {
                   #                keyFile = "/dev/mapper/cryptkey";
                   #               keyFileSize = 8192;
-                  fallbackToPassword = true;
+                  # fallbackToPassword = true;
                   allowDiscards = true;
                 };
                 content = {
