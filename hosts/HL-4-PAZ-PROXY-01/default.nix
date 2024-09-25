@@ -20,7 +20,7 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
-    ./acme.nix
+    # ./acme.nix
     ./modules
   ];
 
@@ -51,6 +51,7 @@
 
     virtualHosts.${globals.domains.me} = {
       forceSSL = true;
+      enableACME = true;
       useACMEWildcardHost = true;
       locations."/".root = pkgs.runCommand "index.html" {} ''
         mkdir -p $out
