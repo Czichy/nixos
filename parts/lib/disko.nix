@@ -63,7 +63,6 @@
         };
         options = {
           ashift = "12";
-          autotim = "on";
         };
       };
 
