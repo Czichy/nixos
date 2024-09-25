@@ -4,7 +4,7 @@
       luksZfs = luksName: pool: {
         type = "luks";
         # name = "${pool}_${luksName}";
-        name = "${luksName}";
+        name = "${pool}_${luksName}";
         settings.allowDiscards = true;
         content = {
           type = "zfs";
@@ -45,8 +45,7 @@
       partLuksZfs = luksName: pool: size: {
         inherit size;
         type = "8300";
-        # content = disko.content.luksZfs luksName pool;
-        content = disko.content.luksZfs "cryptroot" pool;
+        content = disko.content.luksZfs luksName pool;
       };
     };
     zfs = rec {
