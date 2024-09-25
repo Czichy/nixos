@@ -83,7 +83,6 @@
         type = "zfs_fs";
         options = {
           canmount = "noauto";
-          "com.sun:auto-snapshot" = "false";
           mountpoint = "legacy";
           # inherit mountpoint;
         };

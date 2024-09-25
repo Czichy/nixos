@@ -7,165 +7,167 @@
       path = "pci-0000:00:10.0";
     };
   };
-  luksName = "zfs";
+  # luksName = "zfs";
   pool = "tank";
 in {
-  # disko.devices = {
-  #   disk = {
-  #     main = {
-  #       type = "disk";
-  #       device = disk-path "${disks.main.path}";
-  #       content = {
-  #         type = "gpt";
-  #         partitions = {
-  #           # grub = lib.disko.gpt.partGrub;
-  #           ESP = lib.disko.gpt.partBoot "1G";
-  #           "${pool}" = lib.disko.gpt.partLuksZfs disks.main.name "${pool}" "250G";
-  #         };
-  #       };
-  #     };
-  #   };
-  #   zpool = {
-  #     "${pool}" = lib.disko.zfs.mkZpool {datasets = lib.disko.zfs.impermanenceZfsDatasets "${pool}";};
-  #   };
-  # };
+  disko.devices = {
+    disk = {
+      main = {
+        type = "disk";
+        device = disk-path "${disks.main.path}";
+        content = {
+          type = "gpt";
+          partitions = {
+            # grub = lib.disko.gpt.partGrub;
+            ESP = lib.disko.gpt.partEfi "1G";
+            "${pool}" = lib.disko.gpt.partLuksZfs disks.main.name "${pool}" "250G";
+          };
+        };
+      };
+    };
+    zpool = {
+      "${pool}" = lib.disko.zfs.mkZpool {datasets = lib.disko.zfs.impermanenceZfsDatasets "${pool}";};
+    };
+  };
+
+  boot.initrd.systemd.services."zfs-import-${pool}".after = ["cryptsetup.target"];
 
   # Now this is hairy! The format is more or less:
   # IP:<ignore>:GATEWAY:NETMASK:HOSTNAME:NIC:AUTCONF?
   # See: https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt
   # boot.kernelParams = ["ip=1.2.3.4::1.2.3.1:255.255.255.192:myhostname:enp35s0:off"];
   # boot.loader.grub.devices = ["/dev/disk/by-id/${disks.main}"];
-  disko.devices = {
-    disk = {
-      main = {
-        device = disk-path "${disks.main.path}";
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            ESP = {
-              size = "1G";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountOptions = ["umask=0077"];
-                mountpoint = "/boot";
-              };
-            };
-            luksZfs = {
-              type = "8300";
-              size = "100%";
-              content = {
-                type = "luks";
-                name = "${pool}_${luksName}";
-                askPassword = true;
-                settings = {
-                  #                keyFile = "/dev/mapper/cryptkey";
-                  #               keyFileSize = 8192;
-                  # fallbackToPassword = true;
-                  allowDiscards = true;
-                };
-                content = {
-                  type = "zfs";
-                  inherit pool;
-                };
-              };
-            };
-          };
-        };
-      };
-    };
-    zpool = {
-      "${pool}" = {
-        type = "zpool";
-        rootFsOptions = {
-          acltype = "posixacl";
-          atime = "off";
-          checksum = "edonr";
-          compression = "zstd";
-          mountpoint = "none";
-          canmount = "off";
-          devices = "off";
-          xattr = "sa";
-          normalization = "formD";
-          relatime = "on";
-          "com.sun:auto-snapshot" = "false";
-        };
-        options = {
-          ashift = "12";
-          autotrim = "on";
-        };
+  # disko.devices = {
+  #   disk = {
+  #     main = {
+  #       device = disk-path "${disks.main.path}";
+  #       type = "disk";
+  #       content = {
+  #         type = "gpt";
+  #         partitions = {
+  #           ESP = {
+  #             size = "1G";
+  #             type = "EF00";
+  #             content = {
+  #               type = "filesystem";
+  #               format = "vfat";
+  #               mountOptions = ["umask=0077"];
+  #               mountpoint = "/boot";
+  #             };
+  #           };
+  #           luksZfs = {
+  #             type = "8300";
+  #             size = "100%";
+  #             content = {
+  #               type = "luks";
+  #               name = "${pool}_${luksName}";
+  #               askPassword = true;
+  #               settings = {
+  #                 #                keyFile = "/dev/mapper/cryptkey";
+  #                 #               keyFileSize = 8192;
+  #                 # fallbackToPassword = true;
+  #                 allowDiscards = true;
+  #               };
+  #               content = {
+  #                 type = "zfs";
+  #                 inherit pool;
+  #               };
+  #             };
+  #           };
+  #         };
+  #       };
+  #     };
+  #   };
+  #   zpool = {
+  #     "${pool}" = {
+  #       type = "zpool";
+  #       rootFsOptions = {
+  #         acltype = "posixacl";
+  #         atime = "off";
+  #         checksum = "edonr";
+  #         compression = "zstd";
+  #         mountpoint = "none";
+  #         canmount = "off";
+  #         devices = "off";
+  #         xattr = "sa";
+  #         normalization = "formD";
+  #         relatime = "on";
+  #         "com.sun:auto-snapshot" = "false";
+  #       };
+  #       options = {
+  #         ashift = "12";
+  #         autotrim = "on";
+  #       };
 
-        postCreateHook = ''
-          zfs list -t snapshot -H -o name \
-            | grep -E '^${pool}@blank$' \
-            || zfs snapshot ${pool}@blank
-        '';
+  #       postCreateHook = ''
+  #         zfs list -t snapshot -H -o name \
+  #           | grep -E '^${pool}@blank$' \
+  #           || zfs snapshot ${pool}@blank
+  #       '';
 
-        datasets = {
-          reserved = {
-            options = {
-              canmount = "off";
-              mountpoint = "none";
-              reservation = "20GiB";
-            };
-            type = "zfs_fs";
-          };
-          safe = {
-            options = {
-              canmount = "off";
-              mountpoint = "none";
-            };
-            type = "zfs_fs";
-          };
-          "safe/persist" = {
-            type = "zfs_fs";
-            options.mountpoint = "legacy";
-            mountpoint = "/persist";
-            options."com.sun:auto-snapshot" = "false";
-            # postCreateHook = "zfs snapshot ${pool}/persistSave@blank";
-          };
-          local = {
-            options = {
-              canmount = "off";
-              mountpoint = "none";
-            };
-            type = "zfs_fs";
-          };
-          "local/nix" = {
-            type = "zfs_fs";
-            options.mountpoint = "legacy";
-            mountpoint = "/nix";
-            options = {
-              atime = "off";
-              canmount = "on";
-              "com.sun:auto-snapshot" = "false";
-            };
-            # postCreateHook = "zfs snapshot ${pool}/local/nix@blank";
-          };
-          "local/root" = {
-            type = "zfs_fs";
-            options.mountpoint = "legacy";
-            options."com.sun:auto-snapshot" = "false";
-            mountpoint = "/";
-            #             postCreateHook = "zfs snapshot ${pool}/root@blank";
-          };
-          "local/state" = {
-            type = "zfs_fs";
-            options.mountpoint = "legacy";
-            mountpoint = "/state";
-            options = {
-              atime = "off";
-              canmount = "on";
-              "com.sun:auto-snapshot" = "false";
-            };
-            # postCreateHook = "zfs snapshot ${pool}/local/nix@blank";
-          };
-        };
-      };
-    };
-  };
+  #       datasets = {
+  #         reserved = {
+  #           options = {
+  #             canmount = "off";
+  #             mountpoint = "none";
+  #             reservation = "20GiB";
+  #           };
+  #           type = "zfs_fs";
+  #         };
+  #         safe = {
+  #           options = {
+  #             canmount = "off";
+  #             mountpoint = "none";
+  #           };
+  #           type = "zfs_fs";
+  #         };
+  #         "safe/persist" = {
+  #           type = "zfs_fs";
+  #           options.mountpoint = "legacy";
+  #           mountpoint = "/persist";
+  #           options."com.sun:auto-snapshot" = "false";
+  #           # postCreateHook = "zfs snapshot ${pool}/persistSave@blank";
+  #         };
+  #         local = {
+  #           options = {
+  #             canmount = "off";
+  #             mountpoint = "none";
+  #           };
+  #           type = "zfs_fs";
+  #         };
+  #         "local/nix" = {
+  #           type = "zfs_fs";
+  #           options.mountpoint = "legacy";
+  #           mountpoint = "/nix";
+  #           options = {
+  #             atime = "off";
+  #             canmount = "on";
+  #             "com.sun:auto-snapshot" = "false";
+  #           };
+  #           # postCreateHook = "zfs snapshot ${pool}/local/nix@blank";
+  #         };
+  #         "local/root" = {
+  #           type = "zfs_fs";
+  #           options.mountpoint = "legacy";
+  #           options."com.sun:auto-snapshot" = "false";
+  #           mountpoint = "/";
+  #           #             postCreateHook = "zfs snapshot ${pool}/root@blank";
+  #         };
+  #         "local/state" = {
+  #           type = "zfs_fs";
+  #           options.mountpoint = "legacy";
+  #           mountpoint = "/state";
+  #           options = {
+  #             atime = "off";
+  #             canmount = "on";
+  #             "com.sun:auto-snapshot" = "false";
+  #           };
+  #           # postCreateHook = "zfs snapshot ${pool}/local/nix@blank";
+  #         };
+  #       };
+  #     };
+  #   };
+  # };
   # Needed for agenix.
   # nixos-anywhere currently has issues with impermanence so agenix keys are lost during the install process.
   # as such we give /etc/ssh its own zfs dataset rather than using impermanence to save the keys when we wipe the root directory on boot
