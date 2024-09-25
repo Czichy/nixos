@@ -145,6 +145,12 @@ lsblk --output "NAME,SIZE,FSTYPE,FSVER,LABEL,PARTLABEL,UUID,FSAVAIL,FSUSE%,MOUNT
 
 Run following command to generate new ssh key pair:
 
+Create SSH Key for initrd-ssh (LUKS)
+```bash
+mkdir /mnt/nix/secret/initrd -p
+ssh-keygen -t ed25519 -N "" -C "" -f /mnt/nix/secret/initrd/ssh_host_ed25519_key
+```
+SSH
 ```bash
 sudo mkdir -p /mnt/persist/etc/ssh/
 sudo ssh-keygen -t ed25519 -f /mnt/persist/etc/ssh/ssh_host_ed25519_key -C ""
@@ -171,11 +177,7 @@ install nixos
 sudo nixos-install --root /mnt --flake .#"${HOST}" --show-trace --verbose --impure --no-root-passwd
 ```
 
-Create SSH Key for initrd-ssh (LUKS)
-```bash
-mkdir /mnt/nix/secret/initrd -p
-ssh-keygen -t ed25519 -N "" -C "" -f /mnt/nix/secret/initrd/ssh_host_ed25519_key
-```
+
 
 Move Repo
 
