@@ -20,7 +20,7 @@ in {
           partitions = {
             # grub = lib.disko.gpt.partGrub;
             ESP = lib.disko.gpt.partEfi "1G";
-            "${pool}" = lib.disko.gpt.partLuksZfs disks.main.name "${pool}" "250G";
+            root = lib.disko.gpt.partLuksZfs disks.main.name "${pool}" "100%";
           };
         };
       };
