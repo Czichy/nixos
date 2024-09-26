@@ -76,7 +76,7 @@
               nixpkgs.overlays = defaultOverlays; # ++ extraOverlays;
               nixpkgs.config.allowUnfree = true;
               networking.hostName = hostName;
-              # node.name = hostName;
+              node.name = hostName;
               # node.secrets
             }
             ../modules/globals.nix

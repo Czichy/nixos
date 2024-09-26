@@ -1,13 +1,13 @@
 {
   config,
   secretsPath,
-  globals,
   lib,
-  # pkgs,
+  globals,
+  nodes,
   ...
 }: let
   # vaultwardenDomain = "pw.${globals.domains.personal}";
-  vaultwardenDomain = "vaultwarden.czichy.com";
+  vaultwardenDomain = "vault.czichy.com";
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
@@ -38,33 +38,33 @@ in {
     network = "internet";
   };
 
-  # nodes.sentinel = {
-  #   services.nginx = {
-  #     upstreams.vaultwarden = {
-  #       # servers."${config.tensorfiles.services.networking.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
-  #       extraConfig = ''
-  #         zone vaultwarden 64k;
-  #         keepalive 2;
-  #       '';
-  #       monitoring = {
-  #         enable = true;
-  #         expectedBodyRegex = "Vaultwarden Web";
-  #       };
-  #     };
-  #     virtualHosts.${vaultwardenDomain} = {
-  #       forceSSL = true;
-  #       useACMEWildcardHost = true;
-  #       extraConfig = ''
-  #         client_max_body_size 256M;
-  #       '';
-  #       locations."/" = {
-  #         proxyPass = "http://vaultwarden";
-  #         proxyWebsockets = true;
-  #         X-Frame-Options = "SAMEORIGIN";
-  #       };
-  #     };
-  #   };
-  # };
+  nodes.HL-4-PAZ-PROXY-01 = {
+    services.nginx = {
+      upstreams.vaultwarden = {
+        # servers."${config.tensorfiles.services.networking.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
+        extraConfig = ''
+          zone vaultwarden 64k;
+          keepalive 2;
+        '';
+        monitoring = {
+          enable = true;
+          expectedBodyRegex = "Vaultwarden Web";
+        };
+      };
+      virtualHosts.${vaultwardenDomain} = {
+        forceSSL = true;
+        useACMEWildcardHost = true;
+        extraConfig = ''
+          client_max_body_size 256M;
+        '';
+        locations."/" = {
+          proxyPass = "http://vaultwarden";
+          proxyWebsockets = true;
+          X-Frame-Options = "SAMEORIGIN";
+        };
+      };
+    };
+  };
   networking.firewall = {
     allowedTCPPorts = [22 8012];
     allowedUDPPorts = [22 8012];

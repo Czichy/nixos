@@ -3,6 +3,7 @@
   lib,
   inputs,
   globals,
+  nodes,
   ...
 }: let
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";
@@ -27,6 +28,7 @@ in {
             # inputs.self.globals
             ../config/default.nix
             ../../modules/globals.nix
+            # ../../modules/nixos/misc/distributed-config.nix
             ./guests/${guestName}.nix
             # ../../modules/wireguard.nix
             {
@@ -55,7 +57,7 @@ in {
             networking.gateway = globals.net.vlan40.hosts.opnsense.ipv4;
             extraSpecialArgs = {
               inherit (inputs.self) secretsPath;
-              inherit globals;
+              inherit globals nodes;
               inherit lib;
               inherit inputs;
             };

@@ -19,11 +19,18 @@
     (localFlake.lib)
     isModuleLoadedAndEnabled
     mkAgenixEnableOption
+    attrNames
+    filterAttrs
+    flip
+    mapAttrs'
+    nameValuePair
     ;
 
   cfg = config.services.nginx;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
+
+  monitoredUpstreams = filterAttrs (_: x: x.monitoring.enable) config.services.nginx.upstreams;
 in {
   options.services.nginx = {
     agenix = {
@@ -65,9 +72,50 @@ in {
         };
       });
     };
+    upstreams = mkOption {
+      type = types.attrsOf (types.submodule {
+        options.monitoring = {
+          enable = mkOption {
+            type = types.bool;
+            description = "Whether to add a global monitoring entry for this upstream";
+            default = false;
+          };
+
+          path = mkOption {
+            type = types.str;
+            description = "The path to query.";
+            default = "";
+          };
+
+          expectedStatus = mkOption {
+            type = types.int;
+            default = 200;
+            description = "The HTTP status code to expect.";
+          };
+
+          expectedBodyRegex = mkOption {
+            type = types.nullOr types.str;
+            description = "A regex pattern to expect in the body.";
+            default = null;
+          };
+
+          useHttps = mkOption {
+            type = types.bool;
+            description = "Whether to use https to connect to this upstream when monitoring";
+            default = false;
+          };
+
+          skipTlsVerification = mkOption {
+            type = types.bool;
+            description = "Skip tls verification when using https.";
+            default = false;
+          };
+        };
+      });
+    };
   };
 
-  config = mkIf (config.services.nginx.enable && config.services.nginx.recommendedSetup) (
+  config = mkIf (config.services.nginx.enable) (
     lib.mkMerge [
       # |----------------------------------------------------------------------| #
       (mkIf (config.services.nginx.recommendedSetup && agenixCheck) {
@@ -121,6 +169,28 @@ in {
           };
         };
       })
+      # |----------------------------------------------------------------------| #
+      {
+        globals.monitoring.http = flip mapAttrs' monitoredUpstreams (
+          upstreamName: upstream: let
+            schema =
+              if upstream.monitoring.useHttps
+              then "https"
+              else "http";
+          in
+            nameValuePair "${config.node.name}-upstream-${upstreamName}" {
+              url = map (server: "${schema}://${server}${upstream.monitoring.path}") (attrNames upstream.servers);
+              network = "local-${config.node.name}";
+              inherit
+                (upstream.monitoring)
+                expectedBodyRegex
+                expectedStatus
+                skipTlsVerification
+                ;
+            }
+        );
+      }
+      # |----------------------------------------------------------------------| #
     ]
   );
 }

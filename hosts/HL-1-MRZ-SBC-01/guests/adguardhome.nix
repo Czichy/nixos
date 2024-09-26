@@ -1,10 +1,4 @@
-{
-  config,
-  globals,
-  lib,
-  pkgs,
-  ...
-}: let
+{globals, ...}: let
   adguardhomeDomain = "adguardhome.czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
@@ -14,11 +8,11 @@ in {
   #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
   # };
   globals.services.adguardhome.domain = adguardhomeDomain;
-  # globals.monitoring.dns.adguardhome = {
-  #   server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
-  #   domain = ".";
-  #   network = "home-lan";
-  # };
+  globals.monitoring.dns.adguardhome = {
+    server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
+    domain = ".";
+    network = "home-lan";
+  };
   # systemd.network.networks."20-tap" = {
   #   matchConfig.Type = "ether";
   #   matchConfig.MACAddress = "60:be:b4:19:a8:4f";
@@ -30,6 +24,7 @@ in {
   #     DHCP = "yes";
   #   };
   # };
+  # nodes.HL-4-PAZ-PROXY-01 = {
   # nodes.sentinel = {
   #   services.nginx = {
   #     upstreams.adguardhome = {
