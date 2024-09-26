@@ -5,6 +5,8 @@ authorizedKeys: _guestName: guestCfg: {
 }: let
   inherit (lib) mkForce;
 in {
+  node.name = guestCfg.nodeName;
+
   networking.firewall.allowedTCPPorts = [22];
   services.openssh = {
     enable = true;
