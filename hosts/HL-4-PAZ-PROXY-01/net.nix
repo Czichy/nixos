@@ -67,7 +67,7 @@ in {
     rules = ["ct status dnat accept"];
   };
 
-  wireguard.proxy-HL-4-PAZ-PROXY-01.server = {
+  wireguard.proxy-NETCUP.server = {
     host = config.networking.fqdn;
     port = 51443;
     reservedAddresses = ["10.43.0.0/24" "fd00:43::/120"];
