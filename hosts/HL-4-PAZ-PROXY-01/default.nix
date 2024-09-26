@@ -34,7 +34,7 @@
     wireguard-tools
   ];
 
-  # wireguard.proxy-sentinel.firewallRuleForAll.allowedTCPPorts = [80 443];
+  wireguard.proxy-HL-4-PAZ-PROXY-01.firewallRuleForAll.allowedTCPPorts = [80 443];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -71,7 +71,7 @@
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
 
   # Connect safely via wireguard to skip authentication
-  # networking.hosts.${config.wireguard.proxy-sentinel.ipv4} = [globals.services.influxdb.domain];
+  # networking.hosts.${config.wireguard.proxy-HL-4-PAZ-PROXY-01.ipv4} = [globals.services.influxdb.domain];
   # meta.telegraf = {
   #   enable = true;
   #   scrapeSensors = false;

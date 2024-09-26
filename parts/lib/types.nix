@@ -1,7 +1,15 @@
 {lib, ...}:
-with lib;
-with builtins;
-with types; {
+with lib; let
+  inherit
+    (lib)
+    all
+    assertMsg
+    isAttrs
+    mkOptionType
+    recursiveUpdate
+    showOption
+    types
+    ;
   email = addCheck str (str: match "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}" str != null);
 
   # https://gist.github.com/duairc/5c9bb3c922e5d501a1edb9e7b3b845ba
@@ -33,4 +41,6 @@ with types; {
   # Represents a value or lazy value of the given type that will
   # automatically be coerced to the given type when merged.
   lazyOf = type: types.coercedTo (lazyValueOf type) (x: x._lazyValue) type;
+in {
+  inherit isLazyValue lazyOf email lazyValue lazyValueOf;
 }

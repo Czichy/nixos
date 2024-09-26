@@ -24,6 +24,7 @@
 
   inherit
     (lib)
+    isLazyValue
     net
     concatAttrs
     types
@@ -110,7 +111,8 @@ in {
     explicitlyUsedAddresses =
       flip concatMap participatingNodes
       (n:
-        filter (x: !types.isLazyValue x)
+        filter (x: !isLazyValue x)
+        # filter (x: !types.isLazyValue x)
         (concatLists
           (nodes.${n}.options.wireguard.type.functor.wrapped.getSubOptions (wgCfgOf n)).addresses.definitions))
       ++ flatten (concatMap (n: attrValues (wgCfgOf n).server.externalPeers) participatingNodes);

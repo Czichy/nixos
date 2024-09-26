@@ -141,7 +141,7 @@
     inherit (self.extendedLib.firewall) mkTable mkRuleset mkIngressChain mkPrerouteChain mkInputChain mkForwardChain mkOutputChain mkPostrouteChain;
     inherit (self.extendedLib.fs) mkBtrfs;
     inherit (self.extendedLib.hardware) isx86Linux primaryMonitor;
-    inherit (self.extendedLib.misc) filterNixFiles importNixFiles boolToNum fetchKeys containsStrings indexOf intListToStringList mergeToplevelConfigs pow hexToDec;
+    inherit (self.extendedLib.misc) filterNixFiles importNixFiles boolToNum fetchKeys containsStrings indexOf intListToStringList countOccurrences concatAttrs isAbsolutePath mergeToplevelConfigs pow hexLiteralValues hexToDec duplicates;
     inherit (self.extendedLib.modules) mkService mkModuleTree mkModuleTree' isModuleLoadedAndEnabled mkOverrideAtHmModuleLevel mkOverrideAtHmProfileLevel mkOverrideAtModuleLevel mkOverrideAtProfileLevel;
     inherit (self.extendedLib.namespacing) makeSocketNsPhysical makeServiceNsPhysical unRestrictNamespaces;
     inherit (self.extendedLib.net) net;
@@ -161,7 +161,7 @@
     inherit (self.extendedLib.themes) serializeTheme compileSCSS;
     inherit (self.extendedLib.types) isLazyValue lazyValue lazyValueOf lazyOf;
     inherit (self.extendedLib.validators) ifTheyExist ifGroupsExist isAcceptedDevice isWayland ifOneEnabled;
-    inherit (self.extendedLib) wireguard;
+    inherit (self.extendedLib.wireguard) wireguard;
     # inherit
     #   (self.extendedLib.wireguard)
     #   allExternalPeers
