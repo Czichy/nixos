@@ -11,10 +11,10 @@
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
-  # tensorfiles.services.networking.wireguard.proxy-sentinel = {
-  #   client.via = "sentinel";
-  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
-  # };
+  wireguard.proxy-NETCUP = {
+    client.via = "NETCUP";
+    firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
+  };
 
   age.secrets.vaultwarden-env = {
     file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/guests/vaultwarden/vaultwarden-env.age";
