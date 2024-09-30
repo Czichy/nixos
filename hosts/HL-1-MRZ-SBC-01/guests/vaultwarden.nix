@@ -41,7 +41,7 @@ in {
   nodes.HL-4-PAZ-PROXY-01 = {
     services.nginx = {
       upstreams.vaultwarden = {
-        # servers."${config.tensorfiles.services.networking.wireguard.proxy-sentinel.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
+        servers."${config.wireguard.proxy-public.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
         extraConfig = ''
           zone vaultwarden 64k;
           keepalive 2;
