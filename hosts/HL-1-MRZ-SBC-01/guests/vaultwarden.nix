@@ -11,8 +11,8 @@
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
-  wireguard.proxy-NETCUP = {
-    client.via = "NETCUP";
+  wireguard.proxy-public = {
+    client.via = "HL-4-PAZ-PROXY-01";
     firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
   };
 

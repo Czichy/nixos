@@ -61,7 +61,10 @@ in {
       inherit localFlake;
     };
     services_networking_ssh = importApply ./services/networking/ssh.nix {inherit localFlake;};
-    services_networking_wireguard = importApply ./services/networking/wireguard.nix {inherit localFlake;};
+    services_networking_wireguard = importApply ./services/networking/wireguard.nix {
+      inherit localFlake;
+      inherit secretsPath;
+    };
     services_nginx = importApply ./services/networking/nginx.nix {
       inherit localFlake;
       inherit secretsPath;
