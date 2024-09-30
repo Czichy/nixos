@@ -51,16 +51,16 @@ in {
         peer2 = peerA;
       };
 
-    peerPublicKeyFile = peerName: "/secrets/wireguard/${wgName}/keys/${peerName}.pub";
+    peerPublicKeyFile = peerName: "/wireguard/${wgName}/keys/${peerName}.pub";
     peerPublicKeyPath = peerName: secretsPath: secretsPath + peerPublicKeyFile peerName;
 
-    peerPrivateKeyFile = peerName: "/secrets/wireguard/${wgName}/keys/${peerName}.age";
+    peerPrivateKeyFile = peerName: "/wireguard/${wgName}/keys/${peerName}.age";
     peerPrivateKeyPath = peerName: secretsPath: secretsPath + peerPrivateKeyFile peerName;
     peerPrivateKeySecret = peerName: "wireguard-${wgName}-priv-${peerName}";
 
     peerPresharedKeyFile = peerA: peerB: let
       inherit (sortedPeers peerA peerB) peer1 peer2;
-    in "/secrets/wireguard/${wgName}/psks/${peer1}+${peer2}.age";
+    in "/wireguard/${wgName}/psks/${peer1}+${peer2}.age";
     peerPresharedKeyPath = peerA: peerB: secretsPath: secretsPath + peerPresharedKeyFile peerA peerB;
     peerPresharedKeySecret = peerA: peerB: let
       inherit (sortedPeers peerA peerB) peer1 peer2;
