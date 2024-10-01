@@ -60,6 +60,7 @@ in {
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {
       inherit localFlake;
     };
+    services_networking_networkd = importApply ./services/networking/networkd.nix {inherit localFlake;};
     services_networking_ssh = importApply ./services/networking/ssh.nix {inherit localFlake;};
     services_networking_wireguard = importApply ./services/networking/wireguard.nix {
       inherit localFlake;

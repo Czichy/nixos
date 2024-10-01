@@ -5,30 +5,30 @@
 }: let
   macAddress_enp39s0 = "2c:f0:5d:9f:10:37";
 in {
-  networking = {
-    useNetworkd = true;
-    dhcpcd.enable = false;
-    useDHCP = false;
-    # allow mdns port
-    firewall.allowedUDPPorts = [5353];
-    # renameInterfacesByMac = lib.mkIf (!config.boot.isContainer) (
-    #   lib.mapAttrs (_: v: v.mac) (config.secrets.secrets.local.networking.interfaces or {})
-    # );
-  };
-  systemd.network = {
-    enable = true;
-    wait-online.anyInterface = true;
-  };
-  services.resolved = {
-    enable = true;
-    # man I whish dnssec would be viable to use
-    dnssec = "false";
-    llmnr = "false";
-    extraConfig = ''
-      Domains=~.
-      MulticastDNS=true
-    '';
-  };
+  # networking = {
+  #   useNetworkd = true;
+  #   dhcpcd.enable = false;
+  #   useDHCP = false;
+  #   # allow mdns port
+  #   firewall.allowedUDPPorts = [5353];
+  #   # renameInterfacesByMac = lib.mkIf (!config.boot.isContainer) (
+  #   #   lib.mapAttrs (_: v: v.mac) (config.secrets.secrets.local.networking.interfaces or {})
+  #   # );
+  # };
+  # systemd.network = {
+  #   enable = true;
+  #   wait-online.anyInterface = true;
+  # };
+  # services.resolved = {
+  #   enable = true;
+  #   # man I whish dnssec would be viable to use
+  #   dnssec = "false";
+  #   llmnr = "false";
+  #   extraConfig = ''
+  #     Domains=~.
+  #     MulticastDNS=true
+  #   '';
+  # };
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because
   # of rpfilter. You can either disable rpfilter altogether:

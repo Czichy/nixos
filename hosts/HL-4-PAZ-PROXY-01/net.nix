@@ -41,39 +41,39 @@ in {
     networks = {inherit (config.systemd.network.networks) "10-wan";};
   };
 
-  networking = {
-    useNetworkd = true;
-    dhcpcd.enable = false;
-    useDHCP = false;
-    # allow mdns port
-    firewall.allowedUDPPorts = [5353];
-    # firewall.allowedTCPPorts = [3000 80 53 443];
-    # renameInterfacesByMac = lib.mkIf (!config.boot.isContainer) (
-    #   lib.mapAttrs (_: v: v.mac) (config.secrets.secrets.local.networking.interfaces or {})
-    # );
-  };
-  systemd.network = {
-    enable = true;
-    wait-online.anyInterface = true;
-  };
-  services.resolved = {
-    enable = true;
-    # man I whish dnssec would be viable to use
-    dnssec = "false";
-    llmnr = "false";
-    # Disable local DNS stub listener on 127.0.0.53
-    fallbackDns = [
-      "1.1.1.1"
-      "2606:4700:4700::1111"
-      "8.8.8.8"
-      "2001:4860:4860::8844"
-    ];
-    extraConfig = ''
-      Domains=~.
-      MulticastDNS=true
-      DNSStubListener=no
-    '';
-  };
+  # networking = {
+  #   useNetworkd = true;
+  #   dhcpcd.enable = false;
+  #   useDHCP = false;
+  #   # allow mdns port
+  #   firewall.allowedUDPPorts = [5353];
+  #   # firewall.allowedTCPPorts = [3000 80 53 443];
+  #   # renameInterfacesByMac = lib.mkIf (!config.boot.isContainer) (
+  #   #   lib.mapAttrs (_: v: v.mac) (config.secrets.secrets.local.networking.interfaces or {})
+  #   # );
+  # };
+  # systemd.network = {
+  #   enable = true;
+  #   wait-online.anyInterface = true;
+  # };
+  # services.resolved = {
+  #   enable = true;
+  #   # man I whish dnssec would be viable to use
+  #   dnssec = "false";
+  #   llmnr = "false";
+  #   # Disable local DNS stub listener on 127.0.0.53
+  #   fallbackDns = [
+  #     "1.1.1.1"
+  #     "2606:4700:4700::1111"
+  #     "8.8.8.8"
+  #     "2001:4860:4860::8844"
+  #   ];
+  #   extraConfig = ''
+  #     Domains=~.
+  #     MulticastDNS=true
+  #     DNSStubListener=no
+  #   '';
+  # };
 
   systemd.network.networks = {
     "10-wan" = {
