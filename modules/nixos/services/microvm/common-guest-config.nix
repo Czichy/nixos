@@ -51,7 +51,7 @@ in {
     '';
   };
 
-  users.users.root.password = "1234";
+  # users.users.root.password = "1234";
   # users.users.root = {
   #   openssh.authorizedKeys.keys = authorizedKeys;
   # };
@@ -62,7 +62,10 @@ in {
     gc.automatic = mkForce false;
   };
 
-  environment.systemPackages = with pkgs; [kitty.terminfo];
+  environment.systemPackages = with pkgs; [
+    wireguard-tools
+    kitty.terminfo
+  ];
 
   systemd.network.enable = true;
   networking.useNetworkd = true;
