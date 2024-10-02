@@ -7,10 +7,10 @@
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
-  wireguard.proxy-public = {
-    client.via = "HL-4-PAZ-PROXY-01";
-    firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
-  };
+  # wireguard.proxy-public = {
+  #   client.via = "HL-4-PAZ-PROXY-01";
+  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
+  # };
   globals.services.adguardhome.domain = adguardhomeDomain;
   globals.monitoring.dns.adguardhome = {
     server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
@@ -31,7 +31,8 @@ in {
   nodes.HL-4-PAZ-PROXY-01 = {
     services.nginx = {
       upstreams.adguardhome = {
-        servers."${config.wireguard.proxy-public.ipv4}:${toString config.services.adguardhome.port}" = {};
+        servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}" = {};
+        # servers."${config.wireguard.proxy-public.ipv4}:${toString config.services.adguardhome.port}" = {};
         extraConfig = ''
           zone adguardhome 64k;
           keepalive 2;

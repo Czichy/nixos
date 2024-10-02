@@ -1,5 +1,6 @@
 {
   config,
+  globals,
   secretsPath,
   lib,
   ...
@@ -9,10 +10,10 @@
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
-  wireguard.proxy-public = {
-    client.via = "HL-4-PAZ-PROXY-01";
-    firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
-  };
+  # wireguard.proxy-public = {
+  #   client.via = "HL-4-PAZ-PROXY-01";
+  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
+  # };
 
   age.secrets.vaultwarden-env = {
     file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/guests/vaultwarden/vaultwarden-env.age";
@@ -39,7 +40,8 @@ in {
   nodes.HL-4-PAZ-PROXY-01 = {
     services.nginx = {
       upstreams.vaultwarden = {
-        servers."${config.wireguard.proxy-public.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
+        servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-vaultwarden".ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
+        # servers."${config.wireguard.proxy-public.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
         extraConfig = ''
           zone vaultwarden 64k;
           keepalive 2;
