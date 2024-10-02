@@ -108,7 +108,7 @@ in {
   #   openFirewall = true;
   # };
   wireguard.proxy-vps = {
-    client.via = "HL-4-PAZ-PROXY-01";
+    client.via = "HL-1-MRZ-SBC-01-opnsense";
     ipv4 = "10.46.0.90";
     # firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
   };
