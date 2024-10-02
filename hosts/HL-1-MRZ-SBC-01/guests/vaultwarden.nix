@@ -2,8 +2,6 @@
   config,
   secretsPath,
   lib,
-  globals,
-  nodes,
   ...
 }: let
   # vaultwardenDomain = "pw.${globals.domains.personal}";
