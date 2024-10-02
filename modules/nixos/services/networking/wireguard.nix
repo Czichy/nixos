@@ -215,31 +215,6 @@
           # '';
         };
       };
-    # age.secrets =
-    #   concatAttrs (map
-    #     (other: {
-    #       ${peerPresharedKeySecret nodeName other} = {
-    #         rekeyFile = peerPresharedKeyPath nodeName other;
-    #         owner = "systemd-network";
-    #         generator.script = {pkgs, ...}: "${pkgs.wireguard-tools}/bin/wg genpsk";
-    #       };
-    #     })
-    #     neededPeers)
-    #   // {
-    #     ${peerPrivateKeySecret nodeName} = {
-    #       rekeyFile = peerPrivateKeyPath nodeName;
-    #       owner = "systemd-network";
-    #       generator.script = {
-    #         pkgs,
-    #         file,
-    #         ...
-    #       }: ''
-    #         priv=$(${pkgs.wireguard-tools}/bin/wg genkey)
-    #         ${pkgs.wireguard-tools}/bin/wg pubkey <<< "$priv" > ${lib.escapeShellArg (lib.removeSuffix ".age" file + ".pub")}
-    #         echo "$priv"
-    #       '';
-    #     };
-    #   };
 
     systemd.network.netdevs."${wgCfg.unitConfName}" = {
       netdevConfig = {
