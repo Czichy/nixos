@@ -33,7 +33,7 @@
     wireguard-tools
   ];
 
-  # wireguard.proxy-public.firewallRuleForAll.allowedTCPPorts = [80 443];
+  wireguard.proxy-vps.firewallRuleForAll.allowedTCPPorts = [80 443];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
