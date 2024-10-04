@@ -108,17 +108,8 @@ in {
   #   openFirewall = true;
   # };
   wireguard.proxy-vps = {
+    client.via = "HL-1-MRZ-SBC-01-opnsense";
     ipv4 = "10.46.0.90";
-    server = {
-      host = config.networking.fqdn;
-      port = 46819;
-      reservedAddresses = ["10.46.0.90/24" "fd00:43::/120"];
-      openFirewall = true;
-    };
+    # firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
   };
-  # wireguard.proxy-vps = {
-  #   client.via = "HL-1-MRZ-SBC-01-opnsense";
-  #   ipv4 = "10.46.0.90";
-  #   # firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
-  # };
 }
