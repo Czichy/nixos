@@ -10,6 +10,7 @@
   wgName = "proxy-vps";
   inherit
     (lib.wireguard inputs wgName)
+    peerPublicKeyPath
     peerPrivateKeyPath
     peerPresharedKeyPath
     ;
@@ -157,7 +158,7 @@ in {
         };
         wireguardPeers = [
           {
-            PublicKey = builtins.readFile; #"GgyruHwl/IUc31jy05eqLUMk3dmS4796zwTydbt+UiY=";
+            PublicKey = builtins.readFile (peerPublicKeyPath nodeName secretsPath); #"GgyruHwl/IUc31jy05eqLUMk3dmS4796zwTydbt+UiY=";
             PresharedKeyFile = config.age.secrets.preshared-key.path;
             AllowedIPs = ["10.46.0.1/32" "10.15.40.21/32"];
           }
