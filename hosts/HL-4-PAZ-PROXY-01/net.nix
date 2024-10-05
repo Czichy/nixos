@@ -146,7 +146,7 @@ in {
   systemd.network = {
     # enable = true;
     netdevs = {
-      "50-proxy-vps_man" = {
+      "40-proxy-vps" = {
         netdevConfig = {
           Kind = "wireguard";
           Name = "${wgName}";
