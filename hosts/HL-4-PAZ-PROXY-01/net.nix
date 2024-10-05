@@ -185,6 +185,7 @@ in {
             # PresharedKeyFile = config.age.secrets.preshared-key.path;
             AllowedIPs = ["10.46.0.1/32" "10.15.40.21/32"];
             PersistentKeepalive = 25;
+            Endpoint = "92.116.142.216:51820";
           }
         ];
       };
