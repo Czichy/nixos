@@ -117,7 +117,7 @@ in {
     };
     "50-${wgName}" = {
       # name = "${wgName}";
-      matchConfig.Name = "wg0";
+      matchConfig.Name = "${wgName}";
       address = ["10.46.0.90/24"];
       networkConfig = {
         IPv4Forwarding = true;
@@ -169,10 +169,10 @@ in {
   systemd.network = {
     # enable = true;
     netdevs = {
-      "40-proxy-vps" = {
+      "40-${wgName}" = {
         netdevConfig = {
           Kind = "wireguard";
-          Name = "wg0";
+          Name = "${wgName}";
           MTUBytes = "1300";
         };
         wireguardConfig = {
