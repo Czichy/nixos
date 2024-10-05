@@ -115,11 +115,10 @@ in {
       networkConfig.IPv6PrivacyExtensions = "yes";
       linkConfig.RequiredForOnline = "routable";
     };
-    wg0 = {
-      matchConfig.Name = "wg0";
+    "${wgName}" = {
+      matchConfig.Name = "${wgName}";
       address = ["10.46.0.90/24"];
       networkConfig = {
-        # IPMasquerade = "ipv4";
         IPv4Forwarding = true;
       };
     };
@@ -149,7 +148,7 @@ in {
       "50-proxy-vps_man" = {
         netdevConfig = {
           Kind = "wireguard";
-          Name = "wg0";
+          Name = "${wgName}";
           MTUBytes = "1300";
         };
         wireguardConfig = {
@@ -165,14 +164,6 @@ in {
         ];
       };
     };
-    # networks.wg0 = {
-    #   matchConfig.Name = "wg0";
-    #   address = ["10.46.0.90/24"];
-    #   networkConfig = {
-    #     IPMasquerade = "ipv4";
-    #     IPForward = true;
-    #   };
-    # };
   };
 
   # # If requested, create firewall rules for the network / specific participants and open ports.
