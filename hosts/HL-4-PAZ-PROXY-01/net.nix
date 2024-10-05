@@ -131,6 +131,8 @@ in {
     rules = ["ct status dnat accept"];
   };
 
+  # Open the udp port for the wireguard endpoint in the firewall
+  networking.firewall.allowedUDPPorts = [51820];
   # wireguard.proxy-public.server = {
   #   host = config.networking.fqdn;
   #   port = 51443;
