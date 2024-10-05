@@ -2,19 +2,20 @@
   globals,
   inputs,
   config,
-  secretsPath,
   ...
 }: let
   inherit (inputs.self) lib;
+  inherit (inputs.self) secretsPath;
+
+  wgName = "proxy-vps";
   inherit
-    (lib.wireguard)
+    (lib.wireguard inputs wgName)
     peerPrivateKeyPath
     peerPresharedKeyPath
     ;
 
   nodeName = config.node.name;
-  other = "HL-1-MRZ-SBC-01-opnsense";
-
+  opnsense = "HL-1-MRZ-SBC-01-opnsense";
   # config.repo.secrets.local = {
   local = {
     networking = {
@@ -85,7 +86,7 @@ in {
   #   '';
   # };
   age.secrets.preshared-key = {
-    file = peerPresharedKeyPath nodeName other secretsPath;
+    file = "${peerPresharedKeyPath nodeName opnsense secretsPath}";
     mode = "440";
     owner = "systemd-network";
   };
