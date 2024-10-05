@@ -117,14 +117,14 @@ in {
     };
     "50-${wgName}" = {
       # name = "${wgName}";
-      matchConfig.Name = "${wgName}";
+      matchConfig.Name = "wg0";
       address = ["10.46.0.90/24"];
       networkConfig = {
         IPv4Forwarding = true;
         # If DNS requests should go to a specific nameserver when the tunnel is
         # established, uncomment this line and set it to the address of that
         # nameserver. But see the note at the bottom of this page.
-        # DNS = "1.1.1.1";
+        DNS = "1.1.1.1";
       };
     };
   };
@@ -172,7 +172,7 @@ in {
       "40-proxy-vps" = {
         netdevConfig = {
           Kind = "wireguard";
-          Name = "${wgName}";
+          Name = "wg0";
           MTUBytes = "1300";
         };
         wireguardConfig = {
