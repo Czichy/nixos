@@ -182,7 +182,7 @@ in {
         wireguardPeers = [
           {
             PublicKey = "68vTxFdpgtwE6+RGvWFxVugx1KGoCZCq+IGVaczPyxM="; #builtins.readFile (peerPublicKeyPath nodeName secretsPath); #"GgyruHwl/IUc31jy05eqLUMk3dmS4796zwTydbt+UiY=";
-            # PresharedKeyFile = config.age.secrets.preshared-key.path;
+            PresharedKeyFile = config.age.secrets.preshared-key.path;
             AllowedIPs = ["10.46.0.1/32" "10.15.40.21/32"];
             PersistentKeepalive = 25;
             Endpoint = "92.116.142.216:51820";
