@@ -113,6 +113,14 @@ in {
       networkConfig.IPv6PrivacyExtensions = "yes";
       linkConfig.RequiredForOnline = "routable";
     };
+    wg0 = {
+      matchConfig.Name = "wg0";
+      address = ["10.46.0.90/24"];
+      networkConfig = {
+        IPMasquerade = "ipv4";
+        IPForward = true;
+      };
+    };
   };
 
   networking.nftables.firewall.zones.untrusted.interfaces = ["wan"];
@@ -134,7 +142,7 @@ in {
   #   openFirewall = true;
   # };
   systemd.network = {
-    enable = true;
+    # enable = true;
     netdevs = {
       "50-proxy-vps_man" = {
         netdevConfig = {
@@ -155,14 +163,14 @@ in {
         ];
       };
     };
-    networks.wg0 = {
-      matchConfig.Name = "wg0";
-      address = ["10.46.0.90/24"];
-      networkConfig = {
-        IPMasquerade = "ipv4";
-        IPForward = true;
-      };
-    };
+    # networks.wg0 = {
+    #   matchConfig.Name = "wg0";
+    #   address = ["10.46.0.90/24"];
+    #   networkConfig = {
+    #     IPMasquerade = "ipv4";
+    #     IPForward = true;
+    #   };
+    # };
   };
 
   # # If requested, create firewall rules for the network / specific participants and open ports.
