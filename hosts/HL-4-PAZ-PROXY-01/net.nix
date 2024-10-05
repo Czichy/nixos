@@ -115,7 +115,8 @@ in {
       networkConfig.IPv6PrivacyExtensions = "yes";
       linkConfig.RequiredForOnline = "routable";
     };
-    "${wgName}" = {
+    "40-${wgName}" = {
+      name = "${wgName}";
       matchConfig.Name = "${wgName}";
       address = ["10.46.0.90/24"];
       networkConfig = {
