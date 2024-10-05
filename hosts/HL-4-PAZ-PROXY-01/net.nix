@@ -2,9 +2,19 @@
   globals,
   inputs,
   config,
+  secretsPath,
   ...
 }: let
   inherit (inputs.self) lib;
+  inherit
+    (lib.wireguard)
+    peerPrivateKeyPath
+    peerPresharedKeyPath
+    ;
+
+  nodeName = config.node.name;
+  other = "HL-1-MRZ-SBC-01-opnsense";
+
   # config.repo.secrets.local = {
   local = {
     networking = {
@@ -74,6 +84,16 @@ in {
   #     DNSStubListener=no
   #   '';
   # };
+  age.secrets.preshared-key = {
+    file = peerPresharedKeyPath nodeName other secretsPath;
+    mode = "440";
+    owner = "systemd-network";
+  };
+  age.secrets.private-key = {
+    file = peerPrivateKeyPath nodeName secretsPath;
+    mode = "440";
+    owner = "systemd-network";
+  };
 
   systemd.network.networks = {
     "10-wan" = {
@@ -107,15 +127,96 @@ in {
   #   reservedAddresses = ["10.43.0.0/24" "fd00:43::/120"];
   #   openFirewall = true;
   # };
-  wireguard.proxy-vps.server = {
-    host = config.networking.fqdn;
-    port = 51443;
-    reservedAddresses = ["10.46.0.0/24" "fd00:43::/120"];
-    openFirewall = true;
+  # wireguard.proxy-vps.server = {
+  #   host = config.networking.fqdn;
+  #   port = 51443;
+  #   reservedAddresses = ["10.46.0.0/24" "fd00:43::/120"];
+  #   openFirewall = true;
+  # };
+  systemd.network = {
+    enable = true;
+    netdevs = {
+      "50-proxy-vps_man" = {
+        netdevConfig = {
+          Kind = "wireguard";
+          Name = "wg0";
+          MTUBytes = "1300";
+        };
+        wireguardConfig = {
+          PrivateKeyFile = config.age.secrets.private-key.path;
+          ListenPort = 51820;
+        };
+        wireguardPeers = [
+          {
+            PublicKey = builtins.readFile; #"GgyruHwl/IUc31jy05eqLUMk3dmS4796zwTydbt+UiY=";
+            PresharedKeyFile = config.age.secrets.preshared-key.path;
+            AllowedIPs = ["10.46.0.1/32" "10.15.40.21/32"];
+          }
+        ];
+      };
+    };
+    networks.wg0 = {
+      matchConfig.Name = "wg0";
+      address = ["10.46.0.90/24"];
+      networkConfig = {
+        IPMasquerade = "ipv4";
+        IPForward = true;
+      };
+    };
   };
-  # wireguard.proxy-vps = {
-  #   client.via = "HL-1-MRZ-SBC-01-opnsense";
-  #   ipv4 = "10.46.0.90";
-  #   # firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
+
+  # # If requested, create firewall rules for the network / specific participants and open ports.
+  # networking.nftables.firewall = let
+  #   inherit (config.networking.nftables.firewall) localZoneName;
+  # in {
+  #   zones =
+  #     {
+  #       # Parent zone for the whole interface
+  #       "wg-${wgCfg.linkName}".interfaces = [wgCfg.linkName];
+  #     }
+  #     // listToAttrs (flip map participatingNodes (
+  #       peer: let
+  #         peerCfg = wgCfgOf peer;
+  #       in
+  #         # Subzone to specifically target the peer
+  #         nameValuePair "wg-${wgCfg.linkName}-node-${peer}" {
+  #           parent = "wg-${wgCfg.linkName}";
+  #           ipv4Addresses = [peerCfg.ipv4];
+  #           ipv6Addresses = [peerCfg.ipv6];
+  #         }
+  #     ));
+
+  #   rules =
+  #     {
+  #       # Open ports for whole network
+  #       "wg-${wgCfg.linkName}-to-${localZoneName}" = {
+  #         from = ["wg-${wgCfg.linkName}"];
+  #         to = [localZoneName];
+  #         ignoreEmptyRule = true;
+
+  #         inherit
+  #           (wgCfg.firewallRuleForAll)
+  #           allowedTCPPorts
+  #           allowedUDPPorts
+  #           ;
+  #       };
+  #     }
+  #     # Open ports for specific nodes network
+  #     // listToAttrs (flip map participatingNodes (
+  #       peer:
+  #         nameValuePair "wg-${wgCfg.linkName}-node-${peer}-to-${localZoneName}" (
+  #           mkIf (wgCfg.firewallRuleForNode ? ${peer}) {
+  #             from = ["wg-${wgCfg.linkName}-node-${peer}"];
+  #             to = [localZoneName];
+  #             ignoreEmptyRule = true;
+
+  #             inherit
+  #               (wgCfg.firewallRuleForNode.${peer})
+  #               allowedTCPPorts
+  #               allowedUDPPorts
+  #               ;
+  #           }
+  #         )
+  #     ));
   # };
 }

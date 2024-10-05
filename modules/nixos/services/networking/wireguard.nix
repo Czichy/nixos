@@ -196,7 +196,6 @@
           ${peerPresharedKeySecret nodeName other} = {
             file = peerPresharedKeyPath nodeName other secretsPath;
             owner = "systemd-network";
-            # generator.script = {pkgs, ...}: "${pkgs.wireguard-tools}/bin/wg genpsk";
           };
         })
         neededPeers)
@@ -204,15 +203,6 @@
         ${peerPrivateKeySecret nodeName} = {
           file = peerPrivateKeyPath nodeName secretsPath;
           owner = "systemd-network";
-          # generator.script = {
-          #   pkgs,
-          #   file,
-          #   ...
-          # }: ''
-          #   priv=$(${pkgs.wireguard-tools}/bin/wg genkey)
-          #   ${pkgs.wireguard-tools}/bin/wg pubkey <<< "$priv" > ${lib.escapeShellArg (lib.removeSuffix ".age" file + ".pub")}
-          #   echo "$priv"
-          # '';
         };
       };
 
