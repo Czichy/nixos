@@ -7,7 +7,7 @@
   inherit (inputs.self) lib;
   inherit (inputs.self) secretsPath;
 
-  wgName = "wg0";
+  wgName = "proxy-vps";
   inherit
     (lib.wireguard inputs wgName)
     peerPublicKeyPath
