@@ -121,6 +121,10 @@ in {
       address = ["10.46.0.90/24"];
       networkConfig = {
         IPv4Forwarding = true;
+        # If DNS requests should go to a specific nameserver when the tunnel is
+        # established, uncomment this line and set it to the address of that
+        # nameserver. But see the note at the bottom of this page.
+        # DNS = "1.1.1.1";
       };
     };
   };
@@ -130,6 +134,23 @@ in {
     after = ["conntrack"];
     rules = ["ct status dnat accept"];
   };
+  # networking.nftables.ruleset = ''
+  #   table inet wg-wg0 {
+  #     chain preraw {
+  #       type filter hook prerouting priority raw; policy accept;
+  #       iifname != "wg0" ip daddr ${wgIpv4} fib saddr type != local drop
+  #       iifname != "wg0" ip6 daddr ${wgIpv6} fib saddr type != local drop
+  #     }
+  #     chain premangle {
+  #       type filter hook prerouting priority mangle; policy accept;
+  #       meta l4proto udp meta mark set ct mark
+  #     }
+  #     chain postmangle {
+  #       type filter hook postrouting priority mangle; policy accept;
+  #       meta l4proto udp meta mark ${toString wgFwMark} ct mark set meta mark
+  #     }
+  #   }
+  # '';
 
   # Open the udp port for the wireguard endpoint in the firewall
   networking.firewall.allowedUDPPorts = [51820];
@@ -163,6 +184,7 @@ in {
             PublicKey = builtins.readFile (peerPublicKeyPath nodeName secretsPath); #"GgyruHwl/IUc31jy05eqLUMk3dmS4796zwTydbt+UiY=";
             PresharedKeyFile = config.age.secrets.preshared-key.path;
             AllowedIPs = ["10.46.0.1/32" "10.15.40.21/32"];
+            PersistentKeepalive = 25;
           }
         ];
       };
