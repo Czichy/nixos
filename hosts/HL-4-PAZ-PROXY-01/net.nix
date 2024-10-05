@@ -7,7 +7,7 @@
   inherit (inputs.self) lib;
   inherit (inputs.self) secretsPath;
 
-  wgName = "proxy-vps";
+  wgName = "wg0";
   inherit
     (lib.wireguard inputs wgName)
     peerPublicKeyPath
@@ -116,7 +116,7 @@ in {
       linkConfig.RequiredForOnline = "routable";
     };
     "40-${wgName}" = {
-      name = "${wgName}";
+      # name = "${wgName}";
       matchConfig.Name = "${wgName}";
       address = ["10.46.0.90/24"];
       networkConfig = {
