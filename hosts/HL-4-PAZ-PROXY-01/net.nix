@@ -110,7 +110,7 @@ in {
   wireguard.proxy-vps.server = {
     host = config.networking.fqdn;
     port = 51443;
-    reservedAddresses = ["10.43.0.0/24" "fd00:43::/120"];
+    reservedAddresses = ["10.46.0.0/24" "fd00:43::/120"];
     openFirewall = true;
   };
   # wireguard.proxy-vps = {
