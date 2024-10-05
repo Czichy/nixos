@@ -124,7 +124,7 @@ in {
         # If DNS requests should go to a specific nameserver when the tunnel is
         # established, uncomment this line and set it to the address of that
         # nameserver. But see the note at the bottom of this page.
-        DNS = "1.1.1.1";
+        # DNS = "1.1.1.1";
       };
     };
   };
