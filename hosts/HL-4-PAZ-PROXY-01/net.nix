@@ -88,12 +88,12 @@ in {
   # };
   age.secrets.preshared-key = {
     file = "${peerPresharedKeyPath nodeName opnsense secretsPath}";
-    mode = "440";
+    mode = "640";
     owner = "systemd-network";
   };
   age.secrets.private-key = {
     file = peerPrivateKeyPath nodeName secretsPath;
-    mode = "440";
+    mode = "640";
     owner = "systemd-network";
   };
 
