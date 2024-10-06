@@ -268,7 +268,8 @@ in {
             # Endpoint = "92.116.142.216:51820";
           }
           {
-            PublicKey = "L4msD0mEG2ctKDtaMJW2y3cs1fT2LBRVV7iVlWZ2nZc=";
+            PublicKey = "68vTxFdpgtwE6+RGvWFxVugx1KGoCZCq+IGVaczPyxM="; #builtins.readFile (peerPublicKeyPath nodeName secretsPath); #"GgyruHwl/IUc31jy05eqLUMk3dmS4796zwTydbt+UiY=";
+            # PublicKey = "L4msD0mEG2ctKDtaMJW2y3cs1fT2LBRVV7iVlWZ2nZc=";
             AllowedIPs = ["10.46.0.2"];
           }
         ];
