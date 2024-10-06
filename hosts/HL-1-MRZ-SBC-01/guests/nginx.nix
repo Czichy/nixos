@@ -2,11 +2,9 @@
   config,
   # globals,
   secretsPath,
-  pkgs,
   ...
 }:
-with builtins;
-with lib; let
+with builtins; let
   # inherit
   #   (localFlake.lib)
   #   isModuleLoadedAndEnabled
