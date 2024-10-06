@@ -43,7 +43,7 @@ in {
           ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
         # ++ (inputs.nixpkgs.lib.attrValues config.flake.nixosModules);
       };
-      mkMicrovm = guestName: opts: {
+      mkMicrovm = guestName: net: opts: {
         ${guestName} =
           mkGuest guestName opts
           // {
@@ -53,8 +53,9 @@ in {
               # macvtap = "lan";
               # baseMac = macAddress_enp4s0; # TODO move to config
             };
-            networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
-            networking.gateway = globals.net.vlan40.hosts.opnsense.ipv4;
+            networking.address = globals.net."${net}".hosts."${config.node.name}-${guestName}".cidrv4;
+            # networking.address = globals.net."${net}".hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
+            networking.gateway = globals.net."${net}".hosts.opnsense.ipv4;
             extraSpecialArgs = {
               inherit (inputs.self) secretsPath;
               inherit globals nodes;
@@ -65,9 +66,9 @@ in {
       };
     in (
       {}
-      // mkMicrovm "adguardhome" {enableStorageDataset = true;}
-      // mkMicrovm "vaultwarden" {enableStorageDataset = true;}
-      // mkMicrovm "nginx" {enableStorageDataset = true;}
+      // mkMicrovm "adguardhome" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "vaultwarden" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "nginx" "vlan70" {enableStorageDataset = true;}
     );
   };
 }
