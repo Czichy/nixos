@@ -25,7 +25,7 @@ in {
   };
 
   # |----------------------------------------------------------------------| #
-  age.secrets."dhparams.pem" = mkIf (config ? age) {
+  age.secrets."dhparams.pem" = {
     file = secretsPath + "/nginx/dhparams.pem.age";
     mode = "440";
     group = "nginx";
@@ -45,7 +45,7 @@ in {
 
     # SSL config
     sslCiphers = "EECDH+AESGCM:EDH+AESGCM:!aNULL";
-    sslDhparam = mkIf agenixCheck config.age.secrets."dhparams.pem".path;
+    sslDhparam = config.age.secrets."dhparams.pem".path;
     commonHttpConfig = ''
       log_format json_combined escape=json '{'
         '"time": $msec,'
