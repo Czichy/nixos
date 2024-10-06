@@ -4,6 +4,7 @@
 in {
   globals = {
     domains.me = "czichy.com";
+    domains.local = "czichy.com";
     net = {
       #VLAN1
       home-wan = {

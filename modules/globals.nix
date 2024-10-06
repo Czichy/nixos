@@ -226,6 +226,11 @@ in {
               type = types.str;
               description = "My personal domain.";
             };
+
+            local = mkOption {
+              type = types.str;
+              description = "My personal domain.";
+            };
           };
 
           macs = mkOption {

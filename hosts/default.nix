@@ -179,9 +179,6 @@
         guestName: guestDef:
           nameValuePair guestDef.nodeName (
             node.config.microvm.vms.${guestName}.config
-            # if guestDef.backend == "microvm"
-            # then node.config.microvm.vms.${guestName}.config
-            # else node.config.containers.${guestName}.nixosConfiguration
           )
       ));
 

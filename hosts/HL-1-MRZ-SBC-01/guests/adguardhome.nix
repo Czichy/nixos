@@ -28,7 +28,8 @@ in {
   #     DHCP = "yes";
   #   };
   # };
-  nodes.HL-4-PAZ-PROXY-01 = {
+  # nodes.HL-4-PAZ-PROXY-01 = {
+  nodes.HL-1-MRZ-SBC-01-nginx = {
     services.nginx = {
       upstreams.adguardhome = {
         servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}" = {};
