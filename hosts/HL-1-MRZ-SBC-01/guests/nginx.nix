@@ -1,16 +1,98 @@
 {
   config,
-  globals,
+  # globals,
   secretsPath,
+  pkgs,
   ...
-}: let
+}:
+with builtins;
+with lib; let
+  # inherit
+  #   (localFlake.lib)
+  #   isModuleLoadedAndEnabled
+  #   mkImpermanenceEnableOption
+  #   mkAgenixEnableOption
+  #   ;
   nginxLocalDomain = "nginx.czichy.com";
+
+  acme-cfg = config.tensorfiles.services.networking.acme;
 in {
   # |----------------------------------------------------------------------| #
   services.nginx = {
     enable = true;
     recommendedSetup = true;
   };
+
+  # |----------------------------------------------------------------------| #
+  age.secrets."dhparams.pem" = mkIf (config ? age) {
+    file = secretsPath + "/nginx/dhparams.pem.age";
+    mode = "440";
+    group = "nginx";
+  };
+
+  # |----------------------------------------------------------------------| #
+  networking.firewall.allowedTCPPorts = [80 443];
+
+  # Sensible defaults for nginx
+  services.nginx = {
+    recommendedBrotliSettings = true;
+    recommendedGzipSettings = true;
+    recommendedOptimisation = true;
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+    recommendedSecurityHeaders = true;
+
+    # SSL config
+    sslCiphers = "EECDH+AESGCM:EDH+AESGCM:!aNULL";
+    sslDhparam = mkIf agenixCheck config.age.secrets."dhparams.pem".path;
+    commonHttpConfig = ''
+      log_format json_combined escape=json '{'
+        '"time": $msec,'
+        '"remote_addr":"$remote_addr",'
+        '"status":$status,'
+        '"method":"$request_method",'
+        '"host":"$host",'
+        '"uri":"$request_uri",'
+        '"request_size":$request_length,'
+        '"response_size":$body_bytes_sent,'
+        '"response_time":$request_time,'
+        '"referrer":"$http_referer",'
+        '"user_agent":"$http_user_agent"'
+      '}';
+      error_log syslog:server=unix:/dev/log,nohostname;
+      access_log syslog:server=unix:/dev/log,nohostname json_combined;
+      ssl_ecdh_curve secp384r1;
+    '';
+
+    # Default host that rejects everything.
+    # This is selected when no matching host is found for a request.
+    virtualHosts.dummy = {
+      default = true;
+      rejectSSL = true;
+      locations."/".extraConfig = ''
+        deny all;
+      '';
+    };
+  };
+  # |----------------------------------------------------------------------| #
+  globals.monitoring.http = flip mapAttrs' monitoredUpstreams (
+    upstreamName: upstream: let
+      schema =
+        if upstream.monitoring.useHttps
+        then "https"
+        else "http";
+    in
+      nameValuePair "${config.node.name}-upstream-${upstreamName}" {
+        url = map (server: "${schema}://${server}${upstream.monitoring.path}") (attrNames upstream.servers);
+        network = "local-${config.node.name}";
+        inherit
+          (upstream.monitoring)
+          expectedBodyRegex
+          expectedStatus
+          skipTlsVerification
+          ;
+      }
+  );
 
   # |----------------------------------------------------------------------| #
 
@@ -39,14 +121,12 @@ in {
       dnsPropagationCheck = true;
       reloadServices = ["nginx"];
     };
-    certs.extraDomainNames = ["*.${globals.domains.local}"];
+    certs = genAttrs acme-cfg.wildcardDomains (domain: {
+      extraDomainNames = ["*.${domain}"];
+    });
   };
 
   # |----------------------------------------------------------------------| #
-  networking.firewall = {
-    allowedTCPPorts = [53 80 443 3000];
-    allowedUDPPorts = [53];
-  };
 
   topology.self.services.nginx.info = "https://" + nginxLocalDomain;
   systemd.network.enable = true;

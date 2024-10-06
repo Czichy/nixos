@@ -7,10 +7,6 @@
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
-  # wireguard.proxy-public = {
-  #   client.via = "HL-4-PAZ-PROXY-01";
-  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
-  # };
   globals.services.adguardhome.domain = adguardhomeDomain;
   globals.monitoring.dns.adguardhome = {
     server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;

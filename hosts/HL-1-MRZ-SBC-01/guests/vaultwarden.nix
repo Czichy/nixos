@@ -37,7 +37,8 @@ in {
     network = "internet";
   };
 
-  nodes.HL-4-PAZ-PROXY-01 = {
+  # nodes.HL-4-PAZ-PROXY-01 = {
+  nodes.HL-1-MRZ-SBC-01-nginx = {
     services.nginx = {
       upstreams.vaultwarden = {
         servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-vaultwarden".ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
