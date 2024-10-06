@@ -252,6 +252,10 @@ in {
             PersistentKeepalive = 25;
             Endpoint = "92.116.142.216:51820";
           }
+          {
+            PublicKey = "L4msD0mEG2ctKDtaMJW2y3cs1fT2LBRVV7iVlWZ2nZc=";
+            AllowedIPs = ["10.46.0.2"];
+          }
         ];
       };
     };
