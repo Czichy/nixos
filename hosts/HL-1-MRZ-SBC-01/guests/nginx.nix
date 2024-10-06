@@ -1,12 +1,15 @@
 {
   config,
+  lib,
   # globals,
   secretsPath,
   ...
 }:
 with builtins; let
-  # inherit
-  #   (localFlake.lib)
+  inherit
+    (lib)
+    genAttrs
+    ;
   #   isModuleLoadedAndEnabled
   #   mkImpermanenceEnableOption
   #   mkAgenixEnableOption
