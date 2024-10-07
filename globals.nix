@@ -47,6 +47,8 @@ in {
         hosts.HL-1-MRZ-SBC-01.id = 20;
         hosts.HL-1-MRZ-SBC-01-adguardhome.id = 21;
         hosts.HL-1-MRZ-SBC-01-vaultwarden.id = 22;
+
+        hosts.HL-1-MRZ-SBC-01-nginx.id = 29;
       };
 
       #IoT
