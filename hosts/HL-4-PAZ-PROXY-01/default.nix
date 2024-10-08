@@ -33,8 +33,6 @@
     wireguard-tools
   ];
 
-  # wireguard.proxy-vps.firewallRuleForAll.allowedTCPPorts = [80 443];
-
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
@@ -44,23 +42,27 @@
   # | ADDITIONAL CONFIG |
   # ---------------------
   services.qemuGuest.enable = true;
-  services.nginx = {
-    enable = true;
-    recommendedSetup = true;
+  # services.nginx = {
+  #   enable = true;
+  #   recommendedSetup = true;
 
-    virtualHosts.${globals.domains.me} = {
-      forceSSL = true;
-      useACMEWildcardHost = true;
-      locations."/".root = pkgs.runCommand "index.html" {} ''
-        mkdir -p $out
-        cat > $out/index.html <<EOF
-        <html>
-          <body>Not empty soon TM. Until then please go here: <a href="https://github.com/oddlama">oddlama</a></body>
-        </html>
-        EOF
-      '';
-    };
-  };
+  #   virtualHosts.${globals.domains.me} = {
+  #     forceSSL = true;
+  #     useACMEWildcardHost = true;
+  #     locations."/".root = pkgs.runCommand "index.html" {} ''
+  #       mkdir -p $out
+  #       cat > $out/index.html <<EOF
+  #       <html>
+  #         <body>Not empty soon TM. Until then please go here: <a href="https://github.com/oddlama">oddlama</a></body>
+  #       </html>
+  #       EOF
+  #     '';
+  #   };
+  # };
+
+  services.caddy.virtualHosts."adguardhome.czichy.com".extraConfig = ''
+    reverse_proxy 10.15.70.1:80
+  '';
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because

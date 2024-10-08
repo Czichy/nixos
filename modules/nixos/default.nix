@@ -52,6 +52,10 @@ in {
       inherit localFlake;
       inherit secretsPath;
     };
+    services_caddy = importApply ./services/networking/caddy {
+      inherit localFlake;
+      inherit secretsPath;
+    };
     services_nginx = importApply ./services/networking/nginx.nix {
       inherit localFlake;
       inherit secretsPath;
