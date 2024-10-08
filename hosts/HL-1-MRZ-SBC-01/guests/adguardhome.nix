@@ -141,7 +141,6 @@ in {
   #   serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
   # };
 
-  systemd.network.enable = true;
   networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
   # systemd.network.networks."99-v-lan" = {
   #   matchConfig.Type = "ether";
