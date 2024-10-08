@@ -75,6 +75,7 @@ in {
       vlan = [
         "servers"
         "mgmt"
+        "dmz"
       ];
       networkConfig.LinkLocalAddressing = "no";
       linkConfig.RequiredForOnline = "carrier";
