@@ -68,7 +68,7 @@ in {
       {}
       // mkMicrovm "adguardhome" "vlan40" {enableStorageDataset = true;}
       // mkMicrovm "vaultwarden" "vlan40" {enableStorageDataset = true;}
-      // mkMicrovm "nginx" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "nginx" "vlan70" {enableStorageDataset = true;}
     );
   };
 }
