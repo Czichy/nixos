@@ -18,6 +18,17 @@ with builtins; let
 
   acme-cfg = config.tensorfiles.services.networking.acme;
 in {
+  systemd.network.networks."20-tap" = {
+    matchConfig.Type = "ether";
+    matchConfig.MACAddress = "60:be:b4:19:a8:4f";
+    networkConfig = {
+      Address = ["10.15.40.29/24"];
+      Gateway = "10.15.40.99";
+      DNS = ["8.8.8.8"];
+      IPv6AcceptRA = true;
+      DHCP = "yes";
+    };
+  };
   # |----------------------------------------------------------------------| #
   services.nginx = {
     enable = true;
