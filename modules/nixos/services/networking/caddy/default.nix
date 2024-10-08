@@ -15,7 +15,7 @@ with lib; let
     mkAgenixEnableOption
     ;
 
-  cfg = config.tensorfiles.caddy;
+  cfg = config.tensorfiles.services.networking.caddy;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 
