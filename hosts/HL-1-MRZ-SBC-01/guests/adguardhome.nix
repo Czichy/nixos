@@ -7,29 +7,17 @@
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
+  networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
   globals.services.adguardhome.domain = adguardhomeDomain;
   globals.monitoring.dns.adguardhome = {
     server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
     domain = ".";
     network = "home-lan";
   };
-  # systemd.network.networks."20-tap" = {
-  #   matchConfig.Type = "ether";
-  #   matchConfig.MACAddress = "60:be:b4:19:a8:4f";
-  #   networkConfig = {
-  #     Address = ["10.15.1.40/24"];
-  #     Gateway = "10.15.1.99";
-  #     DNS = ["8.8.8.8"];
-  #     IPv6AcceptRA = true;
-  #     DHCP = "yes";
-  #   };
-  # };
-  # nodes.HL-4-PAZ-PROXY-01 = {
   nodes.HL-1-MRZ-SBC-01-nginx = {
     services.nginx = {
       upstreams.adguardhome = {
         servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}" = {};
-        # servers."${config.wireguard.proxy-public.ipv4}:${toString config.services.adguardhome.port}" = {};
         extraConfig = ''
           zone adguardhome 64k;
           keepalive 2;
@@ -132,24 +120,5 @@ in {
     };
   };
 
-  # systemd.services.adguardhome = {
-  #   preStart = lib.mkAfter ''
-  #     INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
-  #       ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
-  #       "$STATE_DIRECTORY/AdGuardHome.yaml"
-  #   '';
-  #   serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
-  # };
-
-  networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
-  # systemd.network.networks."99-v-lan" = {
-  #   matchConfig.Type = "ether";
-  #   DHCP = "yes";
-  #   networkConfig = {
-  #     Address = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4];
-  #     # Gateway = [globals.net.vlan40.cidrv4];
-  #     # DNS = nameservers;
-  #   };
-  # };
   system.stateVersion = "24.05";
 }
