@@ -5,15 +5,11 @@
   lib,
   ...
 }: let
-  # vaultwardenDomain = "pw.${globals.domains.personal}";
   vaultwardenDomain = "vault.czichy.com";
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
-  # wireguard.proxy-public = {
-  #   client.via = "HL-4-PAZ-PROXY-01";
-  #   firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.vaultwarden.config.rocketPort];
-  # };
+  networking.hostName = "HL-1-MRZ-SBC-01-vaultwarden";
 
   age.secrets.vaultwarden-env = {
     file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/guests/vaultwarden/vaultwarden-env.age";
@@ -42,7 +38,6 @@ in {
     services.nginx = {
       upstreams.vaultwarden = {
         servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-vaultwarden".ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
-        # servers."${config.wireguard.proxy-public.ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
         extraConfig = ''
           zone vaultwarden 64k;
           keepalive 2;
@@ -121,21 +116,5 @@ in {
     }
   ];
 
-  # backups.storageBoxes.dusk = {
-  #   subuser = "vaultwarden";
-  #   paths = [config.services.vaultwarden.backupDir];
-  # };
-
-  systemd.network.enable = true;
-  networking.hostName = "HL-1-MRZ-SBC-01-vaultwarden";
-  # systemd.network.networks."99-v-lan" = {
-  #   matchConfig.Type = "ether";
-  #   DHCP = "yes";
-  #   networkConfig = {
-  #     Address = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4];
-  #     # Gateway = [globals.net.vlan40.cidrv4];
-  #     # DNS = nameservers;
-  #   };
-  # };
   system.stateVersion = "24.05";
 }
