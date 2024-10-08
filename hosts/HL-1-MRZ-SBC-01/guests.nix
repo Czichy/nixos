@@ -40,13 +40,13 @@ in {
           ]
           ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
       };
-      mkMicrovm = guestName: net: macvtap: opts: {
+      mkMicrovm = guestName: macvtap: net: opts: {
         ${guestName} =
           mkGuest guestName opts
           // {
             microvm = {
               system = "x86_64-linux";
-              macvtap = "servers";
+              macvtap = "${macvtap}";
               # macvtap = "lan";
               # baseMac = macAddress_enp4s0; # TODO move to config
             };
