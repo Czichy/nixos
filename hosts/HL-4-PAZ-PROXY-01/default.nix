@@ -61,7 +61,7 @@
   # };
 
   services.caddy.virtualHosts."adguardhome.czichy.com".extraConfig = ''
-    reverse_proxy 10.15.70.1:80
+    reverse_proxy 10.15.70.1
   '';
 
   # If you intend to route all your traffic through the wireguard tunnel, the

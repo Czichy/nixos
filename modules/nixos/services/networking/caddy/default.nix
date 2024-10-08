@@ -21,7 +21,7 @@ with lib; let
 
   caddyMetricsPort = 2019;
 in {
-  options.tensorfiles.services.networking.acme = with types; {
+  options.tensorfiles.services.networking.caddy = with types; {
     enable = mkEnableOption ''
       Deploy reverse proxy Caddy
     '';
