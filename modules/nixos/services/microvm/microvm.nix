@@ -70,7 +70,8 @@ in {
           inherit (guestCfg.microvm) mac;
           macvtap = {
             # Attach network interface to host interface for type = “macvlan”
-            link = "servers"; #guestCfg.microvm.macvtap;
+            link = guestCfg.microvm.macvtap;
+            # link = "servers"; #guestCfg.microvm.macvtap;
             mode = "bridge";
           };
         }
