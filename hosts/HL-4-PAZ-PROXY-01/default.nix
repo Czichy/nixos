@@ -63,16 +63,15 @@ in {
   # };
 
   # # SSL config and forwarding to local reverse proxy
-  # services.caddy.enable = true;
-  #  = {
-  #   virtualHosts."adguardhome.czichy.com".extraConfig = ''
-  #     reverse_proxy 10.15.70.1
+  services.caddy = {
+    virtualHosts."adguardhome.czichy.com".extraConfig = ''
+      reverse_proxy 10.15.70.1
 
-  #       tls ${certloc}/cert.pem ${certloc}/key.pem {
-  #         protocols tls1.3
-  #       }
-  #   '';
-  # };
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+          protocols tls1.3
+        }
+    '';
+  };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because

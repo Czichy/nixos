@@ -60,6 +60,10 @@ in {
       services.caddy = {
         enable = true;
         email = "christian@czichy.com";
+        virtualHosts."localhost".extraConfig = ''
+          respond "OK"
+        '';
+
         # package = pkgs.callPackage ./custom-caddy.nix {
         #   plugins = [
         #     # "github.com/mholt/caddy-l4"

@@ -33,6 +33,7 @@ with lib; let
     ["networking" "nftables" "chains"]
     ["services" "nginx" "upstreams"]
     ["services" "nginx" "virtualHosts"]
+    ["services" "caddy" "virtualHosts"]
     ["services" "influxdb2" "provision" "organizations"]
     ["services" "kanidm" "provision" "groups"]
     ["services" "kanidm" "provision" "systems" "oauth2"]
