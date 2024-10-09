@@ -89,9 +89,9 @@ in {
           AmbientCapabilities = "cap_net_bind_service";
           CapabilityBoundingSet = "cap_net_bind_service";
           # Allow Caddy to read Cloudflare API key for DNS validation
-          EnvironmentFile = [
-            config.age.secrets.caddy-cloudflare-token.path
-          ];
+          # EnvironmentFile = [
+          #   config.age.secrets.caddy-cloudflare-token.path
+          # ];
           TimeoutStartSec = "5m";
         };
       };
