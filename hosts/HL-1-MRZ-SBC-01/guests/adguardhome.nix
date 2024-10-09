@@ -145,14 +145,5 @@ in {
 
   systemd.network.enable = true;
   networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
-  # systemd.network.networks."99-v-lan" = {
-  #   matchConfig.Type = "ether";
-  #   DHCP = "yes";
-  #   networkConfig = {
-  #     Address = [globals.net.vlan40.hosts.HL-1-MRZ-SBC-01-adguardhome.ipv4];
-  #     # Gateway = [globals.net.vlan40.cidrv4];
-  #     # DNS = nameservers;
-  #   };
-  # };
   system.stateVersion = "24.05";
 }
