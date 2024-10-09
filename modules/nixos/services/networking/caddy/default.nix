@@ -11,13 +11,14 @@
 with lib; let
   inherit
     (localFlake.lib)
-    isModuleLoadedAndEnabled
+    # isModuleLoadedAndEnabled
+    
     mkAgenixEnableOption
     ;
 
   cfg = config.tensorfiles.services.networking.caddy;
 
-  agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
+  # agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 
   caddyMetricsPort = 2019;
 in {
@@ -47,33 +48,33 @@ in {
       ];
     }
     # |----------------------------------------------------------------------| #
-    (mkIf agenixCheck {
-      age.secrets.caddy-cloudflare-token = {
-        file = secretsPath + "/cloudflare/caddy-cloudflare-token.age";
-        mode = "440";
-        group = "caddy";
-      };
-    })
+    # (mkIf agenixCheck {
+    #   age.secrets.caddy-cloudflare-token = {
+    #     file = secretsPath + "/cloudflare/caddy-cloudflare-token.age";
+    #     mode = "440";
+    #     group = "caddy";
+    #   };
+    # })
     # |----------------------------------------------------------------------| #
     {
       services.caddy = {
         enable = true;
         email = "christian@czichy.com";
-        package = pkgs.callPackage ./custom-caddy.nix {
-          plugins = [
-            # "github.com/mholt/caddy-l4"
-            # "github.com/caddyserver/caddy/v2/modules/standard"
-            # "github.com/hslatman/caddy-crowdsec-bouncer/http@main"
-            # "github.com/hslatman/caddy-crowdsec-bouncer/layer4@main"
-            "github.com/caddy-dns/cloudflare"
-          ];
-          globalConfig = ''
-            acme_dns cloudflare {
-            	zone_token {env.CF_ZONE_API_TOKEN_FILE}
-            	api_token {env.CF_DNS_API_TOKEN_FILE}
-            }
-          '';
-        };
+        # package = pkgs.callPackage ./custom-caddy.nix {
+        #   plugins = [
+        #     # "github.com/mholt/caddy-l4"
+        #     # "github.com/caddyserver/caddy/v2/modules/standard"
+        #     # "github.com/hslatman/caddy-crowdsec-bouncer/http@main"
+        #     # "github.com/hslatman/caddy-crowdsec-bouncer/layer4@main"
+        #     "github.com/caddy-dns/cloudflare"
+        #   ];
+        #   globalConfig = ''
+        #     acme_dns cloudflare {
+        #     	zone_token {env.CF_ZONE_API_TOKEN_FILE}
+        #     	api_token {env.CF_DNS_API_TOKEN_FILE}
+        #     }
+        #   '';
+        # };
       };
     }
     # |----------------------------------------------------------------------| #
