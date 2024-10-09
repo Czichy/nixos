@@ -4,6 +4,7 @@
   ...
 }: let
   adguardhomeDomain = "adguardhome.czichy.com";
+  certloc = "/var/lib/acme/czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
@@ -13,6 +14,18 @@ in {
     server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
     domain = ".";
     network = "home-lan";
+  };
+  nodes.HL-4-PAZ-PROXY-01 = {
+    # SSL config and forwarding to local reverse proxy
+    services.caddy = {
+      virtualHosts."adguardhome.czichy.com".extraConfig = ''
+        reverse_proxy 10.15.70.1
+
+          tls ${certloc}/cert.pem ${certloc}/key.pem {
+            protocols tls1.3
+          }
+      '';
+    };
   };
   nodes.HL-1-MRZ-SBC-01-nginx = {
     services.nginx = {
