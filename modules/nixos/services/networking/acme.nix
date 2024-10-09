@@ -75,7 +75,7 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      users.groups.acme.members = ["nginx"];
+      users.groups.acme.members = ["nginx" "caddy"];
       security.acme = {
         acceptTerms = true;
         defaults = {
@@ -86,7 +86,7 @@ in {
           };
           dnsProvider = "cloudflare";
           dnsPropagationCheck = true;
-          reloadServices = ["nginx"];
+          reloadServices = ["nginx" "caddy"];
         };
         # inherit (acme) certs wildcardDomains;
       };
