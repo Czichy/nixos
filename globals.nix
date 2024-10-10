@@ -48,7 +48,7 @@ in {
         hosts.HL-1-MRZ-SBC-01-adguardhome.id = 21;
         hosts.HL-1-MRZ-SBC-01-vaultwarden.id = 22;
 
-        hosts.HL-1-MRZ-SBC-01-nginx.id = 29;
+        # hosts.HL-1-MRZ-SBC-01-nginx.id = 29;
       };
 
       #IoT
@@ -60,7 +60,8 @@ in {
       vlan70 = {
         cidrv4 = "10.15.70.0/24";
         hosts.opnsense.id = 99;
-        hosts.HL-1-MRZ-SBC-01-nginx.id = 1;
+        hosts.HL-1-MRZ-SBC-01-caddy.id = 1;
+        # hosts.HL-1-MRZ-SBC-01-nginx.id = 1;
       };
 
       #Management
