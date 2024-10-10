@@ -27,7 +27,7 @@ in {
       '';
     };
   };
-  nodes.HL-1-MRZ-SBC-01 = {
+  nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."adguardhome.czichy.com".extraConfig = ''
         reverse_proxy ${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
