@@ -99,13 +99,6 @@ in {
     };
   };
   # |----------------------------------------------------------------------| #
-
-  networking.nftables.firewall.zones.untrusted.interfaces = ["wan"];
-  networking.nftables.chains.forward.dnat = {
-    after = ["conntrack"];
-    rules = ["ct status dnat accept"];
-  };
-  # |----------------------------------------------------------------------| #
   systemd.network = {
     netdevs = {
       "40-${wgName}" = {
@@ -137,6 +130,56 @@ in {
           }
         ];
       };
+    };
+  };
+
+  # |----------------------------------------------------------------------| #
+  # packet forwarding
+  # PreUp = sysctl -w net.ipv4.ip_forward=1
+
+  # port forwarding
+  # PreUp = iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
+  # PreUp = iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
+  # PostDown = iptables -t nat -D PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
+
+  networking.nftables.chains.forward.dnat = {
+    after = ["conntrack"];
+    rules = ["ct status dnat accept"];
+  };
+  networking.nftables.firewall = {
+    zones = {
+      untrusted.interfaces = ["ens3"];
+      lan.interfaces = ["lan-self"];
+      proxy-vps.interfaces = ["${wgName}"];
+    };
+
+    rules = {
+      masquerade = {
+        from = ["${wgName}"];
+        to = ["untrusted"];
+        masquerade = true;
+      };
+
+      outbound = {
+        from = ["${wgName}"];
+        to = ["untrusted"];
+        late = true; # Only accept after any rejects have been processed
+        verdict = "accept";
+      };
+
+      lan-to-local = {
+        from = ["lan"];
+        to = ["local"];
+
+        allowedUDPPorts = [config.wireguard.proxy-vps.server.port];
+      };
+
+      #     # Forward traffic between participants
+      #     forward-proxy-home-vpn-traffic = {
+      #       from = ["proxy-home"];
+      #       to = ["proxy-home"];
+      #       verdict = "accept";
+      #     };
     };
   };
 }

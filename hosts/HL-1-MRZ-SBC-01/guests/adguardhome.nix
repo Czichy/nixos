@@ -38,31 +38,6 @@ in {
       '';
     };
   };
-  # nodes.HL-1-MRZ-SBC-01-nginx = {
-  #   services.nginx = {
-  #     upstreams.adguardhome = {
-  #       servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}" = {};
-  #       extraConfig = ''
-  #         zone adguardhome 64k;
-  #         keepalive 2;
-  #       '';
-  #       monitoring = {
-  #         enable = true;
-  #         expectedBodyRegex = "AdGuard Home";
-  #       };
-  #     };
-  #     virtualHosts.${adguardhomeDomain} = {
-  #       forceSSL = true;
-  #       useACMEWildcardHost = true;
-  #       # oauth2.enable = true;
-  #       # oauth2.allowedGroups = ["access_adguardhome"];
-  #       locations."/" = {
-  #         proxyPass = "http://adguardhome";
-  #         proxyWebsockets = true;
-  #       };
-  #     };
-  #   };
-  # };
 
   environment.persistence."/persist".directories = [
     {
