@@ -34,7 +34,7 @@
     };
   };
   icfg = local.networking.interfaces.wan;
-  wireguardPort = config.wireguard.proxy-vps.server.port;
+  wireguardPort = 51820;
   # icfg = config.repo.secrets.local.networking.interfaces.wan;
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
@@ -110,7 +110,7 @@ in {
         };
         wireguardConfig = {
           PrivateKeyFile = config.age.secrets.private-key.path;
-          ListenPort = 51820;
+          ListenPort = wireguardPort;
         };
         wireguardPeers = [
           {
