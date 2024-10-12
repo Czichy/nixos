@@ -135,13 +135,12 @@ in {
   };
 
   # |----------------------------------------------------------------------| #
-  # packet forwarding
-  # PreUp = sysctl -w net.ipv4.ip_forward=1
 
   # port forwarding
   # PreUp = iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
   # PreUp = iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
   # PostDown = iptables -t nat -D PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
+  networking.firewall.allowedUDPPorts = [51820];
 
   networking.nftables.chains.forward.dnat = {
     after = ["conntrack"];
