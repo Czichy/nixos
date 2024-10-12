@@ -34,6 +34,7 @@
     };
   };
   icfg = local.networking.interfaces.wan;
+  wireguardPort = config.wireguard.proxy-vps.server.port;
   # icfg = config.repo.secrets.local.networking.interfaces.wan;
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
@@ -171,7 +172,7 @@ in {
         from = ["lan"];
         to = ["local"];
 
-        allowedUDPPorts = [config.wireguard.proxy-vps.server.port];
+        allowedUDPPorts = [wireguardPort];
       };
 
       #     # Forward traffic between participants
