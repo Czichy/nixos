@@ -31,6 +31,7 @@ in {
     globalConfig = ''
       servers {
       	trusted_proxies static private_ranges
+      	trusted_proxies static 10.46.0.0/24
       }
 
            # acme_dns cloudflare {
