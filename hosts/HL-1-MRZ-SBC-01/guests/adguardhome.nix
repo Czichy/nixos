@@ -29,18 +29,18 @@ in {
   # };
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
-      virtualHosts."adguardhome.czichy.com".extraConfig = ''
+      virtualHosts."vault.czichy.com".extraConfig = ''
              handle {
         	header Content-Type text/html
-        	respond "<html><center><h1>No Access without VPN!</h1><br>Contact the administrator for more information</center></html>" 403
+        	respond "<html><center><h1>VAULT - PRIVATE!</h1><br>Contact the administrator for more information</center></html>" 403
         }
       '';
-      # virtualHosts."adguardhome.czichy.com".extraConfig = ''
-      #   reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
-      #     # tls ${certloc}/cert.pem ${certloc}/key.pem {
-      #     #   protocols tls1.3
-      #     # }
-      # '';
+      virtualHosts."adguardhome.czichy.com".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
+          # tls ${certloc}/cert.pem ${certloc}/key.pem {
+          #   protocols tls1.3
+          # }
+      '';
     };
   };
 
