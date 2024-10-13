@@ -2,7 +2,6 @@
   localFlake,
   secretsPath,
 }: {
-  catalog,
   config,
   pkgs,
   lib,

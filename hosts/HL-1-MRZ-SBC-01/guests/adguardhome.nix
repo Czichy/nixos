@@ -15,26 +15,26 @@ in {
     domain = ".";
     network = "home-lan";
   };
-  nodes.HL-4-PAZ-PROXY-01 = {
-    # SSL config and forwarding to local reverse proxy
-    services.caddy = {
-      virtualHosts."adguardhome.czichy.com".extraConfig = ''
-        reverse_proxy 10.15.70.1:80
+  # nodes.HL-4-PAZ-PROXY-01 = {
+  #   # SSL config and forwarding to local reverse proxy
+  #   services.caddy = {
+  #     virtualHosts."adguardhome.czichy.com".extraConfig = ''
+  #       reverse_proxy 10.15.70.1:80
 
-          tls ${certloc}/cert.pem ${certloc}/key.pem {
-            protocols tls1.3
-          }
-      '';
-    };
-  };
+  #         tls ${certloc}/cert.pem ${certloc}/key.pem {
+  #           protocols tls1.3
+  #         }
+  #     '';
+  #   };
+  # };
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."adguardhome.czichy.com".extraConfig = ''
         reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
 
-          # tls ${certloc}/cert.pem ${certloc}/key.pem {
-          #   protocols tls1.3
-          # }
+          tls ${certloc}/cert.pem ${certloc}/key.pem {
+            protocols tls1.3
+          }
       '';
     };
   };
