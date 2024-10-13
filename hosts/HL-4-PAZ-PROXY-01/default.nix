@@ -46,6 +46,13 @@ in {
   services.qemuGuest.enable = true;
   # # SSL config and forwarding to local reverse proxy
   services.caddy = {
+    virtualHosts."vault.czichy.com".extraConfig = ''
+           handle {
+      	header Content-Type text/html
+      	respond "<html><center><h1>No Access without VPN!</h1><br>Contact the administrator for more information</center></html>" 403
+      }
+    '';
+
     virtualHosts."czichy.com".extraConfig = ''
       reverse_proxy http://10.15.70.1:80
 
