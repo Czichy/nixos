@@ -30,13 +30,10 @@ in {
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."adguardhome.czichy.com".extraConfig = ''
-                reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
-        transport http {
-                 tls_insecure_skip_verify
-            }
-                  # tls ${certloc}/cert.pem ${certloc}/key.pem {
-                  #   protocols tls1.3
-                  # }
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
+          # tls ${certloc}/cert.pem ${certloc}/key.pem {
+          #   protocols tls1.3
+          # }
       '';
     };
   };
