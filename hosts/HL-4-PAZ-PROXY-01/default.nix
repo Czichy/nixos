@@ -47,14 +47,14 @@ in {
   # # SSL config and forwarding to local reverse proxy
   services.caddy = {
     virtualHosts."czichy.com".extraConfig = ''
-      reverse_proxy 10.15.70.1
+      reverse_proxy http://10.15.70.1:80
 
         tls ${certloc}/cert.pem ${certloc}/key.pem {
           protocols tls1.3
         }
     '';
     virtualHosts."*.czichy.com".extraConfig = ''
-      reverse_proxy 10.15.70.1
+      reverse_proxy http://10.15.70.1:80
 
         tls ${certloc}/cert.pem ${certloc}/key.pem {
           protocols tls1.3
