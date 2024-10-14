@@ -36,47 +36,48 @@ in {
       }
     '';
     globalConfig = ''
-          (czichy_headers) {
-      	header {
-      		Permissions-Policy interest-cohort=()
-      		Strict-Transport-Security "max-age=31536000; includeSubdomains"
-      		X-XSS-Protection "1; mode=block"
-      		X-Content-Type-Options "nosniff"
-      		X-Robots-Tag noindex, nofollow
-      		Referrer-Policy "same-origin"
-      		Content-Security-Policy "frame-ancestors czichy.com *.czichy.com"
-      		-Server
-      		Permissions-Policy "geolocation=(self czichy.com *.czichy.com), microphone=()"
-      	}
+      servers {
+      	trusted_proxies static private_ranges
+      	trusted_proxies static 10.46.0.0/24
       }
-      # (personal_headers) {
-      # 	header {
-      # 		Permissions-Policy interest-cohort=()
-      # 		Strict-Transport-Security "max-age=31536000; includeSubdomains"
-      # 		X-XSS-Protection "1; mode=block"
-      # 		X-Content-Type-Options "nosniff"
-      # 		X-Robots-Tag noindex, nofollow
-      # 		Referrer-Policy "same-origin"
-      # 		Content-Security-Policy "frame-ancestors {{ secret_personal_url }} *.{{ secret_personal_url }}"
-      # 		-Server
-      # 		Permissions-Policy "geolocation=(self {{ secret_personal_url }} *.{{ secret_personal_url }}), microphone=()"
-      # 	}
-      # }
 
-            servers {
-            	trusted_proxies static private_ranges
-            	trusted_proxies static 10.46.0.0/24
-            }
-
-                 # acme_dns cloudflare {
-                 # 	zone_token {env.CF_ZONE_API_TOKEN_FILE}
-                 # 	api_token {env.CF_DNS_API_TOKEN_FILE}
-                 # }
+           # acme_dns cloudflare {
+           # 	zone_token {env.CF_ZONE_API_TOKEN_FILE}
+           # 	api_token {env.CF_DNS_API_TOKEN_FILE}
+           # }
     '';
     virtualHosts."localhost".extraConfig = ''
       respond "OK"
     '';
 
+    extraConfig = ''
+      (czichy_headers) {
+        	header {
+        		Permissions-Policy interest-cohort=()
+        		Strict-Transport-Security "max-age=31536000; includeSubdomains"
+        		X-XSS-Protection "1; mode=block"
+        		X-Content-Type-Options "nosniff"
+        		X-Robots-Tag noindex, nofollow
+        		Referrer-Policy "same-origin"
+        		Content-Security-Policy "frame-ancestors czichy.com *.czichy.com"
+        		-Server
+        		Permissions-Policy "geolocation=(self czichy.com *.czichy.com), microphone=()"
+        	}
+        }
+        # (personal_headers) {
+        # 	header {
+        # 		Permissions-Policy interest-cohort=()
+        # 		Strict-Transport-Security "max-age=31536000; includeSubdomains"
+        # 		X-XSS-Protection "1; mode=block"
+        # 		X-Content-Type-Options "nosniff"
+        # 		X-Robots-Tag noindex, nofollow
+        # 		Referrer-Policy "same-origin"
+        # 		Content-Security-Policy "frame-ancestors {{ secret_personal_url }} *.{{ secret_personal_url }}"
+        # 		-Server
+        # 		Permissions-Policy "geolocation=(self {{ secret_personal_url }} *.{{ secret_personal_url }}), microphone=()"
+        # 	}
+        # }
+    '';
     # package = pkgs.callPackage ./custom-caddy.nix {
     #   plugins = [
     #     # "github.com/mholt/caddy-l4"
