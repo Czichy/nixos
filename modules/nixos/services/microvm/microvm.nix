@@ -44,8 +44,8 @@ in {
         )
       ];
 
-    # TODO needed because of https://github.com/NixOS/nixpkgs/issues/102137
-    environment.noXlibs = mkForce false;
+    # # TODO needed because of https://github.com/NixOS/nixpkgs/issues/102137
+    # environment.noXlibs = mkForce false;
     lib.microvm.mac = guestCfg.microvm.mac;
 
     microvm = {
@@ -70,7 +70,8 @@ in {
           inherit (guestCfg.microvm) mac;
           macvtap = {
             # Attach network interface to host interface for type = “macvlan”
-            link = "servers"; #guestCfg.microvm.macvtap;
+            link = guestCfg.microvm.macvtap;
+            # link = "servers"; #guestCfg.microvm.macvtap;
             mode = "bridge";
           };
         }

@@ -1,5 +1,10 @@
 {
   config.tensorfiles.services = {
-    networking.acme.enable = true;
+    networking = {
+      networkd.enable = true;
+      nftables.enable = true;
+      acme.enable = true;
+      caddy.enable = true;
+    };
   };
 }

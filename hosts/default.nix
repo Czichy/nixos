@@ -139,6 +139,22 @@
           }
       );
 
+      #OPNSense dummy - for Wiregard Server
+      "HL-1-MRZ-SBC-01-opnsense" = withSystem "x86_64-linux" (
+        args:
+          mkHost args "HL-1-MRZ-SBC-01-opnsense" {
+            withHomeManager = true;
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              microvm.nixosModules.host
+            ];
+          }
+      );
+
       #sentinel
       "HL-4-PAZ-PROXY-01" = withSystem "x86_64-linux" (
         args:
@@ -163,9 +179,6 @@
         guestName: guestDef:
           nameValuePair guestDef.nodeName (
             node.config.microvm.vms.${guestName}.config
-            # if guestDef.backend == "microvm"
-            # then node.config.microvm.vms.${guestName}.config
-            # else node.config.containers.${guestName}.nixosConfiguration
           )
       ));
 

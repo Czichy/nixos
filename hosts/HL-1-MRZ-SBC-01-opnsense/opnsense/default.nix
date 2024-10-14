@@ -66,7 +66,7 @@ in {
     environment.etc."resolv.conf".text = "";
 
     # revert from minimal.nix avoid rebuilds
-    environment.noXlibs = false;
+    # environment.noXlibs = false;
 
     nix.enable = false;
 

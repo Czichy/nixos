@@ -4,6 +4,7 @@
 in {
   globals = {
     domains.me = "czichy.com";
+    domains.local = "czichy.com";
     net = {
       #VLAN1
       home-wan = {
@@ -44,33 +45,28 @@ in {
         hosts.opnsense.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 20;
-        # hosts.sire.id = 2;
         hosts.HL-1-MRZ-SBC-01-adguardhome.id = 21;
         hosts.HL-1-MRZ-SBC-01-vaultwarden.id = 22;
-        hosts.HL-1-MRZ-SBC-01-web-proxy.id = 11;
-        # hosts.sire-samba.id = 20;
+
+        # hosts.HL-1-MRZ-SBC-01-nginx.id = 29;
       };
 
       #IoT
       vlan60 = {
         cidrv4 = "10.15.60.0/24";
-        # cidrv6 = "fd10::/64";
-        # hosts.HL-1-OZ-PC-01.id = 62;
-        # hosts.HL-1-MRZ-SBC-01.id = 254;
       };
 
       #DMZ
       vlan70 = {
         cidrv4 = "10.15.70.0/24";
-        # cidrv6 = "fd10::/64";
-        # hosts.HL-1-OZ-PC-01.id = 62;
-        # hosts.HL-1-MRZ-SBC-01.id = 254;
+        hosts.opnsense.id = 99;
+        hosts.HL-1-MRZ-SBC-01-caddy.id = 1;
+        # hosts.HL-1-MRZ-SBC-01-nginx.id = 1;
       };
 
       #Management
       vlan100 = {
         cidrv4 = "10.15.100.0/24";
-        # cidrv6 = "fd10::/64";
         hosts.opnsense.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 20;

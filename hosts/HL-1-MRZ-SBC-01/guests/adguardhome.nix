@@ -4,53 +4,53 @@
   ...
 }: let
   adguardhomeDomain = "adguardhome.czichy.com";
+  certloc = "/var/lib/acme/czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
-  wireguard.proxy-HL-4-PAZ-PROXY-01 = {
-    client.via = "HL-4-PAZ-PROXY-01";
-    firewallRuleForNode.sentinel.allowedTCPPorts = [config.services.adguardhome.port];
-  };
+  networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
   globals.services.adguardhome.domain = adguardhomeDomain;
   globals.monitoring.dns.adguardhome = {
     server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
     domain = ".";
     network = "home-lan";
   };
-  # systemd.network.networks."20-tap" = {
-  #   matchConfig.Type = "ether";
-  #   matchConfig.MACAddress = "60:be:b4:19:a8:4f";
-  #   networkConfig = {
-  #     Address = ["10.15.1.40/24"];
-  #     Gateway = "10.15.1.99";
-  #     DNS = ["8.8.8.8"];
-  #     IPv6AcceptRA = true;
-  #     DHCP = "yes";
+  #   smarthome.{{ secret_personal_url }} {
+  # 	crowdsec
+  # 	reverse_proxy https://10.10.10.10:443 {
+  # 		transport http {
+  # 			tls_server_name smarthome.{{ secret_personal_url }}
+  # 		}
+  # 	}
+  # 	tls /home/{{ main_username }}/lego/certificates/_.{{ secret_personal_url }}.crt /home/{{ main_username }}/lego/certificates/_.{{ secret_personal_url }}.key
+  # 	import personal_headers
+  # }
+  # nodes.HL-4-PAZ-PROXY-01 = {
+  #   # SSL config and forwarding to local reverse proxy
+  #   services.caddy = {
+  #     virtualHosts."adguardhome.czichy.com".extraConfig = ''
+  #       reverse_proxy https://10.15.70.1:443 {
+  #           transport http {
+  #           	tls_server_name adguardhome.czichy.com
+  #           }
+  #       }
+
+  #       tls ${certloc}/cert.pem ${certloc}/key.pem {
+  #         protocols tls1.3
+  #       }
+  #       import czichy_headers
+  #     '';
   #   };
   # };
-  nodes.HL-4-PAZ-PROXY-01 = {
-    services.nginx = {
-      upstreams.adguardhome = {
-        servers."${config.wireguard.proxy-HL-4-PAZ-PROXY-01.ipv4}:${toString config.services.adguardhome.port}" = {};
-        extraConfig = ''
-          zone adguardhome 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "AdGuard Home";
-        };
-      };
-      virtualHosts.${adguardhomeDomain} = {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        # oauth2.enable = true;
-        # oauth2.allowedGroups = ["access_adguardhome"];
-        locations."/" = {
-          proxyPass = "http://adguardhome";
-          proxyWebsockets = true;
-        };
-      };
+  nodes.HL-1-MRZ-SBC-01-caddy = {
+    services.caddy = {
+      virtualHosts."adguardhome.czichy.com".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
+      '';
     };
   };
 
@@ -134,16 +134,6 @@ in {
     };
   };
 
-  # systemd.services.adguardhome = {
-  #   preStart = lib.mkAfter ''
-  #     INTERFACE_ADDR=$(${pkgs.iproute2}/bin/ip -family inet -brief addr show lan | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+") \
-  #       ${lib.getExe pkgs.yq-go} -i '.dns.bind_hosts = [strenv(INTERFACE_ADDR)]' \
-  #       "$STATE_DIRECTORY/AdGuardHome.yaml"
-  #   '';
-  #   serviceConfig.RestartSec = lib.mkForce "60"; # Retry every minute
-  # };
-
   systemd.network.enable = true;
-  networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
   system.stateVersion = "24.05";
 }

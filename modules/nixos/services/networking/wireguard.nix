@@ -1,4 +1,7 @@
-{localFlake}: {
+{
+  localFlake,
+  secretsPath,
+}: {
   config,
   inputs,
   lib,
@@ -191,25 +194,15 @@
       concatAttrs (map
         (other: {
           ${peerPresharedKeySecret nodeName other} = {
-            rekeyFile = peerPresharedKeyPath nodeName other;
+            file = peerPresharedKeyPath nodeName other secretsPath;
             owner = "systemd-network";
-            generator.script = {pkgs, ...}: "${pkgs.wireguard-tools}/bin/wg genpsk";
           };
         })
         neededPeers)
       // {
         ${peerPrivateKeySecret nodeName} = {
-          rekeyFile = peerPrivateKeyPath nodeName;
+          file = peerPrivateKeyPath nodeName secretsPath;
           owner = "systemd-network";
-          generator.script = {
-            pkgs,
-            file,
-            ...
-          }: ''
-            priv=$(${pkgs.wireguard-tools}/bin/wg genkey)
-            ${pkgs.wireguard-tools}/bin/wg pubkey <<< "$priv" > ${lib.escapeShellArg (lib.removeSuffix ".age" file + ".pub")}
-            echo "$priv"
-          '';
         };
       };
 
@@ -233,7 +226,7 @@
           map (serverNode: let
             snCfg = wgCfgOf serverNode;
           in {
-            PublicKey = builtins.readFile (peerPublicKeyPath serverNode);
+            PublicKey = builtins.readFile (peerPublicKeyPath serverNode secretsPath);
             PresharedKeyFile = config.age.secrets.${peerPresharedKeySecret nodeName serverNode}.path;
             AllowedIPs = serverAllowedIPs serverNode;
             Endpoint = "${snCfg.server.host}:${toString snCfg.server.port}";
@@ -243,7 +236,7 @@
           ++ mapAttrsToList (extPeer: ips: let
             peerName = externalPeerName extPeer;
           in {
-            PublicKey = builtins.readFile (peerPublicKeyPath peerName);
+            PublicKey = builtins.readFile (peerPublicKeyPath peerName secretsPath);
             PresharedKeyFile = config.age.secrets.${peerPresharedKeySecret nodeName peerName}.path;
             AllowedIPs = map (net.cidr.make 128) ips;
             # Connections to external peers should always be kept alive
@@ -254,7 +247,7 @@
           ++ map (clientNode: let
             clientCfg = wgCfgOf clientNode;
           in {
-            PublicKey = builtins.readFile (peerPublicKeyPath clientNode);
+            PublicKey = builtins.readFile (peerPublicKeyPath clientNode secretsPath);
             PresharedKeyFile = config.age.secrets.${peerPresharedKeySecret nodeName clientNode}.path;
             AllowedIPs = map (net.cidr.make 128) clientCfg.addresses;
           })
@@ -267,7 +260,7 @@
                 snCfg = wgCfgOf wgCfg.client.via;
               in
                 {
-                  PublicKey = builtins.readFile (peerPublicKeyPath wgCfg.client.via);
+                  PublicKey = builtins.readFile (peerPublicKeyPath wgCfg.client.via secretsPath);
                   PresharedKeyFile = config.age.secrets.${peerPresharedKeySecret nodeName wgCfg.client.via}.path;
                   Endpoint = "${snCfg.server.host}:${toString snCfg.server.port}";
                   # Access to the whole network is routed through our entry node.

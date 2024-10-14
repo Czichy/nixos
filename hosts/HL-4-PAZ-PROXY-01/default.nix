@@ -4,7 +4,9 @@
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  certloc = "/var/lib/acme/czichy.com";
+in {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -20,7 +22,6 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
-    # ./acme.nix
     ./modules
   ];
 
@@ -34,8 +35,6 @@
     wireguard-tools
   ];
 
-  wireguard.proxy-HL-4-PAZ-PROXY-01.firewallRuleForAll.allowedTCPPorts = [80 443];
-
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
@@ -45,23 +44,23 @@
   # | ADDITIONAL CONFIG |
   # ---------------------
   services.qemuGuest.enable = true;
-  services.nginx = {
-    enable = true;
-    recommendedSetup = true;
+  # # SSL config and forwarding to local reverse proxy
+  # services.caddy = {
+  # virtualHosts."czichy.com".extraConfig = ''
+  #   reverse_proxy http://10.15.70.1:80
 
-    virtualHosts.${globals.domains.me} = {
-      forceSSL = true;
-      useACMEWildcardHost = true;
-      locations."/".root = pkgs.runCommand "index.html" {} ''
-        mkdir -p $out
-        cat > $out/index.html <<EOF
-        <html>
-          <body>Not empty soon TM. Until then please go here: <a href="https://github.com/oddlama">oddlama</a></body>
-        </html>
-        EOF
-      '';
-    };
-  };
+  #     tls ${certloc}/cert.pem ${certloc}/key.pem {
+  #       protocols tls1.3
+  #     }
+  # '';
+  # virtualHosts."*.czichy.com".extraConfig = ''
+  #   reverse_proxy http://10.15.70.1:80
+
+  #     tls ${certloc}/cert.pem ${certloc}/key.pem {
+  #       protocols tls1.3
+  #     }
+  # '';
+  # };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because
@@ -71,7 +70,7 @@
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
 
   # Connect safely via wireguard to skip authentication
-  # networking.hosts.${config.wireguard.proxy-HL-4-PAZ-PROXY-01.ipv4} = [globals.services.influxdb.domain];
+  # networking.hosts.${config.wireguard.proxy-public.ipv4} = [globals.services.influxdb.domain];
   # meta.telegraf = {
   #   enable = true;
   #   scrapeSensors = false;

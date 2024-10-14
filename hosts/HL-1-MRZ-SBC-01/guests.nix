@@ -28,9 +28,7 @@ in {
             # inputs.self.globals
             ../config/default.nix
             ../../modules/globals.nix
-            # ../../modules/nixos/misc/distributed-config.nix
             ./guests/${guestName}.nix
-            # ../../modules/wireguard.nix
             {
               #node.secretsDir = ./secrets/${guestName};
               networking.nftables.firewall = {
@@ -41,20 +39,19 @@ in {
             }
           ]
           ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
-        # ++ (inputs.nixpkgs.lib.attrValues config.flake.nixosModules);
       };
-      mkMicrovm = guestName: opts: {
+      mkMicrovm = guestName: macvtap: net: opts: {
         ${guestName} =
           mkGuest guestName opts
           // {
             microvm = {
               system = "x86_64-linux";
-              macvtap = "enp4s0";
+              macvtap = "${macvtap}";
               # macvtap = "lan";
               # baseMac = macAddress_enp4s0; # TODO move to config
             };
-            networking.address = globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-${guestName}".cidrv4;
-            networking.gateway = globals.net.vlan40.hosts.opnsense.ipv4;
+            networking.address = globals.net."${net}".hosts."${config.node.name}-${guestName}".cidrv4;
+            networking.gateway = globals.net."${net}".hosts.opnsense.ipv4;
             extraSpecialArgs = {
               inherit (inputs.self) secretsPath;
               inherit globals nodes;
@@ -65,9 +62,10 @@ in {
       };
     in (
       {}
-      // mkMicrovm "adguardhome" {enableStorageDataset = true;}
-      // mkMicrovm "vaultwarden" {enableStorageDataset = true;}
-      # // mkMicrovm "unifi" {enableStorageDataset = true;}
+      // mkMicrovm "adguardhome" "servers" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "vaultwarden" "servers" "vlan40" {enableStorageDataset = true;}
+      # // mkMicrovm "nginx" "dmz" "vlan70" {enableStorageDataset = true;}
+      // mkMicrovm "caddy" "dmz" "vlan70" {enableStorageDataset = true;}
     );
   };
 }
