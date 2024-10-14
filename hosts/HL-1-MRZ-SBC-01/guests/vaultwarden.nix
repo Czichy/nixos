@@ -6,6 +6,7 @@
   ...
 }: let
   vaultwardenDomain = "vault.czichy.com";
+  certloc = "/var/lib/acme/czichy.com";
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
@@ -33,37 +34,38 @@ in {
     network = "internet";
   };
 
-  # nodes.HL-4-PAZ-PROXY-01 = {
-  nodes.HL-1-MRZ-SBC-01-nginx = {
-    services.nginx = {
-      upstreams.vaultwarden = {
-        servers."${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-vaultwarden".ipv4}:${toString config.services.vaultwarden.config.rocketPort}" = {};
-        extraConfig = ''
-          zone vaultwarden 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "Vaultwarden Web";
-        };
-      };
-      virtualHosts.${vaultwardenDomain} = {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        extraConfig = ''
-          client_max_body_size 256M;
-        '';
-        locations."/" = {
-          proxyPass = "http://vaultwarden";
-          proxyWebsockets = true;
-          X-Frame-Options = "SAMEORIGIN";
-        };
-      };
-    };
-  };
   networking.firewall = {
     allowedTCPPorts = [22 8012];
     allowedUDPPorts = [22 8012];
+  };
+
+  nodes.HL-4-PAZ-PROXY-01 = {
+    # SSL config and forwarding to local reverse proxy
+    services.caddy = {
+      virtualHosts."${vaultwardenDomain}".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+            transport http {
+            	tls_server_name ${vaultwardenDomain}
+            }
+        }
+
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+          protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+  };
+  nodes.HL-1-MRZ-SBC-01-caddy = {
+    services.caddy = {
+      virtualHosts."${vaultwardenDomain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-vaultwarden".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
   };
 
   services.vaultwarden = {
