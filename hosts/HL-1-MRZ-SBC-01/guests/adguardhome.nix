@@ -15,18 +15,33 @@ in {
     domain = ".";
     network = "home-lan";
   };
-  # nodes.HL-4-PAZ-PROXY-01 = {
-  #   # SSL config and forwarding to local reverse proxy
-  #   services.caddy = {
-  #     virtualHosts."adguardhome.czichy.com".extraConfig = ''
-  #       reverse_proxy 10.15.70.1:80
+  #   smarthome.{{ secret_personal_url }} {
+  # 	crowdsec
+  # 	reverse_proxy https://10.10.10.10:443 {
+  # 		transport http {
+  # 			tls_server_name smarthome.{{ secret_personal_url }}
+  # 		}
+  # 	}
+  # 	tls /home/{{ main_username }}/lego/certificates/_.{{ secret_personal_url }}.crt /home/{{ main_username }}/lego/certificates/_.{{ secret_personal_url }}.key
+  # 	import personal_headers
+  # }
+  nodes.HL-4-PAZ-PROXY-01 = {
+    # SSL config and forwarding to local reverse proxy
+    services.caddy = {
+      virtualHosts."adguardhome.czichy.com".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+            transport http {
+            	tls_server_name adguardhome.czichy.com
+            }
+        }
 
-  #         tls ${certloc}/cert.pem ${certloc}/key.pem {
-  #           protocols tls1.3
-  #         }
-  #     '';
-  #   };
-  # };
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+          protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+  };
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."vault.czichy.com".extraConfig = ''
@@ -37,9 +52,10 @@ in {
       '';
       virtualHosts."adguardhome.czichy.com".extraConfig = ''
         reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
-          # tls ${certloc}/cert.pem ${certloc}/key.pem {
-          #   protocols tls1.3
-          # }
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
       '';
     };
   };
