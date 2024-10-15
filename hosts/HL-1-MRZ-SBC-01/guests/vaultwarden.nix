@@ -2,21 +2,44 @@
   config,
   globals,
   secretsPath,
+  pkgs,
   lib,
   ...
 }: let
   vaultwardenDomain = "vault.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
+  # backupPrepareScript = pkgs.writeShellApplication {
+  #   name = "backup-prepare";
+  #   runtimeInputs = [pkgs.home-assistant-cli];
+  #   text = ''
+  #     export HASS_SERVER=http://localhost:8123
+  #     # shellcheck source=/dev/null
+  #     # source "${hass-token}"
+  #     hass-cli service call backup.create
+  #   '';
+  # };
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
   networking.hostName = "HL-3-RZ-VAULT-01";
-
+  # |----------------------------------------------------------------------| #
   age.secrets.vaultwarden-env = {
     file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/guests/vaultwarden/vaultwarden-env.age";
     mode = "440";
     group = "vaultwarden";
   };
+  age.secrets."rclone.conf" = {
+    file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
+    mode = "440";
+    group = "vaultwarden";
+  };
+  age.secrets.restic-vaultwarden = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/guests/vaultwarden/restic-vaultwarden.age";
+    mode = "440";
+    group = "vaultwarden";
+  };
+
+  # |----------------------------------------------------------------------| #
 
   environment.persistence."/persist".directories = [
     {
@@ -27,6 +50,7 @@ in {
     }
   ];
 
+  # |----------------------------------------------------------------------| #
   globals.services.vaultwarden.domain = vaultwardenDomain;
   globals.monitoring.http.vaultwarden = {
     url = "https://${vaultwardenDomain}";
@@ -34,6 +58,7 @@ in {
     network = "internet";
   };
 
+  # |----------------------------------------------------------------------| #
   networking.firewall = {
     allowedTCPPorts = [22 8012];
     allowedUDPPorts = [22 8012];
@@ -68,6 +93,7 @@ in {
     };
   };
 
+  # |----------------------------------------------------------------------| #
   services.vaultwarden = {
     enable = true;
     dbBackend = "sqlite";
@@ -100,11 +126,69 @@ in {
     environmentFile = config.age.secrets.vaultwarden-env.path;
   };
 
+  # |----------------------------------------------------------------------| #
   # Replace uses of old name
   systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
   systemd.services.vaultwarden.serviceConfig = {
     StateDirectory = lib.mkForce "vaultwarden";
     RestartSec = "60"; # Retry every minute
+  };
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
+  services.restic.backups = {
+    vaultwarden = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-vaultwarden";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = [config.services.vaultwarden.backupDir];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-vaultwarden.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run before starting the backup process.
+      # backupPrepareCommand = ''
+      #   echo "Building backup dir ${config.services.vaultwarden.backupDir}"
+      #   mkdir -p ${config.services.vaultwarden.backupDir}
+      #   ${pkgs.sqlite}/bin/sqlite3 ${config.services.vaultwarden.backupDir}/db.sqlite3 ".backup '${config.services.vaultwarden.backupDir}/vaultwarden.sqlite'"
+      # '';
+
+      # A script that must run after finishing the backup process.
+      # backupCleanupCommand = "rm -rf /tmp/restic-backup-temp";
+
+      # Extra extended options to be passed to the restic --option flag.
+      # extraOptions = [];
+
+      # Extra arguments passed to restic backup.
+      # extraBackupArgs = [
+      #   "--exclude-file=/etc/restic/excludes-list"
+      # ];
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      # pruneOpts = [
+      #   "--keep-daily 3"
+      #   "--keep-weekly 3"
+      #   "--keep-monthly 3"
+      #   "--keep-yearly 3"
+      # ];
+      pruneOpts = ["--keep-last 14"];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 01:30:00";
+      };
+    };
   };
 
   # Needed so we don't run out of tmpfs space for large backups.
@@ -118,5 +202,6 @@ in {
     }
   ];
 
+  # |----------------------------------------------------------------------| #
   system.stateVersion = "24.05";
 }

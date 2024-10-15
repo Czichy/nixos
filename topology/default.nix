@@ -1,4 +1,4 @@
-{localFlake}: {config, ...}: let
+{config, ...}: let
   inherit
     (config.lib.topology)
     mkInternet
@@ -46,6 +46,10 @@ in {
     lan = {
       name = "Home-Lan";
       cidrv4 = "10.15.1.0/24";
+    };
+    proxy-vps = {
+      name = "Wireguard-Tunnel";
+      cidrv4 = "10.46.0.0/24";
     };
   };
 

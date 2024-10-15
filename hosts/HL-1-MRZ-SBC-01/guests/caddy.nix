@@ -15,6 +15,7 @@ with builtins; let
   acme-cfg = config.tensorfiles.services.networking.acme;
   caddyMetricsPort = 2019;
 in {
+  networking.hostName = "HL-3-DMZ-PROXY-01";
   # |----------------------------------------------------------------------| #
   networking.firewall.allowedTCPPorts = [
     80 # Caddy
@@ -137,7 +138,6 @@ in {
 
   # |----------------------------------------------------------------------| #
 
-  topology.self.services.nginx.info = "https://" + caddyLocalDomain;
-  networking.hostName = "HL-1-MRZ-SBC-01-caddy";
+  topology.self.services.caddy.info = "https://" + caddyLocalDomain;
   system.stateVersion = "24.05";
 }
