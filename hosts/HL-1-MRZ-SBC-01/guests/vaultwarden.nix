@@ -10,7 +10,7 @@
 in {
   # microvm.mem = 1024 * 2;
   # microvm.vcpu = 20;
-  networking.hostName = "HL-1-MRZ-SBC-01-vaultwarden";
+  networking.hostName = "HL-3-RZ-VAULT-01";
 
   age.secrets.vaultwarden-env = {
     file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/guests/vaultwarden/vaultwarden-env.age";
@@ -59,7 +59,7 @@ in {
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-vaultwarden".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }
