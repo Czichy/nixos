@@ -57,11 +57,11 @@ in {
       programs.firefox = {
         enable = _ true;
         package = pkgs.firefox.override {
-          # trace: warning: The cfg.enableTridactylNative argument for
-          # `firefox.override` is deprecated, please add `pkgs.tridactyl-native`
-          # to `nativeMessagingHosts.packages` instead
           nativeMessagingHosts = with pkgs; (optional plasmaCheck plasma-browser-integration);
           extraPolicies = {
+            "3rdparty".Extensions."{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
+              environment.base = "https://vault.czichy.com";
+            };
             CaptivePortal = false;
             DisableFirefoxStudies = true;
             DisablePocket = true;
