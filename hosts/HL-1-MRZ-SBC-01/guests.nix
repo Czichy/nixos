@@ -40,7 +40,7 @@ in {
           ]
           ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
       };
-      mkMicrovm = guestName: macvtap: net: opts: {
+      mkMicrovm = guestName: hostName: macvtap: net: opts: {
         ${guestName} =
           mkGuest guestName opts
           // {
@@ -50,8 +50,8 @@ in {
               # macvtap = "lan";
               # baseMac = macAddress_enp4s0; # TODO move to config
             };
-            networking.address = globals.net."${net}".hosts."${config.node.name}-${guestName}".cidrv4;
-            networking.gateway = globals.net."${net}".hosts.opnsense.ipv4;
+            networking.address = globals.net."${net}".hosts."${hostName}".cidrv4;
+            networking.gateway = globals.net."${net}".hosts.HL-3-MRZ-FW-01.ipv4;
             extraSpecialArgs = {
               inherit (inputs.self) secretsPath;
               inherit globals nodes;
@@ -62,10 +62,10 @@ in {
       };
     in (
       {}
-      // mkMicrovm "adguardhome" "servers" "vlan40" {enableStorageDataset = true;}
-      // mkMicrovm "vaultwarden" "servers" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "adguardhome" "HL-3-RZ-DNS-01" "servers" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "vaultwarden" "HL-3-RZ-VAULT-01" "servers" "vlan40" {enableStorageDataset = true;}
       # // mkMicrovm "nginx" "dmz" "vlan70" {enableStorageDataset = true;}
-      // mkMicrovm "caddy" "dmz" "vlan70" {enableStorageDataset = true;}
+      // mkMicrovm "caddy" "HL-3-DMZ-PROXY-01" "dmz" "vlan70" {enableStorageDataset = true;}
     );
   };
 }

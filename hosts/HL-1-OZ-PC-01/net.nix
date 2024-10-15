@@ -60,7 +60,7 @@ in {
       matchConfig.Name = "trust";
       matchConfig.Type = "vlan";
       address = [globals.net.vlan10.hosts.HL-1-OZ-PC-01.cidrv4];
-      gateway = [globals.net.vlan10.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan10.hosts.HL-3-MRZ-FW-01.ipv4];
       networkConfig = {
         ConfigureWithoutCarrier = true;
         DHCP = "no";

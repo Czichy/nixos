@@ -140,9 +140,9 @@
       );
 
       #OPNSense dummy - for Wiregard Server
-      "HL-1-MRZ-SBC-01-opnsense" = withSystem "x86_64-linux" (
+      "HL-3-MRZ-FW-01" = withSystem "x86_64-linux" (
         args:
-          mkHost args "HL-1-MRZ-SBC-01-opnsense" {
+          mkHost args "HL-3-MRZ-FW-01" {
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})

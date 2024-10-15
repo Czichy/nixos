@@ -8,12 +8,12 @@
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
-  networking.hostName = "HL-1-MRZ-SBC-01-adguardhome";
+  networking.hostName = "HL-3-RZ-DNS-01";
   globals.services.adguardhome.domain = adguardhomeDomain;
   globals.monitoring.dns.adguardhome = {
-    server = globals.net.home-lan.hosts.ward-adguardhome.ipv4;
+    server = globals.net.vlan40.hosts.HL-3-RZ-DNS-01.ipv4;
     domain = ".";
-    network = "home-lan";
+    network = "vlan40";
   };
   #   smarthome.{{ secret_personal_url }} {
   # 	crowdsec
@@ -28,10 +28,10 @@ in {
   # nodes.HL-4-PAZ-PROXY-01 = {
   #   # SSL config and forwarding to local reverse proxy
   #   services.caddy = {
-  #     virtualHosts."adguardhome.czichy.com".extraConfig = ''
+  #     virtualHosts."${adguardhomeDomain}".extraConfig = ''
   #       reverse_proxy https://10.15.70.1:443 {
   #           transport http {
-  #           	tls_server_name adguardhome.czichy.com
+  #           	tls_server_name ${adguardhomeDomain}
   #           }
   #       }
 
@@ -44,8 +44,8 @@ in {
   # };
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
-      virtualHosts."adguardhome.czichy.com".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-1-MRZ-SBC-01-adguardhome".ipv4}:${toString config.services.adguardhome.port}
+      virtualHosts."${adguardhomeDomain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-DNS-01".ipv4}:${toString config.services.adguardhome.port}
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }

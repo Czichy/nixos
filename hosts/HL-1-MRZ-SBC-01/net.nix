@@ -87,14 +87,14 @@ in {
     "30-dmz" = {
       matchConfig.Name = "dmz";
       matchConfig.Type = "vlan";
-      gateway = [globals.net.vlan70.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan70.hosts.HL-3-MRZ-FW-01.ipv4];
       linkConfig.RequiredForOnline = "routable";
     };
 
     "30-servers" = {
       matchConfig.Name = "servers";
       matchConfig.Type = "vlan";
-      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
       linkConfig.RequiredForOnline = "routable";
     };
 
@@ -105,7 +105,7 @@ in {
       address = [
         globals.net.vlan100.hosts.HL-1-MRZ-SBC-01.cidrv4
       ];
-      gateway = [globals.net.vlan100.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan100.hosts.HL-3-MRZ-FW-01.ipv4];
       networkConfig = {
         ConfigureWithoutCarrier = true;
         DHCP = "no";
@@ -115,7 +115,7 @@ in {
 
     "30-lan-self" = {
       matchConfig.Name = "lan-self";
-      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
       networkConfig = {
         IPv4Forwarding = "yes";
         IPv6PrivacyExtensions = "yes";

@@ -82,6 +82,21 @@ MGMT | MRZ |VLAN100 | 10.15.100.0/24 | Management Restricted Zone, where my mana
 
 <!-- Most of the zones I run are outlined in ITSG-22 and ITSG-38, which are the Canadian Government's guidelines for network zoning. I work IT Security for the federal government, so it only makes sense that I practice what I preach. --> 
 
+# Reverse Proxy using VPS + Wireguard + Caddy
+
+[]    No more enabling VPN apps to reach server, this is crucial for letting other family member use the home server.
+
+[]    I can watch my Linux ISO's anywhere I go
+
+[]    Syncing files
+
+[]    Blogging / Tutorial site???
+
+[]    ntfy, uptime-kuma in VPS.
+
+[]    More Fun
+
+
 ## :wrench: <samp>Installation</samp>
 
 1. Download iso

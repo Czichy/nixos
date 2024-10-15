@@ -9,7 +9,8 @@ in {
       #VLAN1
       home-wan = {
         cidrv4 = "10.15.1.0/24";
-        hosts.opnsense.id = 99;
+        # OPNSense
+        hosts.HL-3-MRZ-FW-01.id = 99;
         hosts.HL-1-MRZ-SBC-01.id = 254;
         hosts.HL-1-OZ-PC-01.id = 62;
       };
@@ -17,7 +18,8 @@ in {
       #TRUST
       vlan10 = {
         cidrv4 = "10.15.10.0/24";
-        hosts.opnsense.id = 99;
+        # OPNSense
+        hosts.HL-3-MRZ-FW-01.id = 99;
         # cidrv6 = "fd10::/64";
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 254;
@@ -42,11 +44,14 @@ in {
       vlan40 = {
         cidrv4 = "10.15.40.0/24";
         cidrv6 = "fd10::/64";
-        hosts.opnsense.id = 99;
+        # OPNSense
+        hosts.HL-3-MRZ-FW-01.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 20;
-        hosts.HL-1-MRZ-SBC-01-adguardhome.id = 21;
-        hosts.HL-1-MRZ-SBC-01-vaultwarden.id = 22;
+        # AdguardHome
+        hosts.HL-3-RZ-DNS-01.id = 21;
+        # Vaultwarden
+        hosts.HL-3-RZ-VAULT-01.id = 22;
 
         # hosts.HL-1-MRZ-SBC-01-nginx.id = 29;
       };
@@ -59,22 +64,28 @@ in {
       #DMZ
       vlan70 = {
         cidrv4 = "10.15.70.0/24";
-        hosts.opnsense.id = 99;
-        hosts.HL-1-MRZ-SBC-01-caddy.id = 1;
-        # hosts.HL-1-MRZ-SBC-01-nginx.id = 1;
+        # OPNSense
+        hosts.HL-3-MRZ-FW-01.id = 99;
+        # Caddy
+        hosts.HL-3-DMZ-PROXY-01.id = 1;
       };
 
       #Management
       vlan100 = {
         cidrv4 = "10.15.100.0/24";
-        hosts.opnsense.id = 99;
+        # OPNSense
+        hosts.HL-3-MRZ-FW-01.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 20;
       };
 
-      proxy-home = {
-        cidrv4 = "10.44.0.0/24";
+      proxy-vps = {
+        cidrv4 = "10.46.0.0/24";
         cidrv6 = "fd00:44::/120";
+        # Caddy local
+        hosts.HL-3-DMZ-PROXY-01.id = 1;
+        # VPS
+        hosts.HL-4-PAZ-PROXY-01.id = 90;
       };
     };
     monitoring = {

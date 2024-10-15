@@ -16,7 +16,7 @@
     ;
 
   nodeName = config.node.name;
-  opnsense = "HL-1-MRZ-SBC-01-opnsense";
+  opnsense = "HL-3-MRZ-FW-01";
   # config.repo.secrets.local = {
   local = {
     networking = {
@@ -89,7 +89,7 @@ in {
     "50-${wgName}" = {
       # name = "${wgName}";
       matchConfig.Name = "${wgName}";
-      address = ["10.46.0.90/24"];
+      address = [globals.net.proxy-vps.hosts."HL-4-PAZ-PROXY-01".cidrv4];
       networkConfig = {
         IPv4Forwarding = true;
         # If DNS requests should go to a specific nameserver when the tunnel is
@@ -127,7 +127,7 @@ in {
             # how often to send an authenticated empty packet to the peer,
             # for the purpose of keeping a stateful firewall or NAT mapping valid persistently.
             PersistentKeepalive = 25;
-            Endpoint = "92.116.142.216:51820";
+            # Endpoint = "92.116.142.216:51820";
           }
         ];
       };
