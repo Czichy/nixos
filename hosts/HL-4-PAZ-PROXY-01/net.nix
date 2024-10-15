@@ -127,7 +127,7 @@ in {
             # how often to send an authenticated empty packet to the peer,
             # for the purpose of keeping a stateful firewall or NAT mapping valid persistently.
             PersistentKeepalive = 25;
-            # Endpoint = "92.116.142.216:51820";
+            Endpoint = "92.116.142.216:51820";
           }
         ];
       };

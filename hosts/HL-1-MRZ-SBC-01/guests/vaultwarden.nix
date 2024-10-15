@@ -101,7 +101,7 @@ in {
   };
 
   # Replace uses of old name
-  # systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
+  systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
   systemd.services.vaultwarden.serviceConfig = {
     StateDirectory = lib.mkForce "vaultwarden";
     RestartSec = "60"; # Retry every minute

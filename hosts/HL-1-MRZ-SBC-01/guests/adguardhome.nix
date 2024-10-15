@@ -25,23 +25,23 @@ in {
   # 	tls /home/{{ main_username }}/lego/certificates/_.{{ secret_personal_url }}.crt /home/{{ main_username }}/lego/certificates/_.{{ secret_personal_url }}.key
   # 	import personal_headers
   # }
-  # nodes.HL-4-PAZ-PROXY-01 = {
-  #   # SSL config and forwarding to local reverse proxy
-  #   services.caddy = {
-  #     virtualHosts."${adguardhomeDomain}".extraConfig = ''
-  #       reverse_proxy https://10.15.70.1:443 {
-  #           transport http {
-  #           	tls_server_name ${adguardhomeDomain}
-  #           }
-  #       }
+  nodes.HL-4-PAZ-PROXY-01 = {
+    # SSL config and forwarding to local reverse proxy
+    services.caddy = {
+      virtualHosts."${adguardhomeDomain}".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+            transport http {
+            	tls_server_name ${adguardhomeDomain}
+            }
+        }
 
-  #       tls ${certloc}/cert.pem ${certloc}/key.pem {
-  #         protocols tls1.3
-  #       }
-  #       import czichy_headers
-  #     '';
-  #   };
-  # };
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+          protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+  };
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."${adguardhomeDomain}".extraConfig = ''
