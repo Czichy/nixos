@@ -44,23 +44,6 @@ in {
   # | ADDITIONAL CONFIG |
   # ---------------------
   services.qemuGuest.enable = true;
-  # # SSL config and forwarding to local reverse proxy
-  # services.caddy = {
-  # virtualHosts."czichy.com".extraConfig = ''
-  #   reverse_proxy http://10.15.70.1:80
-
-  #     tls ${certloc}/cert.pem ${certloc}/key.pem {
-  #       protocols tls1.3
-  #     }
-  # '';
-  # virtualHosts."*.czichy.com".extraConfig = ''
-  #   reverse_proxy http://10.15.70.1:80
-
-  #     tls ${certloc}/cert.pem ${certloc}/key.pem {
-  #       protocols tls1.3
-  #     }
-  # '';
-  # };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because
@@ -69,17 +52,13 @@ in {
 
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
 
-  # Connect safely via wireguard to skip authentication
-  # networking.hosts.${config.wireguard.proxy-public.ipv4} = [globals.services.influxdb.domain];
-  # meta.telegraf = {
-  #   enable = true;
-  #   scrapeSensors = false;
-  #   influxdb2 = {
-  #     inherit (globals.services.influxdb) domain;
-  #     organization = "machines";
-  #     bucket = "telegraf";
-  #     node = "sire-influxdb";
-  #   };
+  services.caddy.virtualHosts."push.czichy.com".extraConfig = ''
+    reverse_proxy 127.0.0.1:push.czichy.com
+
+    tls ${certloc}/cert.pem ${certloc}/key.pem {
+      protocols tls1.3
+    }
+  '';
 
   # This node shall monitor the infrastructure
   # availableMonitoringNetworks = ["internet"];

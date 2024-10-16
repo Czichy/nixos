@@ -39,6 +39,12 @@ in {
     group = "vaultwarden";
   };
 
+  age.secrets.ntfy-alert-pass = {
+    file = secretsPath + "/ntfy-sh/alert-pass.age";
+    mode = "440";
+    group = "vaultwarden";
+  };
+
   # |----------------------------------------------------------------------| #
 
   environment.persistence."/persist".directories = [
@@ -126,16 +132,32 @@ in {
     environmentFile = config.age.secrets.vaultwarden-env.path;
   };
 
-  # |----------------------------------------------------------------------| #
-  # Replace uses of old name
-  systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
   systemd.services.vaultwarden.serviceConfig = {
     StateDirectory = lib.mkForce "vaultwarden";
     RestartSec = "60"; # Retry every minute
   };
+  # |----------------------------------------------------------------------| #
+  systemd.services.backup-vaultwarden.environment.DATA_FOLDER = lib.mkForce "/var/lib/vaultwarden";
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
-  services.restic.backups = {
+  services.restic.backups = let
+    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+    ntfy_url = "https://${globals.services.ntfy-sh.domain}";
+
+    script-post = host: site: ''
+      if [ $EXIT_STATUS -ne 0 ]; then
+        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+        -H 'Title: Backup (${site}) on ${host} failed!' \
+        -H 'Tags: backup,restic,${host},${site}' \
+        -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+      else
+        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+        -H 'Title: Backup (${site}) on ${host} successful!' \
+        -H 'Tags: backup,restic,${host},${site}' \
+        -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
+      fi
+    '';
+  in {
     vaultwarden = {
       # Initialize the repository if it doesn't exist.
       initialize = true;
@@ -162,7 +184,7 @@ in {
       # '';
 
       # A script that must run after finishing the backup process.
-      # backupCleanupCommand = "rm -rf /tmp/restic-backup-temp";
+      backupCleanupCommand = script-post config.networking.hostName "vaultwarden";
 
       # Extra extended options to be passed to the restic --option flag.
       # extraOptions = [];

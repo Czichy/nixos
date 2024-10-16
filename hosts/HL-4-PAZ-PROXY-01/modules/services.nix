@@ -1,5 +1,6 @@
 {
   config.tensorfiles.services = {
+    ntfy-sh.enable = true;
     networking = {
       networkd.enable = true;
       nftables.enable = true;
