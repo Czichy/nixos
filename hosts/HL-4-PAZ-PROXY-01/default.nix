@@ -52,14 +52,6 @@ in {
 
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
 
-  services.caddy.virtualHosts."push.czichy.com".extraConfig = ''
-    reverse_proxy 127.0.0.1:push.czichy.com
-
-    tls ${certloc}/cert.pem ${certloc}/key.pem {
-      protocols tls1.3
-    }
-  '';
-
   # This node shall monitor the infrastructure
   # availableMonitoringNetworks = ["internet"];
   # };

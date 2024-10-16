@@ -18,6 +18,7 @@ with lib; let
   cfg = config.tensorfiles.services.ntfy-sh;
   ntfy-port = "8090";
   ntfy-host = "push.czichy.com";
+  certloc = "/var/lib/acme/czichy.com";
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in {
@@ -88,6 +89,19 @@ in {
       in
         toString script;
     })
+    # |----------------------------------------------------------------------| #
+    {
+      nodes.HL-4-PAZ-PROXY-01 = {
+        services.caddy.virtualHosts."${ntfy-host}".extraConfig = ''
+          reverse_proxy 127.0.0.1:${ntfy-port}
+
+          tls ${certloc}/cert.pem ${certloc}/key.pem {
+            protocols tls1.3
+          }
+        '';
+      };
+    }
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with localFlake.lib.maintainers; [czichy];
