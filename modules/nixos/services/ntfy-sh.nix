@@ -57,7 +57,7 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
-      age.secrets.ntfy-admin-pass = {
+      age.secrets.ntfy-readonly-pass = {
         file = secretsPath + "/ntfy-sh/readonly-pass.age";
         owner = config.services.ntfy-sh.user;
       };
@@ -80,7 +80,7 @@ in {
           fi
 
           if ! ${ntfy} user list | grep -q 'user readonly'; then
-            NTFY_PASSWORD="$(cat ${config.age.secrets.ntfy-niko-pass.path})" \
+            NTFY_PASSWORD="$(cat ${config.age.secrets.ntfy-readonly-pass.path})" \
               ${ntfy} user add readonly
             ${ntfy} access readonly '*' read-only
           fi
