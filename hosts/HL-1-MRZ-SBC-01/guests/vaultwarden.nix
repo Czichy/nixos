@@ -142,7 +142,7 @@ in {
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
   services.restic.backups = let
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}";
+    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
 
     script-post = host: site: ''
       if [ $EXIT_STATUS -ne 0 ]; then
