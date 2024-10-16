@@ -1,4 +1,7 @@
-{localFlake}: {
+{
+  localFlake,
+  secretsPath,
+}: {
   config,
   lib,
   pkgs,
@@ -8,11 +11,7 @@ with builtins;
 with lib; let
   inherit
     (localFlake.lib)
-    mkOverrideAtModuleLevel
     isModuleLoadedAndEnabled
-    mapToAttrsAndMerge
-    mkImpermanenceEnableOption
-    mkUsersSettingsOption
     mkAgenixEnableOption
     ;
 
