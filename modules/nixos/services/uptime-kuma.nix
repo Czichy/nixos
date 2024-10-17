@@ -60,7 +60,7 @@ in {
             directory = "/var/lib/private/uptime-kuma";
             user = "uptime-kuma";
             group = "uptime-kuma";
-            mode = "0755";
+            mode = "0700";
           }
         ];
       };
