@@ -93,11 +93,12 @@ in {
     {
       nodes.HL-4-PAZ-PROXY-01 = {
         services.caddy.virtualHosts."${ntfy-host}".extraConfig = ''
-          reverse_proxy 127.0.0.1:${ntfy-port}
+            reverse_proxy 127.0.0.1:${ntfy-port}
 
-          tls ${certloc}/cert.pem ${certloc}/key.pem {
-            protocols tls1.3
-          }
+            tls ${certloc}/cert.pem ${certloc}/key.pem {
+              protocols tls1.3
+            }
+          import czichy_headers
         '';
       };
     }
