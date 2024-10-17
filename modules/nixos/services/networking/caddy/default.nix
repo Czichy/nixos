@@ -107,9 +107,9 @@ in {
             # 	}
             # }
         '';
-        virtualHosts."localhost".extraConfig = ''
-          respond "OK"
-        '';
+        # virtualHosts."localhost".extraConfig = ''
+        #   respond "OK"
+        # '';
 
         # package = pkgs.callPackage ./custom-caddy.nix {
         #   plugins = [
