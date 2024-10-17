@@ -195,7 +195,7 @@ in {
         syncthingCert = {
           symlink = true;
           # path = "/home/${cfg.user}/.config/syncthing/cert.pem";
-          file = secretsPath + "/hosts/desktop/users/${cfg.user}/syncthing/cert.pem.age";
+          file = secretsPath + "/hosts/HL-1-OZ-PC-01/users/${cfg.user}/syncthing/cert.pem.age";
           # refer to ./xxx.age located in `mysecrets` repo
           mode = "0600";
           owner = "${cfg.user}";
@@ -203,7 +203,7 @@ in {
         syncthingKey = {
           symlink = true;
           # path = "/home/${cfg.user}/.config/syncthing/key.pem";
-          file = secretsPath + "/hosts/desktop/users/${cfg.user}/syncthing/key.pem.age";
+          file = secretsPath + "/hosts/HL-1-OZ-PC-01/users/${cfg.user}/syncthing/key.pem.age";
           # refer to ./xxx.age located in `mysecrets` repo
           mode = "0600";
           owner = "${cfg.user}";
