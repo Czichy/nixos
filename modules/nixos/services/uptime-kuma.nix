@@ -9,6 +9,7 @@ with lib; let
   inherit
     (localFlake.lib)
     mkImpermanenceEnableOption
+    isModuleLoadedAndEnabled
     ;
 
   cfg = config.tensorfiles.services.uptime-kuma;
