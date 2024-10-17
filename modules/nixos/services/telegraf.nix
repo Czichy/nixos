@@ -37,7 +37,7 @@ with lib; let
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in {
-  options.tensorfiles.services.uptime-kuma = with types; {
+  options.tensorfiles.services.telegraf = with types; {
     enable = mkEnableOption "telegraf to push metrics to influx.";
 
     scrapeSensors = mkOption {

@@ -13,7 +13,7 @@ with lib; let
 
   cfg = config.tensorfiles.services.uptime-kuma;
   uptime-port = "8095";
-  uptime-host = "push.czichy.com";
+  uptime-host = "uptime.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
 in {
   options.tensorfiles.services.uptime-kuma = with types; {
