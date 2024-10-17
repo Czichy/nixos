@@ -1,6 +1,4 @@
 {
-  config,
-  globals,
   pkgs,
   inputs,
   ...

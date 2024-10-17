@@ -84,11 +84,11 @@ in {
       };
     })
     # |----------------------------------------------------------------------| #
-    # {
-    #   services.telegraf.extraConfig.inputs = lib.mkIf config.services.telegraf.enable {
-    #     zfs.poolMetrics = true;
-    #   };
-    # }
+    {
+      services.telegraf.extraConfig.inputs = lib.mkIf config.services.telegraf.enable {
+        zfs.poolMetrics = true;
+      };
+    }
     # |----------------------------------------------------------------------| #
     (lib.mkIf impermanenceCheck {
       # TODO remove once this is upstreamed

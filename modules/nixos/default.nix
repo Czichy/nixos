@@ -56,6 +56,15 @@ in {
       inherit localFlake;
     };
 
+    services_telegraf = importApply ./services/telegraf.nix {
+      inherit localFlake;
+      inherit secretsPath;
+    };
+
+    services_uptime-kuma = importApply ./services/uptime-kuma.nix {
+      inherit localFlake;
+    };
+
     # |----------------------------------------------------------------------| #
     # | SERVICES - NETWORKING                                                |
     # |----------------------------------------------------------------------| #

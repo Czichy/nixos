@@ -16,6 +16,7 @@
     minecraft = uidGid 975;
     podman = uidGid 977;
     msr = uidGid 980;
+    uptime-kuma = uidGid 981;
     ntp = uidGid 982;
     git = uidGid 983;
     rtkit = uidGid 984;
