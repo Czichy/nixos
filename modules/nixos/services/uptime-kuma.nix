@@ -72,9 +72,9 @@ in {
         services.caddy.virtualHosts."${uptime-host}".extraConfig = ''
           reverse_proxy 127.0.0.1:${uptime-port}
 
-          tls ${certloc}/cert.pem ${certloc}/key.pem {
-            protocols tls1.3
-          }
+          # tls ${certloc}/cert.pem ${certloc}/key.pem {
+          #   protocols tls1.3
+          # }
         '';
       };
     }
