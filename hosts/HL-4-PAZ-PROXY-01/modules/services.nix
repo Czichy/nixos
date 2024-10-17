@@ -1,11 +1,12 @@
 {
   config.tensorfiles.services = {
     ntfy-sh.enable = true;
+    uptime-kuma.enable = true;
     networking = {
-      networkd.enable = true;
-      nftables.enable = true;
       acme.enable = true;
       caddy.enable = true;
+      networkd.enable = true;
+      nftables.enable = true;
     };
   };
 }
