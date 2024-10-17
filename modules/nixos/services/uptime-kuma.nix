@@ -1,7 +1,4 @@
-{
-  localFlake,
-  secretsPath,
-}: {
+{localFlake}: {
   config,
   lib,
   pkgs,
