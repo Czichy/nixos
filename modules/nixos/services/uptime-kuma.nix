@@ -15,6 +15,13 @@ with lib; let
   uptime-port = "8095";
   uptime-host = "uptime.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
+
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.system.impermanence
+    else {};
 in {
   options.tensorfiles.services.uptime-kuma = with types; {
     enable = mkEnableOption ''uptime-kuma self-hosted monitoring tool'';
