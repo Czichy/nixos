@@ -14,6 +14,7 @@ with lib; let
     (localFlake.lib)
     mkImpermanenceEnableOption
     isModuleLoadedAndEnabled
+    mkAgenixEnableOption
     ;
 
   cfg = config.tensorfiles.services.uptime-kuma;
