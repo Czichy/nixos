@@ -160,7 +160,7 @@ in {
       fi
     '';
   in {
-    vaultwarden = {
+    vaultwarden-backup = {
       # Initialize the repository if it doesn't exist.
       initialize = true;
 

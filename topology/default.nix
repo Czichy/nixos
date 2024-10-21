@@ -8,6 +8,7 @@
     mkConnection
     ;
 in {
+  icons.services.opnsense.file = ./icons/opnsense.svg;
   # TODO: collect networks from globals
   networks = {
     trust = {
@@ -55,7 +56,7 @@ in {
 
   nodes.internet = mkInternet {
     connections = [
-      # (mkConnection "sentinel" "wan")
+      (mkConnection "HL-4-PAZ-PROXY-01" "10-wan")
       (mkConnection "vigor" "wan")
     ];
   };
@@ -243,35 +244,35 @@ in {
     # connections.eth1 = mkConnection "switch-office" "eth4";
   };
 
-  nodes.opnsense = {
-    # guestType = "qemu";
-    deviceType = "cloud-server";
-    # deviceIcon = ./icons/server-svgrepo-com.svg;
-    parent = "HL-1-MRZ-SBC-01";
-    guestType = "qemu";
-    interfaces.wan = {
-      # addresses = ["10.15.1.99"];
-      network = "internet";
-      physicalConnections = [(mkConnection "vigor" "p1")];
-    };
-    interfaces = {
-      lan = {
-        addresses = ["10.15.1.99"];
-        network = "lan";
-        physicalConnections = [(mkConnection "switch-keller" "eth16")];
-      };
-      trust = {
-        network = "trust";
-        addresses = ["10.15.10.99/24"];
-        virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "eth16")];
-      };
-      mgmt = {
-        network = "mgmt";
-        addresses = ["10.15.100.99/24"];
-        virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "eth16")];
-      };
-    };
-  };
+  # nodes.opnsense = {
+  #   # guestType = "qemu";
+  #   deviceType = "cloud-server";
+  #   # deviceIcon = ./icons/server-svgrepo-com.svg;
+  #   parent = "HL-1-MRZ-SBC-01";
+  #   guestType = "qemu";
+  #   interfaces.wan = {
+  #     # addresses = ["10.15.1.99"];
+  #     network = "internet";
+  #     physicalConnections = [(mkConnection "vigor" "p1")];
+  #   };
+  #   interfaces = {
+  #     lan = {
+  #       addresses = ["10.15.1.99"];
+  #       network = "lan";
+  #       physicalConnections = [(mkConnection "switch-keller" "eth16")];
+  #     };
+  #     trust = {
+  #       network = "trust";
+  #       addresses = ["10.15.10.99/24"];
+  #       virtual = true;
+  #       physicalConnections = [(mkConnection "switch-keller" "eth16")];
+  #     };
+  #     mgmt = {
+  #       network = "mgmt";
+  #       addresses = ["10.15.100.99/24"];
+  #       virtual = true;
+  #       physicalConnections = [(mkConnection "switch-keller" "eth16")];
+  #     };
+  #   };
+  # };
 }

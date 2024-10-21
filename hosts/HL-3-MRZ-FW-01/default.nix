@@ -1,8 +1,16 @@
 {
   pkgs,
   inputs,
+  config,
   ...
-}: {
+}: let
+  inherit
+    (config.lib.topology)
+    # mkDevice
+    
+    mkConnection
+    ;
+in {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -21,8 +29,38 @@
     ./modules
   ];
 
-  # topology.self.hardware.image = ../../topology/images/Topton.webp;
-  topology.self.hardware.info = "OPNSense";
+  topology.self = {
+    hardware.info = "OPNSense";
+    # hardware.image = ../../topology/images/Topton.webp;
+    # guestType = "qemu";
+    deviceIcon = "services.opnsense";
+    parent = "HL-1-MRZ-SBC-01";
+    guestType = "qemu";
+    interfaces.wan = {
+      # addresses = ["10.15.1.99"];
+      network = "internet";
+      physicalConnections = [(mkConnection "vigor" "p1")];
+    };
+    interfaces = {
+      lan = {
+        addresses = ["10.15.1.99"];
+        network = "lan";
+        physicalConnections = [(mkConnection "switch-keller" "eth16")];
+      };
+      trust = {
+        network = "trust";
+        addresses = ["10.15.10.99/24"];
+        virtual = true;
+        physicalConnections = [(mkConnection "switch-keller" "eth16")];
+      };
+      mgmt = {
+        network = "mgmt";
+        addresses = ["10.15.100.99/24"];
+        virtual = true;
+        physicalConnections = [(mkConnection "switch-keller" "eth16")];
+      };
+    };
+  };
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
