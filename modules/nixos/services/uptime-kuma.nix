@@ -85,6 +85,12 @@ in {
         group = "uptime-kuma";
       };
 
+      age.secrets."rclone.conf" = {
+        file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
+        mode = "700";
+        group = "uptime-kuma";
+      };
+
       age.secrets.ntfy-alert-pass = {
         file = secretsPath + "/ntfy-sh/alert-pass.age";
         mode = "700";
