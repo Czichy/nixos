@@ -12,15 +12,17 @@ with lib; let
   cfg = config.tensorfiles.services.restic;
   script-post = host: site: ''
     if [ $EXIT_STATUS -ne 0 ]; then
-      ${pkgs.curl}/bin/curl -u $NTFY_USER:$NTFY_PASS \
+      ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
       -H 'Title: Backup (${site}) on ${host} failed!' \
       -H 'Tags: backup,restic,${host},${site}' \
-      -d "Restic (${site}) backup error on ${host}!" 'https://push.pablo.tools/pinpox_backups'
+      -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
     else
-      ${pkgs.curl}/bin/curl -u $NTFY_USER:$NTFY_PASS \
+      ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
       -H 'Title: Backup (${site}) on ${host} successful!' \
       -H 'Tags: backup,restic,${host},${site}' \
-      -d "Restic (${site}) backup success on ${host}!" 'https://push.pablo.tools/pinpox_backups'
+      -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
+
+     ${pkgs.curl}/bin/curl   https://uptime.czichy.com/api/push/oPz4MJsFPX?status=up&msg=OK&ping=
     fi
   '';
 in {

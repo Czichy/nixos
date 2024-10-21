@@ -49,7 +49,9 @@ in {
     {
       services.uptime-kuma = {
         enable = true;
-        settings = {PORT = toString uptime-port;};
+        settings = {
+          PORT = toString uptime-port;
+        };
       };
 
       users = {
@@ -75,7 +77,7 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
-      age.secrets.restic-vaultwarden = {
+      age.secrets.restic-uptime-kuma = {
         file = secretsPath + "/hosts/${hostName}/restic/uptime-kuma.age";
         mode = "700";
         group = "uptime-kuma";
@@ -120,11 +122,11 @@ in {
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
 
-           ${pkgs.curl}/bin/curl   https://uptime.czichy.com/api/push/oPz4MJsFPX?status=up&msg=OK&ping=
+           ${pkgs.curl}/bin/curl https://uptime.czichy.com/api/push/AfaxuEEWaI?status=up&msg=OK&ping=
           fi
         '';
       in {
-        vaultwarden = {
+        uptime-kuma = {
           # Initialize the repository if it doesn't exist.
           initialize = true;
 
@@ -132,25 +134,28 @@ in {
           repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-uptime-kuma";
 
           # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-          paths = [config.services.vaultwarden.backupDir];
+          paths = [config.services.uptime-kuma.settings.DATA_DIR];
 
           # Patterns to exclude when backing up. See
           #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
           # for details on syntax.
           exclude = [];
 
-          passwordFile = config.age.secrets.restic-vaultwarden.path;
+          passwordFile = config.age.secrets.restic-uptime-kuma.path;
           rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
           # A script that must run before starting the backup process.
-          # backupPrepareCommand = ''
-          #   echo "Building backup dir ${config.services.vaultwarden.backupDir}"
-          #   mkdir -p ${config.services.vaultwarden.backupDir}
-          #   ${pkgs.sqlite}/bin/sqlite3 ${config.services.vaultwarden.backupDir}/db.sqlite3 ".backup '${config.services.vaultwarden.backupDir}/vaultwarden.sqlite'"
-          # '';
+          backupPrepareCommand = ''
+            echo "Building backup dir ${config.services.uptime-kuma.settings.DATA_DIR}"
+            systemctl stop uptime-kuma
+          '';
 
           # A script that must run after finishing the backup process.
-          backupCleanupCommand = script-post config.networking.hostName "uptime-kuma";
+          backupCleanupCommand =
+            ''
+              systemctl start uptime-kuma
+            ''
+            + script-post config.networking.hostName "uptime-kuma";
 
           # A list of options (--keep-* et al.) for 'restic forget --prune',
           # to automatically prune old snapshots.
