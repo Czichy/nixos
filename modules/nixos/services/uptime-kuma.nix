@@ -2,6 +2,7 @@
   localFlake,
   secretsPath,
 }: {
+  globals,
   config,
   lib,
   pkgs,
