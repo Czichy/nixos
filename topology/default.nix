@@ -9,6 +9,7 @@
     ;
 in {
   icons.services.opnsense.file = ./icons/opnsense.svg;
+  icons.services.uptime-kuma.file = ./icons/uptime-kuma.svg;
   # TODO: collect networks from globals
   networks = {
     trust = {
@@ -67,16 +68,17 @@ in {
     interfaceGroups = [
       [
         "p1"
-        # "eth2"
-        # "eth3"
-        # "eth4"
       ]
       ["wan"]
     ];
-    # connections.p1 = mkConnection "internet" "wan";
     interfaces.wan = {
       # addresses = ["10.15.100.250"];
       network = "internet";
+    };
+
+    interfaces.p1 = {
+      virtual = false;
+      physicalConnections = [(mkConnection "HL-3-MRZ-FW-01" "enp1s0")];
     };
   };
 
@@ -110,27 +112,40 @@ in {
     ];
 
     interfaces = {
+      eth10 = {
+        virtual = false;
+        physicalConnections = [(mkConnection "HL-1-MRZ-SBC-01" "enp4s0")];
+      };
+      eth16 = {
+        virtual = false;
+        physicalConnections = [(mkConnection "HL-3-MRZ-FW-01" "enp2s0")];
+      };
+      servers = {
+        virtual = true;
+      };
+      iot = {
+        virtual = true;
+      };
       trust = {
-        network = "trust";
-        # addresse = [];
         virtual = true;
+        physicalConnections = [
+          (mkConnection "HL-3-MRZ-FW-01" "trust")
+        ];
       };
-
       guest = {
-        network = "guest";
-        # addresse = [];
         virtual = true;
+        physicalConnections = [
+          (mkConnection "HL-3-MRZ-FW-01" "guest")
+        ];
       };
-      # guest.name = "Guest VLAN20";
-      # security.name = "Security VLAN30";
-      # servers.name = "Servers VLAN40";
-      # iot.name = "IoT VLAN60";
-      # dmz.name = "DMZ VLAN70";
-      # mgmt.name = "MGMT VLAN100";
+      mgmt = {
+        virtual = true;
+        physicalConnections = [
+          (mkConnection "HL-1-MRZ-SBC-01" "mgmt")
+          (mkConnection "HL-3-MRZ-FW-01" "mgmt")
+        ];
+      };
     };
-    # connections.eth1 = mkConnection "ward" "lan-self";
-    # connections.eth2 = mkConnection "sire" "lan-self";
-    # connections.eth7 = mkConnection "zackbiene" "lan1";
   };
 
   nodes.switch-office = mkSwitch "Switch Office" {
@@ -151,24 +166,29 @@ in {
     ];
 
     interfaces = {
-      trust = {
-        network = "trust";
-        virtual = true;
+      eth1 = {
+        virtual = false;
         physicalConnections = [
           (mkConnection "switch-keller" "eth1")
-          # (mkConnection "HL-1-OZ-PC-01" "eth2")
         ];
       };
 
-      guest = {
-        network = "guest";
+      eth2 = {
+        virtual = false;
+        physicalConnections = [
+          (mkConnection "HL-1-OZ-PC-01" "enp39s0")
+        ];
+      };
+      trust = {
         virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "eth1")];
+        physicalConnections = [
+          (mkConnection "switch-keller" "trust")
+        ];
       };
     };
-    connections.eth1 = mkConnection "switch-keller" "eth1";
-    connections.eth2 = mkConnection "HL-1-OZ-PC-01" "trust";
-    # connections.eth7 = mkConnection "zackbiene" "lan1";
+    connections.trust = mkConnection "switch-keller" "trust";
+    connections.mgmt = mkConnection "switch-keller" "mgmt";
+    connections.guest = mkConnection "switch-keller" "guest";
   };
   # |----------------------------------------------------------------------| #
 
@@ -194,13 +214,14 @@ in {
       ]
     ];
     interfaces = {
-      mgmt = {
-        network = "mgmt";
+      eth1 = {
+        # network = "mgmt";
         addresses = ["10.15.100.1/24"];
         virtual = true;
         physicalConnections = [(mkConnection "switch-keller" "eth2")];
       };
     };
+    connections.mgmt = mkConnection "switch-keller" "mgmt";
     # connections.eth1 = mkConnection "switch-keller" "eth2";
   };
 
@@ -214,14 +235,14 @@ in {
       ]
     ];
     interfaces = {
-      mgmt = {
-        network = "mgmt";
+      eth1 = {
+        # network = "mgmt";
         addresses = ["10.15.100.2/24"];
         virtual = true;
         physicalConnections = [(mkConnection "switch-keller" "eth4")];
       };
     };
-    # connections.eth1 = mkConnection "switch-keller" "eth4";
+    connections.mgmt = mkConnection "switch-keller" "mgmt";
   };
 
   nodes.printer = mkDevice "Drucker Büro" {
@@ -234,45 +255,13 @@ in {
       ]
     ];
     interfaces = {
-      trust = {
-        network = "trust";
-        addresses = ["10.15.10.253"];
+      eth1 = {
+        # network = "trust";
+        # addresses = ["10.15.10.253"];
         virtual = true;
         physicalConnections = [(mkConnection "switch-office" "eth4")];
       };
     };
-    # connections.eth1 = mkConnection "switch-office" "eth4";
+    connections.trust = mkConnection "switch-keller" "trust";
   };
-
-  # nodes.opnsense = {
-  #   # guestType = "qemu";
-  #   deviceType = "cloud-server";
-  #   # deviceIcon = ./icons/server-svgrepo-com.svg;
-  #   parent = "HL-1-MRZ-SBC-01";
-  #   guestType = "qemu";
-  #   interfaces.wan = {
-  #     # addresses = ["10.15.1.99"];
-  #     network = "internet";
-  #     physicalConnections = [(mkConnection "vigor" "p1")];
-  #   };
-  #   interfaces = {
-  #     lan = {
-  #       addresses = ["10.15.1.99"];
-  #       network = "lan";
-  #       physicalConnections = [(mkConnection "switch-keller" "eth16")];
-  #     };
-  #     trust = {
-  #       network = "trust";
-  #       addresses = ["10.15.10.99/24"];
-  #       virtual = true;
-  #       physicalConnections = [(mkConnection "switch-keller" "eth16")];
-  #     };
-  #     mgmt = {
-  #       network = "mgmt";
-  #       addresses = ["10.15.100.99/24"];
-  #       virtual = true;
-  #       physicalConnections = [(mkConnection "switch-keller" "eth16")];
-  #     };
-  #   };
-  # };
 }

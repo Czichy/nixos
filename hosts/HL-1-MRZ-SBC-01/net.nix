@@ -9,6 +9,7 @@
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
+  topology.self.interfaces.enp4s0 = {};
 
   globals.monitoring.ping.HL-1-MRZ-SBC-01 = {
     hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4;
@@ -135,55 +136,4 @@ in {
       linkConfig.Unmanaged = "yes";
     };
   };
-
-  # networking.nftables.firewall = {
-  #   snippets.nnf-icmp.ipv6Types = ["mld-listener-query" "nd-router-solicit"];
-
-  #   zones = {
-  #     untrusted.interfaces = ["wan"];
-  #     lan.interfaces = ["lan-self"];
-  #     proxy-home.interfaces = ["proxy-home"];
-  #   };
-
-  #   rules = {
-  #     masquerade = {
-  #       from = ["lan"];
-  #       to = ["untrusted"];
-  #       masquerade = true;
-  #     };
-
-  #     outbound = {
-  #       from = ["lan"];
-  #       to = ["lan" "untrusted"];
-  #       late = true; # Only accept after any rejects have been processed
-  #       verdict = "accept";
-  #     };
-
-  #     lan-to-local = {
-  #       from = ["lan"];
-  #       to = ["local"];
-
-  #       allowedUDPPorts = [51444];
-  #       # allowedUDPPorts = [config.wireguard.proxy-home.server.port];
-  #     };
-
-  #     # Forward traffic between participants
-  #     forward-proxy-home-vpn-traffic = {
-  #       from = ["proxy-home"];
-  #       to = ["proxy-home"];
-  #       verdict = "accept";
-  #     };
-  #   };
-  # };
-
-  # tensorfiles.services.networking.wireguard.enable = true;
-  # tensorfiles.services.networking.wireguard.proxy-home.server = {
-  #   host = globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.ipv4;
-  #   port = 51444;
-  #   reservedAddresses = [
-  #     globals.net.proxy-home.cidrv4
-  #     globals.net.proxy-home.cidrv6
-  #   ];
-  #   openFirewall = false; # Explicitly opened only for lan
-  # };
 }

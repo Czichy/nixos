@@ -5,6 +5,7 @@
 }: let
   macAddress_enp39s0 = "2c:f0:5d:9f:10:37";
 in {
+  topology.self.interfaces.enp39s0 = {};
   networking.firewall.checkReversePath = false;
   # |----------------------------------------------------------------------| #
   systemd.network.netdevs."10-trust" = {

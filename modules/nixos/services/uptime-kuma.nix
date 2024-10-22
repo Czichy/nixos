@@ -46,6 +46,15 @@ in {
     # |----------------------------------------------------------------------| #
     {
       globals.services.uptime-kuma.domain = uptime-host;
+      topology.self.services.uptime-kuma = let
+        address = config.services.uptime-kuma.settings.HOST or null;
+        port = config.services.uptime-kuma.settings.PORT or null;
+      in {
+        name = "Uptime-Kuma";
+        icon = "services.uptime-kuma";
+        info = "${uptime-host}";
+        details.listen = mkIf (address != null && port != null) {text = "${address}:${toString port}";};
+      };
     }
     # |----------------------------------------------------------------------| #
     {
@@ -134,7 +143,7 @@ in {
           fi
         '';
       in {
-        uptime-kuma = {
+        uptime-kuma-backup = {
           # Initialize the repository if it doesn't exist.
           initialize = true;
 
