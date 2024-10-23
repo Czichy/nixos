@@ -13,27 +13,34 @@
 } @ attrs: let
   inherit
     (lib)
-    mkOption
-    types
+    flatten
+    flip
+    foldl'
+    groupBy
+    hasInfix
+    hasPrefix
+    mkMerge
+    optional
+    warnIf
     ;
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption mergeToplevelConfigs mapAttrsToList;
   cfg = config.tensorfiles.services.microvm;
 
-  generateMacAddress = s: let
-    hash = builtins.hashString "sha256" s;
-    c = off: builtins.substring off 2 hash;
-  in "${builtins.substring 0 1 hash}2:${c 2}:${c 4}:${c 6}:${c 8}:${c 10}";
+  # generateMacAddress = s: let
+  #   hash = builtins.hashString "sha256" s;
+  #   c = off: builtins.substring off 2 hash;
+  # in "${builtins.substring 0 1 hash}2:${c 2}:${c 4}:${c 6}:${c 8}:${c 10}";
 
   # List the necessary mount units for the given guest
   fsMountUnitsFor = guestCfg: map (x: x.hostMountpoint) (lib.attrValues guestCfg.zfs);
 
   defineMicrovm = guestName: guestCfg: {
     # Ensure that the zfs dataset exists before it is mounted.
-    # systemd.services."microvm@${guestName}" = {
-    #   unitConfig = {
-    #     RequiresMountsFor = fsMountUnitsFor guestCfg;
-    #   };
-    # };
+    systemd.services."microvm@${guestName}" = {
+      unitConfig = {
+        RequiresMountsFor = fsMountUnitsFor guestCfg;
+      };
+    };
 
     microvm.vms.${guestName} = import ./microvm.nix guestName guestCfg attrs;
   };
@@ -181,43 +188,63 @@ in {
     lib.mkMerge [
       # |----------------------------------------------------------------------| #
       {
-        systemd.tmpfiles.rules = ["d /guests 0700 root root -"];
+        systemd.tmpfiles.rules = [
+          "d /guests 0700 root root -"
+        ];
 
-        modules.zfs.datasets.properties = let
-          zfsDefs = lib.flatten (
-            lib.flip lib.mapAttrsToList cfg.guests (
-              _: guestCfg:
-                lib.flip lib.mapAttrsToList guestCfg.zfs (
-                  _: zfsCfg: {
-                    dataset = "${zfsCfg.dataset}";
-                    inherit (zfsCfg) hostMountpoint;
-                  }
-                )
-            )
-          );
-          zfsAttrSet = lib.listToAttrs (
-            map (zfsDef: {
-              name = zfsDef.dataset;
-              value = {
-                mountpoint = zfsDef.hostMountpoint;
-              };
-            })
-            zfsDefs
-          );
-        in
-          zfsAttrSet;
-        assertions = lib.flatten (
-          lib.flip lib.mapAttrsToList cfg.guests (
-            guestName: guestCfg:
-              lib.flip lib.mapAttrsToList guestCfg.zfs (
-                zfsName: zfsCfg: {
-                  assertion = lib.hasPrefix "/" zfsCfg.guestMountpoint;
-                  message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
+        # To enable shared folders we need to do all fileSystems entries ourselfs
+        fileSystems = let
+          zfsDefs = flatten (flip mapAttrsToList config.guests (
+            _: guestCfg:
+              flip mapAttrsToList guestCfg.zfs (
+                _: zfsCfg: {
+                  path = "${zfsCfg.pool}/${zfsCfg.dataset}";
+                  inherit (zfsCfg) hostMountpoint;
                 }
               )
-          )
-        );
+          ));
+          # Due to limitations in zfs mounting we need to explicitly set an order in which
+          # any dataset gets mounted
+          zfsDefsByPath = flip groupBy zfsDefs (x: x.path);
+        in
+          mkMerge (flip mapAttrsToList zfsDefsByPath (_: defs:
+            (foldl' ({
+                prev,
+                res,
+              }: elem: {
+                prev = elem;
+                res =
+                  res
+                  // {
+                    ${elem.hostMountpoint} = {
+                      fsType = "zfs";
+                      options =
+                        ["zfsutil"]
+                        ++ optional (prev != null) "x-systemd.requires-mounts-for=${warnIf
+                          (hasInfix " " prev.hostMountpoint) "HostMountpoint ${prev.hostMountpoint} cannot contain a space"
+                          prev.hostMountpoint}";
+                      device = elem.path;
+                    };
+                  };
+              })
+              {
+                prev = null;
+                res = {};
+              }
+              defs)
+            .res));
+
+        assertions = flatten (flip mapAttrsToList config.guests (
+          guestName: guestCfg:
+            flip mapAttrsToList guestCfg.zfs (
+              zfsName: zfsCfg: {
+                assertion = hasPrefix "/" zfsCfg.guestMountpoint;
+                message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
+              }
+            )
+        ));
       }
+
       # |----------------------------------------------------------------------| #
       (mergeToplevelConfigs [
         "microvm"
