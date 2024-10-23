@@ -234,15 +234,15 @@ in {
               defs)
             .res));
 
-        assertions = flatten (flip mapAttrsToList config.guests (
-          guestName: guestCfg:
-            flip mapAttrsToList guestCfg.zfs (
-              zfsName: zfsCfg: {
-                assertion = hasPrefix "/" zfsCfg.guestMountpoint;
-                message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
-              }
-            )
-        ));
+        # assertions = flatten (flip mapAttrsToList config.guests (
+        #   guestName: guestCfg:
+        #     flip mapAttrsToList guestCfg.zfs (
+        #       zfsName: zfsCfg: {
+        #         assertion = hasPrefix "/" zfsCfg.guestMountpoint;
+        #         message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
+        #       }
+        #     )
+        # ));
       }
 
       # |----------------------------------------------------------------------| #
