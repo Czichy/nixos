@@ -194,7 +194,7 @@ in {
 
         # To enable shared folders we need to do all fileSystems entries ourselfs
         fileSystems = let
-          zfsDefs = flatten (flip mapAttrsToList config.guests (
+          zfsDefs = flatten (flip mapAttrsToList cfg.guests (
             _: guestCfg:
               flip mapAttrsToList guestCfg.zfs (
                 _: zfsCfg: {
@@ -234,15 +234,15 @@ in {
               defs)
             .res));
 
-        # assertions = flatten (flip mapAttrsToList config.guests (
-        #   guestName: guestCfg:
-        #     flip mapAttrsToList guestCfg.zfs (
-        #       zfsName: zfsCfg: {
-        #         assertion = hasPrefix "/" zfsCfg.guestMountpoint;
-        #         message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
-        #       }
-        #     )
-        # ));
+        assertions = flatten (flip mapAttrsToList cfg.guests (
+          guestName: guestCfg:
+            flip mapAttrsToList guestCfg.zfs (
+              zfsName: zfsCfg: {
+                assertion = hasPrefix "/" zfsCfg.guestMountpoint;
+                message = "guest ${guestName}: zfs ${zfsName}: the guestMountpoint must be an absolute path.";
+              }
+            )
+        ));
       }
 
       # |----------------------------------------------------------------------| #
