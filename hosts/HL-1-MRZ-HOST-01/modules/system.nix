@@ -1,12 +1,8 @@
-{
+{config, ...}: {
   config.tensorfiles.system = {
     impermanence = {
       enable = true;
       allowOther = true;
-      btrfsWipe = {
-        enable = false;
-        rootPartition = "/dev/nvme0n1";
-      };
     };
     users.usersSettings."root" = {
       uid = 0;
@@ -31,5 +27,11 @@
         "qemu-libvirtd"
       ];
     };
+
+    zfs = {
+      enable = true;
+      hostId = builtins.substring 0 8 (builtins.hashString "md5" config.networking.hostName);
+    };
+    initrd-ssh.enable = true;
   };
 }

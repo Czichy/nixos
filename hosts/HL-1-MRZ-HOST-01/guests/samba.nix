@@ -138,7 +138,7 @@
     );
 in {
   # For influxdb communication channel
-  wireguard.proxy-home.client.via = "ward";
+  # wireguard.proxy-home.client.via = "ward";
 
   # |----------------------------------------------------------------------| #
   # to get this file start a smbd, add users using 'smbpasswd -a <user>'
