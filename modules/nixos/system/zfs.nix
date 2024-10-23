@@ -67,7 +67,7 @@ in {
           # The root pool should never be imported forcefully.
           # Failure to import is important to notice!
           forceImportRoot = false;
-          extraPools = ["tank"];
+          # extraPools = ["tank"];
           # forceImportAll = true;
           # requestEncryptionCredentials = true;
         };
