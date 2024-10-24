@@ -396,7 +396,7 @@ in {
     [
       {
         "/storage".neededForBoot = true;
-        "/bunker".neededForBoot = true;
+        # "/bunker".neededForBoot = true;
       }
     ]
     ++ lib.flip lib.mapAttrsToList smbUsers (
