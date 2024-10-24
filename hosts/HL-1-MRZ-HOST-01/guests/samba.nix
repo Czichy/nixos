@@ -9,11 +9,11 @@
   smbUsers = {
     christian = {
       id = 1002;
-      groups = ["christian" "czichys"];
+      groups = ["czichys"];
     };
     ina = {
       id = 1001;
-      groups = ["christian" "czichys"];
+      groups = ["czichys"];
     };
   };
   # smbGroups = config.repo.secrets.local.samba.groups;
