@@ -392,34 +392,34 @@ in {
   );
 
   # For each paperless share, bind-mount create the necessary folders using tmpfiles.
-  fileSystems = lib.mkMerge (
-    [
-      {
-        "/storage".neededForBoot = true;
-        # "/bunker".neededForBoot = true;
-      }
-    ]
-    ++ lib.flip lib.mapAttrsToList smbUsers (
-      user: userCfg:
-        lib.optionalAttrs (userCfg.enablePaperless or false) {
-          "/shares/users/${user}-paperless/consume" = {
-            fsType = "none";
-            options = ["bind"];
-            device = "/paperless/consume/${user}";
-          };
-          "/shares/users/${user}-paperless/documents" = {
-            fsType = "none";
-            options = ["bind" "ro"];
-            device = "/paperless/media/documents/archive/${user}";
-          };
-          "/shares/users/${user}-paperless/originals" = {
-            fsType = "none";
-            options = ["bind" "ro"];
-            device = "/paperless/media/documents/originals/${user}";
-          };
-        }
-    )
-  );
+  # fileSystems = lib.mkMerge (
+  #   [
+  #     {
+  #       "/storage".neededForBoot = true;
+  #       # "/bunker".neededForBoot = true;
+  #     }
+  #   ]
+  #   ++ lib.flip lib.mapAttrsToList smbUsers (
+  #     user: userCfg:
+  #       lib.optionalAttrs (userCfg.enablePaperless or false) {
+  #         "/shares/users/${user}-paperless/consume" = {
+  #           fsType = "none";
+  #           options = ["bind"];
+  #           device = "/paperless/consume/${user}";
+  #         };
+  #         "/shares/users/${user}-paperless/documents" = {
+  #           fsType = "none";
+  #           options = ["bind" "ro"];
+  #           device = "/paperless/media/documents/archive/${user}";
+  #         };
+  #         "/shares/users/${user}-paperless/originals" = {
+  #           fsType = "none";
+  #           options = ["bind" "ro"];
+  #           device = "/paperless/media/documents/originals/${user}";
+  #         };
+  #       }
+  #   )
+  # );
 
   users.users = let
     mkUser = name: id: groups: {
