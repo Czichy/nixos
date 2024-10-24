@@ -18,7 +18,7 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./net.nix
-    # ./guests.nix
+    ./guests.nix
     ./modules
   ];
 
