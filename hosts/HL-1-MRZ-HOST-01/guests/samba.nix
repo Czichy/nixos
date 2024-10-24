@@ -143,10 +143,10 @@ in {
   # |----------------------------------------------------------------------| #
   # to get this file start a smbd, add users using 'smbpasswd -a <user>'
   # then export the database using 'pdbedit -e tdbsam:<location>'
-  age.secrets."samba-passdb.tdb" = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOSTS-01/guests/samba/passdb.tdb.age";
-    mode = "600";
-  };
+  # age.secrets."samba-passdb.tdb" = {
+  #   file = secretsPath + "/hosts/HL-1-MRZ-HOSTS-01/guests/samba/passdb.tdb.age";
+  #   mode = "600";
+  # };
   # |----------------------------------------------------------------------| #
   # services.openssh = {
   #   # You really have to hate them. Thanks Brother ADS-4300N.
@@ -250,7 +250,8 @@ in {
 
             # Users always have to login with an account and are never mapped
             # to a guest account.
-            "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
+            "passdb backend" = "tdbsam";
+            # "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
             "server role" = "standalone";
             "guest account" = "nobody";
             "map to guest" = "never";
