@@ -315,81 +315,81 @@ in {
     );
   };
 
-  systemd.tmpfiles.settings = lib.mkMerge (
-    # Make sure the main paperless structure exists
-    [
-      {
-        "10-smb-paperless" = {
-          "/paperless/consume".d = {
-            user = "paperless";
-            group = "paperless";
-            mode = "0750";
-          };
-          "/paperless/media".d = {
-            user = "paperless";
-            group = "paperless";
-            mode = "0750";
-          };
-          "/paperless/media/documents".d = {
-            user = "paperless";
-            group = "paperless";
-            mode = "0750";
-          };
-          "/paperless/media/documents/archive".d = {
-            user = "paperless";
-            group = "paperless";
-            mode = "0750";
-          };
-          "/paperless/media/documents/originals".d = {
-            user = "paperless";
-            group = "paperless";
-            mode = "0750";
-          };
-        };
-      }
-    ]
-    # For each paperless share, make sure the necessary sub-folders for that user are created
-    # at boot so we can bind-mount them into the shares.
-    ++ lib.flatten (lib.flip lib.mapAttrsToList smbUsers (
-      user: userCfg:
-        lib.optional (userCfg.enablePaperless or false) {
-          "10-smb-paperless" = {
-            "/shares/users/${user}-paperless".d = {
-              user = "paperless";
-              group = "paperless";
-              mode = "0550";
-            };
-            "/paperless/consume/${user}".d = {
-              user = "paperless";
-              group = "paperless";
-              mode = "0750";
-            };
-            "/paperless/media/documents/archive/${user}".d = {
-              user = "paperless";
-              group = "paperless";
-              mode = "0750";
-            };
-            # A .keep file prevents paperless from removing this folder if no documents are present
-            "/paperless/media/documents/archive/${user}/.keep".f = {
-              user = "paperless";
-              group = "paperless";
-              mode = "0640";
-            };
-            "/paperless/media/documents/originals/${user}".d = {
-              user = "paperless";
-              group = "paperless";
-              mode = "0750";
-            };
-            # A .keep file prevents paperless from removing this folder if no documents are present
-            "/paperless/media/documents/originals/${user}/.keep".f = {
-              user = "paperless";
-              group = "paperless";
-              mode = "0640";
-            };
-          };
-        }
-    ))
-  );
+  # systemd.tmpfiles.settings = lib.mkMerge (
+  #   # Make sure the main paperless structure exists
+  #   [
+  #     {
+  #       "10-smb-paperless" = {
+  #         "/paperless/consume".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #         "/paperless/media".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #         "/paperless/media/documents".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #         "/paperless/media/documents/archive".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #         "/paperless/media/documents/originals".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #       };
+  #     }
+  #   ]
+  # For each paperless share, make sure the necessary sub-folders for that user are created
+  # at boot so we can bind-mount them into the shares.
+  # ++ lib.flatten (lib.flip lib.mapAttrsToList smbUsers (
+  #   user: userCfg:
+  #     lib.optional (userCfg.enablePaperless or false) {
+  #       "10-smb-paperless" = {
+  #         "/shares/users/${user}-paperless".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0550";
+  #         };
+  #         "/paperless/consume/${user}".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #         "/paperless/media/documents/archive/${user}".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #         # A .keep file prevents paperless from removing this folder if no documents are present
+  #         "/paperless/media/documents/archive/${user}/.keep".f = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0640";
+  #         };
+  #         "/paperless/media/documents/originals/${user}".d = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0750";
+  #         };
+  #         # A .keep file prevents paperless from removing this folder if no documents are present
+  #         "/paperless/media/documents/originals/${user}/.keep".f = {
+  #           user = "paperless";
+  #           group = "paperless";
+  #           mode = "0640";
+  #         };
+  #       };
+  #     }
+  # ))
+  # );
 
   # For each paperless share, bind-mount create the necessary folders using tmpfiles.
   # fileSystems = lib.mkMerge (
