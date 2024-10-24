@@ -437,7 +437,7 @@ in {
       (
         {}
         // lib.mapAttrs (name: cfg: mkUser name cfg.id cfg.groups) smbUsers
-        // lib.mapAttrs (name: cfg: mkUser name cfg.id []) smbGroups
+        # // lib.mapAttrs (name: cfg: mkUser name cfg.id []) smbGroups
       )
       {
         scanner.openssh.authorizedKeys.keys = [
