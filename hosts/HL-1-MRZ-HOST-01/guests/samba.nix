@@ -440,15 +440,15 @@ in {
         // lib.mapAttrs (name: cfg: mkUser name cfg.id []) smbGroups
       )
       {
-        scanner.openssh.authorizedKeys.keys = [
-          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJcWkqM2gXM9MJoKggCMpXLBJvgPP0fuoIO3UNy4h4uFzyDqMKAADjaJHCqyIQPq/s5vATVmuu4GQyajkc7Y3fBg/2rvAACzFx/2ufK2M4dkdDcYOX6kyNZL7XiJRmLfUR2cqda3P3bQxapkdfIOWfPQQJUAnYlVvUaIShoBxYw5HXRTr2jR5UAklfIRWZOmx07WKC6dZG5MIm1Luun5KgvqQmzQ9ErL5tz/Oi5pPdK30kdkS5WdeWD6KwL78Ff4KfC0DVTO0zb/C7WyKk4ZLu+UKCLHXDTzE4lhBAu6mSUfJ5nQhmdLdKg6Gvh1St/vRcsDJOZqEFBVn35/oK974l root@ADS_4300N_BRN000EC691D285"
-        ];
+        # scanner.openssh.authorizedKeys.keys = [
+        #   "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJcWkqM2gXM9MJoKggCMpXLBJvgPP0fuoIO3UNy4h4uFzyDqMKAADjaJHCqyIQPq/s5vATVmuu4GQyajkc7Y3fBg/2rvAACzFx/2ufK2M4dkdDcYOX6kyNZL7XiJRmLfUR2cqda3P3bQxapkdfIOWfPQQJUAnYlVvUaIShoBxYw5HXRTr2jR5UAklfIRWZOmx07WKC6dZG5MIm1Luun5KgvqQmzQ9ErL5tz/Oi5pPdK30kdkS5WdeWD6KwL78Ff4KfC0DVTO0zb/C7WyKk4ZLu+UKCLHXDTzE4lhBAu6mSUfJ5nQhmdLdKg6Gvh1St/vRcsDJOZqEFBVn35/oK974l root@ADS_4300N_BRN000EC691D285"
+        # ];
 
-        paperless = {
-          group = "paperless";
-          uid = config.ids.uids.paperless;
-          home = "/var/empty";
-        };
+        # paperless = {
+        #   group = "paperless";
+        #   uid = config.ids.uids.paperless;
+        #   home = "/var/empty";
+        # };
       }
     ];
 
