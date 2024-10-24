@@ -96,20 +96,20 @@ in {
     # |----------------------------------------------------------------------| #
     (lib.mkIf impermanenceCheck {
       # TODO remove once this is upstreamed
-      boot.initrd.systemd.services."zfs-import-${cfg.rootPool}".after = ["cryptsetup.target"];
+      # boot.initrd.systemd.services."zfs-import-${cfg.rootPool}".after = ["cryptsetup.target"];
       # After importing the rpool, rollback the root system to be empty.
-      boot.initrd.systemd.services.impermanence-root = {
-        description = "Rollback root fs";
-        wantedBy = ["initrd.target"];
-        after = ["zfs-import-${cfg.rootPool}.service"];
-        requires = ["zfs-import-${cfg.rootPool}.service"];
-        before = ["sysroot.mount"];
-        unitConfig.DefaultDependencies = "no";
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart = "${pkgs.zfs}/bin/zfs rollback -r ${cfg.rootPool}/local/root@blank";
-        };
-      };
+      # boot.initrd.systemd.services.impermanence-root = {
+      #   description = "Rollback root fs";
+      #   wantedBy = ["initrd.target"];
+      #   after = ["zfs-import-${cfg.rootPool}.service"];
+      #   requires = ["zfs-import-${cfg.rootPool}.service"];
+      #   before = ["sysroot.mount"];
+      #   unitConfig.DefaultDependencies = "no";
+      #   serviceConfig = {
+      #     Type = "oneshot";
+      #     ExecStart = "${pkgs.zfs}/bin/zfs rollback -r ${cfg.rootPool}/local/root@blank";
+      #   };
+      # };
       # boot.initrd.postDeviceCommands =
       #   #wipe / and /var on boot
       #   lib.mkAfter ''

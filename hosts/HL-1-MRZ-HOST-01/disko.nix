@@ -60,6 +60,7 @@ in {
       };
     };
   };
+  boot.initrd.systemd.services."zfs-import-rpool".after = ["cryptsetup.target"];
   boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target"];
   services.zrepl = {
     enable = true;
