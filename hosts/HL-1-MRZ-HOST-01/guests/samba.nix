@@ -8,7 +8,7 @@
   # smbUsers = config.repo.secrets.local.samba.users;
   smbUsers = {
     christian = {
-      id = 1002;
+      id = 1000;
       groups = ["czichys"];
     };
     ina = {
