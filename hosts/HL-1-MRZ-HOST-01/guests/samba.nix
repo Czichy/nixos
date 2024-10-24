@@ -17,7 +17,7 @@
     };
   };
   # smbGroups = config.repo.secrets.local.samba.groups;
-  smbGroups = {czichys = {};};
+  smbGroups = {czichys = {id = 1002;};};
   mkPersistent = persistRoot: directory: owner: {
     ${persistRoot}.directories = [
       {
@@ -436,7 +436,7 @@ in {
     lib.mkMerge [
       (
         {}
-        # // lib.mapAttrs (name: cfg: mkUser name cfg.id cfg.groups) smbUsers
+        // lib.mapAttrs (name: cfg: mkUser name cfg.id cfg.groups) smbUsers
         // lib.mapAttrs (name: cfg: mkUser name cfg.id []) smbGroups
       )
       {
