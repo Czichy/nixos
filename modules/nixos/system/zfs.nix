@@ -43,6 +43,10 @@ in {
       type = lib.types.str;
       default = builtins.substring 0 8 (builtins.hashString "md5" hostName);
     };
+    rootPool = lib.mkOption {
+      type = lib.types.str;
+      default = "tank";
+    };
   };
 
   config = lib.mkMerge [
@@ -92,20 +96,20 @@ in {
     # |----------------------------------------------------------------------| #
     (lib.mkIf impermanenceCheck {
       # TODO remove once this is upstreamed
-      # boot.initrd.systemd.services."zfs-import-tank".after = ["cryptsetup.target"];
+      boot.initrd.systemd.services."zfs-import-${cfg.roolPool}".after = ["cryptsetup.target"];
       # After importing the rpool, rollback the root system to be empty.
-      # boot.initrd.systemd.services.impermanence-root = {
-      #   description = "Rollback root fs";
-      #   wantedBy = ["initrd.target"];
-      #   after = ["zfs-import-tank.service"];
-      #   requires = ["zfs-import-tank.service"];
-      #   before = ["sysroot.mount"];
-      #   unitConfig.DefaultDependencies = "no";
-      #   serviceConfig = {
-      #     Type = "oneshot";
-      #     ExecStart = "${pkgs.zfs}/bin/zfs rollback -r tank/root@blank";
-      #   };
-      # };
+      boot.initrd.systemd.services.impermanence-root = {
+        description = "Rollback root fs";
+        wantedBy = ["initrd.target"];
+        after = ["zfs-import-${cfg.roolPool}.service"];
+        requires = ["zfs-import-${cfg.roolPool}.service"];
+        before = ["sysroot.mount"];
+        unitConfig.DefaultDependencies = "no";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.zfs}/bin/zfs rollback -r ${cfg.roolPool}/local/root@blank";
+        };
+      };
       # boot.initrd.postDeviceCommands =
       #   #wipe / and /var on boot
       #   lib.mkAfter ''

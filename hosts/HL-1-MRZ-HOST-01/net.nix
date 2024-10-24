@@ -16,6 +16,14 @@ in {
     hostv6 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.cidrv6;
     network = "vlan40";
   };
+
+  # |----------------------------------------------------------------------| #
+  #   # See <https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt> for docs on this
+  #   # ip=<client-ip>:<server-ip>:<gw-ip>:<netmask>:<hostname>:<device>:<autoconf>:<dns0-ip>:<dns1-ip>:<ntp0-ip>
+  #   # The server ip refers to the NFS server -- we don't need it.
+  #   # "ip=${ipv4.address}::${ipv4.gateway}:${ipv4.netmask}:${hostName}-initrd:${networkInterface}:off:1.1.1.1"
+  ## initrd luks_remote_unlock
+  boot.kernelParams = ["ip=10.15.100.30::10.15.100.99:255.255.255.1:HL-1-MRZ-HOST-01-initrd:enp1s0:off"];
   # |----------------------------------------------------------------------| #
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.

@@ -31,6 +31,7 @@
     zfs = {
       enable = true;
       hostId = builtins.substring 0 8 (builtins.hashString "md5" config.networking.hostName);
+      rootPool = "rpool";
     };
     initrd-ssh.enable = true;
   };
