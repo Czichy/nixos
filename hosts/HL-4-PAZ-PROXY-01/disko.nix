@@ -27,7 +27,7 @@ in {
       "${pool}" = lib.disko.zfs.mkZpool {datasets = lib.disko.zfs.impermanenceZfsDatasets "${pool}";};
     };
   };
-  boot.initrd.systemd.services."zfs-import-${pool}".after = ["cryptsetup.target"];
+  # boot.initrd.systemd.services."zfs-import-${pool}".after = ["cryptsetup.target"];
   # Needed for agenix.
   # nixos-anywhere currently has issues with impermanence so agenix keys are lost during the install process.
   # as such we give /etc/ssh its own zfs dataset rather than using impermanence to save the keys when we wipe the root directory on boot
