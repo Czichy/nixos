@@ -8,11 +8,12 @@
   pubkeys,
   inputs,
   self,
-  # utils,
+  utils,
   ...
 } @ attrs: let
   inherit
     (lib)
+    attrValues
     flatten
     flip
     foldl'
@@ -32,7 +33,11 @@
   # in "${builtins.substring 0 1 hash}2:${c 2}:${c 4}:${c 6}:${c 8}:${c 10}";
 
   # List the necessary mount units for the given guest
-  fsMountUnitsFor = guestCfg: map (x: x.hostMountpoint) (lib.attrValues guestCfg.zfs);
+  fsMountUnitsFor = guestCfg:
+    map
+    (x: "${utils.escapeSystemdPath x.hostMountpoint}.mount")
+    (attrValues guestCfg.zfs);
+  # fsMountUnitsFor = guestCfg: map (x: x.hostMountpoint) (lib.attrValues guestCfg.zfs);
 
   defineMicrovm = guestName: guestCfg: {
     # Ensure that the zfs dataset exists before it is mounted.
