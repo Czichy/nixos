@@ -134,5 +134,5 @@ in {
   # Needed for impermanence, because we mount /persist/save on /persist, we need to make sure /persist is mounted before /persist/save
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/state".neededForBoot = true;
-  boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target" "zfs-import-rpool"];
+  boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target"];
 }
