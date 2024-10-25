@@ -37,9 +37,11 @@
   defineMicrovm = guestName: guestCfg: {
     # Ensure that the zfs dataset exists before it is mounted.
     systemd.services."microvm@${guestName}" = {
-      unitConfig = {
-        RequiresMountsFor = fsMountUnitsFor guestCfg;
-      };
+      requires = fsMountUnitsFor guestCfg;
+      after = fsMountUnitsFor guestCfg;
+      # unitConfig = {
+      #   RequiresMountsFor = fsMountUnitsFor guestCfg;
+      # };
     };
 
     microvm.vms.${guestName} = import ./microvm.nix guestName guestCfg attrs;
