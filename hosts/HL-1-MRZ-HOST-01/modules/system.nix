@@ -3,6 +3,10 @@
     impermanence = {
       enable = true;
       allowOther = true;
+      btrfsWipe = {
+        enable = false;
+        rootPartition = "";
+      };
     };
     users.usersSettings."root" = {
       uid = 0;
