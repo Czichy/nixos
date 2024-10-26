@@ -95,6 +95,16 @@ in {
         [Network]
         MACVLAN=lan-self
       '';
+      matchConfig.Type = "ether";
+      # address = [
+      #   "10.15.40.154/24"
+      #   "10.15.1.42/24"
+      # ];
+      # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      # This interface should only be used from attached macvtaps.
+      # So don't acquire a link local address and only wait for
+      # this interface to gain a carrier.
+      gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
     };
     # "30-servers" = {
     #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
