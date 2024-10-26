@@ -38,14 +38,14 @@ in {
       Mode=bridge
     '';
   };
-  # systemd.network.netdevs."10-servers" = {
-  #   netdevConfig = {
-  #     Kind = "vlan";
-  #     Name = "servers";
-  #     Description = "Servers VLAN40 RZ";
-  #   };
-  #   vlanConfig.Id = 40;
-  # };
+  systemd.network.netdevs."10-servers" = {
+    netdevConfig = {
+      Kind = "vlan";
+      Name = "servers";
+      Description = "Servers VLAN40 RZ";
+    };
+    vlanConfig.Id = 40;
+  };
 
   # systemd.network.netdevs."10-mgmt" = {
   #   netdevConfig = {
@@ -58,7 +58,7 @@ in {
 
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {
-    "30-servers" = {
+    "30-lan" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
       # to prevent conflicts with vlan networks as they have the same MAC
@@ -83,12 +83,12 @@ in {
         MACVLAN=lan-self
       '';
     };
-    # "30-servers" = {
-    #   matchConfig.Name = "servers";
-    #   matchConfig.Type = "vlan";
-    #   gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
-    #   linkConfig.RequiredForOnline = "routable";
-    # };
+    "30-servers" = {
+      matchConfig.Name = "servers";
+      matchConfig.Type = "vlan";
+      gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
+      linkConfig.RequiredForOnline = "routable";
+    };
 
     "30-mgmt" = {
       matchConfig.MACAddress = macAddress_enp1s0;
