@@ -24,7 +24,16 @@
     optional
     warnIf
     ;
-  inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption mergeToplevelConfigs mapAttrsToList;
+  inherit
+    (localFlake.lib)
+    escapeShellArg
+    isModuleLoadedAndEnabled
+    mkImpermanenceEnableOption
+    mergeToplevelConfigs
+    mapAttrsToList
+    makeBinPath
+    disko
+    ;
   cfg = config.tensorfiles.services.microvm;
 
   # generateMacAddress = s: let
@@ -38,6 +47,40 @@
     (x: "${utils.escapeSystemdPath x.hostMountpoint}.mount")
     (attrValues guestCfg.zfs);
   # fsMountUnitsFor = guestCfg: map (x: x.hostMountpoint) (lib.attrValues guestCfg.zfs);
+  # Configuration required on the host for a specific guest
+  defineGuest = _guestName: guestCfg: {
+    # Add the required datasets to the disko configuration of the machine
+    disko.devices.zpool = mkMerge (flip map (attrValues guestCfg.zfs) (zfsCfg: {
+      ${zfsCfg.pool}.datasets.${zfsCfg.dataset} =
+        # We generate the mountpoint fileSystems entries ourselfs to enable shared folders between guests
+        disko.zfs.unmountable;
+    }));
+
+    # Ensure that the zfs dataset exists before it is mounted.
+    systemd.services = mkMerge (flip map (attrValues guestCfg.zfs) (zfsCfg: let
+      fsMountUnit = "${utils.escapeSystemdPath zfsCfg.hostMountpoint}.mount";
+    in {
+      "zfs-ensure-${utils.escapeSystemdPath "${zfsCfg.pool}/${zfsCfg.dataset}"}" = {
+        wantedBy = [fsMountUnit];
+        before = [fsMountUnit];
+        after = [
+          "zfs-import-${utils.escapeSystemdPath zfsCfg.pool}.service"
+          "zfs-mount.target"
+        ];
+        unitConfig.DefaultDependencies = "no";
+        serviceConfig.Type = "oneshot";
+        script = let
+          poolDataset = "${zfsCfg.pool}/${zfsCfg.dataset}";
+          diskoDataset = config.disko.devices.zpool.${zfsCfg.pool}.datasets.${zfsCfg.dataset};
+        in ''
+          export PATH=${makeBinPath [pkgs.zfs]}":$PATH"
+          if ! zfs list -H -o type ${escapeShellArg poolDataset} &>/dev/null ; then
+            ${diskoDataset._create}
+          fi
+        '';
+      };
+    }));
+  };
 
   defineMicrovm = guestName: guestCfg: {
     # Ensure that the zfs dataset exists before it is mounted.
@@ -253,10 +296,8 @@ in {
       }
 
       # |----------------------------------------------------------------------| #
-      (mergeToplevelConfigs [
-        "microvm"
-        "systemd"
-      ] (lib.mapAttrsToList defineMicrovm cfg.guests))
+      (mergeToplevelConfigs ["disko" "systemd" "fileSystems"] (mapAttrsToList defineGuest cfg.guests))
+      (mergeToplevelConfigs ["microvm" "systemd"] (lib.mapAttrsToList defineMicrovm cfg.guests))
       # |----------------------------------------------------------------------| #
       {
         # environment.etc."machine-id" = {
