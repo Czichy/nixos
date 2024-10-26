@@ -32,7 +32,7 @@ in {
       Name = "lan-self";
       Kind = "macvlan";
     };
-    vlanConfig.Id = 40;
+    # vlanConfig.Id = 40;
     extraConfig = ''
       [MACVLAN]
       Mode=bridge
@@ -46,6 +46,13 @@ in {
   #   };
   #   vlanConfig.Id = 40;
   # };
+  systemd.network.netdevs."10-servers" = {
+    netdevConfig = {
+      Kind = "bridge";
+      Name = "servers";
+      Description = "Servers VLAN40 RZ";
+    };
+  };
 
   # systemd.network.netdevs."10-mgmt" = {
   #   netdevConfig = {
@@ -59,23 +66,10 @@ in {
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {
     "30-servers" = {
-      # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
       matchConfig.MACAddress = macAddress_enp4s0;
-      # to prevent conflicts with vlan networks as they have the same MAC
-      matchConfig.Type = "ether";
-      # address = [
-      #   "10.15.40.154/24"
-      #   "10.15.1.42/24"
-      # ];
-      # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
-      routes = [{Gateway = "10.15.40.99";}];
-      vlan = [
-        "servers"
-        # "mgmt"
-      ];
       networkConfig.LinkLocalAddressing = "no";
       linkConfig.RequiredForOnline = "carrier";
       extraConfig = ''
@@ -84,10 +78,42 @@ in {
       '';
     };
     # "30-servers" = {
+    #   # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.lan.mac;
+    #   matchConfig.MACAddress = macAddress_enp4s0;
+    #   matchConfig.Name = "servers";
+    #   # to prevent conflicts with vlan networks as they have the same MAC
+    #   matchConfig.Type = "ether";
+    #   # address = [
+    #   #   "10.15.40.154/24"
+    #   #   "10.15.1.42/24"
+    #   # ];
+    #   # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+    #   # This interface should only be used from attached macvtaps.
+    #   # So don't acquire a link local address and only wait for
+    #   # this interface to gain a carrier.
+    #   routes = [{Gateway = "10.15.40.99";}];
+    #   # vlan = [
+    #   #   "servers"
+    #   #   # "mgmt"
+    #   # ];
+    #   networkConfig.LinkLocalAddressing = "no";
+    #   linkConfig.RequiredForOnline = "carrier";
+    #   extraConfig = ''
+    #     [Network]
+    #     MACVLAN=lan-self
+    #   '';
+    # };
+    # "30-servers" = {
     #   matchConfig.Name = "servers";
     #   matchConfig.Type = "vlan";
     #   gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
     #   linkConfig.RequiredForOnline = "routable";
+    # };
+    # "30-servers" = {
+    #   matchConfig.Name = "servers";
+    #   # matchConfig.Type = "vlan";
+    #   gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
+    #   # linkConfig.RequiredForOnline = "routable";
     # };
 
     "30-mgmt" = {
@@ -110,6 +136,7 @@ in {
 
     "30-lan-self" = {
       matchConfig.Name = "lan-self";
+      address = [globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.cidrv4];
       gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
       networkConfig = {
         IPv4Forwarding = "yes";

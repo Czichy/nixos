@@ -53,6 +53,7 @@ in {
         # Vaultwarden
         hosts.HL-3-RZ-VAULT-01.id = 22;
 
+        hosts.HL-1-MRZ-HOST-01.id = 30;
         # Samba
         hosts.HL-3-RZ-SMB-01.id = 31;
         # hosts.HL-1-MRZ-SBC-01-nginx.id = 29;
