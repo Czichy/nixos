@@ -57,7 +57,7 @@ in {
       Mode=bridge
     '';
   };
-  netdevs."20-servers".netdevConfig = {
+  systemd.network.netdevs."20-servers".netdevConfig = {
     Kind = "bridge";
     Name = "servers";
   };
