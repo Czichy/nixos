@@ -61,6 +61,19 @@ in {
       };
     };
 
+    HL-1-MRZ-HOST-01 = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [];
+        };
+        czichy = {
+          sshKey = null;
+          authorizedKeys = users.czichy;
+        };
+      };
+    };
+
     HL-4-PAZ-PROXY-01 = {
       users = {
         root = {
