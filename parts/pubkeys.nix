@@ -17,6 +17,7 @@ let
   # Hosts
   machines = {
     HL-1-MRZ-SBC-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPR8KYYsWTQ+sOFMlKXTJU6ZDG84ebHtqI4wotvCYzH"];
+    HL-1-MRZ-HOST-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILIb2E40lvAExeY61+57FWes7YKuh8kKEahcVknrT0cX czichy@HL-1-MRZ-HOST-01"];
     HL-1-OZ-PC-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKfYUpuZeYCkKCNL22+jUBroV4gaZYJOjcRVPDZDVXSp root@desktop"];
   };
 
@@ -28,7 +29,7 @@ let
 in {
   inherit (users) czichy;
   inherit recovery_key;
-  inherit (machines) HL-1-MRZ-SBC-01 HL-1-OZ-PC-01;
+  inherit (machines) HL-1-MRZ-SBC-01 HL-1-MRZ-HOST-01 HL-1-OZ-PC-01;
   inherit servers workstations all;
 
   # Additional utilities
