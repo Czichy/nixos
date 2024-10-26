@@ -32,7 +32,7 @@ in {
       address = [
         "10.15.1.30/24"
       ];
-      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
