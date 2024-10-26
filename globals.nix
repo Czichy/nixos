@@ -119,11 +119,6 @@ in {
           hostv6 = "2001:4860:4860::8888";
           network = "internet";
         };
-
-        fritz-box = {
-          hostv4 = globals.net.home-wan.hosts.fritzbox.ipv4;
-          network = "home-wan";
-        };
       };
     };
   };

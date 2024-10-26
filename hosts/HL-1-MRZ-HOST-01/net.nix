@@ -25,6 +25,25 @@ in {
   ## initrd luks_remote_unlock
   boot.kernelParams = ["ip=10.15.100.30::10.15.100.99:255.255.255.1:HL-1-MRZ-HOST-01-initrd:enp1s0:off"];
   # |----------------------------------------------------------------------| #
+  boot.initrd.systemd.network = {
+    enable = true;
+    networks."30-servers" = {
+      matchConfig.MACAddress = macAddress_enp4s0;
+      address = [
+        "10.15.1.30/24"
+      ];
+      gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
+      # This interface should only be used from attached macvtaps.
+      # So don't acquire a link local address and only wait for
+      # this interface to gain a carrier.
+      # networkConfig.LinkLocalAddressing = "no";
+      networkConfig = {
+        IPv6PrivacyExtensions = "yes";
+        MulticastDNS = true;
+      };
+      linkConfig.RequiredForOnline = "routable";
+    };
+  };
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.
   systemd.network.netdevs."10-lan-self" = {
@@ -46,13 +65,13 @@ in {
   #   };
   #   vlanConfig.Id = 40;
   # };
-  systemd.network.netdevs."10-servers" = {
-    netdevConfig = {
-      Kind = "bridge";
-      Name = "servers";
-      Description = "Servers VLAN40 RZ";
-    };
-  };
+  # systemd.network.netdevs."10-servers" = {
+  #   netdevConfig = {
+  #     Kind = "bridge";
+  #     Name = "servers";
+  #     Description = "Servers VLAN40 RZ";
+  #   };
+  # };
 
   # systemd.network.netdevs."10-mgmt" = {
   #   netdevConfig = {
