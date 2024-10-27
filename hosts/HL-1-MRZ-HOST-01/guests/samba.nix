@@ -191,7 +191,7 @@ in {
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."${sambaDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-SAMBA-01".ipv4}:445
+        reverse_proxy http://${globals.net.vlan40.hosts."${config.networking.hostName}".ipv4}:445
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }
