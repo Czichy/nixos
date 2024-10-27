@@ -297,13 +297,13 @@ in {
         } {})
 
         # Move to private
-        # (mkCustomShare {
-        #   name = "schule";
-        #   path = "/shares/schule";
-        #   user = "ina";
-        #   group = "ina";
-        #   hasBunker = true;
-        # } {})
+        (mkCustomShare {
+          name = "schule";
+          path = "/shares/schule";
+          user = "ina";
+          group = "ina";
+          hasBunker = true;
+        } {})
       ]
       ++ lib.flatten (
         lib.mapAttrsToList mkUserShares smbUsers
