@@ -74,7 +74,7 @@ in {
 
       # boot.kernelParams = ["ip=1.2.3.4::1.2.3.1:255.255.255.192:myhostname:enp35s0:off"];
       boot.initrd = {
-        # availableKernelModules = ["r8169"];
+        availableKernelModules = ["r8169" "igc"];
         systemd.users.root.shell = lib.mkForce "/bin/cryptsetup-askpass";
         # systemd.users.root.shell = "/bin/systemd-tty-ask-password-agent";
         network = {
