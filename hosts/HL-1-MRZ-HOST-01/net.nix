@@ -58,10 +58,10 @@ in {
       Mode=bridge
     '';
   };
-  # systemd.network.netdevs."20-servers".netdevConfig = {
-  #   Kind = "bridge";
-  #   Name = "servers";
-  # };
+  systemd.network.netdevs."20-servers".netdevConfig = {
+    Kind = "bridge";
+    Name = "servers";
+  };
   # systemd.network.netdevs."10-servers" = {
   #   netdevConfig = {
   #     Kind = "vlan";
