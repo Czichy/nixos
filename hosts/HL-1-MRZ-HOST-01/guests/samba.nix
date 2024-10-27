@@ -5,6 +5,8 @@
   lib,
   ...
 }: let
+  sambaDomain = "smb.czichy.com";
+  certloc = "/var/lib/acme/czichy.com";
   # smbUsers = config.repo.secrets.local.samba.users;
   smbUsers = {
     christian = {
@@ -137,43 +139,16 @@
       }
     );
 in {
-  # For influxdb communication channel
-  # wireguard.proxy-home.client.via = "ward";
+  networking.hostName = "HL-3-RZ-SMB-01";
 
   # |----------------------------------------------------------------------| #
   # to get this file start a smbd, add users using 'smbpasswd -a <user>'
   # then export the database using 'pdbedit -e tdbsam:<location>'
-  # age.secrets."samba-passdb.tdb" = {
-  #   file = secretsPath + "/hosts/HL-1-MRZ-HOSTS-01/guests/samba/passdb.tdb.age";
-  #   mode = "600";
-  # };
+  age.secrets."samba-passdb.tdb" = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOSTS-01/guests/samba/passdb.tdb.age";
+    mode = "600";
+  };
   # |----------------------------------------------------------------------| #
-  # services.openssh = {
-  #   # You really have to hate them. Thanks Brother ADS-4300N.
-  #   settings = {
-  #     Macs = ["hmac-sha2-512"];
-  #     HostkeyAlgorithms = "+ssh-rsa";
-  #     PubkeyAcceptedAlgorithms = "+ssh-rsa";
-  #   };
-  #   # We need an RSA key for network attached printers and scanners
-  #   # that fucking can't be bothered to support sensible stuff
-  #   hostKeys = [
-  #     {
-  #       bits = 4096;
-  #       path = "/etc/ssh/ssh_host_rsa_key";
-  #       type = "rsa";
-  #     }
-  #   ];
-
-  #   # Allow SFTP for scanner in /shares/groups/scanner
-  #   extraConfig = ''
-  #     Match User scanner
-  #       ForceCommand internal-sftp
-  #       AllowTcpForwarding no
-  #       PermitTunnel no
-  #   '';
-  # };
-
   environment.persistence = lib.mkMerge (
     [
       {
@@ -206,10 +181,23 @@ in {
     openFirewall = true;
   };
 
+  # |----------------------------------------------------------------------| #
+  globals.services.samba.domain = sambaDomain;
   globals.monitoring.tcp.samba = {
     host = globals.net.vlan40.hosts.HL-3-RZ-SMB-01.id;
     port = 445;
     network = "servers";
+  };
+  nodes.HL-1-MRZ-SBC-01-caddy = {
+    services.caddy = {
+      virtualHosts."${sambaDomain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-SAMBA-01".ipv4}:445
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
   };
 
   services.samba = {
