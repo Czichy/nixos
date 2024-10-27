@@ -315,20 +315,18 @@ in {
   # tmpfiles to create shares if not yet present
   systemd.tmpfiles.settings = {
     "10-samba-shares" = {
-      "10-smb-groups" = {
-        "/shares/media" = {
-          d = {
-            user = "christian, ina";
-            group = "czichys";
-            mode = "0750";
-          };
+      "/shares/media" = {
+        d = {
+          user = "christian, ina";
+          group = "czichys";
+          mode = "0750";
         };
-        "/shares/dokumente" = {
-          d = {
-            user = "christian, ina";
-            group = "czichys";
-            mode = "0750";
-          };
+      };
+      "/shares/dokumente" = {
+        d = {
+          user = "christian, ina";
+          group = "czichys";
+          mode = "0750";
         };
       };
     };
