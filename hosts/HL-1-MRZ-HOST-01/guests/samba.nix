@@ -329,6 +329,13 @@ in {
           mode = "0750";
         };
       };
+      "/shares/schule" = {
+        d = {
+          user = "ina";
+          group = "ina";
+          mode = "0750";
+        };
+      };
     };
   };
   # systemd.tmpfiles.settings = lib.mkMerge (
