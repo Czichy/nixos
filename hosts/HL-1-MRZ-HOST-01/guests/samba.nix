@@ -3,6 +3,7 @@
   globals,
   secretsPath,
   lib,
+  pkgs,
   ...
 }: let
   sambaDomain = "smb.czichy.com";
@@ -142,7 +143,11 @@ in {
   networking.hostName = "HL-3-RZ-SMB-01";
 
   # |----------------------------------------------------------------------| #
-  # to get this file start a smbd, add users using 'smbpasswd -a <user>'
+  # Use user and group information from TDB database.
+  # The age-encrypted database is created by setting in the config
+  # > "passdb backend" = "tdbsam:/tmp/samba-password-database";
+  # and running
+  # > sudo pdbedit --create --user=caspervk
   # then export the database using 'pdbedit -e tdbsam:<location>'
   age.secrets."samba-passdb.tdb" = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/samba/passdb.tdb.age";
@@ -200,10 +205,17 @@ in {
     };
   };
 
+  # The setup can be tested by:
+  # > smbclient -L \\\\192.168.0.10
+  # > smbclient \\\\192.168.0.21\\downloads -U caspervk
+
   services.samba = {
     enable = true;
     openFirewall = true;
-
+    # `samba4Full` is compiled with avahi, ldap, AD etc support (compared to the default package, `samba`
+    # Required for samba to register mDNS records for auto discovery
+    # See https://github.com/NixOS/nixpkgs/blob/592047fc9e4f7b74a4dc85d1b9f5243dfe4899e3/pkgs/top-level/all-packages.nix#L27268
+    package = pkgs.samba4Full;
     # Disable Samba's nmbd, because we don't want to reply to NetBIOS over IP
     # requests, since all of our clients hardcode the server shares.
     nmbd.enable = false;
@@ -238,7 +250,8 @@ in {
 
             # Users always have to login with an account and are never mapped
             # to a guest account.
-            "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
+            "passdb backend" = "tdbsam:/tmp/samba-password-database";
+            # "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
             "server role" = "standalone";
             "guest account" = "nobody";
             "map to guest" = "never";
