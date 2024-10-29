@@ -118,7 +118,7 @@ in {
           nitch
           nushellPlugins.query
           nushellPlugins.gstat
-          nushellPlugins.net
+          # nushellPlugins.net
           nushellPlugins.formats
           nushellPlugins.polars
         ]
@@ -164,7 +164,7 @@ in {
                show_banner: false
              });
 
-             plugin add ${pkgs.nushellPlugins.query}/bin/nu_plugin_query
+             # plugin add ${pkgs.nushellPlugins.query}/bin/nu_plugin_query
 
              # maybe useful functions
              # use ${pkgs.nu_scripts}/share/nu_scripts/modules/formats/to-number-format.nu *
