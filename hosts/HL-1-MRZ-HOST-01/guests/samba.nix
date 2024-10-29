@@ -145,7 +145,7 @@ in {
   # to get this file start a smbd, add users using 'smbpasswd -a <user>'
   # then export the database using 'pdbedit -e tdbsam:<location>'
   age.secrets."samba-passdb.tdb" = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOSTS-01/guests/samba/passdb.tdb.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/samba/passdb.tdb.age";
     mode = "600";
   };
   # |----------------------------------------------------------------------| #
