@@ -250,8 +250,8 @@ in {
 
             # Users always have to login with an account and are never mapped
             # to a guest account.
-            "passdb backend" = "tdbsam:/tmp/samba-password-database";
-            # "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
+            # "passdb backend" = "tdbsam:/tmp/samba-password-database";
+            "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
             "server role" = "standalone";
             "guest account" = "nobody";
             "map to guest" = "never";
