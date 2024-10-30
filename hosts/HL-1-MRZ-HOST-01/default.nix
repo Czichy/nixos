@@ -48,6 +48,20 @@
   users.users.qemu-libvirtd.group = "qemu-libvirtd";
   users.groups.qemu-libvirtd = {};
 
+  # |----------------------------------------------------------------------| #
+  systemd.tmpfiles.settings = {
+    "10-var-lib-private" = {
+      "/var/lib/private" = {
+        d = {
+          mode = "0700";
+          user = "root";
+          group = "root";
+        };
+      };
+    };
+  };
+  # |----------------------------------------------------------------------| #
+
   security.pam.services = {
     swaylock = {};
   };
