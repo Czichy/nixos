@@ -229,9 +229,9 @@ in {
           global = {
             # Show the server host name in the printer comment box in print manager
             # and next to the IPC connection in net view.
-            "server string" = "SambaOelig";
+            "server string" = "SambaCzichy";
             # Set the NetBIOS name by which the Samba server is known.
-            "netbios name" = "SambaOelig";
+            "netbios name" = "SambaCzichy";
             # Disable netbios support. We don't need to support browsing since all
             # clients hardcode the host and share names.
             "disable netbios" = "yes";
@@ -250,8 +250,8 @@ in {
 
             # Users always have to login with an account and are never mapped
             # to a guest account.
-            "passdb backend" = "tdbsam:/tmp/samba-password-database";
-            # "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
+            # "passdb backend" = "tdbsam:/tmp/samba-password-database";
+            "passdb backend" = "tdbsam:${config.age.secrets."samba-passdb.tdb".path}";
             "server role" = "standalone";
             "guest account" = "nobody";
             "map to guest" = "never";
