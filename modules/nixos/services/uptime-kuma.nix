@@ -78,10 +78,8 @@ in {
     {
       systemd.tmpfiles.settings = {
         "10-uptime-kuma" = {
-          "/var/lib/private/uptime-kuma" = {
+          "/var/lib/private" = {
             d = {
-              user = "uptime-kuma";
-              group = "uptime-kuma";
               mode = "0700";
             };
           };
