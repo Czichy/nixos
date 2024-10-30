@@ -74,6 +74,21 @@ in {
       };
     }
     # |----------------------------------------------------------------------| #
+    # tmpfiles to create shares if not yet present
+    {
+      systemd.tmpfiles.settings = {
+        "10-uptime-kuma" = {
+          "/var/lib/private/uptime-kuma" = {
+            d = {
+              user = "uptime-kuma";
+              group = "uptime-kuma";
+              mode = "0700";
+            };
+          };
+        };
+      };
+    }
+    # |----------------------------------------------------------------------| #
     (lib.mkIf impermanenceCheck {
       environment.persistence."${impermanence.persistentRoot}" = {
         directories = [
