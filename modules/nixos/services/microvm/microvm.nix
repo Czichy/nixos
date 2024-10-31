@@ -75,16 +75,6 @@ in {
             mode = "bridge";
           };
         }
-        # {
-        #   type = "user";
-        #   id = "qemu";
-        #   mac = "02:00:00:01:01:01";
-        # }
-        # {
-        #   type = "tap";
-        #   id = "vm-40-${builtins.substring 0 9 guestName}";
-        #   mac = "5E:A4:B9:D2:F8:03";
-        # }
       ];
 
       # Block device images for persistent storage
@@ -105,58 +95,50 @@ in {
         }
       ];
 
-      shares = [
-        {
-          # It is highly recommended to share the host's nix-store
-          # with the VMs to prevent building huge images.
-          # a host's /nix/store will be picked up so that no
-          # squashfs/erofs will be built for it.
-          #
-          # by this way, /nix/store is readonly in the VM,
-          # and thus the VM can't run any command that modifies
-          # the store. such as nix build, nix shell, etc...
-          # if you want to run nix commands in the VM, see
-          # https://github.com/astro/microvm.nix/blob/main/doc/src/shares.md#writable-nixstore-overlay
-          tag = "ro-store"; # Unique virtiofs daemon tag
-          proto = "virtiofs"; # virtiofs is faster than 9p
-          source = "/nix/store";
-          mountPoint = "/nix/.ro-store";
-        }
-        {
-          # On the host
-          source = "/var/lib/microvms/${config.networking.hostName}/journal";
-          # In the MicroVM
-          mountPoint = "/var/log/journal";
-          tag = "journal";
-          proto = "virtiofs";
-          socket = "journal.sock";
-        }
-        {
-          # On the host
-          source = "/etc/vm-persist/${config.networking.hostName}";
-          # In the MicroVM
-          mountPoint = "/persist";
-          tag = "persist";
-          proto = "virtiofs";
-        }
-
-        # {
-        #   # On the host
-        #   source = "/state/${config.networking.hostName}";
-        #   # In the MicroVM
-        #   mountPoint = "/state";
-        #   tag = "state";
-        #   proto = "virtiofs";
-        # }
-      ];
-      #++ flip mapAttrsToList guestCfg.zfs (
-      #  _: zfsCfg: {
-      #    source = zfsCfg.hostMountpoint;
-      #    mountPoint = zfsCfg.guestMountpoint;
-      #    tag = builtins.substring 0 16 (builtins.hashString "sha256" zfsCfg.hostMountpoint);
-      #    proto = "virtiofs";
-      #  }
-      # );
+      shares =
+        [
+          {
+            # It is highly recommended to share the host's nix-store
+            # with the VMs to prevent building huge images.
+            # a host's /nix/store will be picked up so that no
+            # squashfs/erofs will be built for it.
+            #
+            # by this way, /nix/store is readonly in the VM,
+            # and thus the VM can't run any command that modifies
+            # the store. such as nix build, nix shell, etc...
+            # if you want to run nix commands in the VM, see
+            # https://github.com/astro/microvm.nix/blob/main/doc/src/shares.md#writable-nixstore-overlay
+            tag = "ro-store"; # Unique virtiofs daemon tag
+            proto = "virtiofs"; # virtiofs is faster than 9p
+            source = "/nix/store";
+            mountPoint = "/nix/.ro-store";
+          }
+          {
+            # On the host
+            source = "/var/lib/microvms/${config.networking.hostName}/journal";
+            # In the MicroVM
+            mountPoint = "/var/log/journal";
+            tag = "journal";
+            proto = "virtiofs";
+            socket = "journal.sock";
+          }
+          {
+            # On the host
+            source = "/etc/vm-persist/${config.networking.hostName}";
+            # In the MicroVM
+            mountPoint = "/persist";
+            tag = "persist";
+            proto = "virtiofs";
+          }
+        ]
+        ++ flip mapAttrsToList guestCfg.zfs (
+          _: zfsCfg: {
+            source = zfsCfg.hostMountpoint;
+            mountPoint = zfsCfg.guestMountpoint;
+            tag = builtins.substring 0 16 (builtins.hashString "sha256" zfsCfg.hostMountpoint);
+            proto = "virtiofs";
+          }
+        );
     };
 
     # networking.renameInterfacesByMac.${guestCfg.networking.mainLinkName} = guestCfg.microvm.mac;

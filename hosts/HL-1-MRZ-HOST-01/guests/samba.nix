@@ -161,6 +161,32 @@ in {
           "/etc/ssh/ssh_host_rsa_key"
           "/etc/ssh/ssh_host_rsa_key.pub"
         ];
+        "/storage".directories = [
+          {
+            directory = "shares/media";
+            user = "christian";
+            group = "czichys";
+            mode = "0750";
+          }
+          {
+            directory = "shares/bibliothek";
+            user = "christian";
+            group = "czichys";
+            mode = "0750";
+          }
+          {
+            directory = "shares/dokumente";
+            user = "christian";
+            group = "czichys";
+            mode = "0750";
+          }
+          {
+            directory = "shares/schule";
+            user = "ina";
+            group = "ina";
+            mode = "0750";
+          }
+        ];
       }
     ]
     ++ lib.flatten (
@@ -327,26 +353,20 @@ in {
   # tmpfiles to create shares if not yet present
   systemd.tmpfiles.settings = {
     "10-samba-shares" = {
-      "/shares/media" = {
-        d = {
-          user = "christian, ina";
-          group = "czichys";
-          mode = "0750";
-        };
+      "/shares/media".d = {
+        user = "christian, ina";
+        group = "czichys";
+        mode = "0750";
       };
-      "/shares/dokumente" = {
-        d = {
-          user = "christian, ina";
-          group = "czichys";
-          mode = "0750";
-        };
+      "/shares/dokumente".d = {
+        user = "christian, ina";
+        group = "czichys";
+        mode = "0750";
       };
-      "/shares/schule" = {
-        d = {
-          user = "ina";
-          group = "ina";
-          mode = "0750";
-        };
+      "/shares/schule".d = {
+        user = "ina";
+        group = "ina";
+        mode = "0750";
       };
     };
   };
