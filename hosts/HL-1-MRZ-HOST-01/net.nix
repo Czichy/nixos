@@ -29,9 +29,9 @@ in {
     enable = true;
     networks."10-servers" = {
       matchConfig.MACAddress = macAddress_enp4s0;
-      address = [
-        "10.15.1.30/24"
-      ];
+      # address = [
+      #   "10.15.1.30/24"
+      # ];
       gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
@@ -41,6 +41,23 @@ in {
         IPv4Forwarding = "yes";
         IPv6PrivacyExtensions = "yes";
         MulticastDNS = true;
+      };
+      linkConfig.RequiredForOnline = "routable";
+    };
+    networks."30-mgmt" = {
+      matchConfig.MACAddress = macAddress_enp1s0;
+      # to prevent conflicts with vlan networks as they have the same MAC
+      matchConfig.Type = "ether";
+      # matchConfig.Name = "mgmt";
+      # matchConfig.Type = "vlan";
+      bridgeConfig = {};
+      address = [
+        globals.net.vlan100.hosts.HL-1-MRZ-HOST-01.cidrv4
+      ];
+      gateway = [globals.net.vlan100.hosts.HL-3-MRZ-FW-01.ipv4];
+      networkConfig = {
+        ConfigureWithoutCarrier = true;
+        DHCP = "no";
       };
       linkConfig.RequiredForOnline = "routable";
     };
@@ -62,30 +79,6 @@ in {
     Kind = "bridge";
     Name = "servers";
   };
-  # systemd.network.netdevs."10-servers" = {
-  #   netdevConfig = {
-  #     Kind = "vlan";
-  #     Name = "servers";
-  #     Description = "Servers VLAN40 RZ";
-  #   };
-  #   vlanConfig.Id = 40;
-  # };
-  # systemd.network.netdevs."10-servers" = {
-  #   netdevConfig = {
-  #     Kind = "bridge";
-  #     Name = "servers";
-  #     Description = "Servers VLAN40 RZ";
-  #   };
-  # };
-
-  # systemd.network.netdevs."10-mgmt" = {
-  #   netdevConfig = {
-  #     Kind = "vlan";
-  #     Name = "mgmt";
-  #     Description = "Management VLAN100 MRZ";
-  #   };
-  #   vlanConfig.Id = 100;
-  # };
 
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {

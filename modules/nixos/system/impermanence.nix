@@ -278,6 +278,13 @@ in {
             #"/etc/tensorfiles" # TODO probably not needed anymore ? not sure
             "/var/lib/bluetooth" # TODO move bluetooth to hardware
             "/var/lib/systemd/coredump"
+            # Add this globally to prevent permission issues
+            {
+              directory = "/var/lib/private/";
+              user = "root";
+              group = "root";
+              mode = "700";
+            }
           ];
           files = [
             "/etc/adjtime"
