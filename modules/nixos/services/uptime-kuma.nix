@@ -62,6 +62,7 @@ in {
         enable = true;
         settings = {
           PORT = toString uptime-port;
+          DATA_DIR = "/var/lib/uptime-kuma/";
         };
       };
 
@@ -76,22 +77,22 @@ in {
     # |----------------------------------------------------------------------| #
     # tmpfiles to create shares if not yet present
     {
-      systemd.tmpfiles.settings = {
-        "10-uptime-kuma" = {
-          "/var/lib/private" = {
-            d = {
-              mode = "0700";
-            };
-          };
-        };
-      };
+      # systemd.tmpfiles.settings = {
+      #   "10-uptime-kuma" = {
+      #     "/var/lib/private" = {
+      #       d = {
+      #         mode = "0700";
+      #       };
+      #     };
+      #   };
+      # };
     }
     # |----------------------------------------------------------------------| #
     (lib.mkIf impermanenceCheck {
       environment.persistence."${impermanence.persistentRoot}" = {
         directories = [
           {
-            directory = "/var/lib/private/uptime-kuma";
+            directory = "/var/lib/uptime-kuma";
             user = "uptime-kuma";
             group = "uptime-kuma";
             mode = "0700";
