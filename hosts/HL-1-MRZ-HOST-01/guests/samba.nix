@@ -21,12 +21,12 @@
   };
   # smbGroups = config.repo.secrets.local.samba.groups;
   smbGroups = {czichys = {id = 1002;};};
-  mkPersistent = persistRoot: directory: owner: {
+  mkPersistent = persistRoot: directory: owner: group: {
     ${persistRoot}.directories = [
       {
         inherit directory;
         user = owner;
-        group = owner;
+        group = group;
         mode = "0750";
       }
     ];
@@ -161,49 +161,55 @@ in {
           "/etc/ssh/ssh_host_rsa_key"
           "/etc/ssh/ssh_host_rsa_key.pub"
         ];
-        "/storage".directories = [
-          {
-            directory = "/shares/media";
-            user = "christian";
-            group = "czichys";
-            mode = "0750";
-          }
-          {
-            directory = "/shares/bibliothek";
-            user = "christian";
-            group = "czichys";
-            mode = "0750";
-          }
-          {
-            directory = "/shares/dokumente";
-            user = "christian";
-            group = "czichys";
-            mode = "0750";
-          }
-          {
-            directory = "/shares/schule";
-            user = "ina";
-            group = "ina";
-            mode = "0750";
-          }
-        ];
+        # "/storage".directories = [
+        #   {
+        #     directory = "/shares/media";
+        #     user = "christian";
+        #     group = "czichys";
+        #     mode = "0750";
+        #   }
+        #   {
+        #     directory = "/shares/bibliothek";
+        #     user = "christian";
+        #     group = "czichys";
+        #     mode = "0750";
+        #   }
+        #   {
+        #     directory = "/shares/dokumente";
+        #     user = "christian";
+        #     group = "czichys";
+        #     mode = "0750";
+        #   }
+        #   {
+        #     directory = "/shares/schule";
+        #     user = "ina";
+        #     group = "ina";
+        #     mode = "0750";
+        #   }
+        # ];
       }
     ]
     ++ lib.flatten (
       lib.flip lib.mapAttrsToList smbUsers (
         name: {enableBunker ? false, ...}:
-          [(mkPersistent "/storage" "/shares/users/${name}" name)]
+          [(mkPersistent "/storage" "/shares/users/${name}" name name)]
           ++ lib.optional enableBunker (
-            mkPersistent "/bunker" "/shares/users/${name}-bunker" name
+            mkPersistent "/bunker" "/shares/users/${name}-bunker" name name
           )
       )
       ++ lib.flip lib.mapAttrsToList smbGroups (
         name: {enableBunker ? false, ...}:
-          [(mkPersistent "/storage" "/shares/groups/${name}" name)]
+          [(mkPersistent "/storage" "/shares/groups/${name}" name name)]
           ++ lib.optional enableBunker (
-            mkPersistent "/bunker" "/shares/groups/${name}-bunker" name
+            mkPersistent "/bunker" "/shares/groups/${name}-bunker" name name
           )
       )
+      ++ [
+        (mkPersistent "/storage" "/shares/bibliothek" "christian" "czichys")
+        (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
+        (mkPersistent "/storage" "/shares/media" "christian" "czichys")
+        (mkPersistent "/storage" "/shares/schule" "ina" "ina")
+      ]
     )
   );
 
@@ -370,111 +376,6 @@ in {
       };
     };
   };
-  # systemd.tmpfiles.settings = lib.mkMerge (
-  # Make sure the main paperless structure exists
-  # [
-  #     {
-  #       "10-smb-paperless" = {
-  #         "/paperless/consume".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #         "/paperless/media".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #         "/paperless/media/documents".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #         "/paperless/media/documents/archive".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #         "/paperless/media/documents/originals".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #       };
-  #     }
-  # ]
-  # For each paperless share, make sure the necessary sub-folders for that user are created
-  # at boot so we can bind-mount them into the shares.
-  # ++ lib.flatten (lib.flip lib.mapAttrsToList smbUsers (
-  #   user: userCfg:
-  #     lib.optional (userCfg.enablePaperless or false) {
-  #       "10-smb-paperless" = {
-  #         "/shares/users/${user}-paperless".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0550";
-  #         };
-  #         "/paperless/consume/${user}".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #         "/paperless/media/documents/archive/${user}".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #         # A .keep file prevents paperless from removing this folder if no documents are present
-  #         "/paperless/media/documents/archive/${user}/.keep".f = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0640";
-  #         };
-  #         "/paperless/media/documents/originals/${user}".d = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0750";
-  #         };
-  #         # A .keep file prevents paperless from removing this folder if no documents are present
-  #         "/paperless/media/documents/originals/${user}/.keep".f = {
-  #           user = "paperless";
-  #           group = "paperless";
-  #           mode = "0640";
-  #         };
-  #       };
-  #     }
-  # ))
-  # );
-
-  # For each paperless share, bind-mount create the necessary folders using tmpfiles.
-  # fileSystems = lib.mkMerge (
-  #   [
-  #     {
-  #       "/storage".neededForBoot = true;
-  #       # "/bunker".neededForBoot = true;
-  #     }
-  #   ]
-  #   ++ lib.flip lib.mapAttrsToList smbUsers (
-  #     user: userCfg:
-  #       lib.optionalAttrs (userCfg.enablePaperless or false) {
-  #         "/shares/users/${user}-paperless/consume" = {
-  #           fsType = "none";
-  #           options = ["bind"];
-  #           device = "/paperless/consume/${user}";
-  #         };
-  #         "/shares/users/${user}-paperless/documents" = {
-  #           fsType = "none";
-  #           options = ["bind" "ro"];
-  #           device = "/paperless/media/documents/archive/${user}";
-  #         };
-  #         "/shares/users/${user}-paperless/originals" = {
-  #           fsType = "none";
-  #           options = ["bind" "ro"];
-  #           device = "/paperless/media/documents/originals/${user}";
-  #         };
-  #       }
-  #   )
-  # );
 
   users.users = let
     mkUser = name: id: groups: {
