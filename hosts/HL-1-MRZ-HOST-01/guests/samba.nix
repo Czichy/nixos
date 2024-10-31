@@ -163,25 +163,25 @@ in {
         ];
         "/storage".directories = [
           {
-            directory = "shares/media";
+            directory = "/shares/media";
             user = "christian";
             group = "czichys";
             mode = "0750";
           }
           {
-            directory = "shares/bibliothek";
+            directory = "/shares/bibliothek";
             user = "christian";
             group = "czichys";
             mode = "0750";
           }
           {
-            directory = "shares/dokumente";
+            directory = "/shares/dokumente";
             user = "christian";
             group = "czichys";
             mode = "0750";
           }
           {
-            directory = "shares/schule";
+            directory = "/shares/schule";
             user = "ina";
             group = "ina";
             mode = "0750";
