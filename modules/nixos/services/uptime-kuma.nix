@@ -152,7 +152,7 @@ in {
             -H 'Title: Backup (${site}) on ${host} successful!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-            && ${pkgs.curl}/bin/curl https://uptime.czichy.com/api/push/AfaxuEEWaI?status=up&msg=OK&ping=
+            && ${pkgs.curl}/bin/curl https://uptime.czichy.com/api/push/6BclrdyqLe?status=up&msg=OK&ping=
           fi
         '';
       in {
