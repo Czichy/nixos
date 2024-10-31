@@ -204,12 +204,12 @@ in {
             mkPersistent "/bunker" "/shares/groups/${name}-bunker" name name
           )
       )
-      ++ [
-        (mkPersistent "/storage" "/shares/bibliothek" "christian" "czichys")
-        (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
-        (mkPersistent "/storage" "/shares/media" "christian" "czichys")
-        (mkPersistent "/storage" "/shares/schule" "ina" "ina")
-      ]
+      # ++ [
+      #   (mkPersistent "/storage" "/shares/bibliothek" "christian" "czichys")
+      #   (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
+      #   (mkPersistent "/storage" "/shares/media" "christian" "czichys")
+      #   (mkPersistent "/storage" "/shares/schule" "ina" "ina")
+      # ]
     )
   );
 
