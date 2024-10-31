@@ -69,7 +69,10 @@
       };
     in (
       {}
-      // mkMicrovm "samba" "HL-3-RZ-SMB-01" "enp4s0" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "samba" "HL-3-RZ-SMB-01" "enp4s0" "vlan40" {
+        enableStorageDataset = true;
+        enableBunkerDataset = true;
+      }
     );
   };
 }
