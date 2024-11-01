@@ -140,8 +140,9 @@ in {
       services.restic.backups = let
         ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+        uptime-kuma_url = "https://uptime.czichy.com/api/push/2ubcyrKgCr?status=up&msg=OK&ping=";
 
-        script-post = host: site: ''
+        script-post = host: site: uptime_url: ''
           if [ $EXIT_STATUS -ne 0 ]; then
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} failed!' \
@@ -152,7 +153,7 @@ in {
             -H 'Title: Backup (${site}) on ${host} successful!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-            && ${pkgs.curl}/bin/curl https://uptime.czichy.com/api/push/6BclrdyqLe?status=up&msg=OK&ping=
+            && ${pkgs.curl}/bin/curl '${uptime_url}'
           fi
         '';
       in {
@@ -185,7 +186,7 @@ in {
             ''
               systemctl start uptime-kuma
             ''
-            + script-post config.networking.hostName "uptime-kuma";
+            + script-post config.networking.hostName "uptime-kuma" uptime-kuma_url;
 
           # A list of options (--keep-* et al.) for 'restic forget --prune',
           # to automatically prune old snapshots.
