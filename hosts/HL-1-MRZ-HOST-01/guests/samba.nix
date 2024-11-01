@@ -161,32 +161,6 @@ in {
           "/etc/ssh/ssh_host_rsa_key"
           "/etc/ssh/ssh_host_rsa_key.pub"
         ];
-        # "/storage".directories = [
-        #   {
-        #     directory = "/shares/media";
-        #     user = "christian";
-        #     group = "czichys";
-        #     mode = "0750";
-        #   }
-        #   {
-        #     directory = "/shares/bibliothek";
-        #     user = "christian";
-        #     group = "czichys";
-        #     mode = "0750";
-        #   }
-        #   {
-        #     directory = "/shares/dokumente";
-        #     user = "christian";
-        #     group = "czichys";
-        #     mode = "0750";
-        #   }
-        #   {
-        #     directory = "/shares/schule";
-        #     user = "ina";
-        #     group = "ina";
-        #     mode = "0750";
-        #   }
-        # ];
       }
     ]
     ++ lib.flatten (
@@ -359,6 +333,11 @@ in {
   # tmpfiles to create shares if not yet present
   systemd.tmpfiles.settings = {
     "10-samba-shares" = {
+      "/shares/bibliothek".d = {
+        user = "christian, ina";
+        group = "czichys";
+        mode = "0750";
+      };
       "/shares/media".d = {
         user = "christian, ina";
         group = "czichys";
@@ -401,17 +380,6 @@ in {
         // lib.mapAttrs (name: cfg: mkUser name cfg.id cfg.groups) smbUsers
         // lib.mapAttrs (name: cfg: mkUser name cfg.id []) smbGroups
       )
-      {
-        # scanner.openssh.authorizedKeys.keys = [
-        #   "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJcWkqM2gXM9MJoKggCMpXLBJvgPP0fuoIO3UNy4h4uFzyDqMKAADjaJHCqyIQPq/s5vATVmuu4GQyajkc7Y3fBg/2rvAACzFx/2ufK2M4dkdDcYOX6kyNZL7XiJRmLfUR2cqda3P3bQxapkdfIOWfPQQJUAnYlVvUaIShoBxYw5HXRTr2jR5UAklfIRWZOmx07WKC6dZG5MIm1Luun5KgvqQmzQ9ErL5tz/Oi5pPdK30kdkS5WdeWD6KwL78Ff4KfC0DVTO0zb/C7WyKk4ZLu+UKCLHXDTzE4lhBAu6mSUfJ5nQhmdLdKg6Gvh1St/vRcsDJOZqEFBVn35/oK974l root@ADS_4300N_BRN000EC691D285"
-        # ];
-
-        # paperless = {
-        #   group = "paperless";
-        #   uid = config.ids.uids.paperless;
-        #   home = "/var/empty";
-        # };
-      }
     ];
 
   users.groups =
@@ -420,8 +388,333 @@ in {
     }
     // lib.mapAttrs (_: cfg: {gid = cfg.id;}) (smbUsers // smbGroups);
 
-  # backups.storageBoxes.dusk = {
-  #   subuser = "samba";
-  #   paths = ["/bunker"];
-  # };
+  # |----------------------------------------------------------------------| #
+  age.secrets."rclone.conf" = {
+    file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
+    mode = "440";
+    # group = "vaultwarden";
+  };
+  age.secrets.restic-bibliothek = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/library.age";
+    mode = "440";
+    # group = "root";
+  };
+  age.secrets.restic-dokumente = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/dokumente.age";
+    mode = "440";
+    # group = "root";
+  };
+  age.secrets.restic-media = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/media.age";
+    mode = "440";
+    # group = "root";
+  };
+  age.secrets.restic-schule = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/schule.age";
+    mode = "440";
+    # group = "root";
+  };
+  age.secrets.restic-christian = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/christian.age";
+    mode = "440";
+    # group = "root";
+  };
+  age.secrets.restic-ina = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/ina.age";
+    mode = "440";
+    # group = "root";
+  };
+
+  age.secrets.ntfy-alert-pass = {
+    file = secretsPath + "/ntfy-sh/alert-pass.age";
+    mode = "440";
+    # group = "root";
+  };
+  services.restic.backups = let
+    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+
+    script-post = host: site: uptime_url: ''
+      if [ $EXIT_STATUS -ne 0 ]; then
+        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+        -H 'Title: Backup (${site}) on ${host} failed!' \
+        -H 'Tags: backup,restic,${host},${site}' \
+        -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+      else
+        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+        -H 'Title: Backup (${site}) on ${host} successful!' \
+        -H 'Tags: backup,restic,${host},${site}' \
+        -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
+        ${pkgs.curl}/bin/curl '${uptime_url}'
+      fi
+    '';
+  in {
+    dokumente-backup = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-dokumente";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = ["shares/dokumente"];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-dokumente.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = script-post config.networking.hostName "dokumente" "https://uptime.czichy.com/api/push/zJJbyUCrfd?status=up&msg=OK&ping=";
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 00:30:00";
+      };
+    };
+    bibliothek-backup = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-bibliothek";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = ["shares/bibiliothek"];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-bibliothek.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = script-post config.networking.hostName "dokumente" "https://uptime.czichy.com/api/push/ggeBgn6rtS?status=up&msg=OK&ping=";
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 00:45:00";
+      };
+    };
+    schule-backup = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-schule";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = ["shares/schule"];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-schule.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run before starting the backup process.
+      # backupPrepareCommand = ''
+      #   echo "Building backup dir ${config.services.vaultwarden.backupDir}"
+      #   mkdir -p ${config.services.vaultwarden.backupDir}
+      #   ${pkgs.sqlite}/bin/sqlite3 ${config.services.vaultwarden.backupDir}/db.sqlite3 ".backup '${config.services.vaultwarden.backupDir}/vaultwarden.sqlite'"
+      # '';
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = script-post config.networking.hostName "schule" "https://uptime.czichy.com/api/push/M8w9mNOoD4?status=up&msg=OK&ping=";
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 01:00:00";
+      };
+    };
+    media-backup = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-media";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = ["shares/media"];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-media.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = script-post config.networking.hostName "media" "https://uptime.czichy.com/api/push/zkaIn0CiUQ?status=up&msg=OK&ping=";
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 01:15:00";
+      };
+    };
+    christian-backup = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-christian";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = ["/shares/users/christian"];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-christian.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = script-post config.networking.hostName "christian" "https://uptime.czichy.com/api/push/bOJSsssuci?status=up&msg=OK&ping=";
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 01:30:00";
+      };
+    };
+    dokumente-ina = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ina";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = ["/shares/users/ina"];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-ina.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = script-post config.networking.hostName "ina" "https://uptime.czichy.com/api/push/AqL2HZlObt?status=up&msg=OK&ping=";
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 01:45:00";
+      };
+    };
+    privat-backup = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/private";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = [config.services.vaultwarden.backupDir];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-privat.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = script-post config.networking.hostName "private" "https://uptime.czichy.com/api/push/bOJSsssuci?status=up&msg=OK&ping=";
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 01:30:00";
+      };
+    };
+  };
+  # |----------------------------------------------------------------------| #
 }
