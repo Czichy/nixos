@@ -28,22 +28,22 @@ in {
   options.tensorfiles.services.restic = with types; {
     enable = mkEnableOption ''Enable Restic Backup'';
   };
-  options.services.restic.backups = lib.mkOption {
-    description = ''
-      Periodic backups to create with Restic.
-    '';
-    type = lib.types.attrsOf (lib.types.submodule ({name, ...}: {
-      options = {
-        passwordFile = lib.mkOption {
-          type = lib.types.str;
-          description = ''
-            Read the repository password from a file.
-          '';
-          example = "/etc/nixos/restic-password";
-        };
-      };
-    }));
-  };
+  # options.services.restic.backups = lib.mkOption {
+  #   description = ''
+  #     Periodic backups to create with Restic.
+  #   '';
+  #   type = lib.types.attrsOf (lib.types.submodule ({name, ...}: {
+  #     options = {
+  #       passwordFile = lib.mkOption {
+  #         type = lib.types.str;
+  #         description = ''
+  #           Read the repository password from a file.
+  #         '';
+  #         example = "/etc/nixos/restic-password";
+  #       };
+  #     };
+  #   }));
+  # };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
