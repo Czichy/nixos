@@ -140,7 +140,7 @@ in {
       services.restic.backups = let
         ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-        uptime-kuma_url = "https://uptime.czichy.com/api/push/2ubcyrKgCr?status=up&msg=OK&ping=";
+        uptime-kuma_url = "https://uptime.czichy.com/api/push/6BclrdyqLe?status=up&msg=OK&ping=";
 
         script-post = host: site: uptime_url: ''
           if [ $EXIT_STATUS -ne 0 ]; then
