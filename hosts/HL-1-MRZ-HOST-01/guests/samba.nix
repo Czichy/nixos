@@ -424,7 +424,7 @@ in {
     mode = "440";
     # group = "root";
   };
-  age.secrets.restic-private = {
+  age.secrets.restic-privat = {
     file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/private.age";
     mode = "440";
     # group = "root";
