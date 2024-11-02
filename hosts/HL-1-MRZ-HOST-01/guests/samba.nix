@@ -395,37 +395,37 @@ in {
     # group = "vaultwarden";
   };
   age.secrets.restic-bibliothek = {
-    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/library.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/library.age";
     mode = "440";
     # group = "root";
   };
   age.secrets.restic-dokumente = {
-    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/dokumente.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/dokumente.age";
     mode = "440";
     # group = "root";
   };
   age.secrets.restic-media = {
-    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/media.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/media.age";
     mode = "440";
     # group = "root";
   };
   age.secrets.restic-schule = {
-    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/schule.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/schule.age";
     mode = "440";
     # group = "root";
   };
   age.secrets.restic-christian = {
-    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/christian.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/christian.age";
     mode = "440";
     # group = "root";
   };
   age.secrets.restic-ina = {
-    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/ina.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/ina.age";
     mode = "440";
     # group = "root";
   };
   age.secrets.restic-privat = {
-    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/private.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/private.age";
     mode = "440";
     # group = "root";
   };
