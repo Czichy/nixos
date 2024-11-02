@@ -122,7 +122,7 @@ in {
 
     "30-lan-self" = {
       matchConfig.Name = "lan-self";
-      address = [globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.cidrv4];
+      # address = [globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.cidrv4];
       gateway = [globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4];
       networkConfig = {
         IPv4Forwarding = "yes";
