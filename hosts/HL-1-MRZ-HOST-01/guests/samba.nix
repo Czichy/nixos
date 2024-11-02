@@ -424,6 +424,11 @@ in {
     mode = "440";
     # group = "root";
   };
+  age.secrets.restic-private = {
+    file = secretsPath + "/hosts/HL-1-MRZ-SBC-01/restic/private.age";
+    mode = "440";
+    # group = "root";
+  };
 
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
