@@ -409,11 +409,6 @@ in {
     mode = "440";
     # group = "root";
   };
-  age.secrets.restic-schule = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/schule.age";
-    mode = "440";
-    # group = "root";
-  };
   age.secrets.restic-christian = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/christian.age";
     mode = "440";
@@ -424,12 +419,6 @@ in {
     mode = "440";
     # group = "root";
   };
-  age.secrets.restic-privat = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/private.age";
-    mode = "440";
-    # group = "root";
-  };
-
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
@@ -637,87 +626,6 @@ in {
       # When to run the backup. See {manpage}`systemd.timer(5)` for details.
       timerConfig = {
         OnCalendar = "*-*-* 01:45:00";
-      };
-    };
-    privat-backup = {
-      # Initialize the repository if it doesn't exist.
-      initialize = true;
-
-      # backup to a rclone remote
-      repository = "rclone:onedrive_nas:/backup/private";
-
-      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = ["/shares/users"];
-
-      # Patterns to exclude when backing up. See
-      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-      # for details on syntax.
-      exclude = [];
-
-      passwordFile = config.age.secrets.restic-privat.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
-
-      # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "private" "https://uptime.czichy.com/api/push/bOJSsssuci?status=up&msg=OK&ping=";
-
-      # A list of options (--keep-* et al.) for 'restic forget --prune',
-      # to automatically prune old snapshots.
-      # The 'forget' command is run *after* the 'backup' command, so
-      # keep that in mind when constructing the --keep-* options.
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
-
-      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
-      timerConfig = {
-        OnCalendar = "*-*-* 01:30:00";
-      };
-    };
-    schule-backup = {
-      # Initialize the repository if it doesn't exist.
-      initialize = true;
-
-      # backup to a rclone remote
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-schule";
-
-      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = ["shares/schule"];
-
-      # Patterns to exclude when backing up. See
-      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-      # for details on syntax.
-      exclude = [];
-
-      passwordFile = config.age.secrets.restic-schule.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
-
-      # A script that must run before starting the backup process.
-      # backupPrepareCommand = ''
-      #   echo "Building backup dir ${config.services.vaultwarden.backupDir}"
-      #   mkdir -p ${config.services.vaultwarden.backupDir}
-      #   ${pkgs.sqlite}/bin/sqlite3 ${config.services.vaultwarden.backupDir}/db.sqlite3 ".backup '${config.services.vaultwarden.backupDir}/vaultwarden.sqlite'"
-      # '';
-
-      # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "schule" "https://uptime.czichy.com/api/push/M8w9mNOoD4?status=up&msg=OK&ping=";
-
-      # A list of options (--keep-* et al.) for 'restic forget --prune',
-      # to automatically prune old snapshots.
-      # The 'forget' command is run *after* the 'backup' command, so
-      # keep that in mind when constructing the --keep-* options.
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
-
-      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
-      timerConfig = {
-        OnCalendar = "*-*-* 01:00:00";
       };
     };
   };
