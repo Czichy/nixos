@@ -12,11 +12,11 @@
   smbUsers = {
     christian = {
       id = 1000;
-      groups = ["czichys"];
+      groups = ["czichys" "samba"];
     };
     ina = {
       id = 1001;
-      groups = ["czichys"];
+      groups = ["czichys" "samba"];
     };
   };
   # smbGroups = config.repo.secrets.local.samba.groups;
@@ -293,7 +293,7 @@ in {
         (mkCustomShare {
           name = "media";
           path = "/shares/media";
-          user = "christian,ina";
+          user = "christian ina";
           group = "czichys";
           hasBunker = true;
         } {})
@@ -301,7 +301,7 @@ in {
         (mkCustomShare {
           name = "dokumente";
           path = "/shares/dokumente";
-          user = "christian,ina";
+          user = "christian ina";
           group = "czichys";
           hasBunker = true;
         } {})
@@ -309,7 +309,7 @@ in {
         (mkCustomShare {
           name = "bibliothek";
           path = "/shares/bibliothek";
-          user = "christian,ina";
+          user = "christian ina";
           group = "czichys";
           hasBunker = true;
         } {})
@@ -325,17 +325,17 @@ in {
   systemd.tmpfiles.settings = {
     "10-samba-shares" = {
       "/shares/bibliothek".d = {
-        user = "christian, ina";
+        user = "christian";
         group = "czichys";
         mode = "0750";
       };
       "/shares/media".d = {
-        user = "christian, ina";
+        user = "christian";
         group = "czichys";
         mode = "0750";
       };
       "/shares/dokumente".d = {
-        user = "christian, ina";
+        user = "christian";
         group = "czichys";
         mode = "0750";
       };
