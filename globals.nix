@@ -56,7 +56,8 @@ in {
         hosts.HL-1-MRZ-HOST-01.id = 30;
         # Samba
         hosts.HL-3-RZ-SMB-01.id = 31;
-        # hosts.HL-1-MRZ-SBC-01-nginx.id = 29;
+
+        hosts.HL-1-MRZ-HOST-02.id = 40;
       };
 
       #IoT
@@ -81,6 +82,7 @@ in {
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 20;
         hosts.HL-1-MRZ-HOST-01.id = 30;
+        hosts.HL-1-MRZ-HOST-02.id = 40;
       };
 
       proxy-vps = {

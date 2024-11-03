@@ -23,7 +23,7 @@
   ];
 
   # topology.self.hardware.image = ../../topology/images/Topton.webp;
-  topology.self.hardware.info = "Intel N100, 16GB RAM";
+  topology.self.hardware.info = "ZimaBlade 7700, 16GB RAM";
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------

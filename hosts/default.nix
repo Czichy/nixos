@@ -153,6 +153,20 @@
             ];
           }
       );
+      "HL-1-MRZ-HOST-02" = withSystem "x86_64-linux" (
+        args:
+          mkHost args "HL-1-MRZ-HOST-02" {
+            withHomeManager = true;
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              microvm.nixosModules.host
+            ];
+          }
+      );
 
       #OPNSense dummy - for Wiregard Server
       "HL-3-MRZ-FW-01" = withSystem "x86_64-linux" (
