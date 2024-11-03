@@ -488,7 +488,7 @@ in {
       repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-bibliothek";
 
       # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = ["shares/bibiliothek"];
+      paths = ["shares/bibliothek"];
 
       # Patterns to exclude when backing up. See
       #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
