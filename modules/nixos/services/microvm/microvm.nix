@@ -86,7 +86,7 @@ in {
         {
           mountPoint = "/var";
           image = "var.img";
-          size = 512;
+          size = 1024;
         }
         {
           mountPoint = "/etc";
