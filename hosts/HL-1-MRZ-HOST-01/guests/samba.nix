@@ -293,7 +293,7 @@ in {
         (mkCustomShare {
           name = "media";
           path = "/shares/media";
-          user = "christian, ina";
+          user = "christian,ina";
           group = "czichys";
           hasBunker = true;
         } {})
@@ -301,7 +301,7 @@ in {
         (mkCustomShare {
           name = "dokumente";
           path = "/shares/dokumente";
-          user = "christian, ina";
+          user = "christian,ina";
           group = "czichys";
           hasBunker = true;
         } {})
@@ -309,17 +309,8 @@ in {
         (mkCustomShare {
           name = "bibliothek";
           path = "/shares/bibliothek";
-          user = "christian, ina";
+          user = "christian,ina";
           group = "czichys";
-          hasBunker = true;
-        } {})
-
-        # Move to private
-        (mkCustomShare {
-          name = "schule";
-          path = "/shares/schule";
-          user = "ina";
-          group = "ina";
           hasBunker = true;
         } {})
       ]
@@ -346,11 +337,6 @@ in {
       "/shares/dokumente".d = {
         user = "christian, ina";
         group = "czichys";
-        mode = "0750";
-      };
-      "/shares/schule".d = {
-        user = "ina";
-        group = "ina";
         mode = "0750";
       };
     };
