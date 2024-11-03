@@ -499,7 +499,7 @@ in {
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "dokumente" "https://uptime.czichy.com/api/push/ggeBgn6rtS?status=up&msg=OK&ping=";
+      backupCleanupCommand = script-post config.networking.hostName "bibliothek" "https://uptime.czichy.com/api/push/ggeBgn6rtS?status=up&msg=OK&ping=";
 
       # A list of options (--keep-* et al.) for 'restic forget --prune',
       # to automatically prune old snapshots.
