@@ -42,17 +42,14 @@
   }: cfg: let
     config =
       {
-        "#persistRoot" = persistRoot;
-        "#user" = user;
-        "#group" = group;
         "read only" = "no";
         "guest ok" = "no";
         "create mask" = "0740";
         "directory mask" = "0750";
         "force user" = user;
         "force group" = group;
-        "valid users" = "${user} @${group}";
-        "write list" = "${user} @${group}";
+        "valid users" = "${user}";
+        "write list" = "${user}";
         "force create mode" = "0660";
         "force directory mode" = "0770";
         # Might be necessary for windows user to be able to open thing in smb
@@ -251,7 +248,7 @@ in {
             # Set sane logging options
             "log level" = "0 auth:2 passdb:2";
             "log file" = "/dev/null";
-            "max log size" = "0";
+            "max log size" = "1024";
             "logging" = "systemd";
 
             # Users always have to login with an account and are never mapped
@@ -301,7 +298,7 @@ in {
         (mkCustomShare {
           name = "dokumente";
           path = "/shares/dokumente";
-          user = "christian ina";
+          user = "christian,ina";
           group = "czichys";
           hasBunker = true;
         } {})
