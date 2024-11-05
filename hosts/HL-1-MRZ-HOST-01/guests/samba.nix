@@ -36,6 +36,7 @@
     path,
     user ? "smb",
     group ? "smb",
+    validUser ? "smb",
     hasBunker ? false,
     hasPaperless ? false,
     persistRoot ? "/panzer",
@@ -290,7 +291,8 @@ in {
         (mkCustomShare {
           name = "media";
           path = "/shares/media";
-          user = "christian ina";
+          user = "christian";
+          validUser = "christian,ina";
           group = "czichys";
           hasBunker = true;
         } {})
@@ -298,7 +300,8 @@ in {
         (mkCustomShare {
           name = "dokumente";
           path = "/shares/dokumente";
-          user = "christian,ina";
+          user = "christian";
+          validUser = "christian,ina";
           group = "czichys";
           hasBunker = true;
         } {})
@@ -306,7 +309,8 @@ in {
         (mkCustomShare {
           name = "bibliothek";
           path = "/shares/bibliothek";
-          user = "christian ina";
+          user = "christian";
+          validUser = "christian,ina";
           group = "czichys";
           hasBunker = true;
         } {})
