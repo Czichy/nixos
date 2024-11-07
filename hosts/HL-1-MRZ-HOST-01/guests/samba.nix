@@ -44,18 +44,18 @@
     config =
       {
         "read only" = "no";
-        "iiiiionly" = "no";
-        "writable" = "yes";
-        "create mask" = "0644";
-        "directory mask" = "0775";
-        "force user" = user;
+        "writeable" = "yes";
+        "guest ok" = "no";
+        "create mask" = "0740";
+        "directory mask" = "0750";
+        # "force user" = user;
         "force group" = group;
         "valid users" = "${validUser}";
         "write list" = "${validUser}";
-        "force create mode" = "0664";
-        "force directory mode" = "0775";
+        # "force create mode" = "0660";
+        # "force directory mode" = "0770";
         # Might be necessary for windows user to be able to open thing in smb
-        "acl allow execute always" = "no";
+        # "acl allow execute always" = "no";
       }
       // cfg;
   in
