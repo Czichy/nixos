@@ -242,7 +242,7 @@ in {
             # Deny access to all hosts by default.
             "hosts deny" = "0.0.0.0/0";
             # Allow access to local network and TODO: wireguard
-            "hosts allow" = "${globals.net.vlan40.cidrv4} ${globals.net.vlan40.cidrv6} ${globals.net.vlan10.cidrv4} ${globals.net.vlan10.cidrv6}";
+            "hosts allow" = "${globals.net.vlan40.cidrv4} ${globals.net.vlan40.cidrv6} ${globals.net.vlan10.cidrv4} ";
             # Don't advertise inaccessible shares to users
             "access based share enum" = "yes";
 
