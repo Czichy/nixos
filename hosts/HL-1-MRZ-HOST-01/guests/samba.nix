@@ -44,15 +44,16 @@
     config =
       {
         "read only" = "no";
-        "guest ok" = "no";
-        "create mask" = "0740";
-        "directory mask" = "0750";
+        "iiiiionly" = "no";
+        "writable" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0775";
         "force user" = user;
         "force group" = group;
-        "valid users" = "${user}";
-        "write list" = "${user}";
-        "force create mode" = "0660";
-        "force directory mode" = "0770";
+        "valid users" = "${validUser}";
+        "write list" = "${validUser}";
+        "force create mode" = "0664";
+        "force directory mode" = "0775";
         # Might be necessary for windows user to be able to open thing in smb
         "acl allow execute always" = "no";
       }
@@ -294,7 +295,7 @@ in {
           user = "christian";
           validUser = "christian,ina";
           group = "czichys";
-          hasBunker = true;
+          hasBunker = false;
         } {})
 
         (mkCustomShare {
@@ -303,7 +304,7 @@ in {
           user = "christian";
           validUser = "christian,ina";
           group = "czichys";
-          hasBunker = true;
+          hasBunker = false;
         } {})
 
         (mkCustomShare {
@@ -312,7 +313,7 @@ in {
           user = "christian";
           validUser = "christian,ina";
           group = "czichys";
-          hasBunker = true;
+          hasBunker = false;
         } {})
       ]
       ++ lib.flatten (
