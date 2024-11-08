@@ -1,147 +1,98 @@
 {
   config,
   globals,
+  secretsPath,
   lib,
   nodes,
   pkgs,
   ...
 }: let
-  sentinelCfg = nodes.sentinel.config;
-  wardCfg = nodes.ward.config;
   influxdbDomain = "influxdb.${globals.domains.me}";
   influxdbPort = 8086;
+
+  certloc = "/var/lib/acme/czichy.com";
 in {
-  wireguard.proxy-sentinel = {
-    client.via = "sentinel";
-    firewallRuleForNode.sentinel.allowedTCPPorts = [influxdbPort];
-  };
+  # age.secrets.github-access-token = {
+  #   rekeyFile = config.node.secretsDir + "/github-access-token.age";
+  #   mode = "440";
+  #   group = "telegraf";
+  # };
 
-  wireguard.proxy-home = {
-    client.via = "ward";
-    firewallRuleForNode.ward-web-proxy.allowedTCPPorts = [influxdbPort];
-  };
+  # meta.telegraf.secrets."@GITHUB_ACCESS_TOKEN@" = config.age.secrets.github-access-token.path;
+  # services.telegraf.extraConfig.outputs.influxdb_v2.urls = lib.mkForce ["http://localhost:${toString influxdbPort}"];
 
-  age.secrets.github-access-token = {
-    rekeyFile = config.node.secretsDir + "/github-access-token.age";
-    mode = "440";
-    group = "telegraf";
-  };
+  # services.telegraf.extraConfig.inputs = {
+  #   github = {
+  #     interval = "10m";
+  #     access_token = "@GITHUB_ACCESS_TOKEN@";
+  #     repositories = [
+  #       "oddlama/agenix-rekey"
+  #       "oddlama/autokernel"
+  #       "oddlama/gentoo-install"
+  #       "oddlama/idmail"
+  #       "oddlama/nix-config"
+  #       "oddlama/nix-topology"
+  #       "oddlama/vane"
+  #     ];
+  #   };
+  # };
 
-  meta.telegraf.secrets."@GITHUB_ACCESS_TOKEN@" = config.age.secrets.github-access-token.path;
-  services.telegraf.extraConfig.outputs.influxdb_v2.urls = lib.mkForce ["http://localhost:${toString influxdbPort}"];
-
-  services.telegraf.extraConfig.inputs = {
-    github = {
-      interval = "10m";
-      access_token = "@GITHUB_ACCESS_TOKEN@";
-      repositories = [
-        "oddlama/agenix-rekey"
-        "oddlama/autokernel"
-        "oddlama/gentoo-install"
-        "oddlama/idmail"
-        "oddlama/nix-config"
-        "oddlama/nix-topology"
-        "oddlama/vane"
-      ];
-    };
-  };
-
+  # |----------------------------------------------------------------------| #
   globals.services.influxdb.domain = influxdbDomain;
+  networking.hostName = "HL-3-RZ-INFLUX-01";
 
-  nodes.sentinel = {
-    services.nginx = {
-      upstreams.influxdb = {
-        servers."${config.wireguard.proxy-sentinel.ipv4}:${toString influxdbPort}" = {};
-        extraConfig = ''
-          zone influxdb 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "InfluxDB";
-        };
-      };
-      virtualHosts.${influxdbDomain} = let
-        accessRules = ''
-          ${lib.concatMapStrings (ip: "allow ${ip};\n") sentinelCfg.wireguard.proxy-sentinel.server.reservedAddresses}
-          deny all;
-        '';
-      in {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        locations."/" = {
-          proxyPass = "http://influxdb";
-          proxyWebsockets = true;
-          extraConfig = accessRules;
-        };
-        locations."/api/v2/write" = {
-          proxyPass = "http://influxdb/api/v2/write";
-          proxyWebsockets = true;
-          extraConfig = ''
-            ${accessRules}
-            access_log off;
-          '';
-        };
-      };
-    };
+  networking.firewall = {
+    allowedTCPPorts = [22 8012];
+    allowedUDPPorts = [22 8012];
   };
 
-  nodes.ward-web-proxy = {
-    services.nginx = {
-      upstreams.influxdb = {
-        servers."${config.wireguard.proxy-home.ipv4}:${toString influxdbPort}" = {};
-        extraConfig = ''
-          zone influxdb 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "InfluxDB";
-        };
-      };
-      virtualHosts.${influxdbDomain} = let
-        accessRules = ''
-          ${lib.concatMapStrings (ip: "allow ${ip};\n") wardCfg.wireguard.proxy-home.server.reservedAddresses}
-          deny all;
-        '';
-      in {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        locations."/" = {
-          proxyPass = "http://influxdb";
-          proxyWebsockets = true;
-          extraConfig = accessRules;
-        };
-        locations."/api/v2/write" = {
-          proxyPass = "http://influxdb/api/v2/write";
-          proxyWebsockets = true;
-          extraConfig = ''
-            ${accessRules}
-            access_log off;
-          '';
-        };
-      };
+  nodes.HL-4-PAZ-PROXY-01 = {
+    # SSL config and forwarding to local reverse proxy
+    services.caddy = {
+      virtualHosts."${influxdbDomain}".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+            transport http {
+            	tls_server_name ${influxdbDomain}
+            }
+        }
+
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+          protocols tls1.3
+        }
+        import czichy_headers
+      '';
     };
   };
-
+  nodes.HL-1-MRZ-SBC-01-caddy = {
+    services.caddy = {
+      virtualHosts."${influxdbDomain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-INFLUX-01".ipv4}:${toString influxdbPort}
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+  };
+  # |----------------------------------------------------------------------| #
   age.secrets.influxdb-admin-password = {
-    generator.script = "alnum";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/admin-password.age";
     mode = "440";
     group = "influxdb2";
   };
 
   age.secrets.influxdb-admin-token = {
-    generator.script = "alnum";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/admin-token.age";
     mode = "440";
     group = "influxdb2";
   };
 
-  age.secrets.influxdb-user-telegraf-token = {
-    generator.script = "alnum";
-    mode = "440";
-    group = "influxdb2";
-  };
-
+  # age.secrets.influxdb-user-telegraf-token = {
+  #   generator.script = "alnum";
+  #   mode = "440";
+  #   group = "influxdb2";
+  # };
+  # |----------------------------------------------------------------------| #
   environment.persistence."/persist".directories = [
     {
       directory = "/var/lib/influxdb2";

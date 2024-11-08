@@ -83,7 +83,14 @@ in {
             enable = true;
             port = 4;
             # this is the default
-            authorizedKeys = pubkeys.czichy ++ pubkeys.recovery_key ++ pubkeys.HL-1-OZ-PC-01;
+            authorizedKeys =
+              pubkeys.czichy
+              ++ pubkeys.recovery_key
+              ++ pubkeys.HL-1-OZ-PC-01
+              ++ [
+                "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKQgoSENg960XY9wU77q8p1+4WgUhEb10xlc27RWcmNE czichy@desktop"
+                "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
+              ];
             hostKeys = ["/nix/secret/initrd/ssh_host_ed25519_key"];
             # hostKeys = [config.age.secrets.initrd_host_ed25519_key.path];
           };

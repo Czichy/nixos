@@ -46,17 +46,21 @@ in {
         cidrv6 = "fd10::/64";
         # OPNSense
         hosts.HL-3-MRZ-FW-01.id = 99;
+        # |------------------------------------| #
         hosts.HL-1-OZ-PC-01.id = 62;
+        # |------------------------------------| #
         hosts.HL-1-MRZ-SBC-01.id = 20;
         # AdguardHome
         hosts.HL-3-RZ-DNS-01.id = 21;
         # Vaultwarden
         hosts.HL-3-RZ-VAULT-01.id = 22;
-
+        # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-01.id = 30;
         # Samba
         hosts.HL-3-RZ-SMB-01.id = 31;
-
+        # InfluxDb
+        hosts.HL-3-RZ-INFLUX-01.id = 32;
+        # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 40;
       };
 
