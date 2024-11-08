@@ -82,18 +82,18 @@ in {
       # is ephemeral and will be lost on reboot.
       #
       # you can check this by running `df -Th` & `lsblk` in the VM.
-      volumes = [
-        {
-          mountPoint = "/var";
-          image = "var.img";
-          size = 1024;
-        }
-        {
-          mountPoint = "/etc";
-          image = "etc.img";
-          size = 50;
-        }
-      ];
+      # volumes = [
+      #   {
+      #     mountPoint = "/var";
+      #     image = "var.img";
+      #     size = 1024;
+      #   }
+      #   {
+      #     mountPoint = "/etc";
+      #     image = "etc.img";
+      #     size = 50;
+      #   }
+      # ];
 
       shares =
         [
