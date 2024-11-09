@@ -5,15 +5,14 @@
 }
 : let
   inherit (inputs.self) lib;
-  macAddress_enp1s0 = "a8:b8:e0:03:8d:e5";
-  macAddress_enp4s0 = "a8:b8:e0:03:8d:e8";
+  macAddress_enp2s0 = "00:e0:4c:34:b6:40";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
   topology.self.interfaces.enp4s0 = {};
 
   globals.monitoring.ping.HL-1-MRZ-HOST-01 = {
-    hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.cidrv4;
-    hostv6 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.cidrv6;
+    hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-02.cidrv4;
+    hostv6 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-02.cidrv6;
     network = "vlan40";
   };
 
@@ -23,12 +22,12 @@ in {
   #   # The server ip refers to the NFS server -- we don't need it.
   #   # "ip=${ipv4.address}::${ipv4.gateway}:${ipv4.netmask}:${hostName}-initrd:${networkInterface}:off:1.1.1.1"
   ## initrd luks_remote_unlock
-  boot.kernelParams = ["ip=10.15.100.30::10.15.100.99:255.255.255.0:HL-1-MRZ-HOST-01-initrd:enp1s0:off"];
+  boot.kernelParams = ["ip=10.15.100.10::10.15.100.99:255.255.255.0:HL-1-MRZ-HOST-01-initrd:enp1s0:off"];
   # |----------------------------------------------------------------------| #
   boot.initrd.systemd.network = {
     enable = true;
     networks."10-servers" = {
-      matchConfig.MACAddress = macAddress_enp4s0;
+      matchConfig.MACAddress = macAddress_enp2s0;
       # address = [
       #   "10.15.1.30/24"
       # ];
@@ -45,14 +44,14 @@ in {
       linkConfig.RequiredForOnline = "routable";
     };
     networks."30-mgmt" = {
-      matchConfig.MACAddress = macAddress_enp1s0;
+      matchConfig.MACAddress = macAddress_enp2s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
       # matchConfig.Name = "mgmt";
       # matchConfig.Type = "vlan";
       bridgeConfig = {};
       address = [
-        globals.net.vlan100.hosts.HL-1-MRZ-HOST-01.cidrv4
+        globals.net.vlan100.hosts.HL-1-MRZ-HOST-02.cidrv4
       ];
       gateway = [globals.net.vlan100.hosts.HL-3-MRZ-FW-01.ipv4];
       networkConfig = {
@@ -83,7 +82,7 @@ in {
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {
     "30-servers" = {
-      matchConfig.MACAddress = macAddress_enp4s0;
+      matchConfig.MACAddress = macAddress_enp2s0;
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
@@ -103,14 +102,14 @@ in {
     };
 
     "30-mgmt" = {
-      matchConfig.MACAddress = macAddress_enp1s0;
+      matchConfig.MACAddress = macAddress_enp2s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
       # matchConfig.Name = "mgmt";
       # matchConfig.Type = "vlan";
       bridgeConfig = {};
       address = [
-        globals.net.vlan100.hosts.HL-1-MRZ-HOST-01.cidrv4
+        globals.net.vlan100.hosts.HL-1-MRZ-HOST-02.cidrv4
       ];
       gateway = [globals.net.vlan100.hosts.HL-3-MRZ-FW-01.ipv4];
       networkConfig = {
