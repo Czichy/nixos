@@ -23,7 +23,7 @@ in {
   #   # The server ip refers to the NFS server -- we don't need it.
   #   # "ip=${ipv4.address}::${ipv4.gateway}:${ipv4.netmask}:${hostName}-initrd:${networkInterface}:off:1.1.1.1"
   ## initrd luks_remote_unlock
-  boot.kernelParams = ["ip=10.15.100.30::10.15.100.99:255.255.255.0:HL-1-MRZ-HOST-01-initrd:enp1s0:off:1.1.1.1"];
+  boot.kernelParams = ["ip=10.15.100.30::10.15.100.99:255.255.255.0:HOST-01-initrd:enp1s0:none"];
   # |----------------------------------------------------------------------| #
   boot.initrd.systemd.network = {
     enable = true;
