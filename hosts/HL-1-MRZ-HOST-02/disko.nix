@@ -30,7 +30,7 @@ in {
       };
       sata_1 = {
         type = "disk";
-        device = disk-id "${disks.hdd1_1.id}";
+        device = disk-id "${disks.sata_1.id}";
         content = lib.disko.content.luksZfs disks.sata_1.name "storage";
       };
     };
