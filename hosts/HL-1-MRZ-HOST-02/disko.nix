@@ -5,7 +5,7 @@
     main = {
       name = "main";
       path = null;
-      id = "nvme-Force_MP510_1945823800012888371B";
+      id = "mmc-BJTD4R_0xad934b39";
     };
 
     hdd1_1 = {
@@ -33,16 +33,16 @@ in {
           };
         };
       };
-      hdd1_1 = {
-        type = "disk";
-        device = disk-id "${disks.hdd1_1.id}";
-        content = lib.disko.content.luksZfs disks.hdd1_1.name "storage";
-      };
-      hdd1_2 = {
-        type = "disk";
-        device = disk-id "${disks.hdd1_2.id}";
-        content = lib.disko.content.luksZfs disks.hdd1_2.name "storage";
-      };
+      # hdd1_1 = {
+      #   type = "disk";
+      #   device = disk-id "${disks.hdd1_1.id}";
+      #   content = lib.disko.content.luksZfs disks.hdd1_1.name "storage";
+      # };
+      # hdd1_2 = {
+      #   type = "disk";
+      #   device = disk-id "${disks.hdd1_2.id}";
+      #   content = lib.disko.content.luksZfs disks.hdd1_2.name "storage";
+      # };
     };
     zpool = {
       rpool = lib.disko.zfs.mkZpool {
@@ -52,12 +52,12 @@ in {
             "safe/guests" = lib.disko.zfs.unmountable;
           };
       };
-      storage = lib.disko.zfs.mkZpool {
-        mode = "mirror";
-        datasets = {
-          "safe/guests" = lib.disko.zfs.unmountable;
-        };
-      };
+      # storage = lib.disko.zfs.mkZpool {
+      #   mode = "mirror";
+      #   datasets = {
+      #     "safe/guests" = lib.disko.zfs.unmountable;
+      #   };
+      # };
     };
   };
   services.zrepl = {
@@ -134,5 +134,5 @@ in {
   # Needed for impermanence, because we mount /persist/save on /persist, we need to make sure /persist is mounted before /persist/save
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/state".neededForBoot = true;
-  boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target"];
+  # boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target"];
 }
