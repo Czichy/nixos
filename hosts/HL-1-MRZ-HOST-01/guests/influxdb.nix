@@ -42,8 +42,8 @@ in {
   networking.hostName = "HL-3-RZ-INFLUX-01";
 
   networking.firewall = {
-    allowedTCPPorts = [22 8012];
-    allowedUDPPorts = [22 8012];
+    allowedTCPPorts = [8086];
+    allowedUDPPorts = [8086];
   };
 
   nodes.HL-4-PAZ-PROXY-01 = {
