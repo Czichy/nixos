@@ -87,11 +87,11 @@ in {
     group = "influxdb2";
   };
 
-  # age.secrets.influxdb-user-telegraf-token = {
-  #   generator.script = "alnum";
-  #   mode = "440";
-  #   group = "influxdb2";
-  # };
+  age.secrets.influxdb-user-telegraf-token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/telegraf-token.age";
+    mode = "440";
+    group = "influxdb2";
+  };
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist".directories = [
     {
