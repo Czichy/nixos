@@ -8,15 +8,10 @@
       id = "mmc-BJTD4R_0xad934b39";
     };
 
-    hdd1_1 = {
-      name = "hdd1_1";
+    sata_1 = {
+      name = "sata_1";
       path = null;
-      id = "wwn-0x5000c500e95e6764";
-    };
-    hdd1_2 = {
-      name = "hdd1_2";
-      path = null;
-      id = "wwn-0x5000c500e961274e";
+      id = "ata-Samsung_SSD_840_Series_S14JNEACC24945P";
     };
   };
 in {
@@ -33,16 +28,11 @@ in {
           };
         };
       };
-      # hdd1_1 = {
-      #   type = "disk";
-      #   device = disk-id "${disks.hdd1_1.id}";
-      #   content = lib.disko.content.luksZfs disks.hdd1_1.name "storage";
-      # };
-      # hdd1_2 = {
-      #   type = "disk";
-      #   device = disk-id "${disks.hdd1_2.id}";
-      #   content = lib.disko.content.luksZfs disks.hdd1_2.name "storage";
-      # };
+      sata_1 = {
+        type = "disk";
+        device = disk-id "${disks.hdd1_1.id}";
+        content = lib.disko.content.luksZfs disks.sata_1.name "storage";
+      };
     };
     zpool = {
       rpool = lib.disko.zfs.mkZpool {
@@ -52,12 +42,12 @@ in {
             "safe/guests" = lib.disko.zfs.unmountable;
           };
       };
-      # storage = lib.disko.zfs.mkZpool {
-      #   mode = "mirror";
-      #   datasets = {
-      #     "safe/guests" = lib.disko.zfs.unmountable;
-      #   };
-      # };
+      storage = lib.disko.zfs.mkZpool {
+        mode = "mirror";
+        datasets = {
+          "safe/guests" = lib.disko.zfs.unmountable;
+        };
+      };
     };
   };
   services.zrepl = {
