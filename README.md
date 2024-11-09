@@ -149,7 +149,7 @@ cd nixos
 1. partition & format the disk via disko
 
 ```bash
-sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko --flake .#"${HOST}"
+sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- --mode disko --flake .#"${HOST}"
 ```
 
 Check Disk Layout
