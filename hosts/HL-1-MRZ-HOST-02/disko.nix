@@ -36,15 +36,26 @@ in {
     };
     zpool = {
       rpool = lib.disko.zfs.mkZpool {
-        datasets =
-          lib.disko.zfs.impermanenceZfsDatasets "rpool"
-          // {
-            "safe/guests" = lib.disko.zfs.unmountable;
-          };
+        datasets = {
+          # lib.disko.zfs.impermanenceZfsDatasets "rpool"
+          "local" = lib.disko.zfs.unmountable;
+          # "local/nix" = lib.disko.zfs.filesystem "/nix";
+          "local/root" =
+            lib.disko.zfs.filesystem "/"
+            // {
+              postCreateHook = "zfs snapshot rpool/local/root@blank";
+            };
+          "local/state" = lib.disko.zfs.filesystem "/state";
+          "safe" = lib.disko.zfs.unmountable;
+          "safe/persist" = lib.disko.zfs.filesystem "/persist";
+          "safe/guests" = lib.disko.zfs.unmountable;
+        };
       };
       storage = lib.disko.zfs.mkZpool {
         mode = "mirror";
         datasets = {
+          "local" = lib.disko.zfs.unmountable;
+          "local/nix" = lib.disko.zfs.filesystem "/nix";
           "safe/guests" = lib.disko.zfs.unmountable;
         };
       };
