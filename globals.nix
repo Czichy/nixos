@@ -49,6 +49,10 @@ in {
         # |------------------------------------| #
         hosts.HL-1-OZ-PC-01.id = 62;
         # |------------------------------------| #
+        hosts.HL-1-MRZ-HOST-02.id = 10;
+        # Unifi Controller
+        hosts.HL-3-RZ-UNIFI-01.id = 11;
+        # |------------------------------------| #
         hosts.HL-1-MRZ-SBC-01.id = 20;
         # AdguardHome
         hosts.HL-3-RZ-DNS-01.id = 21;
@@ -60,10 +64,6 @@ in {
         hosts.HL-3-RZ-SMB-01.id = 31;
         # InfluxDb
         hosts.HL-3-RZ-INFLUX-01.id = 32;
-        # |------------------------------------| #
-        hosts.HL-1-MRZ-HOST-02.id = 40;
-        # Unifi Controller
-        hosts.HL-3-RZ-UNIFI-01.id = 41;
       };
 
       #IoT
@@ -88,7 +88,7 @@ in {
         hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-SBC-01.id = 20;
         hosts.HL-1-MRZ-HOST-01.id = 30;
-        hosts.HL-1-MRZ-HOST-02.id = 40;
+        hosts.HL-1-MRZ-HOST-02.id = 10;
       };
 
       proxy-vps = {
