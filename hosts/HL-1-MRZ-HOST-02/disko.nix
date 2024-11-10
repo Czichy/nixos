@@ -52,7 +52,7 @@ in {
         };
       };
       storage = lib.disko.zfs.mkZpool {
-        mode = "mirror";
+        # mode = "mirror";
         datasets = {
           "local" = lib.disko.zfs.unmountable;
           "local/nix" = lib.disko.zfs.filesystem "/nix";
