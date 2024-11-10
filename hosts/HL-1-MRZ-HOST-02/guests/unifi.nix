@@ -50,7 +50,7 @@ in {
     }
   ];
 
-  unifi = {
+  services.unifi = {
     enable = true;
     unifiPackage = pkgs.unifi8;
     openFirewall = true;
