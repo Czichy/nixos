@@ -62,6 +62,8 @@ in {
         hosts.HL-3-RZ-INFLUX-01.id = 32;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 40;
+        # Unifi Controller
+        hosts.HL-3-RZ-UNIFI-01.id = 41;
       };
 
       #IoT
