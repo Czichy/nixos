@@ -61,7 +61,7 @@ in {
           =====================================================================
         '';
         settings = {
-          PermitRootLogin = _ "no";
+          PermitRootLogin = _ "yes";
           PasswordAuthentication = _ false;
           StrictModes = _ true;
           KbdInteractiveAuthentication = _ false;
