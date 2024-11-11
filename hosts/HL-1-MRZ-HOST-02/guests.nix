@@ -69,9 +69,9 @@
       };
     in (
       {}
-      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "enp2s0" "vlan40" {
-        enableStorageDataset = true;
-      }
+      # // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "enp2s0" "vlan40" {
+      #   enableStorageDataset = true;
+      # }
     );
   };
 }
