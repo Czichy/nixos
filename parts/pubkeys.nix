@@ -47,7 +47,7 @@ in {
       users = {
         root = {
           sshKey = null;
-          authorizedKeys = [];
+          authorizedKeys = users.czichy;
         };
         czichy = {
           sshKey = null;
@@ -60,7 +60,7 @@ in {
       users = {
         root = {
           sshKey = null;
-          authorizedKeys = [];
+          authorizedKeys = users.czichy;
         };
         czichy = {
           sshKey = null;
@@ -73,7 +73,7 @@ in {
       users = {
         root = {
           sshKey = null;
-          authorizedKeys = [];
+          authorizedKeys = users.czichy;
         };
         czichy = {
           sshKey = null;
@@ -86,7 +86,7 @@ in {
       users = {
         root = {
           sshKey = null;
-          authorizedKeys = [];
+          authorizedKeys = users.czichy;
         };
         czichy = {
           sshKey = null;
@@ -99,7 +99,7 @@ in {
       users = {
         root = {
           sshKey = null;
-          authorizedKeys = [];
+          authorizedKeys = users.czichy;
         };
         czichy = {
           sshKey = null;
