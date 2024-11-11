@@ -1,32 +1,17 @@
-# --- parts/modules/home-manager/programs/ssh.nix
-#
-# Author:  czichy <christian@czichy.com>
-# URL:     https://github.com/czichy/tensorfiles
-# License: MIT
-#
-# 888                                                .d888 d8b 888
-# 888                                               d88P"  Y8P 888
-# 888                                               888        888
-# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
-# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
-# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
-# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
-#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   localFlake,
   secretsPath,
   pubkeys,
-}:
-{
+}: {
   config,
   lib,
   hostName,
   ...
 }:
 with builtins;
-with lib;
-let
-  inherit (localFlake.lib)
+with lib; let
+  inherit
+    (localFlake.lib)
     mkOverrideAtHmModuleLevel
     isModuleLoadedAndEnabled
     mkImpermanenceEnableOption
@@ -39,9 +24,11 @@ let
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.sshKey.enable;
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
-  impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-in
-{
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
+in {
   options.tensorfiles.hm.programs.ssh = with types; {
     enable = mkEnableOption ''
       TODO
@@ -112,12 +99,12 @@ in
         enableNushellIntegration = _ (
           isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
         );
-        agents = [ "ssh" ];
+        agents = ["ssh"];
         extraFlags = [
           "--nogui"
           "--quiet"
         ];
-        keys = [ "id_ed25519" ];
+        keys = ["id_ed25519"];
       };
 
       services.ssh-agent.enable = _ true;
@@ -127,39 +114,36 @@ in
       age.secrets."${cfg.sshKey.privateKeySecretsPath}" = {
         file = _ (secretsPath + "/${cfg.sshKey.privateKeySecretsPath}.age");
         mode = _ "700";
-        #owner = _ config.home.username;
       };
       home.file = with cfg.sshKey; {
         "${privateKeyHomePath}".source = _ (
           config.lib.file.mkOutOfStoreSymlink config.age.secrets."${privateKeySecretsPath}".path
         );
 
-        "${publicKeyHomePath}".text =
-          let
-            key =
-              if publicKeyRaw != null then
-                publicKeyRaw
-              else
-                #(attrsets.attrByPath (replaceStrings [ "$user" ] [ config.home.username ] (
-                #  splitString "." publicKeySecretsAttrsetKey
-                #)) "" pubkeys);
-                (attrsets.attrByPath (splitString "." (
-                  replaceStrings [ "$user" ] [ config.home.username ] publicKeySecretsAttrsetKey
-                )) "" pubkeys);
-          in
+        "${publicKeyHomePath}".text = let
+          key =
+            if publicKeyRaw != null
+            then publicKeyRaw
+            else
+              #(attrsets.attrByPath (replaceStrings [ "$user" ] [ config.home.username ] (
+              #  splitString "." publicKeySecretsAttrsetKey
+              #)) "" pubkeys);
+              (attrsets.attrByPath (splitString "." (
+                  replaceStrings ["$user"] [config.home.username] publicKeySecretsAttrsetKey
+                )) ""
+                pubkeys);
+        in
           _ key;
       };
     })
     # |----------------------------------------------------------------------| #
     {
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        #  home.persistence."/persist/home/czichy" = {
-        directories = [ ".ssh" ];
-        #    #files = [ ".ssh/known_hosts" ];
+        directories = [".ssh"];
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }
