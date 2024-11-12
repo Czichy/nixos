@@ -10,10 +10,10 @@ in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
   topology.self.interfaces.enp2s0 = {};
 
-  globals.monitoring.ping.HL-1-MRZ-HOST-01 = {
-    hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-02.cidrv4;
-    hostv6 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-02.cidrv6;
-    network = "vlan40";
+  globals.monitoring.ping.HL-1-MRZ-HOST-02 = {
+    hostv4 = lib.net.cidr.ip globals.net.vlan100.hosts.HL-1-MRZ-HOST-02.cidrv4;
+    hostv6 = lib.net.cidr.ip globals.net.vlan100.hosts.HL-1-MRZ-HOST-02.cidrv6;
+    network = "vlan100";
   };
 
   # |----------------------------------------------------------------------| #
@@ -22,7 +22,7 @@ in {
   #   # The server ip refers to the NFS server -- we don't need it.
   #   # "ip=${ipv4.address}::${ipv4.gateway}:${ipv4.netmask}:${hostName}-initrd:${networkInterface}:off:1.1.1.1"
   ## initrd luks_remote_unlock
-  boot.kernelParams = ["ip=10.15.100.40::10.15.100.99:255.255.255.0:HL-1-MRZ-HOST-01-initrd:enp1s0:off"];
+  boot.kernelParams = ["ip=10.15.100.10::10.15.100.99:255.255.255.0:HL-1-MRZ-HOST-02-initrd:enp2s0:off"];
   # |----------------------------------------------------------------------| #
   # Create a MACVTAP for ourselves too, so that we can communicate with
   # our guests on the same interface.
@@ -62,15 +62,14 @@ in {
       matchConfig.MACAddress = macAddress_enp2s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
-      # address = [
-      #   "10.15.40.154/24"
-      #   "10.15.1.42/24"
-      # ];
+      address = [
+        "10.15.40.9/24"
+      ];
       # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
-      routes = [{Gateway = "${globals.net.vlan70.hosts.HL-3-MRZ-FW-01.ipv4}";}];
+      # routes = [{Gateway = "${globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4}";}];
       vlan = [
         "servers"
         "mgmt"

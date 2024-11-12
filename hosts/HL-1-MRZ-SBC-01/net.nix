@@ -12,9 +12,9 @@ in {
   topology.self.interfaces.enp4s0 = {};
 
   globals.monitoring.ping.HL-1-MRZ-SBC-01 = {
-    hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv4;
-    hostv6 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-SBC-01.cidrv6;
-    network = "vlan40";
+    hostv4 = lib.net.cidr.ip globals.net.vlan100.hosts.HL-1-MRZ-SBC-01.cidrv4;
+    hostv6 = lib.net.cidr.ip globals.net.vlan100.hosts.HL-1-MRZ-SBC-01.cidrv6;
+    network = "vlan100";
   };
   # |----------------------------------------------------------------------| #
   # Create a MACVTAP for ourselves too, so that we can communicate with
@@ -64,15 +64,15 @@ in {
       matchConfig.MACAddress = macAddress_enp4s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
-      address = [
-        "10.15.40.154/24"
-        "10.15.1.42/24"
-      ];
+      # address = [
+      #   "10.15.40.154/24"
+      #   "10.15.1.42/24"
+      # ];
       # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
-      routes = [{Gateway = "10.15.1.99";}];
+      # routes = [{Gateway = "10.15.1.99";}];
       vlan = [
         "servers"
         "mgmt"
