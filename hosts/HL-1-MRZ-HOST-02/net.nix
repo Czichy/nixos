@@ -70,6 +70,7 @@ in {
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
       # routes = [{Gateway = "${globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4}";}];
+      routes = [{Gateway = "10.15.1.99";}];
       vlan = [
         "servers"
         "mgmt"
