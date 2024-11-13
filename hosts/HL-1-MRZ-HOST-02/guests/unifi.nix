@@ -7,6 +7,7 @@
   unifiDomain = "unifi.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
 in {
+  microvm.mem = 1024 * 2;
   networking.hostName = "HL-3-RZ-UNIFI-01";
   globals.services.unifi.domain = unifiDomain;
   globals.monitoring.dns.unifi = {
