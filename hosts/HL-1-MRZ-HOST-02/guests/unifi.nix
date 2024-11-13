@@ -1,5 +1,4 @@
 {
-  config,
   globals,
   pkgs,
   ...
@@ -7,13 +6,27 @@
   unifiDomain = "unifi.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
 in {
-  microvm.mem = 1024 * 2;
+  microvm.mem = 1024 * 3;
+  microvm.vcpu = 4;
   networking.hostName = "HL-3-RZ-UNIFI-01";
   globals.services.unifi.domain = unifiDomain;
   globals.monitoring.dns.unifi = {
     server = globals.net.vlan40.hosts.HL-3-RZ-DNS-01.ipv4;
     domain = ".";
     network = "vlan40";
+  };
+  networking.firewall = {
+    allowedTCPPorts = [
+      8080 # Port for UAP to inform controller.
+      8880 # Port for HTTP portal redirect, if guest portal is enabled.
+      8843 # Port for HTTPS portal redirect, ditto.
+      8443 # Port for HTTPS portal redirect, ditto.
+      6789 # Port for UniFi mobile speed test.
+    ];
+    allowedUDPPorts = [
+      3478 # UDP port used for STUN.
+      10001 # UDP port used for device discovery.
+    ];
   };
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy

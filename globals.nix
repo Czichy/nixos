@@ -49,9 +49,8 @@ in {
         # |------------------------------------| #
         hosts.HL-1-OZ-PC-01.id = 62;
         # |------------------------------------| #
-        hosts.HL-1-MRZ-HOST-02.id = 10;
         # Unifi Controller
-        hosts.HL-3-RZ-UNIFI-01.id = 11;
+        hosts.HL-3-RZ-UNIFI-01.id = 10;
         # |------------------------------------| #
         hosts.HL-1-MRZ-SBC-01.id = 20;
         # AdguardHome
