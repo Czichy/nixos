@@ -24,6 +24,7 @@ in {
       6789 # Port for UniFi mobile speed test.
     ];
     allowedUDPPorts = [
+      5514
       3478 # UDP port used for STUN.
       10001 # UDP port used for device discovery.
     ];
@@ -57,18 +58,18 @@ in {
     };
   };
 
-  # environment.persistence."/persist".directories = [
-  #   {
-  #     directory = "/var/lib/private/AdGuardHome";
-  #     mode = "0700";
-  #   }
-  # ];
+  environment.persistence."/persist".directories = [
+    {
+      directory = "/var/lib/unifi";
+      mode = "0700";
+    }
+  ];
 
   services.unifi = {
     enable = true;
     unifiPackage = pkgs.unifi8;
     mongodbPackage = pkgs.mongodb-6_0;
-    openFirewall = true;
+    openFirewall = false;
     maximumJavaHeapSize = 1024;
   };
 
