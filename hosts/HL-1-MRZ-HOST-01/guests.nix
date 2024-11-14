@@ -35,7 +35,7 @@
         };
         zfs."/shared" = lib.mkIf enableSharedDataset {
           pool = "storage";
-          dataset = "safee/shared/";
+          dataset = "safe/shared/";
         };
         modules =
           [
