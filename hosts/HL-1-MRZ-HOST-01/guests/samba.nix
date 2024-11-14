@@ -165,23 +165,27 @@ in {
     ++ lib.flatten (
       lib.flip lib.mapAttrsToList smbUsers (
         name: {enableBunker ? false, ...}:
-          [(mkPersistent "/shared" "/shares/users/${name}" name name)]
+          [(mkPersistent "/storage" "/shares/users/${name}" name name)]
           ++ lib.optional enableBunker (
             mkPersistent "/bunker" "/shares/users/${name}-bunker" name name
           )
       )
       ++ lib.flip lib.mapAttrsToList smbGroups (
         name: {enableBunker ? false, ...}:
-          [(mkPersistent "/shared" "/shares/groups/${name}" name name)]
+          [(mkPersistent "/storage" "/shares/groups/${name}" name name)]
           ++ lib.optional enableBunker (
             mkPersistent "/bunker" "/shares/groups/${name}-bunker" name name
           )
       )
       ++ [
-        (mkPersistent "/shared" "/shares/bibliothek" "christian" "czichys")
-        (mkPersistent "/shared" "/shares/dokumente" "christian" "czichys")
-        (mkPersistent "/shared" "/shares/media" "christian" "czichys")
-        (mkPersistent "/shared" "/shares/schule" "ina" "ina")
+        (mkPersistent "/storage" "/shares/bibliothek" "christian" "czichys")
+        (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
+        (mkPersistent "/storage" "/shares/media" "christian" "czichys")
+        (mkPersistent "/storage" "/shares/schule" "ina" "ina")
+        (mkPersistent "/shares" "/bibliothek" "christian" "czichys")
+        (mkPersistent "/shares" "/dokumente" "christian" "czichys")
+        (mkPersistent "/shares" "/media" "christian" "czichys")
+        (mkPersistent "/shares" "/schule" "ina" "ina")
       ]
     )
   );
@@ -345,8 +349,7 @@ in {
   };
   fileSystems = lib.mkMerge [
     {
-      # "/storage".neededForBoot = true;
-      "/shared".neededForBoot = true;
+      "/storage".neededForBoot = true;
       "/bunker".neededForBoot = true;
     }
   ];
