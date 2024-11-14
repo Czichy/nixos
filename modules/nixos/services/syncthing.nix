@@ -34,7 +34,7 @@ with lib; let
       # addresses = [ "tcp://192.168.0.99:51820" ];
     };
     "nas" = {
-      id = "MJ7QFHU-TIMOUSL-6NNC55J-ADQ64CZ-DJOWJU3-HHQLCOQ-5WUXVXS-WHLCAQB";
+      id = "UFTAS4W-V5CJBPI-CRH2T4I-47SX34E-7OQKHH5-RXD5SAN-NAZ2ADX-W7TNPAK";
     };
   };
 in {
@@ -118,32 +118,6 @@ in {
         "d ${cfg.configDir} - czichy users"
         "d /home/${cfg.user}/.config - czichy users"
       ];
-      # systemd.services.syncthing-init = {
-      #   after = [ "${mountServiceName}" ];
-      #   requires = [ "${mountServiceName}" ];
-      #   serviceConfig = {
-      #     # For the config init service to sleep to make sure the main service has
-      #     # time to start
-      #     # This didn't fix the issue but I got a 404 page not found error instead of localhost error
-      #     # ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
-      #   };
-      # };
-
-      # systemd.services.syncthing = {
-      #   after = [ "${mountServiceName}" ];
-      #   requires = [ "${mountServiceName}" ];
-      #   serviceConfig = {
-      #     # For the config init service to sleep to make sure the main service has
-      #     # time to start
-      #     # This didn't fix the issue but I got a 404 page not found error instead of localhost error
-      #     # ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
-      #   };
-      # };
-      # systemd.services.syncthing = {
-      #   bindsTo = ["home-czichy-.config-syncthing.mount"];
-      #   after = ["home-czichy-.config-syncthing.mount"];
-      # };
-
       services.syncthing = {
         enable = true;
         configDir = "${cfg.configDir}";
@@ -194,7 +168,6 @@ in {
       age.secrets = {
         syncthingCert = {
           symlink = true;
-          # path = "/home/${cfg.user}/.config/syncthing/cert.pem";
           file = secretsPath + "/hosts/HL-1-OZ-PC-01/users/${cfg.user}/syncthing/cert.pem.age";
           # refer to ./xxx.age located in `mysecrets` repo
           mode = "0600";
@@ -202,7 +175,6 @@ in {
         };
         syncthingKey = {
           symlink = true;
-          # path = "/home/${cfg.user}/.config/syncthing/key.pem";
           file = secretsPath + "/hosts/HL-1-OZ-PC-01/users/${cfg.user}/syncthing/key.pem.age";
           # refer to ./xxx.age located in `mysecrets` repo
           mode = "0600";
