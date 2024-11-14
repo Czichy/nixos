@@ -56,6 +56,7 @@ in {
         mode = "mirror";
         datasets = {
           "safe/guests" = lib.disko.zfs.unmountable;
+          "safe/shared" = lib.disko.zfs.unmountable;
         };
       };
     };
