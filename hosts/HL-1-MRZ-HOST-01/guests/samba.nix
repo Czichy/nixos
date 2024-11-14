@@ -351,6 +351,7 @@ in {
     {
       "/storage".neededForBoot = true;
       "/bunker".neededForBoot = true;
+      "/shares".neededForBoot = true;
     }
   ];
 
