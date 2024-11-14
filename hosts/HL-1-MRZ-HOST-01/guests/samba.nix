@@ -182,10 +182,10 @@ in {
         (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
         (mkPersistent "/storage" "/shares/media" "christian" "czichys")
         (mkPersistent "/storage" "/shares/schule" "ina" "ina")
-        (mkPersistent "/shares" "/bibliothek" "christian" "czichys")
-        (mkPersistent "/shares" "/dokumente" "christian" "czichys")
-        (mkPersistent "/shares" "/media" "christian" "czichys")
-        (mkPersistent "/shares" "/schule" "ina" "ina")
+        # (mkPersistent "/shares" "/bibliothek" "christian" "czichys")
+        # (mkPersistent "/shares" "/dokumente" "christian" "czichys")
+        # (mkPersistent "/shares" "/media" "christian" "czichys")
+        # (mkPersistent "/shares" "/schule" "ina" "ina")
       ]
     )
   );
@@ -351,7 +351,6 @@ in {
     {
       "/storage".neededForBoot = true;
       "/bunker".neededForBoot = true;
-      "/shares".neededForBoot = true;
     }
   ];
 
