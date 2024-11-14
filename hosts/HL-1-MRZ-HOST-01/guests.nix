@@ -12,7 +12,6 @@
       mkGuest = guestName: {
         enableStorageDataset ? false,
         enableBunkerDataset ? false,
-        enableSharedDataset ? false,
         ...
       }: {
         autostart = true;
@@ -33,9 +32,9 @@
           pool = "storage";
           dataset = "bunker/guests/${guestName}";
         };
-        zfs."/shared" = lib.mkIf enableSharedDataset {
+        zfs."/shared" = {
           pool = "storage";
-          dataset = "bunker/shares/";
+          dataset = "safe/shared";
         };
         modules =
           [
@@ -75,11 +74,12 @@
     in (
       {}
       // mkMicrovm "samba" "HL-3-RZ-SMB-01" "enp4s0" "vlan40" {
-        enableSharedDataset = true;
+        enableStorageDataset = true;
         enableBunkerDataset = true;
       }
       // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp4s0" "vlan40" {
         enableStorageDataset = true;
+        enableBunkerDataset = true;
       }
     );
   };
