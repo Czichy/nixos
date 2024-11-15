@@ -7,10 +7,10 @@
 }: let
   # |----------------------------------------------------------------------| #
   cfg = {
-    user = "christian";
-    group = "users";
+    user = "root";
+    group = "root";
     dataDir = "/shared/shares";
-    configDir = "/home/christian/.config/syncthing";
+    configDir = "/root/.config/syncthing";
     isServer = true;
   };
   # |----------------------------------------------------------------------| #
@@ -89,8 +89,8 @@ in {
     ];
   };
   systemd.tmpfiles.rules = [
-    "d ${cfg.configDir} - christian users"
-    "d /home/${cfg.user}/.config - christian users"
+    "d ${cfg.configDir} - root root"
+    "d /${cfg.user}/.config - root root"
   ];
   services.syncthing = {
     enable = true;
