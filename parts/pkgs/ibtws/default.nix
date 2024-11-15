@@ -31,7 +31,7 @@
 in
   stdenv.mkDerivation rec {
     pname = "ib-tws-native";
-    version = "10.28.1c";
+    version = "10.30.1q";
     etagHash = "sha256-l8532dQIgUlN9L++3Y8qLeRu9/vof2/aMLySXZlq4hw=";
 
     src = fetchurl {

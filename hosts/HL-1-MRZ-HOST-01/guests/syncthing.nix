@@ -88,17 +88,17 @@ in {
         "iykxy-ruk4y" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/Dokumente"; # Which folder to add to Syncthing
-          devices = ["HL-1-OZ-PC-01" "HL-3-OZ-SYNC-01"]; # Which devices to share the folder with
+          devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
         };
         "lhqxb-zc6qj" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/Trading"; # Which folder to add to Syncthing
-          devices = ["HL-1-OZ-PC-01" "HL-3-OZ-SYNC-01"]; # Which devices to share the folder with
+          devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
         };
         "nandi-sj5en" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/.credentials"; # Which folder to add to Syncthing
-          devices = ["HL-1-OZ-PC-01" "HL-3-OZ-SYNC-01"]; # Which devices to share the folder with
+          devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
         };
       };
       options.globalAnnounceEnabled = false; # Only sync on LAN
