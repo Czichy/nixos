@@ -8,7 +8,7 @@
   # |----------------------------------------------------------------------| #
   cfg = {
     user = "root";
-    dataDir = "/";
+    dataDir = "/shared";
     configDir = "/root/.config/syncthing";
     isServer = true;
   };

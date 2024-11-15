@@ -63,6 +63,8 @@ in {
         hosts.HL-3-RZ-SMB-01.id = 31;
         # InfluxDb
         hosts.HL-3-RZ-INFLUX-01.id = 32;
+        # Syncthing
+        hosts.HL-3-RZ-SYNC-01.id = 33;
       };
 
       #IoT
