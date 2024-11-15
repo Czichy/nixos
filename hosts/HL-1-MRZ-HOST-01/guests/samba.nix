@@ -165,14 +165,14 @@ in {
     ++ lib.flatten (
       lib.flip lib.mapAttrsToList smbUsers (
         name: {enableBunker ? false, ...}:
-          [(mkPersistent "/storage" "/shares/users/${name}" name name)]
+          [(mkPersistent "/shared" "/shares/users/${name}" name name)]
           ++ lib.optional enableBunker (
             mkPersistent "/bunker" "/shares/users/${name}-bunker" name name
           )
       )
       ++ lib.flip lib.mapAttrsToList smbGroups (
         name: {enableBunker ? false, ...}:
-          [(mkPersistent "/storage" "/shares/groups/${name}" name name)]
+          [(mkPersistent "/shared" "/shares/groups/${name}" name name)]
           ++ lib.optional enableBunker (
             mkPersistent "/bunker" "/shares/groups/${name}-bunker" name name
           )
