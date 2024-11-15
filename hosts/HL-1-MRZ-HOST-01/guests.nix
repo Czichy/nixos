@@ -37,10 +37,12 @@
         zfs."/shared" = lib.mkIf enableBunkerDataset {
           pool = "storage";
           dataset = "bunker/shared";
+          hostMountpoint = "/shared";
         };
         zfs."/paperless" = lib.mkIf enablePaperlessDataset {
           pool = "storage";
           dataset = "bunker/paperless";
+          hostMountpoint = "/paperless";
         };
         modules =
           [
