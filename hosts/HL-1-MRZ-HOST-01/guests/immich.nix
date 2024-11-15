@@ -5,8 +5,6 @@
   pkgs,
   ...
 }: let
-  sentinelCfg = nodes.sentinel.config;
-  wardWebProxyCfg = nodes.ward-web-proxy.config;
   immichDomain = "immich.${globals.domains.me}";
 
   ipImmichMachineLearning = "10.89.0.10";
@@ -174,8 +172,6 @@ in {
   networking.nftables.chains.forward.into-immich-container = {
     after = ["conntrack"];
     rules = [
-      "iifname proxy-sentinel ip saddr ${sentinelCfg.wireguard.proxy-sentinel.ipv4} tcp dport 3001 accept"
-      "iifname proxy-home ip saddr ${wardWebProxyCfg.wireguard.proxy-home.ipv4} tcp dport 3001 accept"
       "iifname podman1 oifname lan accept"
     ];
   };
@@ -185,75 +181,6 @@ in {
     url = "https://${immichDomain}";
     expectedBodyRegex = "immutable.entry.app";
     network = "internet";
-  };
-
-  nodes.sentinel = {
-    services.nginx = {
-      upstreams.immich = {
-        servers."${config.wireguard.proxy-sentinel.ipv4}:2283" = {};
-        extraConfig = ''
-          zone immich 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "immutable.entry.app";
-        };
-      };
-      virtualHosts.${immichDomain} = {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        locations."/" = {
-          proxyPass = "http://immich";
-          proxyWebsockets = true;
-        };
-        extraConfig = ''
-          client_max_body_size 50G;
-          proxy_buffering off;
-          proxy_request_buffering off;
-          proxy_read_timeout 600s;
-          proxy_send_timeout 600s;
-          send_timeout       600s;
-        '';
-      };
-    };
-  };
-
-  nodes.ward-web-proxy = {
-    services.nginx = {
-      upstreams.immich = {
-        servers."${config.wireguard.proxy-home.ipv4}:2283" = {};
-        extraConfig = ''
-          zone immich 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "immutable.entry.app";
-        };
-      };
-      virtualHosts.${immichDomain} = {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        locations."/" = {
-          proxyPass = "http://immich";
-          proxyWebsockets = true;
-          extraConfig = ''
-          '';
-        };
-        extraConfig = ''
-          client_max_body_size 50G;
-          proxy_buffering off;
-          proxy_request_buffering off;
-          proxy_read_timeout 600s;
-          proxy_send_timeout 600s;
-          send_timeout       600s;
-          allow ${globals.net.home-lan.cidrv4};
-          allow ${globals.net.home-lan.cidrv6};
-          deny all;
-        '';
-      };
-    };
   };
 
   systemd.tmpfiles.settings = {
