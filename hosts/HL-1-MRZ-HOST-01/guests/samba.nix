@@ -182,10 +182,11 @@ in {
         (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
         (mkPersistent "/storage" "/shares/media" "christian" "czichys")
         (mkPersistent "/storage" "/shares/schule" "ina" "ina")
-        # (mkPersistent "/shares" "/bibliothek" "christian" "czichys")
-        # (mkPersistent "/shares" "/dokumente" "christian" "czichys")
-        # (mkPersistent "/shares" "/media" "christian" "czichys")
-        # (mkPersistent "/shares" "/schule" "ina" "ina")
+        #
+        (mkPersistent "/shared" "/shares/bibliothek" "christian" "czichys")
+        (mkPersistent "/shared" "/shares/dokumente" "christian" "czichys")
+        (mkPersistent "/shared" "/shares/media" "christian" "czichys")
+        (mkPersistent "/shared" "/shares/schule" "ina" "ina")
       ]
     )
   );
@@ -350,6 +351,7 @@ in {
   fileSystems = lib.mkMerge [
     {
       "/storage".neededForBoot = true;
+      "/shared".neededForBoot = true;
       "/bunker".neededForBoot = true;
     }
   ];

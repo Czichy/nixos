@@ -34,7 +34,7 @@
         };
         zfs."/shared" = {
           pool = "storage";
-          dataset = "safe/shared";
+          dataset = "bunker/shared";
         };
         modules =
           [
