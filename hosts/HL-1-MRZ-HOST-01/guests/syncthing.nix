@@ -88,12 +88,12 @@ in {
       folders = {
         "iykxy-ruk4y" = {
           # Name of folder in Syncthing, also the folder ID
-          path = "${cfg.dataDir}/Dokumente"; # Which folder to add to Syncthing
+          path = "${cfg.dataDir}/dokumente"; # Which folder to add to Syncthing
           devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
         };
         "lhqxb-zc6qj" = {
           # Name of folder in Syncthing, also the folder ID
-          path = "${cfg.dataDir}/Trading"; # Which folder to add to Syncthing
+          path = "${cfg.dataDir}/users/christian/Trading"; # Which folder to add to Syncthing
           devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
         };
         "nandi-sj5en" = {
@@ -108,12 +108,12 @@ in {
     };
   };
 
-  environment.persistence."/persist".directories = [
-    {
-      directory = "/var/lib/unifi";
-      mode = "0700";
-    }
-  ];
+  # environment.persistence."/persist".directories = [
+  #   {
+  #     directory = "/var/lib/unifi";
+  #     mode = "0700";
+  #   }
+  # ];
 
   systemd.network.enable = true;
   system.stateVersion = "24.05";
