@@ -9,10 +9,22 @@
   cfg = {
     user = "root";
     group = "root";
-    dataDir = "/shared";
+    dataDir = "/sync";
     configDir = "/root/.config/syncthing";
     isServer = true;
   };
+  # |----------------------------------------------------------------------| #
+  users = {
+    christian = {
+      id = 1000;
+      groups = ["czichys" "syncthing"];
+    };
+    # ina = {
+    #   id = 1001;
+    #   groups = ["czichys" "samba"];
+    # };
+  };
+  groups = {czichys = {id = 1002;};};
   # |----------------------------------------------------------------------| #
   # devices = lib.attrsets.filterAttrs (h: _: h != hostName) {
   devices = {
@@ -31,6 +43,17 @@
     "HL-3-RZ-SYNC-01" = {
       id = "UFTAS4W-V5CJBPI-CRH2T4I-47SX34E-7OQKHH5-RXD5SAN-NAZ2ADX-W7TNPAK";
     };
+  };
+  # |----------------------------------------------------------------------| #
+  mkPersistent = persistRoot: directory: owner: group: {
+    ${persistRoot}.directories = [
+      {
+        inherit directory;
+        user = owner;
+        group = group;
+        mode = "0750";
+      }
+    ];
   };
   # |----------------------------------------------------------------------| #
 in {
@@ -108,14 +131,54 @@ in {
       gui.insecureAdminAccess = true;
     };
   };
+  # |----------------------------------------------------------------------| #
+  environment.persistence = lib.mkMerge (
+    [
+      {
+        "/persist".files = [
+          "/etc/ssh/ssh_host_rsa_key"
+          "/etc/ssh/ssh_host_rsa_key.pub"
+        ];
+      }
+    ]
+    ++ [
+      (mkPersistent "/shared" "/shares/users/christian/Trading" "christian" "christian")
+      (mkPersistent "/shared" "/sync/users/christian/.credentials" "christian" "christian")
+      (mkPersistent "/shared" "/sync/dokumente" "christian" "czichys")
+    ]
+  );
+  # |----------------------------------------------------------------------| #
 
-  # environment.persistence."/persist".directories = [
-  #   {
-  #     directory = "/var/lib/unifi";
-  #     mode = "0700";
-  #   }
-  # ];
+  fileSystems = lib.mkMerge [
+    {
+      "/shared".neededForBoot = true;
+    }
+  ];
 
+  # |----------------------------------------------------------------------| #
+  users.users = let
+    mkUser = name: id: groups: {
+      isNormalUser = true;
+      uid = id;
+      group = name;
+      extraGroups = groups;
+      createHome = false;
+      home = "/var/empty";
+      useDefaultShell = false;
+      autoSubUidGidRange = false;
+    };
+  in
+    lib.mkMerge [
+      (
+        {}
+        // lib.mapAttrs (name: cfg: mkUser name cfg.id cfg.groups) users
+        // lib.mapAttrs (name: cfg: mkUser name cfg.id []) groups
+      )
+    ];
+
+  users.groups = lib.mapAttrs (_: cfg: {gid = cfg.id;}) (users // groups);
+
+  # |----------------------------------------------------------------------| #
   systemd.network.enable = true;
   system.stateVersion = "24.05";
 }
