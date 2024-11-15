@@ -178,10 +178,10 @@ in {
           )
       )
       ++ [
-        (mkPersistent "/storage" "/shares/bibliothek" "christian" "czichys")
-        (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
-        (mkPersistent "/storage" "/shares/media" "christian" "czichys")
-        (mkPersistent "/storage" "/shares/schule" "ina" "ina")
+        # (mkPersistent "/storage" "/shares/bibliothek" "christian" "czichys")
+        # (mkPersistent "/storage" "/shares/dokumente" "christian" "czichys")
+        # (mkPersistent "/storage" "/shares/media" "christian" "czichys")
+        # (mkPersistent "/storage" "/shares/schule" "ina" "ina")
         #
         (mkPersistent "/shared" "/shares/bibliothek" "christian" "czichys")
         (mkPersistent "/shared" "/shares/dokumente" "christian" "czichys")
