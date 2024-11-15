@@ -80,7 +80,12 @@ in {
 
   networking.firewall = {
     allowedTCPPorts = [
-      8384 # Port for Syncthing.
+      8384 # Port for Syncthing Web UI.
+      22000 # TCP based sync protocol traffic
+    ];
+    allowedUDPPorts = [
+      22000 # QUIC based sync protocol traffic
+      21027 # for discovery broadcasts on IPv4 and multicasts on IPv6
     ];
   };
   systemd.tmpfiles.rules = [
@@ -97,8 +102,10 @@ in {
 
     cert = config.age.secrets.syncthingCert.path;
     key = config.age.secrets.syncthingKey.path;
-
-    guiAddress = "127.0.0.1:8384";
+    # To be able to access the web GUI from other computers, you need to change the
+    # GUI Listen Address setting from the default 127.0.0.1:8384 to 0.0.0.0:8384.
+    # You also need to open the port in your local firewall if you have one.
+    guiAddress = "0.0.0.0:8384";
 
     settings = {
       # Disable this on non-servers as the folder has to be manually added
