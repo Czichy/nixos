@@ -8,6 +8,7 @@
   # |----------------------------------------------------------------------| #
   cfg = {
     user = "root";
+    group = "root";
     dataDir = "/shared";
     configDir = "/root/.config/syncthing";
     isServer = true;
@@ -67,7 +68,7 @@ in {
     enable = true;
     configDir = "${cfg.configDir}";
     user = "${cfg.user}";
-    group = "users";
+    group = "${cfg.group}";
 
     dataDir = "${cfg.dataDir}";
 
