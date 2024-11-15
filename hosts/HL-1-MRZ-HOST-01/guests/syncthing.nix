@@ -14,7 +14,7 @@
   };
   # |----------------------------------------------------------------------| #
   devices = lib.attrsets.filterAttrs (h: _: h != hostName) {
-    "pc" = {
+    "HL-1-OZ-PC-01" = {
       id = "QBEVQY4-KBNMIBW-MTY7SEC-DNBDN7J-OL7HHJ7-K7S5EXD-MF3FAHZ-RRFBHAR";
       # This option would be nice but we can't use it because there's no way to
       # declaratively configure shared folders we recieve. This just auto
@@ -25,7 +25,8 @@
       # allowedNetwork = "192.168.0.0/16";
       # addresses = [ "tcp://192.168.0.99:51820" ];
     };
-    "nas" = {
+
+    "HL-3-RZ-SYNC-01" = {
       id = "UFTAS4W-V5CJBPI-CRH2T4I-47SX34E-7OQKHH5-RXD5SAN-NAZ2ADX-W7TNPAK";
     };
   };
@@ -87,17 +88,17 @@ in {
         "iykxy-ruk4y" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/Dokumente"; # Which folder to add to Syncthing
-          devices = ["pc" "nas"]; # Which devices to share the folder with
+          devices = ["HL-1-OZ-PC-01" "HL-3-OZ-SYNC-01"]; # Which devices to share the folder with
         };
         "lhqxb-zc6qj" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/Trading"; # Which folder to add to Syncthing
-          devices = ["pc" "nas"]; # Which devices to share the folder with
+          devices = ["HL-1-OZ-PC-01" "HL-3-OZ-SYNC-01"]; # Which devices to share the folder with
         };
         "nandi-sj5en" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/.credentials"; # Which folder to add to Syncthing
-          devices = ["pc" "nas"]; # Which devices to share the folder with
+          devices = ["HL-1-OZ-PC-01" "HL-3-OZ-SYNC-01"]; # Which devices to share the folder with
         };
       };
       options.globalAnnounceEnabled = false; # Only sync on LAN
