@@ -13,6 +13,7 @@
         enableStorageDataset ? false,
         enableBunkerDataset ? false,
         enableSharedDataset ? false,
+        enablePaperlessDataset ? false,
         ...
       }: {
         autostart = true;
@@ -36,6 +37,10 @@
         zfs."/shared" = lib.mkIf enableBunkerDataset {
           pool = "storage";
           dataset = "bunker/shared";
+        };
+        zfs."/paperless" = lib.mkIf enablePaperlessDataset {
+          pool = "storage";
+          dataset = "bunker/paperless";
         };
         modules =
           [
@@ -77,6 +82,7 @@
       // mkMicrovm "samba" "HL-3-RZ-SMB-01" "enp4s0" "vlan40" {
         enableStorageDataset = true;
         enableBunkerDataset = true;
+        enablePaperlessDataset = true;
         enableSharedDataset = true;
       }
       // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp4s0" "vlan40" {
