@@ -87,7 +87,7 @@ in {
         "iykxy-ruk4y" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/Dokumente"; # Which folder to add to Syncthing
-          devices = ["pc nas"]; # Which devices to share the folder with
+          devices = ["pc" "nas"]; # Which devices to share the folder with
         };
         "lhqxb-zc6qj" = {
           # Name of folder in Syncthing, also the folder ID
