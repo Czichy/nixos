@@ -9,7 +9,7 @@
   cfg = {
     user = "root";
     group = "root";
-    dataDir = "/sync";
+    dataDir = "/shared/shares";
     configDir = "/root/.config/syncthing";
     isServer = true;
   };
@@ -122,7 +122,7 @@ in {
         };
         "nandi-sj5en" = {
           # Name of folder in Syncthing, also the folder ID
-          path = "${cfg.dataDir}/.credentials"; # Which folder to add to Syncthing
+          path = "${cfg.dataDir}/users/christian/.credentials"; # Which folder to add to Syncthing
           devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
         };
       };
@@ -141,11 +141,11 @@ in {
         ];
       }
     ]
-    ++ [
-      (mkPersistent "/shared" "/shares/users/christian/Trading" "christian" "christian")
-      (mkPersistent "/shared" "/sync/users/christian/.credentials" "christian" "christian")
-      (mkPersistent "/shared" "/sync/dokumente" "christian" "czichys")
-    ]
+    # ++ [
+    #   (mkPersistent "/shared" "/shares/users/christian/Trading" "christian" "christian")
+    #   (mkPersistent "/shared" "/shares/users/christian/.credentials" "christian" "christian")
+    #   (mkPersistent "/shared" "/sync/dokumente" "christian" "czichys")
+    # ]
   );
   # |----------------------------------------------------------------------| #
 
