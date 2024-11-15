@@ -36,9 +36,8 @@ in
 
     src = fetchurl {
       url = "https://download2.interactivebrokers.com/installers/tws/stable-standalone/tws-stable-standalone-linux-x64.sh";
-      hash = "sha256-PT/Sr/Qw7eRtjm5DjJkxaBVjdH18Ez8SzyqAb/EMDKw=";
+      hash = "sha256-FEGwioQctDRT6qqpRWQ60ymI6PSZ6KK77t65HkDeAJg=";
     };
-
     phases = [
       "unpackPhase"
       "installPhase"

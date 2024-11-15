@@ -13,7 +13,8 @@
     isServer = true;
   };
   # |----------------------------------------------------------------------| #
-  devices = lib.attrsets.filterAttrs (h: _: h != hostName) {
+  # devices = lib.attrsets.filterAttrs (h: _: h != hostName) {
+  devices = {
     "HL-1-OZ-PC-01" = {
       id = "QBEVQY4-KBNMIBW-MTY7SEC-DNBDN7J-OL7HHJ7-K7S5EXD-MF3FAHZ-RRFBHAR";
       # This option would be nice but we can't use it because there's no way to
