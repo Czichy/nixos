@@ -34,7 +34,7 @@
           pool = "storage";
           dataset = "bunker/guests/${guestName}";
         };
-        zfs."/shared" = lib.mkIf enableBunkerDataset {
+        zfs."/shared" = lib.mkIf enableSharedDataset {
           pool = "storage";
           dataset = "bunker/shared";
           hostMountpoint = "/shared";
