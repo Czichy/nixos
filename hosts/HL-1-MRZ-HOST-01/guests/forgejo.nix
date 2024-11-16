@@ -306,7 +306,7 @@ in {
   ];
   # |----------------------------------------------------------------------| #
 
-  systemd.services.backup-forgejo.environment.DATA_FOLDER = lib.mkForce config.services.forgejo.dump.backupDir;
+  systemd.services.backup-forgejo.environment.DATA_FOLDER = lib.mkForce "${config.services.forgejo.dump.backupDir}";
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
   services.restic.backups = let
