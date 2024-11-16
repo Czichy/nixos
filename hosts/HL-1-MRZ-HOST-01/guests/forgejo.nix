@@ -133,6 +133,10 @@ in {
     authorizedKeysFiles = lib.mkForce [
       "${config.services.forgejo.stateDir}/.ssh/authorized_keys"
     ];
+    authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKQgoSENg960XY9wU77q8p1+4WgUhEb10xlc27RWcmNE czichy@desktop"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
+    ];
     # Recommended by forgejo: https://forgejo.org/docs/latest/admin/recommendations/#git-over-ssh
     settings.AcceptEnv = "GIT_PROTOCOL";
   };
