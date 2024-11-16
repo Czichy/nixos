@@ -337,7 +337,7 @@ in {
       repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-forgejo";
 
       # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = [config.services.vaultwarden.backupDir];
+      paths = [config.services.forgejo.dump.backupDir];
 
       # Patterns to exclude when backing up. See
       #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
