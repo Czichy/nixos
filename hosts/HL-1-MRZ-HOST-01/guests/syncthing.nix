@@ -10,7 +10,7 @@
     user = "christian";
     group = "czichys";
     dataDir = "/shared/shares";
-    configDir = "/root/.config/syncthing";
+    configDir = "/home/christian/.config/syncthing";
     isServer = true;
   };
   # |----------------------------------------------------------------------| #
@@ -64,14 +64,12 @@ in {
     syncthingCert = {
       symlink = true;
       file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/syncthing/cert.pem.age";
-      # refer to ./xxx.age located in `mysecrets` repo
       mode = "0600";
       owner = "${cfg.user}";
     };
     syncthingKey = {
       symlink = true;
       file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/syncthing/key.pem.age";
-      # refer to ./xxx.age located in `mysecrets` repo
       mode = "0600";
       owner = "${cfg.user}";
     };
