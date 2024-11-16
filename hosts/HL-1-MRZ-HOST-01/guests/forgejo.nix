@@ -299,6 +299,11 @@ in {
     }
   ];
 
+  fileSystems = lib.mkMerge [
+    {
+      "/state".neededForBoot = true;
+    }
+  ];
   # |----------------------------------------------------------------------| #
 
   systemd.services.backup-forgejo.environment.DATA_FOLDER = lib.mkForce config.services.forgejo.dump.backupDir;
