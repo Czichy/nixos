@@ -65,6 +65,8 @@ in {
         hosts.HL-3-RZ-INFLUX-01.id = 32;
         # Syncthing
         hosts.HL-3-RZ-SYNC-01.id = 33;
+        # Forgejo
+        hosts.HL-3-RZ-GIT-01.id = 34;
       };
 
       #IoT
