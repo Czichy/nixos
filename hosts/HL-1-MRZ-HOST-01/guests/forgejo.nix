@@ -276,20 +276,19 @@ in {
   '';
 
   # |----------------------------------------------------------------------| #
-
-  environment.persistence."/persist".directories = [
-    {
-      directory = config.services.forgejo.stateDir;
-      inherit (config.services.forgejo) user group;
-      mode = "0700";
-    }
-    {
-      "/persist".files = [
-        "/etc/ssh/ssh_host_rsa_key"
-        "/etc/ssh/ssh_host_rsa_key.pub"
-      ];
-    }
-  ];
+  environment.persistence."/persist" = {
+    files = [
+      "/etc/ssh/ssh_host_rsa_key"
+      "/etc/ssh/ssh_host_rsa_key.pub"
+    ];
+    directories = [
+      {
+        directory = config.services.forgejo.stateDir;
+        inherit (config.services.forgejo) user group;
+        mode = "0700";
+      }
+    ];
+  };
   # Needed so we don't run out of tmpfs space for large backups.
   # Technically this could be cleared each boot but whatever.
   environment.persistence."/state".directories = [
