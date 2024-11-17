@@ -130,9 +130,9 @@ in {
   };
 
   services.openssh = {
-    authorizedKeysFiles = lib.mkForce [
-      "${config.services.forgejo.stateDir}/.ssh/authorized_keys"
-    ];
+    # authorizedKeysFiles = lib.mkForce [
+    #   "${config.services.forgejo.stateDir}/.ssh/authorized_keys"
+    # ];
     # Recommended by forgejo: https://forgejo.org/docs/latest/admin/recommendations/#git-over-ssh
     settings.AcceptEnv = "GIT_PROTOCOL";
   };
@@ -194,8 +194,8 @@ in {
         LANDING_PAGE = "/explore/repos";
         SSH_PORT = 9922;
         SSH_USER = "git";
-        START_SSH_SERVER = true;
-        SSH_DOMAIN = forgejoDomain;
+        # START_SSH_SERVER = true;
+        # SSH_DOMAIN = forgejoDomain;
         # SSH_LISTEN_PORT = 22;
         # SSH_LISTEN_HOST = "100.121.201.47";
       };
