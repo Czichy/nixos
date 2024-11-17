@@ -152,7 +152,7 @@ in {
     settings = {
       DEFAULT.APP_NAME = "Czichy Git"; # tungsten inert gas?
       actions = {
-        ENABLED = true;
+        ENABLED = false;
         DEFAULT_ACTIONS_URL = "github";
       };
       database = {
@@ -199,6 +199,7 @@ in {
         DOMAIN = forgejoDomain;
         ROOT_URL = "https://${forgejoDomain}/";
         LANDING_PAGE = "/explore/repos";
+        DISABLE_SSH = true;
         SSH_PORT = 9922;
         SSH_USER = "git";
         START_SSH_SERVER = true;
