@@ -138,8 +138,6 @@ in {
   };
   services.forgejo = {
     enable = true;
-    # TODO db backups
-    # dump.enable = true;
     user = "git";
     group = "git";
     lfs.enable = true;
@@ -193,9 +191,13 @@ in {
         HTTP_PORT = 3000;
         DOMAIN = forgejoDomain;
         ROOT_URL = "https://${forgejoDomain}/";
-        LANDING_PAGE = "login";
+        LANDING_PAGE = "/explore/repos";
         SSH_PORT = 9922;
         SSH_USER = "git";
+        START_SSH_SERVER = true;
+        SSH_DOMAIN = forgejoDomain;
+        SSH_LISTEN_PORT = 9922;
+        # SSH_LISTEN_HOST = "100.121.201.47";
       };
       service = {
         DISABLE_REGISTRATION = true;
