@@ -111,7 +111,7 @@ in {
   nodes.HL-1-MRZ-SBC-01-caddy = {
     services.caddy = {
       virtualHosts."${forgejoDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-GIT-01".ipv4}:${toString config.services.forgejo.settings.HTTP_PORT}
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-GIT-01".ipv4}:${toString config.services.forgejo.settings.server.HTTP_PORT}
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }
