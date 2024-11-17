@@ -196,7 +196,7 @@ in {
         SSH_USER = "git";
         START_SSH_SERVER = true;
         SSH_DOMAIN = forgejoDomain;
-        SSH_LISTEN_PORT = 9922;
+        SSH_LISTEN_PORT = 22;
         # SSH_LISTEN_HOST = "100.121.201.47";
       };
       service = {
