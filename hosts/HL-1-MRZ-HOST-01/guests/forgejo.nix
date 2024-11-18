@@ -277,7 +277,7 @@ in {
   systemd.services.forgejo.preStart = let
     adminCmd = "${lib.getExe config.services.forgejo.package} admin user";
     admin-pwd = config.age.secrets.admin-password.path;
-    admin = "user@admin"; # Note, Forgejo doesn't allow creation of an account named "admin"
+    admin = "administrator"; # Note, Forgejo doesn't allow creation of an account named "admin"
     user-pwd = config.age.secrets.user-password.path;
     user = "czichy";
   in ''
