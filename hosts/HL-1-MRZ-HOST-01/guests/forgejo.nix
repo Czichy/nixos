@@ -199,11 +199,13 @@ in {
         DOMAIN = forgejoDomain;
         ROOT_URL = "https://${forgejoDomain}/";
         LANDING_PAGE = "/explore/repos";
-        DISABLE_SSH = true;
+        DISABLE_SSH = false;
         SSH_PORT = 9922;
         SSH_USER = "git";
         START_SSH_SERVER = true;
         SSH_DOMAIN = forgejoDomain;
+
+        BUILTIN_SSH_SERVER_USER = "git";
         # SSH_LISTEN_PORT = 22;
         # SSH_LISTEN_HOST = "100.121.201.47";
       };
