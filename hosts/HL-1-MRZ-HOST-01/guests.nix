@@ -99,7 +99,6 @@
         enableStorageDataset = true;
       }
       // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp4s0" "vlan40" {
-        enableSharedDataset = true;
       }
     );
   };

@@ -11,18 +11,18 @@
 # |----------------------------------------------------------------------| #
 # in
 {
-  # microvm.mem = 1024 * 3;
-  # microvm.vcpu = 4;
-  microvm.shares = [
-    {
-      # On the host
-      source = "/shared/shares/users/christian/Trading/TWS_Flex_Reports";
-      # In the MicroVM
-      mountPoint = "/TWS_Flex_Reports";
-      tag = "flex";
-      proto = "virtiofs";
-    }
-  ];
+  microvm.mem = 1024 * 0.5;
+  microvm.vcpu = 1;
+  # microvm.shares = [
+  #   {
+  #     # On the host
+  #     source = "/shared/shares/users/christian/Trading/TWS_Flex_Reports";
+  #     # In the MicroVM
+  #     mountPoint = "/TWS_Flex_Reports";
+  #     tag = "flex";
+  #     proto = "virtiofs";
+  #   }
+  # ];
 
   networking.hostName = hostName;
 
@@ -55,6 +55,10 @@
   ];
 
   # |----------------------------------------------------------------------| #
+  environment.persistence."/persist".files = [
+    "/etc/ssh/ssh_host_rsa_key"
+    "/etc/ssh/ssh_host_rsa_key.pub"
+  ];
   fileSystems = lib.mkMerge [
     {
       "/shared".neededForBoot = true;
