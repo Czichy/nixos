@@ -59,11 +59,11 @@
     "/etc/ssh/ssh_host_rsa_key"
     "/etc/ssh/ssh_host_rsa_key.pub"
   ];
-  fileSystems = lib.mkMerge [
-    {
-      "/shared".neededForBoot = true;
-    }
-  ];
+  # fileSystems = lib.mkMerge [
+  #   {
+  #     "/shared".neededForBoot = true;
+  #   }
+  # ];
   # |----------------------------------------------------------------------| #
   systemd.network.enable = true;
   system.stateVersion = "24.05";
