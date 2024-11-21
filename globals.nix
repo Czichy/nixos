@@ -67,6 +67,8 @@ in {
         hosts.HL-3-RZ-SYNC-01.id = 33;
         # Forgejo
         hosts.HL-3-RZ-GIT-01.id = 34;
+        # IBKR Flex Downloader
+        hosts.HL-3-RZ-IBKR-01.id = 35;
       };
 
       #IoT
