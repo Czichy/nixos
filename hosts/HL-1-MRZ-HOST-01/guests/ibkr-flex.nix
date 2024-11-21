@@ -3,6 +3,7 @@
   secretsPath,
   hostName,
   lib,
+  inputs,
   ...
 }:
 # let
