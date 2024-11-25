@@ -61,8 +61,12 @@ in {
     #   inherit localFlake;
     #   inherit secretsPath;
     # };
+    services_healthchecks = importApply ./services/monitoring/healthchecks.nix {
+      inherit localFlake;
+      inherit secretsPath;
+    };
 
-    services_uptime-kuma = importApply ./services/uptime-kuma.nix {
+    services_uptime-kuma = importApply ./services/monitoring/uptime-kuma.nix {
       inherit localFlake;
       inherit secretsPath;
     };

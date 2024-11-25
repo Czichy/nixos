@@ -18,7 +18,7 @@ with lib; let
     mkAgenixEnableOption
     ;
 
-  cfg = config.tensorfiles.services.uptime-kuma;
+  cfg = config.tensorfiles.services.monitoring.uptime-kuma;
   uptime-port = "8095";
   uptime-host = "uptime.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
