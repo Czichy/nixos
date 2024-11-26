@@ -165,7 +165,7 @@ in {
           repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-uptime-kuma";
 
           # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-          paths = [config.services.uptime-kuma.settings.DATA_DIR];
+          paths = ["${impermanence.persistentRoot}/${config.services.uptime-kuma.settings.DATA_DIR}"];
 
           # Patterns to exclude when backing up. See
           #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
