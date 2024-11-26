@@ -43,6 +43,9 @@
     "HL-3-RZ-SYNC-01" = {
       id = "UFTAS4W-V5CJBPI-CRH2T4I-47SX34E-7OQKHH5-RXD5SAN-NAZ2ADX-W7TNPAK";
     };
+    "HANDY-Christian" = {
+      id = "C5ESTLTAAX0YV3MFXH372LKETN3B7GQW5MV2PJ042XDSKVD2ML4J0PAP";
+    };
   };
   # |----------------------------------------------------------------------| #
   mkPersistent = persistRoot: directory: owner: group: {
@@ -128,7 +131,7 @@ in {
         "nandi-sj5en" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/users/christian/.credentials"; # Which folder to add to Syncthing
-          devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
+          devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01" "HANDY-Christian"]; # Which devices to share the folder with
         };
       };
       options.globalAnnounceEnabled = false; # Only sync on LAN
