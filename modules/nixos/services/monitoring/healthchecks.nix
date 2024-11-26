@@ -74,13 +74,6 @@ in {
       # |----------------------------------------------------------------------| #
       networking.firewall.allowedTCPPorts = [80 port];
       # |----------------------------------------------------------------------| #
-      users = {
-        users.healthchecks = {
-          isSystemUser = true;
-          group = "healthchecks";
-        };
-        groups.healthchecks = {};
-      };
     }
     # |----------------------------------------------------------------------| #
     (lib.mkIf impermanenceCheck {
@@ -89,7 +82,6 @@ in {
           {
             directory = "${config.services.healthchecks.dataDir}";
             user = "healthchecks";
-            group = "healthchecks";
             mode = "0700";
           }
         ];
@@ -100,24 +92,24 @@ in {
       age.secrets.healthchecks = {
         file = secretsPath + "/hosts/${hostName}/healthchecks.age";
         mode = "700";
-        group = "healthchecks";
+        user = "healthchecks";
       };
       age.secrets.restic-healthchecks = {
         file = secretsPath + "/hosts/${hostName}/restic/healthchecks.age";
         mode = "700";
-        group = "healthchecks";
+        user = "healthchecks";
       };
 
       age.secrets."hc-rclone.conf" = {
         file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
         mode = "700";
-        group = "healthchecks";
+        user = "healthchecks";
       };
 
       age.secrets.hc-ntfy-alert-pass = {
         file = secretsPath + "/ntfy-sh/alert-pass.age";
         mode = "700";
-        group = "healthchecks";
+        user = "healthchecks";
       };
     })
     # |----------------------------------------------------------------------| #
