@@ -31,7 +31,7 @@ with lib; let
     else {};
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in {
-  options.tensorfiles.services.uptime-kuma = with types; {
+  options.tensorfiles.services.monitoring.healthchecks = with types; {
     enable = mkEnableOption ''healthchecks self-hosted monitoring tool'';
 
     impermanence = {

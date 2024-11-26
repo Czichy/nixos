@@ -50,6 +50,13 @@
     };
   };
 
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
+    };
+  };
+
   home.username = "czichy";
   home.homeDirectory = "/home/czichy";
   home.sessionVariables = {
