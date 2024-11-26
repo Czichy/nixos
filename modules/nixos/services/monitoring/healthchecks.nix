@@ -93,27 +93,23 @@ in {
         file = secretsPath + "/hosts/${hostName}/healthchecks.age";
         mode = "700";
         group = "healthchecks";
-        user = "healthchecks";
       };
       age.secrets.restic-healthchecks = {
         file = secretsPath + "/hosts/${hostName}/restic/healthchecks.age";
         mode = "700";
         group = "healthchecks";
-        user = "healthchecks";
       };
 
       age.secrets."hc-rclone.conf" = {
         file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
         mode = "700";
         group = "healthchecks";
-        user = "healthchecks";
       };
 
       age.secrets.hc-ntfy-alert-pass = {
         file = secretsPath + "/ntfy-sh/alert-pass.age";
         mode = "700";
         group = "healthchecks";
-        user = "healthchecks";
       };
     })
     # |----------------------------------------------------------------------| #
