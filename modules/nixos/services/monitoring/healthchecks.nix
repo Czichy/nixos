@@ -19,7 +19,7 @@ with lib; let
     ;
 
   cfg = config.tensorfiles.services.monitoring.healthchecks;
-  port = "45566";
+  port = 45566;
   host = "health.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
 
@@ -125,7 +125,7 @@ in {
       # TODO: configure private ip
       nodes.HL-4-PAZ-PROXY-01 = {
         services.caddy.virtualHosts."${host}".extraConfig = ''
-            reverse_proxy localhost:${port}
+            reverse_proxy localhost:${toString port}
 
             tls ${certloc}/cert.pem ${certloc}/key.pem {
               protocols tls1.3
@@ -139,7 +139,7 @@ in {
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
       services.restic.backups = let
         ntfy_pass = "$(cat ${config.age.secrets.hc-ntfy-alert-pass.path})";
-        ntfy_url = "https://${globals.services.hc-ntfy-sh.domain}/backups";
+        ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
         uptime-kuma_url = "https://uptime.czichy.com/api/push/6BclrdyqLe?status=up&msg=OK&ping=";
 
         script-post = host: site: uptime_url: ''
@@ -177,7 +177,7 @@ in {
 
           # A script that must run before starting the backup process.
           backupPrepareCommand = ''
-            echo "Building backup dir ${config.services.healthchecks.settings.dataDir}"
+            echo "Building backup dir ${config.services.healthchecks.dataDir}"
             systemctl stop healthchecks.service
             systemctl stop healthchecks-sendalerts.service
             systemctl stop healthchecks-sendreports.service
