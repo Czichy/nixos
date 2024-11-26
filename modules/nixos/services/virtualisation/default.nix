@@ -72,8 +72,16 @@ in {
           source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-i386-vars.fd";
         };
       };
-
+    }
+    # |----------------------------------------------------------------------| #
+    {
       programs.dconf.enable = true;
+      dconf.settings = {
+        "org/virt-manager/virt-manager/connections" = {
+          autoconnect = ["qemu:///system"];
+          uris = ["qemu:///system"];
+        };
+      };
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
