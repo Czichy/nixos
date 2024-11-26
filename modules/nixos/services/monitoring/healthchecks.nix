@@ -95,6 +95,12 @@ in {
         owner = "healthchecks";
         group = "healthchecks";
       };
+      age.secrets.healthchecks-ping = {
+        file = secretsPath + "/hosts/${hostName}/healthchecks-ping.age";
+        mode = "700";
+        owner = "healthchecks";
+        group = "healthchecks";
+      };
       age.secrets.restic-healthchecks = {
         file = secretsPath + "/hosts/${hostName}/restic/healthchecks.age";
         mode = "700";
@@ -136,7 +142,8 @@ in {
       services.restic.backups = let
         ntfy_pass = "$(cat ${config.age.secrets.hc-ntfy-alert-pass.path})";
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-        uptime-kuma_url = "https://uptime.czichy.com/api/push/6BclrdyqLe?status=up&msg=OK&ping=";
+        pingKey = "$(cat ${config.age.secrets.healthchecks-ping.path})";
+        slug = "https://health.czichy.com/ping/i${pingKey}/backup-healthchecks";
 
         script-post = host: site: uptime_url: ''
           if [ $EXIT_STATUS -ne 0 ]; then
@@ -144,12 +151,13 @@ in {
             -H 'Title: Backup (${site}) on ${host} failed!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/fail"
           else
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} successful!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-            ${pkgs.curl}/bin/curl '${uptime_url}'
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused ${slug}
           fi
         '';
       in {
