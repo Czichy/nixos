@@ -65,7 +65,7 @@ in {
         dataDir = "/services/healthchecks";
         settings = {
           SECRET_KEY_FILE = config.age.secrets.healthchecks.path;
-          SITE_ROOT = "host";
+          SITE_ROOT = "https://${host}";
           EMAIL_HOST = "localhost";
           EMAIL_PORT = "25";
           EMAIL_USE_TLS = "False";
