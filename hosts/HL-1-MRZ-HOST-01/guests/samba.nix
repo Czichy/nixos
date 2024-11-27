@@ -386,54 +386,54 @@ in {
   age.secrets."rclone.conf" = {
     file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
     mode = "440";
-    # group = "vaultwarden";
   };
   age.secrets.restic-bibliothek = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/library.age";
     mode = "440";
-    # group = "root";
   };
   age.secrets.restic-dokumente = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/dokumente.age";
     mode = "440";
-    # group = "root";
   };
   age.secrets.restic-media = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/media.age";
     mode = "440";
-    # group = "root";
   };
   age.secrets.restic-christian = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/christian.age";
     mode = "440";
-    # group = "root";
   };
   age.secrets.restic-ina = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/ina.age";
     mode = "440";
-    # group = "root";
   };
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
-    # group = "root";
+  };
+  age.secrets.samba-hc-ping = {
+    file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
+    mode = "440";
   };
   services.restic.backups = let
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+    pingKey = "$(cat ${config.age.secrets.samba-hc-ping.path})";
+    slug = "https://health.czichy.com/ping/${pingKey}";
 
-    script-post = host: site: uptime_url: ''
+    script-post = host: site: ''
       if [ $EXIT_STATUS -ne 0 ]; then
         ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
         -H 'Title: Backup (${site}) on ${host} failed!' \
         -H 'Tags: backup,restic,${host},${site}' \
         -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}/fail"
       else
         ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
         -H 'Title: Backup (${site}) on ${host} successful!' \
         -H 'Tags: backup,restic,${host},${site}' \
         -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl '${uptime_url}'
+        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}"
       fi
     '';
   in {

@@ -45,6 +45,13 @@ in {
     group = "vaultwarden";
   };
 
+  age.secrets.vault-hc-ping = {
+    file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
+    mode = "700";
+    owner = "vaultwarden";
+    group = "vaultwarden";
+  };
+
   # |----------------------------------------------------------------------| #
 
   environment.persistence."/persist".directories = [
@@ -143,7 +150,8 @@ in {
   services.restic.backups = let
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-    uptime-kuma_url = "https://uptime.czichy.com/api/push/2ubcyrKgCr?status=up&msg=OK&ping=";
+    pingKey = "$(cat ${config.age.secrets.vaultwarden-hc-ping.path})";
+    slug = "https://health.czichy.com/ping/${pingKey}";
 
     script-post = host: site: uptime_url: ''
       if [ $EXIT_STATUS -ne 0 ]; then
@@ -151,12 +159,13 @@ in {
         -H 'Title: Backup (${site}) on ${host} failed!' \
         -H 'Tags: backup,restic,${host},${site}' \
         -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}/fail"
       else
         ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
         -H 'Title: Backup (${site}) on ${host} successful!' \
         -H 'Tags: backup,restic,${host},${site}' \
         -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl '${uptime_url}'
+        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}"
       fi
     '';
   in {
@@ -186,7 +195,7 @@ in {
       # '';
 
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "vaultwarden" uptime-kuma_url;
+      backupCleanupCommand = script-post config.networking.hostName "vaultwarden";
 
       # Extra extended options to be passed to the restic --option flag.
       # extraOptions = [];

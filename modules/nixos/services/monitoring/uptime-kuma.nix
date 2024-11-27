@@ -119,6 +119,11 @@ in {
         mode = "700";
         group = "uptime-kuma";
       };
+      age.secrets.uptime-hc-ping = {
+        file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
+        mode = "700";
+        group = "uptime-kuma";
+      };
     })
     # |----------------------------------------------------------------------| #
     {
@@ -140,20 +145,22 @@ in {
       services.restic.backups = let
         ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-        uptime-kuma_url = "https://uptime.czichy.com/api/push/6BclrdyqLe?status=up&msg=OK&ping=";
+        pingKey = "$(cat ${config.age.secrets.samba-hc-ping.path})";
+        slug = "https://health.czichy.com/ping/${pingKey}";
 
-        script-post = host: site: uptime_url: ''
+        script-post = host: site: ''
           if [ $EXIT_STATUS -ne 0 ]; then
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} failed!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}/fail"
           else
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} successful!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-            ${pkgs.curl}/bin/curl '${uptime_url}'
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}"
           fi
         '';
       in {
@@ -186,7 +193,7 @@ in {
             ''
               systemctl start uptime-kuma
             ''
-            + script-post config.networking.hostName "uptime-kuma" uptime-kuma_url;
+            + script-post config.networking.hostName "uptime-kuma";
 
           # A list of options (--keep-* et al.) for 'restic forget --prune',
           # to automatically prune old snapshots.

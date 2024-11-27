@@ -145,7 +145,7 @@ in {
         pingKey = "$(cat ${config.age.secrets.healthchecks-ping.path})";
         slug = "https://health.czichy.com/ping/${pingKey}/backup-healthchecks";
 
-        script-post = host: site: uptime_url: ''
+        script-post = host: site: ''
           if [ $EXIT_STATUS -ne 0 ]; then
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} failed!' \
@@ -192,7 +192,7 @@ in {
             ''
               systemctl start healthchecks.target
             ''
-            + script-post config.networking.hostName "healthchecks" uptime-kuma_url;
+            + script-post config.networking.hostName "healthchecks";
 
           # A list of options (--keep-* et al.) for 'restic forget --prune',
           # to automatically prune old snapshots.
