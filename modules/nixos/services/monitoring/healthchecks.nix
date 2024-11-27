@@ -143,7 +143,7 @@ in {
         ntfy_pass = "$(cat ${config.age.secrets.hc-ntfy-alert-pass.path})";
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
         pingKey = "$(cat ${config.age.secrets.healthchecks-ping.path})";
-        slug = "https://health.czichy.com/ping/i${pingKey}/backup-healthchecks";
+        slug = "https://health.czichy.com/ping/${pingKey}/backup-healthchecks";
 
         script-post = host: site: uptime_url: ''
           if [ $EXIT_STATUS -ne 0 ]; then
