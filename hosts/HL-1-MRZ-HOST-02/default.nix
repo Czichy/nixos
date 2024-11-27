@@ -23,7 +23,7 @@
   ];
 
   # topology.self.hardware.image = ../../topology/images/Topton.webp;
-  topology.self.hardware.info = "ZimaBlade 7700, 16GB RAM";
+  topology.self.hardware.info = "Topton, 16GB RAM";
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
@@ -47,20 +47,6 @@
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
   users.users.qemu-libvirtd.group = "qemu-libvirtd";
   users.groups.qemu-libvirtd = {};
-
-  # |----------------------------------------------------------------------| #
-  systemd.tmpfiles.settings = {
-    "10-var-lib-private" = {
-      "/var/lib/private" = {
-        d = {
-          mode = "0700";
-          user = "root";
-          group = "root";
-        };
-      };
-    };
-  };
-  # |----------------------------------------------------------------------| #
 
   security.pam.services = {
     swaylock = {};

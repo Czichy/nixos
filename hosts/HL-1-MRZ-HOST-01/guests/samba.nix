@@ -203,7 +203,7 @@ in {
     port = 445;
     network = "servers";
   };
-  nodes.HL-1-MRZ-SBC-01-caddy = {
+  nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${sambaDomain}".extraConfig = ''
         reverse_proxy http://${globals.net.vlan40.hosts."${config.networking.hostName}".ipv4}:445

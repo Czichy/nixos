@@ -63,7 +63,7 @@ in {
       '';
     };
   };
-  nodes.HL-1-MRZ-SBC-01-caddy = {
+  nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${influxdbDomain}".extraConfig = ''
         reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-INFLUX-01".ipv4}:${toString influxdbPort}

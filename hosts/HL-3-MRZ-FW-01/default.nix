@@ -7,7 +7,6 @@
   inherit
     (config.lib.topology)
     # mkDevice
-    
     mkConnection
     ;
 in {
@@ -34,7 +33,7 @@ in {
     # hardware.image = ../../topology/images/Topton.webp;
     # guestType = "qemu";
     deviceIcon = "services.opnsense";
-    parent = "HL-1-MRZ-SBC-01";
+    parent = "HL-1-MRZ-HOST-02";
     guestType = "qemu";
     interfaces.enp1s0 = {
       physicalConnections = [(mkConnection "vigor" "p1")];

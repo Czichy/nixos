@@ -20,6 +20,8 @@
         "sdhci_pci"
       ];
       kernelModules = [
+        "kvm-amd"
+        "amdgpu"
         "i2c-dev"
         "vfio"
         "vfio_iommu_type1"

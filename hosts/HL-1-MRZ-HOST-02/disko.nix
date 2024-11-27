@@ -1,139 +1,121 @@
-{inputs, ...}: let
-  inherit (inputs.self) lib;
-  disk-id = id: "/dev/disk/by-id/${id}";
-  disks = {
-    main = {
-      name = "main";
-      path = null;
-      id = "mmc-BJTD4R_0xad934b39";
-    };
-
-    sata_1 = {
-      name = "sata_1";
-      path = null;
-      id = "ata-Samsung_SSD_840_Series_S14JNEACC24945P";
-    };
-  };
+# --- parts/hosts/spinorbundle/disko.nix
+#
+# Author:  czichy <christian@czichy.com>
+# URL:     https://github.com/czichy/tensorfiles
+# License: MIT
+#
+# 888                                                .d888 d8b 888
+# 888                                               d88P"  Y8P 888
+# 888                                               888        888
+# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
+# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
+# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
+# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
+#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+let
+  rawdisk = "/dev/nvme0n1";
 in {
   disko.devices = {
+    #nodev = {
+    #"/" = {
+    ## May need to replace with btrfs snapshots if I use more than 8G?
+    #fsType = "tmpfs";
+    #mountOptions = ["defaults" "size=2G" "mode=755"];
+    #};
+    #"/home/czichy" = {
+    ## May need to replace with btrfs snapshots if I use more than 8G?
+    #fsType = "tmpfs";
+    #mountOptions = ["defaults" "size=2G" "mode=777"];
+    #};
+    #};
     disk = {
-      main = {
+      ${rawdisk} = {
+        device = "${rawdisk}";
         type = "disk";
-        device = disk-id "${disks.main.id}";
+
         content = {
           type = "gpt";
           partitions = {
-            ESP = lib.disko.gpt.partEfi "1G";
-            rpool = lib.disko.gpt.partLuksZfs disks.main.name "rpool" "100%";
-          };
-        };
-      };
-      sata_1 = {
-        type = "disk";
-        device = disk-id "${disks.sata_1.id}";
-        content = lib.disko.content.luksZfs disks.sata_1.name "storage";
-      };
-    };
-    zpool = {
-      rpool = lib.disko.zfs.mkZpool {
-        datasets = {
-          # lib.disko.zfs.impermanenceZfsDatasets "rpool"
-          "local" = lib.disko.zfs.unmountable;
-          # "local/nix" = lib.disko.zfs.filesystem "/nix";
-          "local/root" =
-            lib.disko.zfs.filesystem "/"
-            // {
-              postCreateHook = "zfs snapshot rpool/local/root@blank";
+            boot = {
+              priority = 1;
+              name = "esp";
+              label = "esp";
+              size = "1024M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountOptions = ["umask=0077"];
+                mountpoint = "/boot";
+              };
             };
-          "local/state" = lib.disko.zfs.filesystem "/state";
-          "safe" = lib.disko.zfs.unmountable;
-          "safe/persist" = lib.disko.zfs.filesystem "/persist";
-          "safe/guests" = lib.disko.zfs.unmountable;
-        };
-      };
-      storage = lib.disko.zfs.mkZpool {
-        # mode = "mirror";
-        datasets = {
-          "local" = lib.disko.zfs.unmountable;
-          "local/nix" = lib.disko.zfs.filesystem "/nix";
-          "safe/guests" = lib.disko.zfs.unmountable;
-        };
-      };
-    };
-  };
-  services.zrepl = {
-    enable = true;
-    settings = {
-      global = {
-        logging = [
-          {
-            type = "syslog";
-            level = "info";
-            format = "human";
-          }
-        ];
-        # TODO zrepl monitor
-        #monitoring = [
-        #  {
-        #    type = "prometheus";
-        #    listen = ":9811";
-        #    listen_freebind = true;
-        #  }
-        #];
-      };
 
-      jobs = [
-        {
-          name = "local-snapshots";
-          type = "snap";
-          filesystems = {
-            "rpool/local/state<" = true;
-            "rpool/safe<" = true;
-            "storage/safe<" = true;
-            "storage/bunker<" = true;
+            root = {
+              # label = "${config.networking.hostName}_persist";
+              label = "persist";
+              name = "btrfs";
+              size = "100%";
+              content = {
+                type = "btrfs";
+                extraArgs = [
+                  "-f"
+                  # "-L ${config.networking.hostName}_persist"
+                  "-L persist"
+                ];
+                subvolumes = {
+                  "/root" = {
+                    type = "filesystem";
+                    mountpoint = "/";
+                    mountOptions = ["compress=zstd" "noatime"];
+                  };
+                  "/home" = {
+                    type = "filesystem";
+                    mountpoint = "/home";
+                    mountOptions = ["compress=zstd" "noatime"];
+                  };
+                  "/nix" = {
+                    type = "filesystem";
+                    mountpoint = "/nix";
+                    mountOptions = ["compress=zstd"];
+                  };
+                  "/persist" = {
+                    type = "filesystem";
+                    mountpoint = "/persist";
+                    mountOptions = ["compress=zstd" "noatime"];
+                  };
+                  "/log" = {
+                    type = "filesystem";
+                    mountpoint = "/var/log";
+                    mountOptions = ["compress=zstd" "noatime"];
+                  };
+                  "/snapshots" = {
+                    mountpoint = "/snapshots";
+                    mountOptions = ["compress=zstd" "noatime"];
+                  };
+                  "/swap" = {
+                    mountpoint = "/.swapvol";
+                    swap.swapfile.size = "8G";
+                  };
+                  shared = {
+                    type = "filesystem";
+                    mountpoint = "/shared";
+                    mountOptions = ["compress=zstd"];
+                  };
+                  log = {
+                    type = "filesystem";
+                    mountpoint = "/var/log";
+                    mountOptions = ["compress=zstd"];
+                  };
+                };
+              };
+            };
           };
-          snapshotting = {
-            type = "periodic";
-            prefix = "zrepl-";
-            timestamp_format = "iso-8601";
-            interval = "15m";
-          };
-          pruning.keep = [
-            # Keep all manual snapshots
-            {
-              type = "regex";
-              regex = "^zrepl-.*$";
-              negate = true;
-            }
-            # Keep last n snapshots
-            {
-              type = "last_n";
-              regex = "^zrepl-.*$";
-              count = 10;
-            }
-            # Prune periodically
-            {
-              type = "grid";
-              regex = "^zrepl-.*$";
-              grid = lib.concatStringsSep " | " [
-                "72x1h"
-                "90x1d"
-                "60x1w"
-                "24x30d"
-              ];
-            }
-          ];
-        }
-      ];
+        };
+      };
     };
   };
-  # Needed for agenix.
-  # nixos-anywhere currently has issues with impermanence so agenix keys are lost during the install process.
-  # as such we give /etc/ssh its own zfs dataset rather than using impermanence to save the keys when we wipe the root directory on boot
-  # agenix needs the keys available before the zfs datasets are mounted, so we need this to make sure they are available.
-  # fileSystems."/etc/ssh".neededForBoot = true;
-  # Needed for impermanence, because we mount /persist/save on /persist, we need to make sure /persist is mounted before /persist/save
+  fileSystems."/nix".neededForBoot = true;
+  fileSystems."/home".neededForBoot = true;
   fileSystems."/persist".neededForBoot = true;
-  fileSystems."/state".neededForBoot = true;
-  # boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target"];
+  fileSystems."/snapshots".neededForBoot = true;
 }

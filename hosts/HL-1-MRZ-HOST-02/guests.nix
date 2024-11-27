@@ -5,39 +5,32 @@
   globals,
   nodes,
   ...
-}: {
+}: let
+  macAddress_enp4s0 = "60:be:b4:19:a8:4f";
+in {
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
-      mkGuest = guestName: {
-        enableStorageDataset ? false,
-        enableBunkerDataset ? false,
-        ...
-      }: {
+      mkGuest = guestName: {enableStorageDataset ? false, ...}: {
         autostart = true;
-        zfs."/state" = {
-          # TODO make one option out of that? and split into two readonly options automatically?
-          pool = "rpool";
-          dataset = "local/guests/${guestName}";
-        };
-        zfs."/persist" = {
-          pool = "rpool";
-          dataset = "safe/guests/${guestName}";
-        };
-        zfs."/storage" = lib.mkIf enableStorageDataset {
-          pool = "storage";
-          dataset = "safe/guests/${guestName}";
-        };
-        zfs."/bunker" = lib.mkIf enableBunkerDataset {
-          pool = "storage";
-          dataset = "bunker/guests/${guestName}";
-        };
+        # temporary state that is wiped on reboot
+        # zfs."/state" = {
+        #   pool = "rpool";
+        #   dataset = "rpool/encrypted/vms/${guestName}";
+        # };
+        # persistent state
+        # zfs."/persist" = {
+        #   pool = "rpool";
+        #   dataset = "rpool/encrypted/safe/vms/${guestName}";
+        # };
         modules =
           [
+            # inputs.self.globals
             ../config/default.nix
             ../../modules/globals.nix
             ./guests/${guestName}.nix
             {
+              #node.secretsDir = ./secrets/${guestName};
               networking.nftables.firewall = {
                 zones.untrusted.interfaces = [
                   config.tensorfiles.services.microvm.guests.${guestName}.networking.mainLinkName
@@ -69,9 +62,10 @@
       };
     in (
       {}
-      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "vlan40" {
-        enableStorageDataset = true;
-      }
+      // mkMicrovm "adguardhome" "HL-3-RZ-DNS-01" "servers" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "vaultwarden" "HL-3-RZ-VAULT-01" "servers" "vlan40" {enableStorageDataset = true;}
+      # // mkMicrovm "nginx" "dmz" "vlan70" {enableStorageDataset = true;}
+      // mkMicrovm "caddy" "HL-3-DMZ-PROXY-01" "dmz" "vlan70" {enableStorageDataset = true;}
     );
   };
 }

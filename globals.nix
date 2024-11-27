@@ -6,14 +6,14 @@ in {
     domains.me = "czichy.com";
     domains.local = "czichy.com";
     net = {
-      #VLAN1
-      home-wan = {
-        cidrv4 = "10.15.1.0/24";
-        # OPNSense
-        hosts.HL-3-MRZ-FW-01.id = 99;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
-        hosts.HL-1-OZ-PC-01.id = 62;
-      };
+      # #VLAN1
+      # home-wan = {
+      #   cidrv4 = "10.15.1.0/24";
+      #   # OPNSense
+      #   hosts.HL-3-MRZ-FW-01.id = 99;
+      #   hosts.HL-1-MRZ-HOST-02.id = 254;
+      #   hosts.HL-1-OZ-PC-01.id = 62;
+      # };
 
       #TRUST
       vlan10 = {
@@ -22,7 +22,7 @@ in {
         hosts.HL-3-MRZ-FW-01.id = 99;
         # cidrv6 = "fd10::/64";
         hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
+        hosts.HL-1-MRZ-HOST-02.id = 254;
       };
 
       #GUEST
@@ -30,7 +30,7 @@ in {
         cidrv4 = "10.15.20.0/24";
         # cidrv6 = "fd10::/64";
         hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
+        hosts.HL-1-MRZ-HOST-02.id = 254;
       };
 
       #Security
@@ -38,7 +38,7 @@ in {
         cidrv4 = "10.15.30.0/24";
         # cidrv6 = "fd10::/64";
         hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 254;
+        hosts.HL-1-MRZ-HOST-02.id = 254;
       };
       #Server
       vlan40 = {
@@ -50,25 +50,25 @@ in {
         hosts.HL-1-OZ-PC-01.id = 62;
         # |------------------------------------| #
         # Unifi Controller
-        hosts.HL-3-RZ-UNIFI-01.id = 11;
+        hosts.HL-3-RZ-UNIFI-01.id = 31;
         # |------------------------------------| #
-        hosts.HL-1-MRZ-SBC-01.id = 20;
+        hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome
         hosts.HL-3-RZ-DNS-01.id = 21;
         # Vaultwarden
         hosts.HL-3-RZ-VAULT-01.id = 22;
         # |------------------------------------| #
-        hosts.HL-1-MRZ-HOST-01.id = 30;
+        hosts.HL-1-MRZ-HOST-01.id = 10;
         # Samba
-        hosts.HL-3-RZ-SMB-01.id = 31;
+        hosts.HL-3-RZ-SMB-01.id = 11;
         # InfluxDb
-        hosts.HL-3-RZ-INFLUX-01.id = 32;
+        hosts.HL-3-RZ-INFLUX-01.id = 12;
         # Syncthing
-        hosts.HL-3-RZ-SYNC-01.id = 33;
+        hosts.HL-3-RZ-SYNC-01.id = 13;
         # Forgejo
-        hosts.HL-3-RZ-GIT-01.id = 34;
+        hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader
-        hosts.HL-3-RZ-IBKR-01.id = 35;
+        hosts.HL-3-RZ-IBKR-01.id = 15;
       };
 
       #IoT
@@ -91,9 +91,9 @@ in {
         # OPNSense
         hosts.HL-3-MRZ-FW-01.id = 99;
         hosts.HL-1-OZ-PC-01.id = 62;
-        hosts.HL-1-MRZ-SBC-01.id = 20;
-        hosts.HL-1-MRZ-HOST-01.id = 30;
-        hosts.HL-1-MRZ-HOST-02.id = 10;
+        hosts.HL-1-MRZ-HOST-01.id = 10;
+        hosts.HL-1-MRZ-HOST-02.id = 20;
+        hosts.HL-1-MRZ-HOST-03.id = 30;
       };
 
       proxy-vps = {

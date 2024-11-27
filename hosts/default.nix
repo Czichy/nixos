@@ -108,9 +108,9 @@
           }
       );
       #ward
-      "HL-1-MRZ-SBC-01" = withSystem "x86_64-linux" (
+      "HL-1-MRZ-HOST-02" = withSystem "x86_64-linux" (
         args:
-          mkHost args "HL-1-MRZ-SBC-01" {
+          mkHost args "HL-1-MRZ-HOST-02" {
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
@@ -123,9 +123,9 @@
           }
       );
 
-      "HL-1-MRZ-HOST-01" = withSystem "x86_64-linux" (
+      "HL-1-MRZ-HOST-03" = withSystem "x86_64-linux" (
         args:
-          mkHost args "HL-1-MRZ-HOST-01" {
+          mkHost args "HL-1-MRZ-HOST-03" {
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
@@ -137,9 +137,9 @@
             ];
           }
       );
-      "HL-1-MRZ-HOST-02" = withSystem "x86_64-linux" (
+      "HL-1-MRZ-HOST-01" = withSystem "x86_64-linux" (
         args:
-          mkHost args "HL-1-MRZ-HOST-02" {
+          mkHost args "HL-1-MRZ-HOST-01" {
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
