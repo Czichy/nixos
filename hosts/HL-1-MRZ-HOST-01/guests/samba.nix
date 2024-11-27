@@ -493,7 +493,7 @@ in {
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "bibliothek" "https://uptime.czichy.com/api/push/ggeBgn6rtS?status=up&msg=OK&ping=";
+      backupCleanupCommand = script-post config.networking.hostName "bibliothek";
 
       # A list of options (--keep-* et al.) for 'restic forget --prune',
       # to automatically prune old snapshots.
@@ -530,7 +530,7 @@ in {
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "media" "https://uptime.czichy.com/api/push/zkaIn0CiUQ?status=up&msg=OK&ping=";
+      backupCleanupCommand = script-post config.networking.hostName "media";
 
       # A list of options (--keep-* et al.) for 'restic forget --prune',
       # to automatically prune old snapshots.
@@ -567,7 +567,7 @@ in {
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "christian" "https://uptime.czichy.com/api/push/bOJSsssuci?status=up&msg=OK&ping=";
+      backupCleanupCommand = script-post config.networking.hostName "christian";
 
       # A list of options (--keep-* et al.) for 'restic forget --prune',
       # to automatically prune old snapshots.
@@ -604,7 +604,7 @@ in {
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "ina" "https://uptime.czichy.com/api/push/AqL2HZlObt?status=up&msg=OK&ping=";
+      backupCleanupCommand = script-post config.networking.hostName "ina";
 
       # A list of options (--keep-* et al.) for 'restic forget --prune',
       # to automatically prune old snapshots.
