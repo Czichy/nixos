@@ -1,8 +1,6 @@
 let
   inherit (builtins) attrValues concatLists foldl' map;
 
-  czichy-HL-1-MRZ-SBC-01 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINOIqr6KsojkEyyYItPBXcWUfacQY54rWkIGTXUdl27k czichy@HL-1-MRZ-SBC-01";
-
   # Users
   users = {
     czichy = [
@@ -16,9 +14,9 @@ let
 
   # Hosts
   machines = {
-    HL-1-MRZ-HOST-02 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPR8KYYsWTQ+sOFMlKXTJU6ZDG84ebHtqI4wotvCYzH"];
     HL-1-MRZ-HOST-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILIb2E40lvAExeY61+57FWes7YKuh8kKEahcVknrT0cX czichy@HL-1-MRZ-HOST-01"];
-    HL-1-MRZ-HOST-03 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILIb2E40lvAExeY61+57FWes7YKuh8kKEahcVknrT0cX czichy@HL-1-MRZ-HOST-01"];
+    HL-1-MRZ-HOST-02 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPR8KYYsWTQ+sOFMlKXTJU6ZDG84ebHtqI4wotvCYzH"];
+    HL-1-MRZ-HOST-03 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE1mhPCuc7o7lNp1FWaByYr0snO2rnwd9gH8WabEeybt"];
     HL-1-OZ-PC-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKfYUpuZeYCkKCNL22+jUBroV4gaZYJOjcRVPDZDVXSp root@desktop"];
   };
 

@@ -145,7 +145,7 @@ in {
       services.restic.backups = let
         ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-        pingKey = "$(cat ${config.age.secrets.samba-hc-ping.path})";
+        pingKey = "$(cat ${config.age.secrets.uptime-hc-ping.path})";
         slug = "https://health.czichy.com/ping/${pingKey}";
 
         script-post = host: site: ''
