@@ -49,15 +49,6 @@ in {
         # |------------------------------------| #
         hosts.HL-1-OZ-PC-01.id = 62;
         # |------------------------------------| #
-        # Unifi Controller
-        hosts.HL-3-RZ-UNIFI-01.id = 31;
-        # |------------------------------------| #
-        hosts.HL-1-MRZ-HOST-02.id = 20;
-        # AdguardHome
-        hosts.HL-3-RZ-DNS-01.id = 21;
-        # Vaultwarden
-        hosts.HL-3-RZ-VAULT-01.id = 22;
-        # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-01.id = 10;
         # Samba
         hosts.HL-3-RZ-SMB-01.id = 11;
@@ -69,6 +60,15 @@ in {
         hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader
         hosts.HL-3-RZ-IBKR-01.id = 15;
+        # |------------------------------------| #
+        hosts.HL-1-MRZ-HOST-02.id = 20;
+        # AdguardHome
+        hosts.HL-3-RZ-DNS-01.id = 21;
+        # Vaultwarden
+        hosts.HL-3-RZ-VAULT-01.id = 22;
+        # |------------------------------------| #
+        # Unifi Controller
+        hosts.HL-3-RZ-UNIFI-01.id = 31;
       };
 
       #IoT
