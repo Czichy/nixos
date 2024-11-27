@@ -89,11 +89,11 @@ in {
       vlan100 = {
         cidrv4 = "10.15.100.0/24";
         # OPNSense
-        hosts.HL-3-MRZ-FW-01.id = 99;
-        hosts.HL-1-OZ-PC-01.id = 62;
         hosts.HL-1-MRZ-HOST-01.id = 10;
         hosts.HL-1-MRZ-HOST-02.id = 20;
         hosts.HL-1-MRZ-HOST-03.id = 30;
+        hosts.HL-1-OZ-PC-01.id = 62;
+        hosts.HL-3-MRZ-FW-01.id = 99;
       };
 
       proxy-vps = {

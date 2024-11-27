@@ -13,9 +13,7 @@
     inherit
       (lib)
       concatMapAttrs
-      filterAttrs
       flip
-      genAttrs
       mapAttrs
       mapAttrs'
       nameValuePair

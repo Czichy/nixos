@@ -62,15 +62,15 @@ in {
       matchConfig.MACAddress = macAddress_enp2s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
-      address = [
-        "10.15.40.9/24"
-      ];
+      # address = [
+      #   "10.15.40.9/24"
+      # ];
       # gateway = [globals.net.vlan40.hosts.opnsense.ipv4];
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
       # routes = [{Gateway = "${globals.net.vlan40.hosts.HL-3-MRZ-FW-01.ipv4}";}];
-      routes = [{Gateway = "10.15.1.99";}];
+      # routes = [{Gateway = "10.15.1.99";}];
       vlan = [
         "servers"
         "mgmt"
