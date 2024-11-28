@@ -2,6 +2,7 @@
   config,
   globals,
   secretsPath,
+  hostName,
   lib,
   pkgs,
   ...
@@ -139,7 +140,9 @@
       }
     );
 in {
-  networking.hostName = "HL-3-RZ-SMB-01";
+  networking.hostName = hostName;
+
+  # |----------------------------------------------------------------------| #
 
   # |----------------------------------------------------------------------| #
   # Use user and group information from TDB database.
