@@ -53,6 +53,10 @@ in {
       mem = mkDefault 1024;
       vcpu = mkDefault 2;
 
+      # This causes QEMU rebuilds which would remove 200MB from the closure but
+      # recompiling QEMU every deploy is worse.
+      optimize.enable = false;
+
       # Add a writable store overlay, but since this is always ephemeral
       # disable any store optimization from nix.
       writableStoreOverlay = "/nix/.rw-store";

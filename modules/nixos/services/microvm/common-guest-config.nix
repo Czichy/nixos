@@ -51,11 +51,6 @@ in {
     '';
   };
 
-  # users.users.root.password = "1234";
-  # users.users.root = {
-  #   openssh.authorizedKeys.keys = authorizedKeys;
-  # };
-
   nix = {
     settings.auto-optimise-store = mkForce false;
     optimise.automatic = mkForce false;

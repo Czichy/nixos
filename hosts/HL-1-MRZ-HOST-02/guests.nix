@@ -5,24 +5,16 @@
   globals,
   nodes,
   ...
-}: let
-  macAddress_enp4s0 = "60:be:b4:19:a8:4f";
-in {
+}:
+# let
+# macAddress_enp4s0 = "60:be:b4:19:a8:4f";
+# in
+{
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
       mkGuest = guestName: {enableStorageDataset ? false, ...}: {
         autostart = true;
-        # temporary state that is wiped on reboot
-        # zfs."/state" = {
-        #   pool = "rpool";
-        #   dataset = "rpool/encrypted/vms/${guestName}";
-        # };
-        # persistent state
-        # zfs."/persist" = {
-        #   pool = "rpool";
-        #   dataset = "rpool/encrypted/safe/vms/${guestName}";
-        # };
         modules =
           [
             # inputs.self.globals
@@ -57,6 +49,7 @@ in {
               inherit globals nodes;
               inherit lib;
               inherit inputs;
+              inherit hostName;
             };
           };
       };
