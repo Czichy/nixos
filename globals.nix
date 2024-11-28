@@ -43,7 +43,7 @@ in {
       #Server
       vlan40 = {
         cidrv4 = "10.15.40.0/24";
-        cidrv6 = "fd10::/64";
+        # cidrv6 = "fd10::/64";
         # OPNSense
         hosts.HL-3-MRZ-FW-01.id = 99;
         # |------------------------------------| #
