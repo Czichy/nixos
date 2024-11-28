@@ -51,15 +51,15 @@ in {
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-01.id = 10;
         # Samba
-        hosts.HL-3-RZ-SMB-01.id = 31;
+        hosts.HL-3-RZ-SMB-01.id = 11;
         # InfluxDb
-        hosts.HL-3-RZ-INFLUX-01.id = 32;
+        hosts.HL-3-RZ-INFLUX-01.id = 12;
         # Syncthing
-        hosts.HL-3-RZ-SYNC-01.id = 33;
+        hosts.HL-3-RZ-SYNC-01.id = 13;
         # Forgejo
-        hosts.HL-3-RZ-GIT-01.id = 34;
+        hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader
-        hosts.HL-3-RZ-IBKR-01.id = 35;
+        hosts.HL-3-RZ-IBKR-01.id = 15;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome
