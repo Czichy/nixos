@@ -18,6 +18,10 @@
       id = 1001;
       groups = ["czichys" "samba"];
     };
+    brother = {
+      id = 1003;
+      groups = ["samba"];
+    };
   };
   # smbGroups = config.repo.secrets.local.samba.groups;
   smbGroups = {czichys = {id = 1002;};};
@@ -313,6 +317,15 @@ in {
         } {})
 
         (mkCustomShare {
+          name = "dokumente";
+          path = "/shares/dokumente/scanned_documents";
+          user = "brother";
+          validUser = "christian,ina,brother";
+          group = "czichys";
+          hasBunker = false;
+        } {})
+
+        (mkCustomShare {
           name = "bibliothek";
           path = "/shares/bibliothek";
           user = "christian";
@@ -334,17 +347,22 @@ in {
       "/shares/bibliothek".d = {
         user = "christian";
         group = "czichys";
-        mode = "0750";
+        mode = "0660";
       };
       "/shares/media".d = {
         user = "christian";
         group = "czichys";
-        mode = "0750";
+        mode = "0660";
       };
       "/shares/dokumente".d = {
         user = "christian";
         group = "czichys";
-        mode = "0750";
+        mode = "0660";
+      };
+      "/shares/dokumente/scanned_documents".d = {
+        user = "brother";
+        group = "czichys";
+        mode = "0660";
       };
     };
   };
