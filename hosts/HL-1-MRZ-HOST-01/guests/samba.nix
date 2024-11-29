@@ -317,7 +317,7 @@ in {
         } {})
 
         (mkCustomShare {
-          name = "dokumente";
+          name = "scanned_documents";
           path = "/shares/dokumente/scanned_documents";
           user = "brother";
           validUser = "christian,ina,brother";
