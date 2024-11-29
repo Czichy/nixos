@@ -1,34 +1,21 @@
-# --- parts/modules/home-manager/programs/pywal.nix
-#
-# Author:  czichy <christian@czichy.com>
-# URL:     https://github.com/czichy/tensorfiles
-# License: MIT
-#
-# 888                                                .d888 d8b 888
-# 888                                               d88P"  Y8P 888
-# 888                                               888        888
-# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
-# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
-# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
-# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
-#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.hm.programs.pywal;
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
-  impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 
   plasmaCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.profiles.graphical-plasma";
@@ -199,41 +186,37 @@ let
     wal -i $1
 
     ${
-      if (isModuleLoadedAndEnabled config "tensorfiles.hm.services.pywalfox-native") then
-        ''
-          echo "Changing firefox theme to pywalfox-native..."
-          pywalfox update
-        ''
-      else
-        ""
+      if (isModuleLoadedAndEnabled config "tensorfiles.hm.services.pywalfox-native")
+      then ''
+        echo "Changing firefox theme to pywalfox-native..."
+        pywalfox update
+      ''
+      else ""
     }
     ${
-      if (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.emacs-doom") then
-        ''
-          echo "Changing emacs theme to ewal-doom-one..."
-          emacsclient -e "(progn (load-theme 'ewal-doom-one))"
-        ''
-      else
-        ""
+      if (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.emacs-doom")
+      then ''
+        echo "Changing emacs theme to ewal-doom-one..."
+        emacsclient -e "(progn (load-theme 'ewal-doom-one))"
+      ''
+      else ""
     }
     ${
-      if plasmaCheck then
-        ''
-          echo "Changing KDE wallpaper ...."
-          ${kdewallpaperset}/bin/kdewallpaperset $1
-          echo "Changing KDE color scheme ...."
-          # In case it doesnt exist
-          mkdir -p ~/.local/share/color-schemes
-          rm ~/.local/share/color-schemes/pywal*
-          ${kdegencolorscheme}/bin/kdegencolorscheme $(basename $1 | cut -d. -f1)
-          plasma-apply-colorscheme "pywal-$(basename $1 | cut -d. -f1)"
-        ''
-      else
-        ""
+      if plasmaCheck
+      then ''
+        echo "Changing KDE wallpaper ...."
+        ${kdewallpaperset}/bin/kdewallpaperset $1
+        echo "Changing KDE color scheme ...."
+        # In case it doesnt exist
+        mkdir -p ~/.local/share/color-schemes
+        rm ~/.local/share/color-schemes/pywal*
+        ${kdegencolorscheme}/bin/kdegencolorscheme $(basename $1 | cut -d. -f1)
+        plasma-apply-colorscheme "pywal-$(basename $1 | cut -d. -f1)"
+      ''
+      else ""
     }
   '';
-in
-{
+in {
   options.tensorfiles.hm.programs.pywal = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles pywal colorscheme generator.
@@ -259,16 +242,15 @@ in
     # |----------------------------------------------------------------------| #
     {
       home.packages =
-        [ cfg.pkg ]
+        [cfg.pkg]
         ++ (
-          if plasmaCheck then
-            [
-              wal-switch
-              kdewallpaperset
-              kdegencolorscheme
-            ]
-          else
-            [ ]
+          if plasmaCheck
+          then [
+            wal-switch
+            kdewallpaperset
+            kdegencolorscheme
+          ]
+          else []
         );
 
       # TODO add a conditional for Xorg vs Wayland
@@ -325,12 +307,12 @@ in
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        directories = [ (pathToRelative "${config.xdg.cacheHome}/wal") ];
-        files = [ ".fehbg" ];
+        directories = [(pathToRelative "${config.xdg.cacheHome}/wal")];
+        files = [".fehbg"];
       };
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }

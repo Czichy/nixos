@@ -40,6 +40,8 @@ in {
           #cmake # Cross-platform, open-source build system generator
           #gnumake # A tool to control the generation of non-source files from sources
           git # Distributed version control system
+          gitoxide #An idiomatic, lean, fast & safe pure Rust implementation of Git
+          gitui # Blazing 💥 fast terminal-ui for git written in rust 🦀
 
           # --- NET UTILS ---
           dig # Domain name server

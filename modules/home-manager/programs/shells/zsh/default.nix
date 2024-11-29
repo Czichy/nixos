@@ -1,28 +1,13 @@
-# --- parts/modules/programs/shells/zsh/default.nix
-#
-# Author:  czichy <christian@czichy.com>
-# URL:     https://github.com/czichy/tensorfiles
-# License: MIT
-#
-# 888                                                .d888 d8b 888
-# 888                                               d88P"  Y8P 888
-# 888                                               888        888
-# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
-# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
-# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
-# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
-#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib;
-let
-  inherit (localFlake.lib)
+with lib; let
+  inherit
+    (localFlake.lib)
     mkOverrideAtHmModuleLevel
     isModuleLoadedAndEnabled
     mkPywalEnableOption
@@ -34,10 +19,12 @@ let
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
-  impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
-in
-{
+in {
   options.tensorfiles.hm.programs.shells.zsh = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the zsh shell.
@@ -160,10 +147,9 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages =
-        with pkgs;
-        with cfg.shellAliases;
-        [ nitch ]
+      home.packages = with pkgs;
+      with cfg.shellAliases;
+        [nitch]
         ++ (optional lsToEza eza)
         ++ (optional catToBat bat)
         ++ (optional findToFd fd)
@@ -211,7 +197,7 @@ in
       };
 
       home.shellAliases = mkMerge [
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        {fetch = _ "${pkgs.nitch}/bin/nitch";}
         (mkIf cfg.shellAliases.lsToEza {
           ls = _ "${pkgs.eza}/bin/eza";
           ll = _ "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified";
@@ -225,8 +211,8 @@ in
           find = _ "${pkgs.fd}/bin/fd";
           fd = _ "${pkgs.fd}/bin/fd";
         })
-        (mkIf cfg.shellAliases.grepToRipgrep { grep = _ "${pkgs.ripgrep}/bin/rg"; })
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        (mkIf cfg.shellAliases.grepToRipgrep {grep = _ "${pkgs.ripgrep}/bin/rg";})
+        {fetch = _ "${pkgs.nitch}/bin/nitch";}
       ];
     }
     # |----------------------------------------------------------------------| #
@@ -256,18 +242,17 @@ in
 
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
         files =
-          [ ".zsh_history" ]
+          [".zsh_history"]
           ++ (optional cfg.oh-my-zsh.enable (pathToRelative "${config.xdg.cacheHome}/oh-my-zsh"))
           ++ (
-            if cfg.p10k.enable then
-              [
-                (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh")
-                (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh.zwc")
-                (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh")
-                (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh.zwc")
-              ]
-            else
-              [ ]
+            if cfg.p10k.enable
+            then [
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh.zwc")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh.zwc")
+            ]
+            else []
           );
         directories = optional cfg.p10k.enable (
           pathToRelative "${config.xdg.cacheHome}/p10k-${config.home.username}"
@@ -277,5 +262,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }
