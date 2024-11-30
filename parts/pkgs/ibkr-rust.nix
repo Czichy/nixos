@@ -29,6 +29,8 @@ rustPlatform.buildRustPackage rec {
 
   buildInputs = [openssl];
 
+  cargoHash = "sha256-38hTOsa1a5vpR1i8GK1aq1b8qaJoCE74ewbUOnun+Qs=";
+
   # NOTE needed due to Cargo.lock containing git dependencies
   # cargoLock = {
   #   lockFile = ./Cargo.lock;
