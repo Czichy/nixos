@@ -272,7 +272,7 @@ in {
 
             # Clients should only connect using the latest SMB3 protocol (e.g., on
             # clients running Windows 8 and later).
-            "server min protocol" = "SMB3_11";
+            # "server min protocol" = "SMB3_11";
             # Require native SMB transport encryption by default.
             "server smb encrypt" = "required";
 
@@ -297,8 +297,8 @@ in {
             "fruit:wipe_intentionally_left_blank_rfork" = "yes";
             "fruit:delete_empty_adfiles" = "yes";
 
-            "client min protocol" = "SMB2";
-            "client max protocol" = "SMB3";
+            # "client min protocol" = "SMB2";
+            # "client max protocol" = "SMB3";
           };
         }
         (mkCustomShare {
