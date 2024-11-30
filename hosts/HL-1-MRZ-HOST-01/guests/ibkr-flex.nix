@@ -52,8 +52,8 @@
   environment.systemPackages = with pkgs; [
     pkg-config
     openssh
-    inputs.self.packages.${system}.ibkr-rust
-    # inputs.ibkr-rust.packages.${pkgs.system}.flex
+    # inputs.self.packages.${system}.ibkr-rust
+    inputs.ibkr-rust.packages.${pkgs.system}.flex
   ];
 
   # |----------------------------------------------------------------------| #
