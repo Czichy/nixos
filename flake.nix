@@ -166,9 +166,9 @@
       url = "github:edolstra/flake-compat";
       flake = false;
     };
-    ibkr-rust = {
-      url = "github:czichy/ibkr-rust";
-    };
+    # ibkr-rust = {
+    #   url = "github:czichy/ibkr-rust";
+    # };
   };
 
   # NOTE Here you can add additional binary cache substituers that you trust.

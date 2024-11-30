@@ -2,8 +2,6 @@
   pkgs,
   secretsPath,
   hostName,
-  lib,
-  inputs,
   ...
 }:
 # let
@@ -35,17 +33,10 @@
       owner = "root";
     };
   };
-  # |----------------------------------------------------------------------| #
-  # networking.firewall = {
-  #   allowedTCPPorts = [
-  #     8384 # Port for Syncthing Web UI.
-  #     22000 # TCP based sync protocol traffic
-  #   ];
-  #   allowedUDPPorts = [
-  #     22000 # QUIC based sync protocol traffic
-  #     21027 # for discovery broadcasts on IPv4 and multicasts on IPv6
-  #   ];
-  # };
+  age.secrets.ibkr-flex-hc-ping = {
+    file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
+    mode = "440";
+  };
   # ------------------------------
   # | SYSTEM PACKAGES |
   # ------------------------------
@@ -53,8 +44,55 @@
     pkg-config
     openssh
     # inputs.self.packages.${system}.ibkr-rust
-    inputs.ibkr-rust.packages.${pkgs.system}.flex
+    (
+      let
+        token = "$(cat ${config.age.secrets.ibkrFlexToken.path})";
+        query = "639991";
+
+        pingKey = "$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
+        slug = "https://health.czichy.com/ping/${pingKey}";
+      in
+        writeShellScriptBin "ibkr-flex-download"
+        ''
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          echo "Downloading Flex Report"
+          nix run github:czichy/ibkr-rust/flex -q ${query} -t "echo '${token}'" --dump-path /TWS_Flex_Reports  \
+          --extra-experimental-features "nix-command flakes"
+
+          for file in /TWS_Flex_Reports/*.xml ; do
+              fileDate=$(awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
+              destination="$(awk -F[-] '{print $1 }' <<<"$fileDate")/$(awk -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
+              echo "$destination"
+              echo mv "$file" "/TWS_Flex_Reports/$destination";
+          done
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused ${slug}/ibkr-flex-download
+
+        ''
+    )
+    # inputs.ibkr-rust.packages.${pkgs.system}.flex
   ];
+  # |----------------------------------------------------------------------| #
+  systemd.timers."ibkr-flex-download" = {
+    wantedBy = ["timers.target"];
+    timerConfig = {
+      Perisistent = true;
+      OnCalendar = "Mon..Fri 23:30";
+      Unit = "ibkr-flex-download.service";
+    };
+  };
+
+  systemd.services."ibkr-flex-download" = {
+    script = ''
+      set -eu
+      ${pkgs}/ibkr.flex-download
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+    };
+  };
 
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist".files = [
