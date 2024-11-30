@@ -27,10 +27,10 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    networkmanagerapplet # need this to configure L2TP ipsec
-    wireguard-tools
-  ];
+  # environment.systemPackages = with pkgs; [
+  #   networkmanagerapplet # need this to configure L2TP ipsec
+  #   wireguard-tools
+  # ];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
