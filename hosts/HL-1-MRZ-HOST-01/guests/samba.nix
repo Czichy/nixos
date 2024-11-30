@@ -59,7 +59,7 @@
         # "force create mode" = "0660";
         # "force directory mode" = "0770";
         # Might be necessary for windows user to be able to open thing in smb
-        # "acl allow execute always" = "no";
+        "acl allow execute always" = "no";
       }
       // cfg;
   in

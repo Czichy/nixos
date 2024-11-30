@@ -1,6 +1,7 @@
 {localFlake}: {
   config,
   lib,
+  pkgs,
   ...
 }:
 with builtins;
