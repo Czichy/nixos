@@ -296,6 +296,9 @@ in {
             # Clean up unused or empty files created by the OS or Samba.
             "fruit:wipe_intentionally_left_blank_rfork" = "yes";
             "fruit:delete_empty_adfiles" = "yes";
+
+            "client min protocol" = "SMB2";
+            "client max protocol" = "SMB3";
           };
         }
         (mkCustomShare {
