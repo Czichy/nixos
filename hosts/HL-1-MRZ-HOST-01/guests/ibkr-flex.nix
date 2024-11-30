@@ -86,7 +86,7 @@
   systemd.services."ibkr-flex-download" = {
     script = ''
       set -eu
-      ${pkgs.ibkr.flex-download}
+      ${pkgs.ibkr-flex-download}
     '';
     serviceConfig = {
       Type = "oneshot";
