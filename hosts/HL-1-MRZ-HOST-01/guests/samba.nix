@@ -323,8 +323,8 @@ in {
           name = "scanned_documents";
           path = "/shares/dokumente/scanned_documents";
           user = "brother";
-          validUser = "christian,ina,brother";
-          group = "czichys";
+          validUser = "brother";
+          group = "brother";
           hasBunker = false;
         } {})
 
@@ -365,7 +365,7 @@ in {
       "/shares/dokumente/scanned_documents".d = {
         user = "brother";
         group = "czichys";
-        mode = "0660";
+        mode = "0777";
       };
     };
   };
