@@ -4,6 +4,7 @@
   fetchFromGitHub,
   pkg-config,
   openssl,
+  glib,
   # stdenv,
   # mandown,
   # installShellFiles,
@@ -25,9 +26,17 @@ rustPlatform.buildRustPackage rec {
 
   env.OPENSSL_NO_VENDOR = 1;
 
-  nativeBuildInputs = [pkg-config];
+  nativeBuildInputs = [
+    openssl
+    pkg-config
+  ];
 
-  buildInputs = [openssl];
+  buildInputs = [
+    openssl
+    glib
+    openssl.dev
+    pkg-config
+  ];
 
   cargoHash = "sha256-38hTOsa1a5vpR1i8GK1aq1b8qaJoCE74ewbUOnun+Qs=";
 
