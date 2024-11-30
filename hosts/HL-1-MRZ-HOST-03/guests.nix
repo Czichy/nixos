@@ -47,15 +47,14 @@
           ]
           ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
       };
-      mkMicrovm = guestName: hostName: macvtap: net: opts: {
+      mkMicrovm = guestName: hostName: macvtap: mac: net: opts: {
         ${guestName} =
           mkGuest guestName opts
           // {
             microvm = {
               system = "x86_64-linux";
               macvtap = "${macvtap}";
-              # macvtap = "lan";
-              # baseMac = macAddress_enp4s0; # TODO move to config
+              mac = mac;
             };
             networking.address = globals.net."${net}".hosts."${hostName}".cidrv4;
             networking.gateway = globals.net."${net}".hosts.HL-3-MRZ-FW-01.ipv4;
@@ -69,7 +68,7 @@
       };
     in (
       {}
-      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "vlan40" {
+      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "02:01:27:11:7f:17" "vlan40" {
         enableStorageDataset = true;
       }
     );
