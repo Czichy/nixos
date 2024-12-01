@@ -81,7 +81,7 @@ in {
     serviceConfig = {
       Type = "simple";
       User = "root";
-      ExecStart = "${download-ibkr-flex}";
+      ExecStart = "${download-ibkr-flex}/bin/ibkr-flex-download";
     };
   };
 
