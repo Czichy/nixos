@@ -452,9 +452,9 @@ in {
           -H 'Title: Backup (${site}) on ${host} failed!' \
           -H 'Tags: backup,restic,${host},${site}' \
           -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused '${slug}/$pingKey/backup-${site}/fail'
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/$pingKey/backup-${site}/fail"
         else
-          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused '${slug}/$pingKey/backup-${site}'
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/$pingKey/backup-${site}"
         fi
     '';
     # ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
