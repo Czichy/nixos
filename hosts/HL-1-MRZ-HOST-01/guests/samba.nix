@@ -443,7 +443,7 @@ in {
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
     pingKey = "$(cat ${config.age.secrets.samba-hc-ping.path})";
-    slug = "https://health.czichy.com/ping/";
+    slug = "https://health.czichy.com/ping";
 
     script-post = host: site: ''
       if [ $EXIT_STATUS -ne 0 ]; then
