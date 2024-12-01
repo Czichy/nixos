@@ -145,22 +145,22 @@ in {
       services.restic.backups = let
         ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-        pingKey = "$(cat ${config.age.secrets.uptime-hc-ping.path})";
-        slug = "https://health.czichy.com/ping/${pingKey}";
+        slug = "https://health.czichy.com/ping/";
 
         script-post = host: site: ''
+          pingKey="$(cat ${config.age.secrets.uptime-hc-ping.path})";
           if [ $EXIT_STATUS -ne 0 ]; then
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} failed!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}/fail"
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail"
           else
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} successful!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/backup-${site}"
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}"
           fi
         '';
       in {
