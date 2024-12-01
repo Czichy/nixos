@@ -10,7 +10,7 @@
   query = "639991";
 
   pingKey = "$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
-  slug = "https://health.czichy.com/ping/${pingKey}";
+  slug = "https://health.czichy.com/ping/";
   download-ibkr-flex =
     pkgs.writeShellScriptBin "ibkr-flex-download"
     ''
@@ -27,7 +27,8 @@
           echo "$destination"
           echo mv "$file" "/TWS_Flex_Reports/$destination";
       done
-      ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused '${slug}/ibkr-flex-download'
+      pingKey="$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
+      ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/ibkr-flex-download"
 
     '';
   # |----------------------------------------------------------------------| #
