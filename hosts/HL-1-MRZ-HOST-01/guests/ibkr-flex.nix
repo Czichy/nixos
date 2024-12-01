@@ -4,12 +4,34 @@
   secretsPath,
   hostName,
   ...
-}:
-# let
-# |----------------------------------------------------------------------| #
-# |----------------------------------------------------------------------| #
-# in
-{
+}: let
+  # |----------------------------------------------------------------------| #
+  token = "$(cat ${config.age.secrets.ibkrFlexToken.path})";
+  query = "639991";
+
+  pingKey = "$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
+  slug = "https://health.czichy.com/ping/${pingKey}";
+  download-ibkr-flex =
+    pkgs.writeShellScriptBin "ibkr-flex-download"
+    ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      echo "Downloading Flex Report"
+      nix run github:czichy/ibkr-rust/flex -q ${query} -t "echo '${token}'" --dump-path /TWS_Flex_Reports  \
+      --extra-experimental-features "nix-command flakes"
+
+      for file in /TWS_Flex_Reports/*.xml ; do
+          fileDate=$(awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
+          destination="$(awk -F[-] '{print $1 }' <<<"$fileDate")/$(awk -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
+          echo "$destination"
+          echo mv "$file" "/TWS_Flex_Reports/$destination";
+      done
+      ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused '${slug}/ibkr-flex-download'
+
+    '';
+  # |----------------------------------------------------------------------| #
+in {
   microvm.mem = 512;
   microvm.vcpu = 1;
   microvm.shares = [
@@ -44,35 +66,6 @@
   environment.systemPackages = with pkgs; [
     pkg-config
     openssh
-    # inputs.self.packages.${system}.ibkr-rust
-    (
-      let
-        token = "$(cat ${config.age.secrets.ibkrFlexToken.path})";
-        query = "639991";
-
-        pingKey = "$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
-        slug = "https://health.czichy.com/ping/${pingKey}";
-      in
-        writeShellScriptBin "ibkr-flex-download"
-        ''
-          #!/usr/bin/env bash
-          set -euo pipefail
-
-          echo "Downloading Flex Report"
-          nix run github:czichy/ibkr-rust/flex -q ${query} -t "echo '${token}'" --dump-path /TWS_Flex_Reports  \
-          --extra-experimental-features "nix-command flakes"
-
-          for file in /TWS_Flex_Reports/*.xml ; do
-              fileDate=$(awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
-              destination="$(awk -F[-] '{print $1 }' <<<"$fileDate")/$(awk -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
-              echo "$destination"
-              echo mv "$file" "/TWS_Flex_Reports/$destination";
-          done
-          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused ${slug}/ibkr-flex-download
-
-        ''
-    )
-    # inputs.ibkr-rust.packages.${pkgs.system}.flex
   ];
   # |----------------------------------------------------------------------| #
   systemd.timers."ibkr-flex-download" = {
@@ -85,13 +78,10 @@
   };
 
   systemd.services."ibkr-flex-download" = {
-    script = ''
-      set -eu
-    '';
-    # ${pkgs.ibkr-flex-download}
     serviceConfig = {
-      Type = "oneshot";
+      Type = "simple";
       User = "root";
+      ExecStart = "${download-ibkr-flex}";
     };
   };
 
@@ -100,11 +90,6 @@
     "/etc/ssh/ssh_host_rsa_key"
     "/etc/ssh/ssh_host_rsa_key.pub"
   ];
-  # fileSystems = lib.mkMerge [
-  #   {
-  #     "/shared".neededForBoot = true;
-  #   }
-  # ];
   # |----------------------------------------------------------------------| #
   systemd.network.enable = true;
   system.stateVersion = "24.05";
