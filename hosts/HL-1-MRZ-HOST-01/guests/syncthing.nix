@@ -63,6 +63,33 @@ in {
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
+  microvm.shares = [
+    {
+      # On the host
+      source = "/shared/shares/dokumente";
+      # In the MicroVM
+      mountPoint = "${cfg.dataDir}/dokumente";
+      tag = "flex";
+      proto = "virtiofs";
+    }
+    {
+      # On the host
+      source = "/shared/shares/users/christian/Trading/";
+      # In the MicroVM
+      mountPoint = "${cfg.dataDir}/users/christian/Trading";
+      tag = "flex";
+      proto = "virtiofs";
+    }
+    {
+      # On the host
+      source = "/shared/shares/users/christian/.credentials/";
+      # In the MicroVM
+      mountPoint = "${cfg.dataDir}/users/christian/.credentials";
+      tag = "flex";
+      proto = "virtiofs";
+    }
+  ];
+  # |----------------------------------------------------------------------| #
   age.secrets = {
     syncthingCert = {
       symlink = true;
@@ -140,21 +167,14 @@ in {
     };
   };
   # |----------------------------------------------------------------------| #
-  environment.persistence = lib.mkMerge (
-    [
-      {
-        "/persist".files = [
-          "/etc/ssh/ssh_host_rsa_key"
-          "/etc/ssh/ssh_host_rsa_key.pub"
-        ];
-      }
-    ]
-    # ++ [
-    #   (mkPersistent "/shared" "/shares/users/christian/Trading" "christian" "christian")
-    #   (mkPersistent "/shared" "/shares/users/christian/.credentials" "christian" "christian")
-    #   (mkPersistent "/shared" "/sync/dokumente" "christian" "czichys")
-    # ]
-  );
+  environment.persistence = lib.mkMerge [
+    {
+      "/persist".files = [
+        "/etc/ssh/ssh_host_rsa_key"
+        "/etc/ssh/ssh_host_rsa_key.pub"
+      ];
+    }
+  ];
   # |----------------------------------------------------------------------| #
 
   fileSystems = lib.mkMerge [
