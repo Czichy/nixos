@@ -69,7 +69,7 @@ in {
       source = "/shared/shares/dokumente";
       # In the MicroVM
       mountPoint = "${cfg.dataDir}/dokumente";
-      tag = "flex";
+      tag = "sync-dokumente";
       proto = "virtiofs";
     }
     {
@@ -77,7 +77,7 @@ in {
       source = "/shared/shares/users/christian/Trading/";
       # In the MicroVM
       mountPoint = "${cfg.dataDir}/users/christian/Trading";
-      tag = "flex";
+      tag = "sync-trading";
       proto = "virtiofs";
     }
     {
@@ -85,7 +85,7 @@ in {
       source = "/shared/shares/users/christian/.credentials/";
       # In the MicroVM
       mountPoint = "${cfg.dataDir}/users/christian/.credentials";
-      tag = "flex";
+      tag = "sync-credentials";
       proto = "virtiofs";
     }
   ];
