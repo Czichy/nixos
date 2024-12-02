@@ -167,7 +167,7 @@
       flake = false;
     };
     ibkr-rust = {
-      url = "github:czichy/ibkr-rust/flex";
+      url = "github:czichy/ibkr-rust";
     };
   };
 
