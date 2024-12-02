@@ -177,11 +177,11 @@ in {
   ];
   # |----------------------------------------------------------------------| #
 
-  fileSystems = lib.mkMerge [
-    {
-      "/shared".neededForBoot = true;
-    }
-  ];
+  # fileSystems = lib.mkMerge [
+  #   {
+  #     "/shared".neededForBoot = true;
+  #   }
+  # ];
 
   # |----------------------------------------------------------------------| #
   users.users = let
