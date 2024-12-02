@@ -67,6 +67,7 @@ in {
   environment.systemPackages = with pkgs; [
     pkg-config
     openssh
+    inputs.ibkr-rust.packages.${pkgs.system}.flex
   ];
   # |----------------------------------------------------------------------| #
   systemd.timers."ibkr-flex-download" = {
