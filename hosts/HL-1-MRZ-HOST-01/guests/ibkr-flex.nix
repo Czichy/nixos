@@ -1,4 +1,5 @@
 {
+  inputs,
   config,
   pkgs,
   secretsPath,
@@ -8,8 +9,6 @@
   # |----------------------------------------------------------------------| #
   token = "$(cat ${config.age.secrets.ibkrFlexToken.path})";
   query = "639991";
-
-  pingKey = "$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
   slug = "https://health.czichy.com/ping/";
   download-ibkr-flex =
     pkgs.writeShellScriptBin "ibkr-flex-download"
