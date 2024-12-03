@@ -72,6 +72,7 @@ in {
   # | SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = with pkgs; [
+    gawk
     pkg-config
     openssh
     inputs.ibkr-rust.packages.${pkgs.system}.flex
