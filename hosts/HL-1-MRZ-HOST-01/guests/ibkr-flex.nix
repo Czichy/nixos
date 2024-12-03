@@ -47,17 +47,26 @@ in {
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
+  users = {
+    users.ibkr = {
+      isSystemUser = true;
+      group = "uptime-kuma";
+    };
+    groups.ibkr = {};
+  };
+  # |----------------------------------------------------------------------| #
   age.secrets = {
     ibkrFlexToken = {
       symlink = true;
       file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ibkr-flex/token.age";
       mode = "0600";
-      owner = "root";
+      owner = "ibkr";
     };
   };
   age.secrets.ibkr-flex-hc-ping = {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
+    owner = "ibkr";
   };
   # ------------------------------
   # | SYSTEM PACKAGES |
@@ -80,7 +89,7 @@ in {
   systemd.services."ibkr-flex-download" = {
     serviceConfig = {
       Type = "simple";
-      User = "root";
+      User = "ibkr";
       ExecStart = "${download-ibkr-flex}/bin/ibkr-flex-download";
     };
   };
