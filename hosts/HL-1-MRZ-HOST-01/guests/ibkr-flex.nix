@@ -19,8 +19,8 @@
       echo "Downloading Flex Report"
 
       for file in /TWS_Flex_Reports/*.xml ; do
-          fileDate=$(awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
-          destination="$(awk -F[-] '{print $1 }' <<<"$fileDate")/$(awk -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
+          fileDate=$(${pkgs.awk} -F[_.] '{print $3 }' <<<"$(basename "$file")");
+          destination="$(${pkgs.awk} -F[-] '{print $1 }' <<<"$fileDate")/$(${pkgs.awk} -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
           echo "$destination"
           echo mv "$file" "/TWS_Flex_Reports/$destination";
       done
@@ -72,7 +72,7 @@ in {
   # | SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = with pkgs; [
-    gawk
+    awk
     pkg-config
     openssh
     inputs.ibkr-rust.packages.${pkgs.system}.flex
