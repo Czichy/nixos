@@ -50,7 +50,7 @@ in {
   users = {
     users.ibkr = {
       isSystemUser = true;
-      group = "uptime-kuma";
+      group = "ibkr";
     };
     groups.ibkr = {};
   };
