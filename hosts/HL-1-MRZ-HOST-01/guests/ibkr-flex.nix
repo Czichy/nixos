@@ -16,7 +16,7 @@
       set -euo pipefail
 
       echo "Downloading Flex Report"
-      token="cat ${config.age.secrets.ibkrFlexToken.path})";
+      token="$(cat ${config.age.secrets.ibkrFlexToken.path})";
       /run/current-system/sw/bin/ibkr-rust-flex -q ${query} -t "$token" --dump-path /TWS_Flex_Reports
 
       for file in /TWS_Flex_Reports/*.xml ; do
