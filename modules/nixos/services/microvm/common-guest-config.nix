@@ -57,9 +57,7 @@ in {
     gc.automatic = mkForce false;
   };
 
-  environment.systemPackages = with pkgs; [
-    vim
-  ];
+  environment.systemPackages = [pkgs.helix];
 
   systemd.network.enable = true;
   networking.useNetworkd = true;
