@@ -17,7 +17,7 @@
       set -euo pipefail
 
       echo "Downloading Flex Report"
-      exec ibkr-rust-flex -q ${query} -t "echo '${token}'" --dump-path /TWS_Flex_Reports
+      /run/current-system/sw/bin/ibkr-rust-flex -q ${query} -t "echo '${token}'" --dump-path /TWS_Flex_Reports
 
       for file in /TWS_Flex_Reports/*.xml ; do
           fileDate=$(awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
