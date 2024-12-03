@@ -23,7 +23,8 @@
           fileDate=$(${pkgs.gawk}/bin/awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
           destination="$(${pkgs.gawk}/bin/awk -F[-] '{print $1 }' <<<"$fileDate")/$(${pkgs.gawk}/bin/awk -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
           echo "$destination"
-          echo mv "$file" "/TWS_Flex_Reports/$destination";
+          mkdir -p "/TWS_Flex_Reports/$destination";
+          mv "$file" "/TWS_Flex_Reports/$destination";
       done
       pingKey="$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
       ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/ibkr-flex-download"
