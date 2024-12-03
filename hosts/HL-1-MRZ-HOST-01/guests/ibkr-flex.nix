@@ -61,13 +61,13 @@ in {
       symlink = true;
       file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ibkr-flex/token.age";
       mode = "0600";
-      owner = "ibkr";
+      owner = "root";
     };
   };
   age.secrets.ibkr-flex-hc-ping = {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
-    owner = "ibkr";
+    owner = "root";
   };
   # ------------------------------
   # | SYSTEM PACKAGES |
@@ -91,7 +91,7 @@ in {
   systemd.services."ibkr-flex-download" = {
     serviceConfig = {
       Type = "simple";
-      User = "ibkr";
+      User = "root";
       ExecStart = "${download-ibkr-flex}/bin/ibkr-flex-download";
     };
   };
