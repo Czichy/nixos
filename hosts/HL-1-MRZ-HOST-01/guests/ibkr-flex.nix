@@ -7,7 +7,7 @@
   ...
 }: let
   # |----------------------------------------------------------------------| #
-  token = "$(cat ${config.age.secrets.ibkrFlexToken.path})";
+  token = "cat ${config.age.secrets.ibkrFlexToken.path}";
   query = "639991";
   slug = "https://health.czichy.com/ping/";
   download-ibkr-flex =
