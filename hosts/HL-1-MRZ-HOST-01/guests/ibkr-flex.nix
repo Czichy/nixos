@@ -17,7 +17,6 @@
       set -euo pipefail
 
       echo "Downloading Flex Report"
-      /run/current-system/sw/bin/ibkr-rust-flex -q ${query} -t '${token}' --dump-path /TWS_Flex_Reports
 
       for file in /TWS_Flex_Reports/*.xml ; do
           fileDate=$(awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
@@ -29,6 +28,7 @@
       ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/ibkr-flex-download"
 
     '';
+  # /run/current-system/sw/bin/ibkr-rust-flex -q ${query} -t '${token}' --dump-path /TWS_Flex_Reports
   # |----------------------------------------------------------------------| #
 in {
   microvm.mem = 512;
