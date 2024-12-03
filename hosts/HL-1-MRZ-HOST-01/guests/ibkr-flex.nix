@@ -7,6 +7,7 @@
   ...
 }: let
   # |----------------------------------------------------------------------| #
+  token = "cat ${config.age.secrets.ibkrFlexToken.path}";
   query = "639991";
   slug = "https://health.czichy.com/ping/";
   download-ibkr-flex =
@@ -16,8 +17,7 @@
       set -euo pipefail
 
       echo "Downloading Flex Report"
-      token="$(cat ${config.age.secrets.ibkrFlexToken.path})";
-      /run/current-system/sw/bin/ibkr-rust-flex -q ${query} -t "echo $token" --dump-path /TWS_Flex_Reports
+      /run/current-system/sw/bin/ibkr-rust-flex -q ${query} -t '${token}' --dump-path /TWS_Flex_Reports
 
       for file in /TWS_Flex_Reports/*.xml ; do
           fileDate=$(awk -F[_.] '{print $3 }' <<<"$(basename "$file")");

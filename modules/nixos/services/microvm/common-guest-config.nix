@@ -58,8 +58,7 @@ in {
   };
 
   environment.systemPackages = with pkgs; [
-    wireguard-tools
-    kitty.terminfo
+    vim
   ];
 
   systemd.network.enable = true;
