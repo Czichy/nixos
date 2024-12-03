@@ -19,7 +19,7 @@
       echo "Downloading Flex Report"
 
       for file in /TWS_Flex_Reports/*.xml ; do
-          fileDate=$(${pkgs.awk} -F[_.] '{print $3 }' <<<"$(basename "$file")");
+          fileDate=$(${pkgs.gawk} -F[_.] '{print $3 }' <<<"$(basename "$file")");
           destination="$(${pkgs.gawk} -F[-] '{print $1 }' <<<"$fileDate")/$(${pkgs.gawk} -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
           echo "$destination"
           echo mv "$file" "/TWS_Flex_Reports/$destination";
