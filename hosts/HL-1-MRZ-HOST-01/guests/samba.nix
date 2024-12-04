@@ -353,21 +353,21 @@ in {
       "/shares/bibliothek".d = {
         user = "christian";
         group = "czichys";
-        mode = "0660";
+        mode = "0777";
       };
       "/shares/media".d = {
         user = "christian";
         group = "czichys";
-        mode = "0660";
+        mode = "0777";
       };
       "/shares/dokumente".d = {
         user = "christian";
         group = "czichys";
-        mode = "0660";
+        mode = "0777";
       };
       "/shares/dokumente/scanned_documents".d = {
         user = "brother";
-        group = "brother";
+        group = "czichys";
         mode = "0777";
       };
     };
