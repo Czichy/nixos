@@ -127,9 +127,6 @@ in {
     group = "${cfg.group}";
 
     dataDir = "${cfg.dataDir}";
-    # Don't create default ~/Sync folder
-    environment.STNODEFAULTFOLDER = "true";
-
     cert = config.age.secrets.syncthingCert.path;
     key = config.age.secrets.syncthingKey.path;
     # To be able to access the web GUI from other computers, you need to change the
@@ -167,6 +164,8 @@ in {
       gui.insecureAdminAccess = true;
     };
   };
+  # Don't create default ~/Sync folder
+  systemd.services.syncthing.environment.STNODEFAULTFOLDER = "true";
   # |----------------------------------------------------------------------| #
   environment.persistence = lib.mkMerge [
     {
