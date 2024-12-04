@@ -127,6 +127,8 @@ in {
     group = "${cfg.group}";
 
     dataDir = "${cfg.dataDir}";
+    # Don't create default ~/Sync folder
+    environment.STNODEFAULTFOLDER = "true";
 
     cert = config.age.secrets.syncthingCert.path;
     key = config.age.secrets.syncthingKey.path;
@@ -134,7 +136,6 @@ in {
     # GUI Listen Address setting from the default 127.0.0.1:8384 to 0.0.0.0:8384.
     # You also need to open the port in your local firewall if you have one.
     guiAddress = "0.0.0.0:8384";
-
     settings = {
       # Disable this on non-servers as the folder has to be manually added
       # overrides any devices added or deleted through the WebUI

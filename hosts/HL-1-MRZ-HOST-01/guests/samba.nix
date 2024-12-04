@@ -322,14 +322,14 @@ in {
           hasBunker = false;
         } {})
 
-        (mkCustomShare {
-          name = "scanned_documents";
-          path = "/shares/dokumente/scanned_documents";
-          user = "brother";
-          validUser = "brother";
-          group = "czichys";
-          hasBunker = false;
-        } {})
+        # (mkCustomShare {
+        #   name = "scanned_documents";
+        #   path = "/shares/dokumente/scanned_documents";
+        #   user = "brother";
+        #   validUser = "brother";
+        #   group = "czichys";
+        #   hasBunker = false;
+        # } {})
 
         (mkCustomShare {
           name = "bibliothek";
@@ -365,11 +365,11 @@ in {
         group = "czichys";
         mode = "0777";
       };
-      "/shares/dokumente/scanned_documents".d = {
-        user = "brother";
-        group = "czichys";
-        mode = "0777";
-      };
+      # "/shares/dokumente/scanned_documents".d = {
+      #   user = "brother";
+      #   group = "czichys";
+      #   mode = "0777";
+      # };
     };
   };
   fileSystems = lib.mkMerge [
