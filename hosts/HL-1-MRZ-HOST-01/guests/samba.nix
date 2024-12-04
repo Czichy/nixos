@@ -327,7 +327,7 @@ in {
           path = "/shares/dokumente/scanned_documents";
           user = "brother";
           validUser = "brother";
-          group = "brother";
+          group = "czichys";
           hasBunker = false;
         } {})
 
