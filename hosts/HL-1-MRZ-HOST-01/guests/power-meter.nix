@@ -11,27 +11,27 @@
 {
   microvm.mem = 512;
   microvm.vcpu = 1;
-  # microvm.shares = [
-  #   {
-  #     # On the host
-  #     source = "/shared/shares/users/christian/Trading/TWS_Flex_Reports";
-  #     # In the MicroVM
-  #     mountPoint = "/TWS_Flex_Reports";
-  #     tag = "flex";
-  #     proto = "virtiofs";
-  #   }
-  # ];
+  microvm.shares = [
+    {
+      # On the host
+      source = "/shared/shares/users/christian/Trading/TWS_Flex_Reports";
+      # In the MicroVM
+      mountPoint = "/TWS_Flex_Reports";
+      tag = "flex";
+      proto = "virtiofs";
+    }
+  ];
 
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
-  # users = {
-  #   users.ibkr = {
-  #     isSystemUser = true;
-  #     group = "ibkr";
-  #   };
-  #   groups.ibkr = {};
-  # };
+  users = {
+    users.power = {
+      isSystemUser = true;
+      group = "power";
+    };
+    groups.power = {};
+  };
   # |----------------------------------------------------------------------| #
   # age.secrets = {
   #   ibkrFlexToken = {
@@ -50,9 +50,7 @@
   # | SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = with pkgs; [
-    gawk
     pkg-config
-    openssh
     inputs.power-meter.packages.${pkgs.system}.power-meter
   ];
   # |----------------------------------------------------------------------| #

@@ -93,7 +93,6 @@
         enableStorageDataset = true;
       }
       // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp4s0" "02:01:27:6b:d9:d4" "vlan40" {
-        # enableSharedDataset = true;
       }
       // mkMicrovm "forgejo" "HL-3-RZ-GIT-01" "enp4s0" "02:01:27:c4:0e:09" "vlan40" {
         enableStorageDataset = true;
