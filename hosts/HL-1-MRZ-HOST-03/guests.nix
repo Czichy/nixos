@@ -63,6 +63,7 @@
               inherit globals nodes;
               inherit lib;
               inherit inputs;
+              inherit hostName;
             };
           };
       };
