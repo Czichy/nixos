@@ -25,13 +25,13 @@
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
-  users = {
-    users.power = {
-      isSystemUser = true;
-      group = "power";
-    };
-    groups.power = {};
-  };
+  # users = {
+  #   users.power = {
+  #     isSystemUser = true;
+  #     group = "power";
+  #   };
+  #   groups.power = {};
+  # };
   # |----------------------------------------------------------------------| #
   # age.secrets = {
   #   ibkrFlexToken = {
@@ -49,10 +49,10 @@
   # ------------------------------
   # | SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    pkg-config
-    inputs.power-meter.packages.${pkgs.system}.power-meter
-  ];
+  # environment.systemPackages = with pkgs; [
+  #   pkg-config
+  #   inputs.power-meter.packages.${pkgs.system}.power-meter
+  # ];
   # |----------------------------------------------------------------------| #
   # systemd.timers."ibkr-flex-download" = {
   #   wantedBy = ["timers.target"];
