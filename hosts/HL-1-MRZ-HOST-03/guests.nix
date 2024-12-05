@@ -71,6 +71,9 @@
       // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "02:01:27:11:7f:17" "vlan40" {
         enableStorageDataset = true;
       }
+      // mkMicrovm "powermeter" "HL-3-RZ-POWER-01" "enp4s0" "02:02:27:f1:ed:77" "vlan40" {
+        enableStorageDataset = true;
+      }
     );
   };
 }

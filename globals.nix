@@ -61,7 +61,7 @@ in {
         # IBKR Flex Downloader
         hosts.HL-3-RZ-IBKR-01.id = 15;
         # Power Meter
-        hosts.HL-3-RZ-POWER-01.id = 19;
+        hosts.HL-3-RZ-POWER-01.id = 32;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome
