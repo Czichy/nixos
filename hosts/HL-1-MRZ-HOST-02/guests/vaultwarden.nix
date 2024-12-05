@@ -47,9 +47,7 @@ in {
 
   age.secrets.vaultwarden-hc-ping = {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
-    mode = "700";
-    owner = "vaultwarden";
-    group = "vaultwarden";
+    mode = "440";
   };
 
   # |----------------------------------------------------------------------| #
