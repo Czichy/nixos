@@ -70,7 +70,7 @@
       };
     };
     # Newest kernels might not be supported by ZFS
-    kernelPackages = lib.mkForce pkgs.linuxPackagesFor (pkgs.linuxKernel.kernels.linux_6_6.override {
+    kernelPackages = pkgs.linuxPackagesFor (pkgs.linuxKernel.kernels.linux_6_6.override {
       argsOverride = rec {
         src = pkgs.fetchurl {
           url = "mirror://kernel/linux/kernel/v${lib.versions.major version}.x/linux-${version}.tar.xz";
