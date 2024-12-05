@@ -62,27 +62,6 @@ in {
   };
 
   # |----------------------------------------------------------------------| #
-  # nodes.sentinel = {
-  #   # Rewrite destination addr with dnat on incoming connections
-  #   # and masquerade responses to make them look like they originate from this host.
-  #   # - 9922 (wan) -> 22 (proxy-sentinel)
-  #   networking.nftables.chains = {
-  #     postrouting.to-forgejo = {
-  #       after = ["hook"];
-  #       rules = [
-  #         "iifname wan ip daddr ${config.wireguard.proxy-sentinel.ipv4} tcp dport 22 masquerade random"
-  #         "iifname wan ip6 daddr ${config.wireguard.proxy-sentinel.ipv6} tcp dport 22 masquerade random"
-  #       ];
-  #     };
-  #     prerouting.to-forgejo = {
-  #       after = ["hook"];
-  #       rules = [
-  #         "iifname wan tcp dport 9922 dnat ip to ${config.wireguard.proxy-sentinel.ipv4}:22"
-  #         "iifname wan tcp dport 9922 dnat ip6 to ${config.wireguard.proxy-sentinel.ipv6}:22"
-  #       ];
-  #     };
-  #   };
-  # };
   networking.firewall = {
     allowedTCPPorts = [
       config.services.forgejo.settings.server.HTTP_PORT
