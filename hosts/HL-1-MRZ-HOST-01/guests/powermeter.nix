@@ -25,13 +25,13 @@
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
-  # users = {
-  #   users.power = {
-  #     isSystemUser = true;
-  #     group = "power";
-  #   };
-  #   groups.power = {};
-  # };
+  users = {
+    users.power = {
+      isSystemUser = true;
+      group = "power";
+    };
+    groups.power = {};
+  };
   # |----------------------------------------------------------------------| #
   # age.secrets = {
   #   ibkrFlexToken = {
