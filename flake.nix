@@ -169,6 +169,10 @@
     ibkr-rust = {
       url = "github:czichy/ibkr-rust";
     };
+
+    power-meter = {
+      url = "github:czichy/power-meter";
+    };
   };
 
   # NOTE Here you can add additional binary cache substituers that you trust.
