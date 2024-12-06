@@ -87,9 +87,9 @@
     systemd.services."microvm@${guestName}" = {
       requires = fsMountUnitsFor guestCfg;
       after = fsMountUnitsFor guestCfg;
-      # unitConfig = {
-      #   RequiresMountsFor = fsMountUnitsFor guestCfg;
-      # };
+      unitConfig = {
+        RequiresMountsFor = fsMountUnitsFor guestCfg;
+      };
     };
 
     microvm.vms.${guestName} = import ./microvm.nix guestName guestCfg attrs;
