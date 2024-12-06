@@ -29,7 +29,7 @@ in {
   environment.persistence."/persist" = {
     directories = [
       "/var/lib/systemd/coredump"
-      # "/var/lib/nixos" # contains user/group id map
+      "/var/lib/nixos" # contains user/group id map
       "/var/log"
     ];
 

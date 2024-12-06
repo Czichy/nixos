@@ -60,6 +60,8 @@ in {
         hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader
         hosts.HL-3-RZ-IBKR-01.id = 15;
+        # IBKR Flex Downloader
+        hosts.HL-3-RZ-IBKR-02.id = 16;
         # Power Meter
         hosts.HL-3-RZ-POWER-01.id = 32;
         # |------------------------------------| #

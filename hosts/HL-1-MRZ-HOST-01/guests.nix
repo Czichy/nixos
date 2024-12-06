@@ -99,6 +99,8 @@
       }
       // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp4s0" "02:01:27:ff:ed:77" "vlan40" {
       }
+      // mkMicrovm "ibkr-flex_1" "HL-3-RZ-IBKR-02" "enp4s0" "02:03:27:ff:ed:77" "vlan40" {
+      }
       // mkMicrovm "powermeter" "HL-3-RZ-POWER-01" "enp4s0" "02:02:27:f1:ed:77" "vlan40" {
         enableStorageDataset = true;
       }
