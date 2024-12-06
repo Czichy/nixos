@@ -80,7 +80,7 @@
     #     modDirVersion = "6.10.14";
     #   };
     # });
-    # kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
   hardware = {
