@@ -6,6 +6,11 @@
   nodes,
   ...
 }: {
+  # USB pass-through for power meter
+  services.udev.extraRules = ''
+    # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
+    SUBSYSTEM=="usb", ATTR{serial}=="015ACA59", ATTR{product}=="CP2104_USB_to_UART_Bridge_Controller", GROUP="kvm"
+  '';
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
