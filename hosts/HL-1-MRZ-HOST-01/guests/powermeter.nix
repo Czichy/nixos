@@ -9,8 +9,8 @@
 # |----------------------------------------------------------------------| #
 # in
 {
-  # microvm.mem = 512;
-  # microvm.vcpu = 1;
+  microvm.mem = 512;
+  microvm.vcpu = 1;
   # microvm.shares = [
   #   {
   #     # On the host
@@ -33,26 +33,12 @@
     groups.power = {};
   };
   # |----------------------------------------------------------------------| #
-  # age.secrets = {
-  #   ibkrFlexToken = {
-  #     symlink = true;
-  #     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ibkr-flex/token.age";
-  #     mode = "0600";
-  #     owner = "root";
-  #   };
-  # };
-  # age.secrets.ibkr-flex-hc-ping = {
-  #   file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
-  #   mode = "440";
-  #   owner = "root";
-  # };
-  # ------------------------------
   # | SYSTEM PACKAGES |
-  # ------------------------------
-  # environment.systemPackages = with pkgs; [
-  #   pkg-config
-  #   inputs.power-meter.packages.${pkgs.system}.power-meter
-  # ];
+  # |----------------------------------------------------------------------| #
+  environment.systemPackages = with pkgs; [
+    pkg-config
+    inputs.power-meter.packages.${pkgs.system}.power-meter
+  ];
   # |----------------------------------------------------------------------| #
   # systemd.timers."ibkr-flex-download" = {
   #   wantedBy = ["timers.target"];
