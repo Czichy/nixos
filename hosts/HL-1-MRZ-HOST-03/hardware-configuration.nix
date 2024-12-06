@@ -69,7 +69,7 @@
         configurationLimit = 8;
       };
     };
-    kernelPackages = pkgs.linuxPackages_latest;
+    # kernelPackages = pkgs.linuxPackages_latest;
   };
 
   hardware = {

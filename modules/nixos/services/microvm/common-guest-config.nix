@@ -6,7 +6,7 @@ authorizedKeys: _guestName: guestCfg: {
   inherit (lib) mkForce;
 in {
   node.name = guestCfg.nodeName;
-
+  boot.initrd.systemd.enable = true;
   networking.firewall.allowedTCPPorts = [22];
   services.openssh = {
     enable = true;
