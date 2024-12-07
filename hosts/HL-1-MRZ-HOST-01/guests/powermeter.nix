@@ -14,7 +14,7 @@
   microvm.devices = [
     # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
     {
-      bus = "tty";
+      bus = "usb";
       path = "serial=015ACA59,product=CP2104_USB_to_UART_Bridge_Controller";
     }
   ];
