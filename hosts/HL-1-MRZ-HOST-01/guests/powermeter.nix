@@ -12,10 +12,9 @@
   microvm.mem = 512;
   microvm.vcpu = 1;
   microvm.devices = [
-    # Sonoff Zigbee 3.0 USB Dongle Plus
-    # Silicon Labs CP210x UART Bridge
+    # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
     {
-      bus = "usb";
+      bus = "tty";
       path = "serial=015ACA59,product=CP2104_USB_to_UART_Bridge_Controller";
     }
   ];
