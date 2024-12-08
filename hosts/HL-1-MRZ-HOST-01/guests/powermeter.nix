@@ -18,12 +18,12 @@
       path = "vendorid=0x10c4,productid=0xea60";
     }
   ];
-  microvm.qemu.extraArgs = [
-    "-device"
-    "qemu-xhci"
-    "-device"
-    "usb-host,vendorid=0x10c4,productid=0xea60"
-  ];
+  # microvm.qemu.extraArgs = [
+  #   "-device"
+  #   "qemu-xhci"
+  #   "-device"
+  #   "usb-host,vendorid=0x10c4,productid=0xea60"
+  # ];
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
