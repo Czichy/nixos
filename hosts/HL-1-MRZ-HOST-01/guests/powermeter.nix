@@ -55,7 +55,7 @@
     wantedBy = ["multi-user.target"];
     serviceConfig = {
       # change this to refer to your actual derivation
-      ExecStart = "/run/current-system/sw/bin/power-meter --port /dev/ttyUSB0";
+      ExecStart = "/run/current-system/sw/bin/power-meter start --port /dev/ttyUSB0";
       # EnvironmentFile = "${interosEsMdb}/lib/es-service.env";
       Restart = "always";
       RestartSec = 1;
