@@ -61,6 +61,7 @@ in {
 
   systemd.network.enable = true;
   networking.useNetworkd = true;
+  system.stateVersion = "24.05";
 
   systemd.network.networks."10-${guestCfg.networking.mainLinkName}" = {
     matchConfig.Name = guestCfg.networking.mainLinkName;
