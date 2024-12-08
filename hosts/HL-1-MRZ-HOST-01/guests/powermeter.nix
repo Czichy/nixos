@@ -45,7 +45,6 @@
     inputs.power-meter.packages.${pkgs.system}.power-meter
   ];
   # |----------------------------------------------------------------------| #
-  # |----------------------------------------------------------------------| #
   environment.persistence."/persist".files = [
     "/etc/ssh/ssh_host_rsa_key"
     "/etc/ssh/ssh_host_rsa_key.pub"

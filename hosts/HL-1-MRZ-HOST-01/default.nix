@@ -24,13 +24,17 @@
 
   # topology.self.hardware.image = ../../topology/images/Topton.webp;
   topology.self.hardware.info = "Intel N100, 16GB RAM";
-  # ------------------------------
+  # |----------------------------------------------------------------------| #
   # | ADDITIONAL SYSTEM PACKAGES |
-  # ------------------------------
-  # environment.systemPackages = with pkgs; [
-  #   networkmanagerapplet # need this to configure L2TP ipsec
-  #   wireguard-tools
-  # ];
+  # |----------------------------------------------------------------------| #
+  environment.systemPackages = with pkgs; [
+    pkg-config
+    pciutils # A collection of programs for inspecting and manipulating configuration of PCI devices
+    usbutils # Tools for working with USB devices, such as lsusb
+    minicom # Modem control and terminal emulation program
+    inputs.power-meter.packages.${pkgs.system}.power-meter
+  ];
+  # |----------------------------------------------------------------------| #
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
