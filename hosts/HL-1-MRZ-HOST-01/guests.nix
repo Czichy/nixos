@@ -9,7 +9,7 @@
   # USB pass-through for power meter
   services.udev.extraRules = ''
     # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
-    SUBSYSTEM=="tty", ATTRS{serial}=="015ACA59", ATTRS{model}=="CP2104_USB_to_UART_Bridge_Controller", GROUP="kvm", NAME="lesekopf0"
+    SUBSYSTEM=="usb", ATTR{idVendor}=="10c4", ATTR{idProduct}=="ea60", GROUP="kvm"
   '';
   tensorfiles.services.microvm = {
     enable = true;
