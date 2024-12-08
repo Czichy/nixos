@@ -49,7 +49,7 @@
     inputs.power-meter.packages.${pkgs.system}.power-meter
   ];
   # |----------------------------------------------------------------------| #
-  systemd.services.interosEsMdb = {
+  systemd.services.powerMeter = {
     description = "Power Meter";
     # after = ["network.target"];
     wantedBy = ["multi-user.target"];
