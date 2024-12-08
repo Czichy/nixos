@@ -12,11 +12,16 @@
   microvm.mem = 512;
   microvm.vcpu = 1;
   microvm.devices = [
-    # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
     {
+      # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
       bus = "usb";
       path = "serial=015ACA59,model=CP2104_USB_to_UART_Bridge_Controller";
     }
+  ];
+  microvm.qemu.extraArgs = [
+    "-usb"
+    "-device"
+    "/dev/ttyusb0"
   ];
   # microvm.shares = [
   #   {
@@ -44,6 +49,8 @@
   # |----------------------------------------------------------------------| #
   environment.systemPackages = with pkgs; [
     pkg-config
+    pciutils # A collection of programs for inspecting and manipulating configuration of PCI devices
+    usbutils # Tools for working with USB devices, such as lsusb
     minicom # Modem control and terminal emulation program
     inputs.power-meter.packages.${pkgs.system}.power-meter
   ];
