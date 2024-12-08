@@ -11,19 +11,19 @@
 {
   microvm.mem = 512;
   microvm.vcpu = 1;
-  microvm.devices = [
-    {
-      # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
-      bus = "usb";
-      path = "vendorid=0x10c4,productid=0xea60";
-    }
-  ];
-  # microvm.qemu.extraArgs = [
-  #   "-device"
-  #   "qemu-xhci"
-  #   "-device"
-  #   "usb-host,vendorid=0x10c4,productid=0xea60"
+  # microvm.devices = [
+  #   {
+  #     # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
+  #     bus = "usb";
+  #     path = "vendorid=0x10c4,productid=0xea60";
+  #   }
   # ];
+  microvm.qemu.extraArgs = [
+    "-device"
+    "qemu-xhci"
+    "-device"
+    "usb-host,vendorid=0x10c4,productid=0xea60"
+  ];
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
