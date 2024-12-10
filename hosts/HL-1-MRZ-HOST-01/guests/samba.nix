@@ -12,21 +12,21 @@
   smbUsers = {
     christian = {
       id = 1000;
-      groups = ["czichys" "samba"];
+      groups = ["czichys" "samba" "brother"];
     };
     ina = {
       id = 1001;
-      groups = ["czichys" "samba"];
+      groups = ["czichys" "samba" "brother"];
     };
-    # brother = {
-    #   id = 1003;
-    #   groups = ["samba" "brother"];
-    # };
+    brother = {
+      id = 1003;
+      groups = ["samba" "brother"];
+    };
   };
   # smbGroups = config.repo.secrets.local.samba.groups;
   smbGroups = {
     czichys = {id = 1002;};
-    # brother = {id = 1004;};
+    brother = {id = 1004;};
   };
   mkPersistent = persistRoot: directory: owner: group: {
     ${persistRoot}.directories = [
@@ -59,8 +59,8 @@
         "force group" = group;
         "valid users" = "${validUser}";
         "write list" = "${validUser}";
-        # "force create mode" = "0660";
-        # "force directory mode" = "0770";
+        "force create mode" = "0660";
+        "force directory mode" = "0770";
         # Might be necessary for windows user to be able to open thing in smb
         "acl allow execute always" = "no";
       }
@@ -275,7 +275,7 @@ in {
 
             # Clients should only connect using the latest SMB3 protocol (e.g., on
             # clients running Windows 8 and later).
-            # "server min protocol" = "SMB3_11";
+            "server min protocol" = "SMB3_11";
             # Require native SMB transport encryption by default.
             "server smb encrypt" = "required";
 
@@ -299,9 +299,6 @@ in {
             # Clean up unused or empty files created by the OS or Samba.
             "fruit:wipe_intentionally_left_blank_rfork" = "yes";
             "fruit:delete_empty_adfiles" = "yes";
-
-            # "client min protocol" = "SMB2";
-            # "client max protocol" = "SMB3";
           };
         }
         (mkCustomShare {
@@ -365,11 +362,11 @@ in {
         group = "czichys";
         mode = "0777";
       };
-      # "/shares/dokumente/scanned_documents".d = {
-      #   user = "brother";
-      #   group = "czichys";
-      #   mode = "0777";
-      # };
+      "/shares/dokumente/scanned_documents".d = {
+        user = "brother";
+        group = "czichys";
+        mode = "0777";
+      };
     };
   };
   fileSystems = lib.mkMerge [
