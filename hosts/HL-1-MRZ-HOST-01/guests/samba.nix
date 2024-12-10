@@ -12,21 +12,21 @@
   smbUsers = {
     christian = {
       id = 1000;
-      groups = ["czichys" "samba" "brother"];
+      groups = ["czichys" "samba"];
     };
     ina = {
       id = 1001;
-      groups = ["czichys" "samba" "brother"];
+      groups = ["czichys" "samba"];
     };
-    brother = {
-      id = 1003;
-      groups = ["samba" "brother"];
-    };
+    # brother = {
+    #   id = 1003;
+    #   groups = ["samba" "brother"];
+    # };
   };
   # smbGroups = config.repo.secrets.local.samba.groups;
   smbGroups = {
     czichys = {id = 1002;};
-    brother = {id = 1004;};
+    # brother = {id = 1004;};
   };
   mkPersistent = persistRoot: directory: owner: group: {
     ${persistRoot}.directories = [
