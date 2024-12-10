@@ -12,11 +12,11 @@
   smbUsers = {
     christian = {
       id = 1000;
-      groups = ["czichys" "samba"];
+      groups = ["czichys" "samba" "brother"];
     };
     ina = {
       id = 1001;
-      groups = ["czichys" "samba"];
+      groups = ["czichys" "samba" "brother"];
     };
     brother = {
       id = 1003;
@@ -362,11 +362,16 @@ in {
         group = "czichys";
         mode = "0777";
       };
-      # "/shares/dokumente/scanned_documents".d = {
-      #   user = "brother";
-      #   group = "czichys";
-      #   mode = "0777";
-      # };
+      "/shares/dokumente/scanned_documents".d = {
+        user = "brother";
+        group = "czichys";
+        mode = "0777";
+      };
+      "/shares/users".d = {
+        user = "root";
+        group = "czichys";
+        mode = "0777";
+      };
     };
   };
   fileSystems = lib.mkMerge [
