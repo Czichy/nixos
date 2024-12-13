@@ -69,7 +69,7 @@
       };
     in (
       {}
-      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "02:01:27:11:7f:17" "vlan40" {
+      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "02:05:27:11:7f:17" "vlan40" {
         enableStorageDataset = true;
       }
     );

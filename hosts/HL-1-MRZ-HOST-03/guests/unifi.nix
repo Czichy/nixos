@@ -58,12 +58,20 @@ in {
     };
   };
 
-  environment.persistence."/persist".directories = [
-    {
-      directory = "/var/lib/unifi";
-      mode = "0700";
-    }
-  ];
+  # |----------------------------------------------------------------------| #
+  environment.persistence."/persist" = {
+    files = [
+      "/etc/ssh/ssh_host_rsa_key"
+      "/etc/ssh/ssh_host_rsa_key.pub"
+    ];
+    directories = [
+      {
+        directory = "/var/lib/unifi";
+        mode = "0700";
+      }
+    ];
+  };
+  # |----------------------------------------------------------------------| #
 
   services.unifi = {
     enable = true;
@@ -74,7 +82,4 @@ in {
   };
 
   topology.self.services.unifi.info = "https://" + unifiDomain;
-
-  systemd.network.enable = true;
-  system.stateVersion = "24.05";
 }

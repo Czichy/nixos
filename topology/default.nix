@@ -114,11 +114,11 @@ in {
     interfaces = {
       eth10 = {
         virtual = false;
-        physicalConnections = [(mkConnection "HL-1-MRZ-SBC-01" "enp4s0")];
+        physicalConnections = [(mkConnection "HL-1-MRZ-HOST-02" "enp4s0")];
       };
       eth11 = {
         virtual = false;
-        physicalConnections = [(mkConnection "HL-1-MRZ-HOST-01" "enp4s0")];
+        physicalConnections = [(mkConnection "HL-1-MRZ-HOST-02" "enp4s0")];
       };
       eth12 = {
         virtual = false;
@@ -126,7 +126,7 @@ in {
       };
       eth13 = {
         virtual = false;
-        physicalConnections = [(mkConnection "HL-1-MRZ-HOST-02" "enp2s0")];
+        physicalConnections = [(mkConnection "HL-1-MRZ-HOST-03" "enp2s0")];
       };
       eth16 = {
         virtual = false;
@@ -153,9 +153,9 @@ in {
       mgmt = {
         virtual = true;
         physicalConnections = [
-          (mkConnection "HL-1-MRZ-SBC-01" "mgmt")
           (mkConnection "HL-1-MRZ-HOST-01" "mgmt")
           (mkConnection "HL-1-MRZ-HOST-02" "mgmt")
+          (mkConnection "HL-1-MRZ-HOST-03" "mgmt")
           (mkConnection "HL-3-MRZ-FW-01" "mgmt")
         ];
       };
