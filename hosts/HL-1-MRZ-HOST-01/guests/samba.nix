@@ -253,7 +253,7 @@ in {
             # clients hardcode the host and share names.
             "disable netbios" = "yes";
             # Deny access to all hosts by default.
-            "hosts deny" = "0.0.0.0/0";
+            # "hosts deny" = "0.0.0.0/0";
             # Allow access to local network and TODO: wireguard
             "hosts allow" = "${globals.net.vlan40.cidrv4} ${globals.net.vlan10.cidrv4} ";
             # Don't advertise inaccessible shares to users
@@ -278,7 +278,7 @@ in {
             "server min protocol" = "NT1";
             # "server min protocol" = "SMB3_11";
             # Require native SMB transport encryption by default.
-            "server smb encrypt" = "required";
+            # "server smb encrypt" = "required";
 
             # Never map anything to the excutable bit.
             "map archive" = "no";
@@ -294,12 +294,12 @@ in {
             "show add printer wizard" = "no";
 
             # Load in modules (order is critical!) and enable AAPL extensions.
-            "vfs objects" = "catia fruit streams_xattr";
+            # "vfs objects" = "catia fruit streams_xattr";
             # Enable Apple's SMB2+ extension.
-            "fruit:aapl" = "yes";
+            # "fruit:aapl" = "yes";
             # Clean up unused or empty files created by the OS or Samba.
-            "fruit:wipe_intentionally_left_blank_rfork" = "yes";
-            "fruit:delete_empty_adfiles" = "yes";
+            # "fruit:wipe_intentionally_left_blank_rfork" = "yes";
+            # "fruit:delete_empty_adfiles" = "yes";
           };
         }
         (mkCustomShare {
