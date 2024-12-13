@@ -275,7 +275,8 @@ in {
 
             # Clients should only connect using the latest SMB3 protocol (e.g., on
             # clients running Windows 8 and later).
-            "server min protocol" = "SMB3_11";
+            "server min protocol" = "NT1";
+            # "server min protocol" = "SMB3_11";
             # Require native SMB transport encryption by default.
             "server smb encrypt" = "required";
 

@@ -207,12 +207,6 @@ in {
       # to automatically prune old snapshots.
       # The 'forget' command is run *after* the 'backup' command, so
       # keep that in mind when constructing the --keep-* options.
-      # pruneOpts = [
-      #   "--keep-daily 3"
-      #   "--keep-weekly 3"
-      #   "--keep-monthly 3"
-      #   "--keep-yearly 3"
-      # ];
       pruneOpts = ["--keep-last 14"];
 
       # When to run the backup. See {manpage}`systemd.timer(5)` for details.

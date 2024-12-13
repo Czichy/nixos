@@ -96,6 +96,7 @@
     jq # A lightweight and flexible command-line JSON processor
     killall
     vim # The most popular clone of the VI editor
+    pavucontrol # volume control
 
     # ARCHIVING UTILS --
     atool # Archive command line helper
