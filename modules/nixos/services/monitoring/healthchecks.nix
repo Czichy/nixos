@@ -53,7 +53,7 @@ in {
         name = "Healthchecks";
         # icon = "services.uptime-kuma";
         info = "${host}";
-        details.listen = mkIf (address != null && port != null) {text = "${address}:${toString port}";};
+        # details.listen = mkIf (address != null && port != null) {text = "${address}:${toString port}";};
       };
     }
     # |----------------------------------------------------------------------| #

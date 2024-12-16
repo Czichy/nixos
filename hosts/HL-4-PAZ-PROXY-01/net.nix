@@ -40,11 +40,11 @@ in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
   networking.domain = globals.domains.me;
 
-  globals.monitoring.ping.sentinel = {
-    hostv4 = lib.net.cidr.ip icfg.hostCidrv4;
-    hostv6 = lib.net.cidr.ip icfg.hostCidrv6;
-    network = "internet";
-  };
+  # globals.monitoring.ping.sentinel = {
+  #   hostv4 = lib.net.cidr.ip icfg.hostCidrv4;
+  #   hostv6 = lib.net.cidr.ip icfg.hostCidrv6;
+  #   network = "internet";
+  # };
 
   # |----------------------------------------------------------------------| #
   age.secrets.preshared-key = {

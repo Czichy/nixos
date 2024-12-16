@@ -1,14 +1,17 @@
 {
   globals,
   pkgs,
+  hostName,
   ...
 }: let
   unifiDomain = "unifi.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
 in {
+  # |----------------------------------------------------------------------| #
   microvm.mem = 1024 * 3;
   microvm.vcpu = 4;
-  networking.hostName = "HL-3-RZ-UNIFI-01";
+  # |----------------------------------------------------------------------| #
+  networking.hostName = hostName;
   globals.services.unifi.domain = unifiDomain;
   globals.monitoring.dns.unifi = {
     server = globals.net.vlan40.hosts.HL-3-RZ-DNS-01.ipv4;
@@ -29,6 +32,7 @@ in {
       10001 # UDP port used for device discovery.
     ];
   };
+  # |----------------------------------------------------------------------| #
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
@@ -81,5 +85,9 @@ in {
     maximumJavaHeapSize = 1024;
   };
 
-  topology.self.services.unifi.info = "https://" + unifiDomain;
+  # |----------------------------------------------------------------------| #
+  # topology.self.services.unifi = {
+  # info = "https://" + unifiDomain;
+  # name = "Unifi Controller";
+  # };
 }

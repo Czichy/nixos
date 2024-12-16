@@ -138,7 +138,7 @@ in {
 
   # |----------------------------------------------------------------------| #
 
-  topology.self.services.caddy.info = "https://" + caddyLocalDomain;
+  # topology.self.services.caddy.info = "https://" + caddyLocalDomain;
 
   # topology.self.connections.dmz = mkConnection "HL-3-MRZ-FW-01" "dmz";
   system.stateVersion = "24.05";

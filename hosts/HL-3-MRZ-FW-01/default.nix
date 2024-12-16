@@ -52,31 +52,31 @@ in {
         network = "trust";
         addresses = ["10.15.10.99/24"];
         virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "trust")];
+        # physicalConnections = [(mkConnection "switch-keller" "trust")];
       };
       mgmt = {
         network = "mgmt";
         addresses = ["10.15.100.99/24"];
         virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "mgmt")];
+        # physicalConnections = [(mkConnection "switch-keller" "mgmt")];
       };
       guest = {
         network = "guest";
         addresses = ["10.15.20.99/24"];
         virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "mgmt")];
+        # physicalConnections = [(mkConnection "switch-keller" "mgmt")];
       };
       iot = {
         network = "iot";
         addresses = ["10.15.60.99/24"];
         virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "iot")];
+        # physicalConnections = [(mkConnection "switch-keller" "iot")];
       };
       servers = {
         network = "servers";
         addresses = ["10.15.40.99/24"];
         virtual = true;
-        physicalConnections = [(mkConnection "switch-keller" "servers")];
+        # physicalConnections = [(mkConnection "switch-keller" "servers")];
       };
       dmz = {
         network = "dmz";
@@ -105,12 +105,4 @@ in {
   # default configuration of the NixOS firewall will block the traffic because
   # of rpfilter. You can either disable rpfilter altogether:
   networking.firewall.checkReversePath = false;
-
-  # home-manager.users."czichy" = import (../../homes + "/czichy@server");
-  # users.users.qemu-libvirtd.group = "qemu-libvirtd";
-  # users.groups.qemu-libvirtd = {};
-
-  # security.pam.services = {
-  #   swaylock = {};
-  # };
 }

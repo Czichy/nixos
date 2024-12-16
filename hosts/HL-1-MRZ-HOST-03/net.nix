@@ -1,14 +1,18 @@
 {
   inputs,
   globals,
+  config,
   ...
 }
 : let
   inherit (inputs.self) lib;
+  inherit (config.lib.topology) mkConnection;
   macAddress_enp2s0 = "00:e0:4c:34:b6:40";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
-  topology.self.interfaces.enp2s0 = {};
+  topology.self.interfaces.enp2s0 = {
+    physicalConnections = [(mkConnection "HL-3-MRZ-FW-01" "enp1s0")];
+  };
 
   globals.monitoring.ping.HL-1-MRZ-HOST-03 = {
     hostv4 = lib.net.cidr.ip globals.net.vlan100.hosts.HL-1-MRZ-HOST-03.cidrv4;

@@ -9,6 +9,7 @@
   macAddress_enp4s0 = "a8:b8:e0:03:8d:e8";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
+  topology.self.interfaces.enp1s0 = {};
   topology.self.interfaces.enp4s0 = {};
 
   globals.monitoring.ping.HL-1-MRZ-HOST-01 = {
