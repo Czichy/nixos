@@ -5,11 +5,11 @@
 }
 : let
   inherit (inputs.self) lib;
-  # macAddress_enp1s0 = "60:be:b4:19:a8:4c";
   macAddress_enp4s0 = "60:be:b4:19:a8:4f";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
-  topology.self.interfaces.enp4s0 = {};
+  topology.self.interfaces.enp4s0 = {
+  };
 
   globals.monitoring.ping.HL-1-MRZ-HOST-02 = {
     hostv4 = lib.net.cidr.ip globals.net.vlan100.hosts.HL-1-MRZ-HOST-02.cidrv4;

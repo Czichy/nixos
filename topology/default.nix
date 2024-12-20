@@ -6,6 +6,7 @@
     mkSwitch
     mkRouter
     mkConnection
+    mkConnectionRev
     ;
 in {
   icons.services.opnsense.file = ./icons/opnsense.svg;
@@ -132,7 +133,7 @@ in {
       eth16 = {
         virtual = false;
         physicalConnections = [
-          (mkConnection "HL-3-MRZ-FW-01" "enp2s0")
+          (mkConnectionRev "HL-3-MRZ-FW-01" "enp2s0")
         ];
       };
       servers = {
@@ -140,9 +141,10 @@ in {
         network = "servers";
         physicalConnections = [
           (mkConnection "HL-1-MRZ-HOST-01" "30-servers")
-          (mkConnection "HL-1-MRZ-HOST-02" "servers")
+          # (mkConnection "HL-1-MRZ-HOST-02" "servers")
+          (mkConnection "HL-1-MRZ-HOST-02" "enp4s0")
           (mkConnection "HL-1-MRZ-HOST-03" "servers")
-          (mkConnection "HL-3-MRZ-FW-01" "servers")
+          # (mkConnectionRev "HL-3-MRZ-FW-01" "servers")
         ];
       };
       iot = {
@@ -155,16 +157,16 @@ in {
       trust = {
         virtual = true;
         network = "trust";
-        physicalConnections = [
-          (mkConnection "HL-3-MRZ-FW-01" "trust")
-        ];
+        # physicalConnections = [
+        # (mkConnection "HL-3-MRZ-FW-01" "trust")
+        # ];
       };
       guest = {
         virtual = true;
         network = "guest";
-        physicalConnections = [
-          (mkConnection "HL-3-MRZ-FW-01" "guest")
-        ];
+        # physicalConnections = [
+        # (mkConnection "HL-3-MRZ-FW-01" "guest")
+        # ];
       };
       mgmt = {
         virtual = true;
@@ -173,7 +175,7 @@ in {
           (mkConnection "HL-1-MRZ-HOST-01" "30-mgmt")
           (mkConnection "HL-1-MRZ-HOST-02" "mgmt")
           (mkConnection "HL-1-MRZ-HOST-03" "mgmt")
-          (mkConnection "HL-3-MRZ-FW-01" "mgmt")
+          # (mkConnection "HL-3-MRZ-FW-01" "mgmt")
         ];
       };
     };
@@ -210,19 +212,19 @@ in {
           (mkConnection "HL-1-OZ-PC-01" "enp39s0")
         ];
       };
-      # trust = {
-      #   virtual = true;
-      #   physicalConnections = [
-      #     (mkConnection "switch-keller" "trust")
-      #   ];
-      # };
+      trust = {
+        virtual = true;
+        physicalConnections = [
+          (mkConnection "switch-keller" "trust")
+        ];
+      };
     };
     # connections.trust = mkConnection "switch-keller" "trust";
     # connections.mgmt = mkConnection "switch-keller" "mgmt";
     # connections.guest = mkConnection "switch-keller" "guest";
-    connections.trust = mkConnection "switch-keller" "eth1";
-    connections.mgmt = mkConnection "switch-keller" "eth1";
-    connections.guest = mkConnection "switch-keller" "eth1";
+    # connections.trust = mkConnection "switch-keller" "eth1";
+    # connections.mgmt = mkConnection "switch-keller" "eth1";
+    # connections.guest = mkConnection "switch-keller" "eth1";
   };
   # |----------------------------------------------------------------------| #
 
@@ -255,7 +257,7 @@ in {
         physicalConnections = [(mkConnection "switch-office" "eth2")];
       };
     };
-    connections.mgmt = mkConnection "switch-office" "eth2";
+    # connections.mgmt = mkConnection "switch-office" "eth2";
     # connections.eth1 = mkConnection "switch-keller" "eth2";
   };
 
@@ -272,11 +274,13 @@ in {
       eth1 = {
         # network = "mgmt";
         addresses = ["10.15.100.2/24"];
-        virtual = true;
+        virtual = false;
         physicalConnections = [(mkConnection "switch-keller" "eth4")];
       };
     };
-    connections.mgmt = mkConnection "switch-keller" "eth4";
+    # connections.mgmt = mkConnection "switch-keller" "eth4";
+    # connections.trust = mkConnection "switch-keller" "eth4";
+    # connections.guest = mkConnection "switch-keller" "eth4";
   };
 
   nodes.printer = mkDevice "Drucker Büro" {
@@ -290,12 +294,12 @@ in {
     ];
     interfaces = {
       eth1 = {
-        # network = "trust";
+        network = "trust";
         # addresses = ["10.15.10.253"];
         virtual = true;
         physicalConnections = [(mkConnection "switch-office" "eth4")];
       };
     };
-    connections.trust = mkConnection "switch-office" "eth4";
+    # connections.trust = mkConnection "switch-office" "eth4";
   };
 }

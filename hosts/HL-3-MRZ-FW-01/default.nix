@@ -36,53 +36,61 @@ in {
     parent = "HL-1-MRZ-HOST-02";
     guestType = "qemu";
     interfaces.enp1s0 = {
+      network = "lan";
       physicalConnections = [(mkConnection "vigor" "p1")];
     };
 
     interfaces.enp2s0 = {
+      physicalConnections = [(mkConnection "switch-keller" "eth16")];
     };
 
     interfaces = {
       lan = {
         addresses = ["10.15.1.99"];
         network = "lan";
-        # physicalConnections = [(mkConnection "switch-keller" "lan")];
+        physicalConnections = [(mkConnection "vigor" "p1")];
       };
       trust = {
         network = "trust";
         addresses = ["10.15.10.99/24"];
         virtual = true;
-        # physicalConnections = [(mkConnection "switch-keller" "trust")];
+        physicalConnections = [(mkConnection "switch-keller" "trust")];
+        # physicalConnections = [(mkConnection "switch-keller" "eth16")];
       };
       mgmt = {
         network = "mgmt";
         addresses = ["10.15.100.99/24"];
         virtual = true;
-        # physicalConnections = [(mkConnection "switch-keller" "mgmt")];
+        physicalConnections = [(mkConnection "switch-keller" "mgmt")];
+        # physicalConnections = [(mkConnection "switch-keller" "eth16")];
       };
       guest = {
         network = "guest";
         addresses = ["10.15.20.99/24"];
         virtual = true;
-        # physicalConnections = [(mkConnection "switch-keller" "mgmt")];
+        physicalConnections = [(mkConnection "switch-keller" "mgmt")];
+        # physicalConnections = [(mkConnection "switch-keller" "eth16")];
       };
       iot = {
         network = "iot";
         addresses = ["10.15.60.99/24"];
         virtual = true;
-        # physicalConnections = [(mkConnection "switch-keller" "iot")];
+        physicalConnections = [(mkConnection "switch-keller" "iot")];
+        # physicalConnections = [(mkConnection "switch-keller" "eth16")];
       };
       servers = {
         network = "servers";
         addresses = ["10.15.40.99/24"];
         virtual = true;
-        # physicalConnections = [(mkConnection "switch-keller" "servers")];
+        physicalConnections = [(mkConnection "switch-keller" "servers")];
+        # physicalConnections = [(mkConnection "switch-keller" "eth16")];
       };
       dmz = {
         network = "dmz";
         addresses = ["10.15.70.99/24"];
         virtual = true;
-        # physicalConnections = [(mkConnection "switch-keller" "servers")];
+        physicalConnections = [(mkConnection "switch-keller" "servers")];
+        # physicalConnections = [(mkConnection "switch-keller" "eth16")];
       };
     };
   };
