@@ -1,4 +1,6 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  homeDir = "/home/czichy";
+in {
   tensorfiles.hm = {
     profiles.graphical-hyprland.enable = true;
     security.agenix.enable = true;
@@ -59,7 +61,7 @@
   };
 
   home.username = "czichy";
-  home.homeDirectory = "/home/czichy";
+  home.homeDirectory = homeDir;
   home.sessionVariables = {
     DEFAULT_USERNAME = "czichy";
     DEFAULT_MAIL = "christian@czichy.com";

@@ -78,8 +78,7 @@ in {
               # Startup
               # "swaybg -i ${wallpaper} --mode fill"
               "${pkgs.swaynotificationcenter}/bin/swaync"
-              # "ib-tws-native"
-              "[workspace 7] firefox -P 'tradingview1' --class=tradingview"
+              # "[workspace 7] firefox -P 'tradingview1' --class=tradingview"
               "[workspace 6] ${BROWSER}"
               "wl-paste --type text --watch cliphist store #Stores only text data"
               "wl-paste --type image --watch cliphist store #Stores only image data"
