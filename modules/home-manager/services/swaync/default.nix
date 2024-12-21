@@ -12,22 +12,19 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel mkPywalEnableOption;
 
   cfg = config.tensorfiles.hm.services.swaync;
   _ = mkOverrideAtHmModuleLevel;
-in
-{
+in {
   options.tensorfiles.hm.services.swaync = with types; {
     enable = mkEnableOption ''
       TODO
@@ -45,7 +42,7 @@ in
         iosevka
         swaynotificationcenter
         libnotify
-        (nerdfonts.override { fonts = [ "Iosevka" ]; })
+        nerd-fonts.iosevka
       ];
 
       services.swaync = {
@@ -134,10 +131,10 @@ in
       };
 
       # Started via hyprland to ensure it restarts properly with hyprland
-      systemd.user.services.swaync.Install.WantedBy = lib.mkForce [ ];
+      systemd.user.services.swaync.Install.WantedBy = lib.mkForce [];
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }
