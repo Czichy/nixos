@@ -20,12 +20,12 @@
       /run/current-system/sw/bin/ibkr-rust-flex -q ${query} -t "$token" --dump-path /TWS_Flex_Reports
 
       for file in /TWS_Flex_Reports/*.xml ; do
-          chown 1000:1000 "$file"
           fileDate=$(${pkgs.gawk}/bin/awk -F[_.] '{print $3 }' <<<"$(basename "$file")");
           destination="$(${pkgs.gawk}/bin/awk -F[-] '{print $1 }' <<<"$fileDate")/$(${pkgs.gawk}/bin/awk -F[-] '{print $1"-"$2  }' <<<"$fileDate")/"
           echo "$destination"
           mkdir -p "/TWS_Flex_Reports/$destination";
           mv "$file" "/TWS_Flex_Reports/$destination";
+          chown 1000:1000 "/TWS_Flex_Reports/$destination" -R;
       done
       pingKey="$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
       ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/ibkr-flex-download"
