@@ -72,6 +72,7 @@ in {
               "GDK_BACKEND,wayland"
               # toolkit-specific scale
               "GDK_SCALE,2"
+              "QT_SCALE_FACTOR,2"
               "XCURSOR_SIZE,32"
             ];
             exec-once = [
