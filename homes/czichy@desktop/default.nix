@@ -20,6 +20,7 @@ in {
       ragenix.enable = true;
       games.steam.enable = true;
       games.minecraft.enable = true;
+      terminals.foot.makeDefault = true;
     };
     hardware.monitors = {
       enable = true;
@@ -72,7 +73,7 @@ in {
     #beeper # Universal chat app.
     #armcord # Lightweight, alternative desktop client for Discord
     #anki # Spaced repetition flashcard program
-    #libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
+    libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
     #texlive.combined.scheme-medium # TeX Live environment
     #zotero # Collect, organize, cite, and share your research sources
     #lapack # openblas with just the LAPACK C and FORTRAN ABI

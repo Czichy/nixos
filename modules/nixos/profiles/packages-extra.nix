@@ -34,7 +34,7 @@ in {
           jq # A lightweight and flexible command-line JSON processor
           killall
           #vim # The most popular clone of the VI editor
-          calcurse # A calendar and scheduling application for the command line
+          # calcurse # A calendar and scheduling application for the command line
           #w3m # A text-mode web browser
           # neofetch # A fast, highly customizable system info script
           #cmake # Cross-platform, open-source build system generator

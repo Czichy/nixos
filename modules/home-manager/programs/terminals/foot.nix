@@ -17,15 +17,11 @@ in
         Enables NixOS module that configures/handles terminals.foot colorscheme generator.
       '';
 
-      #nvim-scrollback = {
-      #  enable =
-      #    mkEnableOption ''
-      #      TODO
-      #    ''
-      #    // {
-      #      default = true;
-      #    };
-      #};
+      makeDefault = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Whether to make this terminal default by setting TERMINAL env var";
+      };
 
       pkg = mkOption {
         type = package;
@@ -39,6 +35,10 @@ in
     config = mkIf cfg.enable (mkMerge [
       # |----------------------------------------------------------------------| #
       {
+        home = {
+          # packages = lib.optional (cfg.package != null) cfg.package;
+          sessionVariables.TERMINAL = mkIf cfg.makeDefault "foot";
+        };
         programs.foot = {
           enable = true;
 
