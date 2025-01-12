@@ -83,7 +83,8 @@ in {
               "[workspace 6] ${BROWSER}"
               "wl-paste --type text --watch cliphist store #Stores only text data"
               "wl-paste --type image --watch cliphist store #Stores only image data"
-              "[workspace special:pass silent] keepassxc"
+              "[workspace special:pass silent] bitwarden"
+              # "[workspace special:pass silent] keepassxc"
               "swayosd --max-volume 150"
               "xprop -root -f _XWAYLAND_GLOBAL_OUTPUT_SCALE 32c -set _XWAYLAND_GLOBAL_OUTPUT_SCALE 1"
 
@@ -106,8 +107,8 @@ in {
                 "SUPER,x,exec,wofi -S drun -x 10 -y 10 -W 25% -H 60%"
                 "SUPER,d,exec,wofi -S run"
                 "SUPER,v,exec, cliphist list | wofi -dmenu | cliphist decode | wl-copy"
-                ",Scroll_Lock,exec,pass-wofi # fn+k"
-                ",XF86Calculator,exec,pass-wofi # fn+f12"
+                #",Scroll_Lock,exec,pass-wofi # fn+k"
+                #",XF86Calculator,exec,pass-wofi # fn+f12"
 
                 # Toggle waybar"
                 ",XF86Tools,exec,pkill -USR1 waybar # profile button"

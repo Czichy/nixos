@@ -40,6 +40,7 @@ in {
             "${config.home.homeDirectory}/projects/power-meter"
             "${config.home.homeDirectory}/projects/seeking-edge"
             "${config.home.homeDirectory}/projects/tradingjournalrs"
+            "${config.home.homeDirectory}/projects/ibflex2ledger"
             #
             "${config.home.homeDirectory}/Dokumente/finanzen/ledger"
           ];

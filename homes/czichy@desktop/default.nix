@@ -11,6 +11,7 @@ in {
     };
     services.keepassxc.enable = true;
     programs = {
+      bitwarden.enable = true;
       ssh = {
         enable = true;
         sshKey.enable = false;

@@ -32,6 +32,7 @@ in {
     profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
 
     # -- programs --
+    programs_bitwarden = importApply ./programs/bitwarden.nix {inherit localFlake;};
     programs_browsers_firefox = importApply ./programs/browsers/firefox {inherit localFlake;};
     programs_btop = importApply ./programs/btop.nix {inherit localFlake;};
     programs_tmux = importApply ./programs/tmux.nix {inherit localFlake;};
