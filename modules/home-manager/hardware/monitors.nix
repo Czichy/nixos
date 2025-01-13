@@ -1,28 +1,15 @@
-# --- parts/modules/home-manager/hardware/nixGL.nix
-#
-# Author:  czichy <christian@czichy.com>
-# URL:     https://github.com/czichy/tensorfiles
-# License: MIT
-#
-# 888                                                .d888 d8b 888
-# 888                                               d88P"  Y8P 888
-# 888                                               888        888
-# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
-# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
-# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
-# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
-#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{ config, lib, ... }:
+{localFlake}: {
+  config,
+  lib,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib) isModuleLoadedAndEnabled;
   cfg = config.tensorfiles.hm.hardware.monitors;
 
   hyprlandCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.services.wayland.window-managers.hyprland";
-in
-{
+in {
   options.tensorfiles.hm.hardware.monitors = with types; {
     enable = mkEnableOption ''
       TODO
@@ -81,7 +68,7 @@ in
           };
         }
       );
-      default = [ ];
+      default = [];
     };
   };
 
@@ -99,13 +86,14 @@ in
     # |----------------------------------------------------------------------| #
     (mkIf hyprlandCheck {
       wayland.windowManager.hyprland.settings = {
-        monitor = map (
-          m:
-          if m.enabled then
-            "${m.name},${toString m.width}x${toString m.height}@${toString m.refreshRate},${toString m.x}x${toString m.y},${m.scale} "
-          else
-            ""
-        ) cfg.monitors;
+        monitor =
+          map (
+            m:
+              if m.enabled
+              then "${m.name},${toString m.width}x${toString m.height}@${toString m.refreshRate},${toString m.x}x${toString m.y},${m.scale} "
+              else ""
+          )
+          cfg.monitors;
 
         #   # Binding workspaces to monitor
         #   # By default it will always opend on the selected monitor.
@@ -113,40 +101,41 @@ in
         workspace = lib.concatLists (
           map (
             m:
-            if m.enabled then
-              map
+              if m.enabled
+              then
+                map
                 (
-                  ws:
-                  "${builtins.toString ws},monitor:${m.name},default:${
-                    if ws == m.defaultWorkspace then "true" else "false"
+                  ws: "${builtins.toString ws},monitor:${m.name},default:${
+                    if ws == m.defaultWorkspace
+                    then "true"
+                    else "false"
                   }"
                 )
                 (
-                  if m.primary && builtins.length cfg.monitors == 2 then
-                    [
-                      1
-                      2
-                      3
-                      4
-                      5
-                    ]
-                  else
-                    [
-                      6
-                      7
-                      8
-                      9
-                      10
-                    ]
+                  if m.primary && builtins.length cfg.monitors == 2
+                  then [
+                    1
+                    2
+                    3
+                    4
+                    5
+                  ]
+                  else [
+                    6
+                    7
+                    8
+                    9
+                    10
+                  ]
                 )
-            else
-              [ ]
-          ) cfg.monitors
+              else []
+          )
+          cfg.monitors
         );
       };
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }
