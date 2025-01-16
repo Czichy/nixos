@@ -44,7 +44,7 @@
     p7zip # A new p7zip fork with additional codecs and improvements (forked from https://sourceforge.net/projects/p7zip/)
     rar # Utility for RAR archives
     # unrar # Utility for RAR archives # NOTE collision with rar
-    rzip # Compression program
+    # rzip # Compression program
     unzip # An extraction utility for archives compressed in .zip format
     xz # A general-purpose data compression software, successor of LZMA
     zip # Compressor/archiver for creating and modifying zipfiles
