@@ -1,6 +1,7 @@
 {localFlake}: {
   config,
   lib,
+  pkgs,
   ...
 }:
 with builtins;
@@ -17,6 +18,50 @@ in {
       References
       - https://github.com/direnv/direnv
     '';
+    enableBashIntegration = mkOption {
+      default = true;
+      type = types.bool;
+      description = ''
+        Whether to enable Bash integration.
+      '';
+    };
+
+    enableZshIntegration = mkOption {
+      default = true;
+      type = types.bool;
+      description = ''
+        Whether to enable Zsh integration.
+      '';
+    };
+
+    enableFishIntegration = mkOption {
+      default = true;
+      type = types.bool;
+      readOnly = true;
+      description = ''
+        Whether to enable Fish integration. Note, enabling the direnv module
+        will always active its functionality for Fish since the direnv package
+        automatically gets loaded in Fish. If this is not the case try adding
+        ```nix
+          environment.pathsToLink = [ "/share/fish" ];
+        ```
+        to the system configuration.
+      '';
+    };
+
+    enableNushellIntegration = mkOption {
+      default = true;
+      type = types.bool;
+      description = ''
+        Whether to enable Nushell integration.
+      '';
+    };
+
+    nix-direnv = {
+      enable = mkEnableOption ''
+        [nix-direnv](https://github.com/nix-community/nix-direnv),
+        a fast, persistent use_nix implementation for direnv'';
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
