@@ -50,6 +50,45 @@ in {
       };
     }
     # |----------------------------------------------------------------------| #
+    {
+      programs.bash.initExtra = mkIf cfg.enableBashIntegration (
+        # Using mkAfter to make it more likely to appear after other
+        # manipulations of the prompt.
+        mkAfter ''
+          eval "$(${pkgs.direnv}/bin/direnv hook bash)"
+        ''
+      );
+
+      programs.zsh.initExtra = mkIf cfg.enableZshIntegration ''
+        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+      '';
+
+      programs.fish.interactiveShellInit = mkIf cfg.enableFishIntegration (
+        # Using mkAfter to make it more likely to appear after other
+        # manipulations of the prompt.
+        mkAfter ''
+          ${pkgs.direnv}/bin/direnv hook fish | source
+        ''
+      );
+
+      programs.nushell.extraConfig = mkIf cfg.enableNushellIntegration (
+        # Using mkAfter to make it more likely to appear after other
+        # manipulations of the prompt.
+        mkAfter ''
+          let-env config = ($env | default {} config).config
+          let-env config = ($env.config | default {} hooks)
+          let-env config = ($env.config | update hooks ($env.config.hooks | default [] pre_prompt))
+          let-env config = ($env.config | update hooks.pre_prompt ($env.config.hooks.pre_prompt | append {
+            code: "
+              let direnv = (${pkgs.direnv}/bin/direnv export json | from json)
+              let direnv = if ($direnv | length) == 1 { $direnv } else { {} }
+              $direnv | load-env
+              "
+          }))
+        ''
+      );
+    }
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with localFlake.lib.maintainers; [czichy];
