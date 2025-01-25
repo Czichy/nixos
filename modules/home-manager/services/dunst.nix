@@ -41,9 +41,7 @@ in {
     # |----------------------------------------------------------------------| #
     {
       home.packages = with pkgs; [
-        iosevka
         libnotify
-        nerd-fonts.iosevka
       ];
 
       systemd.user.tmpfiles.rules = [

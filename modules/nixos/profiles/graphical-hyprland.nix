@@ -52,6 +52,24 @@ in {
         kdePackages.kate # Advanced text editor
         kdePackages.kcalc # Scientific calculator
         kdePackages.kalarm # Personal alarm scheduler
+
+        # -- FONTS PACKAGES --
+        atkinson-hyperlegible # Sans serif for accessibility
+        corefonts # microsoft fonts
+        eb-garamond # free garamond port
+        ibm-plex # Striking Fonts from IBM
+        iosevka
+        jetbrains-mono # monospace
+        lmodern # TeX font
+        nerd-fonts.iosevka
+        noto-fonts-color-emoji # emoji primary
+        open-sans # nice sans
+        unifont # bitmap font, good fallback
+        unifont_upper # upper unicode ranges of unifont
+        vollkorn # weighty serif
+        noto-fonts # noto fonts: great for fallbacks
+        noto-fonts-extra
+        noto-fonts-cjk-sans
       ];
 
       services.xserver.enable = _ true;
