@@ -53,7 +53,7 @@ in {
       console = {
         enable = _ true;
         useXkbConfig = _ true;
-        font = _ "${pkgs.terminus_font}/share/consolefonts/ter-112n.psf.gz";
+        font = _ "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
       };
     }
     # |----------------------------------------------------------------------| #

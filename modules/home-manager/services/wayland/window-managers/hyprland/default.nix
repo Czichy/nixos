@@ -33,6 +33,7 @@ in {
     {
       home = {
         packages = with pkgs; [
+          hyprpicker
           grimblast
           swaybg
           slurp
