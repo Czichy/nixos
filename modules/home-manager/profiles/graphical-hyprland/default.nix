@@ -70,6 +70,25 @@ in {
         wl-clipboard
         cliphist
         ydotool
+
+        # -- FONTS PACKAGES --
+        atkinson-hyperlegible # Sans serif for accessibility
+        corefonts # microsoft fonts
+        eb-garamond # free garamond port
+        ibm-plex # Striking Fonts from IBM
+        iosevka
+        jetbrains-mono # monospace
+        lmodern # TeX font
+        nerd-fonts.iosevka
+        noto-fonts-color-emoji # emoji primary
+        open-sans # nice sans
+        unifont # bitmap font, good fallback
+        unifont_upper # upper unicode ranges of unifont
+        vollkorn # weighty serif
+        noto-fonts # noto fonts: great for fallbacks
+        noto-fonts-extra
+        noto-fonts-cjk-sans
+
         (pkgs.rustPlatform.buildRustPackage rec {
           pname = "swayosd";
           version = "5c2176ae6a01a18fdc2b0f5d5f593737b5765914";
