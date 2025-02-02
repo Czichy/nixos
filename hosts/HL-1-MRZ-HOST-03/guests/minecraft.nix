@@ -7,6 +7,7 @@
   ...
 }: let
   mcDomain = "mc.czichy.com";
+  certloc = "/var/lib/acme/czichy.com";
   sharedMinecraftConfig = import ./minecraft/sharedMinecraftConfig.nix {inherit pkgs lib;};
 in
   with lib;
