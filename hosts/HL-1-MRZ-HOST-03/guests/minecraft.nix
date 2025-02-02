@@ -9,6 +9,8 @@
   mcDomain = "mc.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
   sharedMinecraftConfig = import ./minecraft/sharedMinecraftConfig.nix {inherit pkgs lib;};
+
+  geyserUrl = n: v: b: "https://download.geysermc.org/v2/projects/${n}/versions/${v}/builds/${b}/downloads/velocity";
 in
   with lib;
   with pkgs; {
@@ -27,23 +29,6 @@ in
       allowedUDPPorts = [25565 19132];
     };
 
-    # nodes.HL-4-PAZ-PROXY-01 = {
-    #   # SSL config and forwarding to local reverse proxy
-    #   services.caddy = {
-    #     virtualHosts."${unifiDomain}".extraConfig = ''
-    #       reverse_proxy https://10.15.70.1:443 {
-    #           transport http {
-    #           	tls_server_name ${unifiDomain}
-    #           }
-    #       }
-
-    #       tls ${certloc}/cert.pem ${certloc}/key.pem {
-    #         protocols tls1.3
-    #       }
-    #       import czichy_headers
-    #     '';
-    #   };
-    # };
     nodes.HL-1-MRZ-HOST-02-caddy = {
       services.caddy = {
         virtualHosts."${mcDomain}".extraConfig = ''
@@ -137,6 +122,33 @@ in
             online-mode = false;
             motd = "Gosig beta!";
           };
+        };
+      };
+    };
+    # |----------------------------------------------------------------------| #
+
+    services.minecraft-servers.servers.proxy = {
+      symlinks = {
+        "plugins/Geyser.jar" = pkgs.fetchurl rec {
+          pname = "geyser";
+          version = "2.2.2";
+          url = geyserUrl pname version "427";
+          hash = "sha256-vGrENEZfOjh8FLYVDyX9/lXwkR+0lAsEafV/F0F+4hk=";
+        };
+        "plugins/Floodgate.jar" = pkgs.fetchurl rec {
+          pname = "floodgate";
+          version = "2.2.2";
+          url = geyserUrl pname version "90";
+          hash = "sha256-v7Gfwl870Vy6Q8PcBETFKknVL5UVEWbGmCiw4MVR7XE=";
+        };
+      };
+      files = {
+        "plugins/Geyser-Velocity/config.yml".value = {
+          server-name = "Server do Gabs";
+          passthrough-motd = true;
+          passthrough-player-counts = true;
+          allow-third-party-capes = true;
+          auth-type = "floodgate";
         };
       };
     };

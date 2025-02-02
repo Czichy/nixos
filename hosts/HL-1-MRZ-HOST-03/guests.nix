@@ -72,7 +72,7 @@
       // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "02:05:27:11:7f:17" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "minecraft" "HL-3-RZ-MC-01" "servers" "03:05:27:11:7f:17" "vlan40" {
+      // mkMicrovm "minecraft" "HL-3-RZ-MC-01" "servers" "02:04:27:11:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
     );
