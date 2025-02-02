@@ -73,6 +73,7 @@ in {
 
         # -- FONTS PACKAGES --
         atkinson-hyperlegible # Sans serif for accessibility
+        atkinson-monolegible
         corefonts # microsoft fonts
         eb-garamond # free garamond port
         ibm-plex # Striking Fonts from IBM

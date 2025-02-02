@@ -167,6 +167,11 @@
       };
     };
 
+    nix-minecraft = {
+      url = "github:Misterio77/nix-minecraft";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # This exists, I guess
     flake-compat = {
       url = "github:edolstra/flake-compat";

@@ -71,6 +71,8 @@ in {
         # |------------------------------------| #
         # Unifi Controller
         hosts.HL-3-RZ-UNIFI-01.id = 31;
+        # Minecraft Server
+        hosts.HL-3-RZ-MC-01.id = 32;
       };
 
       #IoT

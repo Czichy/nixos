@@ -33,6 +33,7 @@ in {
     {
       home = {
         packages = with pkgs; [
+          hyprland-qtutils
           hyprpicker
           grimblast
           swaybg
