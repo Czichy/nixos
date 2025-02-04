@@ -3,7 +3,7 @@
   lib,
 }: {
   enable = true;
-  autoStart = false;
+  autoStart = true;
   package = pkgs.minecraftServers.paper-1_20_4;
   jvmOpts = (import ./aikar-flags.nix) "4G";
   serverProperties = {

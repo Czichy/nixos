@@ -19,9 +19,12 @@ in {
       git.enable = true;
       ib-tws.enable = true;
       ragenix.enable = true;
-      games.steam.enable = true;
-      games.minecraft.enable = true;
+      games = {
+        steam.enable = true;
+        minecraft.enable = true;
+      };
       terminals.foot.makeDefault = true;
+      editors.zed.enable = true;
     };
     hardware.monitors = {
       enable = true;
