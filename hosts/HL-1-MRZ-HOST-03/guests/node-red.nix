@@ -10,7 +10,7 @@
   networking.hostName = hostName;
 
   networking.firewall = {
-    allowedTCPPorts = [443];
+    allowedTCPPorts = [443 1880];
   };
   # |----------------------------------------------------------------------| #
 
