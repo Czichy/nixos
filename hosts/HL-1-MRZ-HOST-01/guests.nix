@@ -6,11 +6,6 @@
   nodes,
   ...
 }: {
-  # USB pass-through for power meter
-  services.udev.extraRules = ''
-    # Lesekopf - Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_015ACA59
-    SUBSYSTEM=="usb", ATTR{idVendor}=="10c4", ATTR{idProduct}=="ea60", GROUP="kvm"
-  '';
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
@@ -103,9 +98,6 @@
         enableStorageDataset = true;
       }
       // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp4s0" "02:01:27:ff:ed:77" "vlan40" {
-      }
-      // mkMicrovm "powermeter" "HL-3-RZ-POWER-01" "enp4s0" "02:04:27:f1:ed:77" "vlan40" {
-        enableStorageDataset = true;
       }
     );
   };

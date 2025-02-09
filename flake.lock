@@ -2663,11 +2663,11 @@
         "services-flake": "services-flake_2"
       },
       "locked": {
-        "lastModified": 1734017254,
-        "narHash": "sha256-E3w+1pe9sI+WLoCMLJgD/6grnMyLizrpdkJjum/uPg0=",
+        "lastModified": 1739100062,
+        "narHash": "sha256-xip2FdCqestKThYtIK6JJkTNxYU/CO4suVuVcIwTVvI=",
         "owner": "czichy",
         "repo": "power-meter",
-        "rev": "84eed2c9290ef643eacc5b680f6195266e290d84",
+        "rev": "71238c837a1aa75fdae2c5f20f8a2a632780c086",
         "type": "github"
       },
       "original": {
