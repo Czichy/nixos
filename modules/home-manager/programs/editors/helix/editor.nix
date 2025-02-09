@@ -1,6 +1,6 @@
 {
   cursorline = true;
-  auto-save = true;
+  auto-save = false;
   line-number = "relative";
   color-modes = true;
   file-picker.hidden = false;

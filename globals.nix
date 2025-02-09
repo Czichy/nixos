@@ -73,6 +73,10 @@ in {
         hosts.HL-3-RZ-UNIFI-01.id = 31;
         # Minecraft Server
         hosts.HL-3-RZ-MC-01.id = 32;
+        # Mosquitto
+        hosts.HL-3-RZ-MQQT-01.id = 33;
+        # Power Meter
+        hosts.HL-3-RZ-POWER-02.id = 34;
       };
 
       #IoT
