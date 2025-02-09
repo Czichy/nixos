@@ -83,6 +83,12 @@
       // mkMicrovm "powermeter" "HL-3-RZ-POWER-02" "servers" "02:04:27:12:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
+      // mkMicrovm "mosquitto" "HL-3-RZ-MQTT-01" "servers" "02:04:27:15:8f:17" "vlan40" {
+        enableStorageDataset = true;
+      }
+      // mkMicrovm "node-red" "HL-3-RZ-RED-01" "servers" "02:04:27:14:8f:17" "vlan40" {
+        enableStorageDataset = true;
+      }
     );
   };
 }
