@@ -20,7 +20,7 @@
     allowedTCPPorts = [443 1880];
   };
   # |----------------------------------------------------------------------| #
-  age.secrets.restic-vaultwarden = {
+  age.secrets.restic-node-red = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-03/guests/node-red/restic-node-red.age";
     mode = "440";
   };
@@ -82,15 +82,8 @@
       # for details on syntax.
       exclude = [];
 
-      passwordFile = config.age.secrets.restic-vaultwarden.path;
+      passwordFile = config.age.secrets.restic-node-red.path;
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
-
-      # A script that must run before starting the backup process.
-      # backupPrepareCommand = ''
-      #   echo "Building backup dir ${config.services.vaultwarden.backupDir}"
-      #   mkdir -p ${config.services.vaultwarden.backupDir}
-      #   ${pkgs.sqlite}/bin/sqlite3 ${config.services.vaultwarden.backupDir}/db.sqlite3 ".backup '${config.services.vaultwarden.backupDir}/vaultwarden.sqlite'"
-      # '';
 
       # A script that must run after finishing the backup process.
       backupCleanupCommand = script-post config.networking.hostName "node-red";
