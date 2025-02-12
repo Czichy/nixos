@@ -80,7 +80,7 @@
       repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-node-red";
 
       # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = ["/root/.node-red"];
+      paths = ["/var/lib/node-red"];
 
       # Patterns to exclude when backing up. See
       #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
@@ -127,7 +127,7 @@
     ];
     directories = [
       {
-        directory = "/root/.node-red/";
+        directory = "/var/lib/node-red";
         mode = "0700";
       }
     ];
