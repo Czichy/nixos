@@ -25,6 +25,11 @@
     mode = "440";
   };
 
+  age.secrets."rclone.conf" = {
+    file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
+    mode = "440";
+  };
+
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
