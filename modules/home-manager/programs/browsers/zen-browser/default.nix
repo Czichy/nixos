@@ -14,10 +14,8 @@ with lib; let
     mkImpermanenceEnableOption
     ;
 
-  cfg = config.tensorfiles.hm.programs.browsers.zen;
+  cfg = config.tensorfiles.hm.programs.browsers.zen-browser;
   _ = mkOverrideAtHmModuleLevel;
-
-  plasmaCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.profiles.graphical-plasma";
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
@@ -27,7 +25,7 @@ with lib; let
     else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
-  options.tensorfiles.hm.programs.browsers.zen = with types; {
+  options.tensorfiles.hm.programs.browsers.zen-browser = with types; {
     enable = mkEnableOption ''
       TODO
     '';

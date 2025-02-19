@@ -13,7 +13,7 @@ in {
     programs = {
       bitwarden.enable = true;
       browsers.vivaldi.enable = true;
-      browsers.zen.enable = true;
+      browsers.zen-browser.enable = true;
       ssh = {
         enable = true;
         sshKey.enable = false;
