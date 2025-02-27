@@ -32,7 +32,11 @@ in {
         programs = {
           terminals.foot.enable = _ true;
           terminals.ghostty.enable = _ true;
-          browsers.firefox.enable = _ true;
+          browsers = {
+            firefox.enable = _ true;
+            vivaldi.enable = _ true;
+            # zen-browser.enable = _ true;
+          };
           editors.helix.enable = _ true;
           wlogout.enable = _ true;
           wofi.enable = _ true;

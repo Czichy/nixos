@@ -23,7 +23,7 @@ with lib; let
     if impermanenceCheck
     then config.tensorfiles.hm.system.impermanence
     else {};
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  # pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
   options.tensorfiles.hm.programs.browsers.zen-browser = with types; {
     enable = mkEnableOption ''

@@ -35,7 +35,7 @@ in {
     programs_bitwarden = importApply ./programs/bitwarden.nix {inherit localFlake;};
     programs_browsers_firefox = importApply ./programs/browsers/firefox {inherit localFlake;};
     programs_browsers_vivaldi = importApply ./programs/browsers/vivaldi.nix {inherit localFlake;};
-    programs_browsers_zen = importApply ./programs/browsers/zen-browser {inherit localFlake;};
+    # programs_browsers_zen = importApply ./programs/browsers/zen-browser {inherit localFlake;};
     programs_btop = importApply ./programs/btop.nix {inherit localFlake;};
     programs_tmux = importApply ./programs/tmux.nix {inherit localFlake;};
     programs_zellij = importApply ./programs/zellij.nix {inherit localFlake;};

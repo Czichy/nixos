@@ -184,6 +184,10 @@
     power-meter = {
       url = "github:czichy/power-meter";
     };
+    # zen-browser = {
+    #   url = "github:fufexan/zen-browser-flake";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   # NOTE Here you can add additional binary cache substituers that you trust.
