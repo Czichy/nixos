@@ -90,8 +90,8 @@ in {
               "swayosd --max-volume 150"
               "xprop -root -f _XWAYLAND_GLOBAL_OUTPUT_SCALE 32c -set _XWAYLAND_GLOBAL_OUTPUT_SCALE 1"
 
-              (mkIf agenixCheck "ib-tws-native -u $(< ${ibkr.user}) -p $(< ${ibkr.password})")
-              (mkIf (!agenixCheck) "ib-tws-native")
+              (mkIf agenixCheck "ib-tws-native-latest -u $(< ${ibkr.user}) -p $(< ${ibkr.password})")
+              (mkIf (!agenixCheck) "ib-tws-native-latest")
             ];
 
             bind =
