@@ -1,55 +1,34 @@
-#!/usr/bin/env nix-shell
-#!nix-shell -i bash -p curl gnused gnugrep
+i#!/bin/sh
+cd $(dirname $0)
 
-set -eu -o pipefail
+URL_PREFIX=https://download2.interactivebrokers.com/installers/tws/latest-standalone
+URL_JSON=${URL_PREFIX}/version.json
+URL_INSTALLER=${URL_PREFIX}/tws-latest-standalone-linux-x64.sh
 
-dirname=$(dirname "$0" | xargs realpath)
-nixpkgs=$(realpath "${dirname}/../..")
-attr=ib-tws
-nix_file="$dirname/default.nix"
+UPSTREAM_VERSION=$(curl ${URL_JSON} | sed 's/twslatest_callback({"buildVersion":"\(.*\)","buildDateTime.*/\1/')
+LOCAL_VERSION=$(grep -Po 'version = "\K([^"]*)' default.nix)
 
-url="https://download2.interactivebrokers.com/installers/tws/latest-standalone/tws-latest-standalone-linux-x64.sh"
-latestEtagHash=$(curl -sI $url | grep ETag | sed -E 's/.*"([^:]+):.*/\1/')
-
-currentEtagHash=$(nix-instantiate --eval -E "with import $nixpkgs {}; $attr.etagHash or (builtins.parseDrvName $attr.name).etagHash" | tr -d '"')
-currentVersion=$(nix-instantiate --eval -E "with import $nixpkgs {}; $attr.version or (builtins.parseDrvName $attr.name).version" | tr -d '"')
-
-if [ "$currentEtagHash" = "$latestEtagHash" ]; then
-  echo "ib-tws is up-to-date: ${currentVersion}"
-  exit 0
+if [ "$1" == "--no-git" ]; then
+    GIT="true";
+else
+    GIT="git";
 fi
 
-# download install script, get hash and store path
-{
-  read hash
-  read installScriptPath
-} < <(nix-prefetch-url "$url" --type sha256 --print-path)
-
-# convert to SRI hash
-sriHash=$(nix hash to-sri --type sha256 $hash)
-
-# extract install script to extract the version string
-src="$(mktemp -d /tmp/ib-tws-src.XXX)"
-pushd "$src"
-
-INSTALL4J_TEMP="$src" sh "$installScriptPath" __i4j_extract_and_exit
-latestVersion=$(grep buildInfo "$src/"*.dir/i4jparams.conf | sed -E 's/.*name="buildInfo" value="Build (\S+) .*/\1/')
-
-popd
-rm -r "$src"
-
-# update hash, version and etagHash
-sed -E \
-  -e "s|hash = \"[a-zA-Z0-9\/+-=]*\";|hash = \"$sriHash\";|" \
-  -e "s|version = \"$currentVersion\";|version = \"$latestVersion\";|" \
-  -e "s|etagHash = \"$currentEtagHash\";|etagHash = \"$latestEtagHash\";|" \
-  -i "$nix_file"
-
-# prepare a commit for automation
-cmd=$(echo "git commit -a -m \"$attr: $currentVersion -> $latestVersion\"")
-
-if [ -n "$GITHUB_ACTION" ]; then
-  eval $cmd
-else
-  echo $cmd
+if [ "$UPSTREAM_VERSION" != "$LOCAL_VERSION" -a -n "$UPSTREAM_VERSION" ]; then
+  $GIT pull --rebase
+  if [ -z "$(git status --untracked-files=no --porcelain)" ]; then
+      $GIT stash
+      CLEANUP="$GIT stash pop"
+  fi
+  FILE=$(mktemp)
+  curl ${URL_INSTALLER} > $FILE
+  chmod a+x $FILE
+  HASH=$(nix-hash $FILE --type sha256 --base32)
+  rm $FILE
+  sed -i -e 's/version = ".*/version = "'$UPSTREAM_VERSION'";/' default.nix
+  sed -i -e 's/sha256 = ".*/sha256 = "'$HASH'";/' default.nix
+  $GIT add default.nix
+  $GIT commit -m "ib-tws: $LOCAL_VERSION -> $UPSTREAM_VERSION"
+  eval $CLEANUP
+  $GIT push
 fi

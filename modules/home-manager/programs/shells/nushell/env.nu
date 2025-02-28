@@ -1,7 +1,7 @@
 
 # Nushell Environment Config
 $env.EDITOR = "hx"
-$env.BROWSER = "firefox"
+$env.BROWSER = "vivaldi"
 
 # Nushell Environment Config File
 #

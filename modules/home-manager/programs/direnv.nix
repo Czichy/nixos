@@ -69,7 +69,7 @@ in {
       programs.direnv = {
         enable = _ true;
         enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        # enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
         enableNushellIntegration = _ (
           isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
         );

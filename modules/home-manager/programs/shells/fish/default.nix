@@ -219,9 +219,13 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.file."${config.xdg.cacheHome}/oh-my-fish/.keep".enable = false;
+      # home.file."${config.xdg.cacheHome}/oh-my-fish/.keep".enable = false;
 
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+        directories = [
+          ".local/share/atuin"
+          ".local/share/zoxide"
+        ];
         files = [".local/share/fish"];
       };
     })
