@@ -48,8 +48,9 @@ in {
         profiles.minimal.enable = _ true;
 
         programs = {
-          shells.nushell.enable = _ true;
-          starship.enable = _ true;
+          # shells.nushell.enable = _ true;
+          shells.fish.enable = _ true;
+          # starship.enable = _ true;
           editors.helix.enable = _ true;
           file-managers.yazi.enable = _ true;
 

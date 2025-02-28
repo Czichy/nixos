@@ -33,9 +33,11 @@ in {
 
     # -- programs --
     programs_bitwarden = importApply ./programs/bitwarden.nix {inherit localFlake;};
+
     programs_browsers_firefox = importApply ./programs/browsers/firefox {inherit localFlake;};
     programs_browsers_vivaldi = importApply ./programs/browsers/vivaldi.nix {inherit localFlake;};
     # programs_browsers_zen = importApply ./programs/browsers/zen-browser {inherit localFlake;};
+
     programs_btop = importApply ./programs/btop.nix {inherit localFlake;};
     programs_tmux = importApply ./programs/tmux.nix {inherit localFlake;};
     programs_zellij = importApply ./programs/zellij.nix {inherit localFlake;};
@@ -56,8 +58,11 @@ in {
     programs_newsboat = importApply ./programs/newsboat.nix {inherit localFlake;};
     programs_pywal = importApply ./programs/pywal.nix {inherit localFlake;};
     programs_ragenix = importApply ./programs/ragenix.nix {inherit localFlake inputs;};
+
     programs_shells_zsh = importApply ./programs/shells/zsh {inherit localFlake;};
     programs_shells_nushell = importApply ./programs/shells/nushell {inherit localFlake;};
+    programs_shells_fish = importApply ./programs/shells/fish {inherit localFlake;};
+
     programs_ssh = importApply ./programs/ssh.nix {
       inherit secretsPath pubkeys;
       inherit localFlake;
