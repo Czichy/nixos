@@ -40,12 +40,24 @@
       debug = true;
     };
   inputs = {
-    # --- BASE DEPENDENCIES ---
+    # --- BASE DEPENDENCIES -----------------------------------------
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-parts.url = "github:hercules-ci/flake-parts";
+    home-manager = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    impermanence.url = "github:nix-community/impermanence";
     systems.url = "github:nix-systems/default";
-
-    # --- DEV DEPENDENCIES ---
+    microvm = {
+      url = "github:astro/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # --- DEV DEPENDENCIES ------------------------------------------
     devenv.url = "github:cachix/devenv";
     devenv-root = {
       url = "file+file:///dev/null";
@@ -58,7 +70,7 @@
     };
     treefmt-nix.url = "github:numtide/treefmt-nix";
 
-    # --- SECRET DEPENDENCIES --
+    # --- SECRET DEPENDENCIES ---------------------------------------
     agenix = {
       url = "github:ryantm/agenix";
       #   url = "github:yaxitech/ragenix";
@@ -74,27 +86,12 @@
       flake = false;
     };
 
-    # --- (NOTE, YOUR) EXTRA DEPENDENCIES --
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    impermanence.url = "github:nix-community/impermanence";
-
+    # --- UTILITIES -------------------------------------------------
     nixGL = {
       url = "github:nix-community/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hardware.url = "github:NixOS/nixos-hardware/master";
-
-    microvm = {
-      url = "github:astro/microvm.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     nix-topology = {
       url = "github:oddlama/nix-topology";
@@ -113,8 +110,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    #nur.url = "github:nix-community/NUR";
-
     arkenfox-user-js = {
       url = "github:arkenfox/user.js";
       flake = false;
@@ -129,8 +124,22 @@
       flake = false;
     };
 
+    # Sandbox wrappers for programs
+    nixpak = {
+      url = "github:nixpak/nixpak";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
+    };
+    # This exists, I guess
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
     nix-alien.url = "github:thiagokokada/nix-alien";
 
+    # --- PACKAGES --------------------------------------------------
     plasma-manager = {
       url = "github:pjones/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -158,25 +167,11 @@
       };
     };
 
-    # Sandbox wrappers for programs
-    nixpak = {
-      url = "github:nixpak/nixpak";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-      };
-    };
-
     nix-minecraft = {
       url = "github:Misterio77/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # This exists, I guess
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
     ibkr-rust = {
       url = "github:czichy/ibkr-rust";
     };

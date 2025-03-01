@@ -102,6 +102,7 @@
               nix-topology.nixosModules.default
               nixos-nftables-firewall.nixosModules.default
               microvm.nixosModules.host
+              # nur.modules.nixos.default
             ];
           }
       );
