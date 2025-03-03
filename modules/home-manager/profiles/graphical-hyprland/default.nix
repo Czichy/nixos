@@ -54,7 +54,7 @@ in {
 
       home.sessionVariables = {
         # Default programs
-        BROWSER = _ "firefox";
+        BROWSER = _ "vivaldi";
         EXPLORER = _ "yazi";
         # TERMINAL = _ "foot";
         EDITOR = _ "hx";

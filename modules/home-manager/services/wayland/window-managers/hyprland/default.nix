@@ -79,6 +79,7 @@ in {
             ];
             exec-once = [
               # Startup
+              "swayosd-server"
               # "swaybg -i ${wallpaper} --mode fill"
               "${pkgs.swaynotificationcenter}/bin/swaync"
               # "[workspace 7] firefox -P 'tradingview1' --class=tradingview"
@@ -164,8 +165,8 @@ in {
                 "SUPER + SHIFT,comma,movetoworkspacesilent,-1"
                 "SUPER + SHIFT,period,movetoworkspacesilent,+1"
 
-                ", XF86AudioMute, exec, swayosd --output-volume mute-toggle"
-                ", XF86AudioMicMute, exec, swayosd --input-volume mute-toggle"
+                ", XF86AudioMute, exec, swayosd-client --output-volume mute-toggle"
+                ", XF86AudioMicMute, exec, swayosd-client --input-volume mute-toggle"
 
                 # Special Workspaces
                 "SUPER,u,togglespecialworkspace"
@@ -179,10 +180,10 @@ in {
               ]);
 
             bindle = [
-              ", XF86AudioRaiseVolume, exec, swayosd --output-volume raise"
-              ", XF86AudioLowerVolume, exec, swayosd --output-volume lower"
-              "SHIFT, XF86AudioRaiseVolume, exec, swayosd --input-volume raise"
-              "SHIFT, XF86AudioLowerVolume, exec, swayosd --input-volume lower"
+              ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
+              ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
+              "SHIFT, XF86AudioRaiseVolume, exec, swayosd-client--input-volume raise"
+              "SHIFT, XF86AudioLowerVolume, exec, swayosd-client--input-volume lower"
             ];
 
             bindm = [

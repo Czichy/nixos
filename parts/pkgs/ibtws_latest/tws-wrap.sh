@@ -1,5 +1,6 @@
 #!/bin/sh
 export INSTALL4J_JAVA_HOME_OVERRIDE='__JAVAHOME__'
+export GDK_BACKEND=x11
 mkdir -p $HOME/.tws-latest
 VMOPTIONS=$HOME/.tws-latest/tws.vmoptions
 if [ ! -e tws.vmoptions ]; then

@@ -87,6 +87,10 @@
     };
 
     # --- UTILITIES -------------------------------------------------
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixGL = {
       url = "github:nix-community/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";

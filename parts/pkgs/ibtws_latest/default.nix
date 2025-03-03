@@ -1,12 +1,12 @@
 {pkgs ? import <nixpkgs> {}}:
 with pkgs; let
-  jdkWithJavaFX = pkgs.jdk21.override {
+  jdkWithJavaFX = pkgs.jdk23.override {
     enableJavaFX = true;
-    openjfx21 = openjfx.override {withWebKit = true;};
+    openjfx23 = openjfx.override {withWebKit = true;};
   };
   ibDerivation = stdenv.mkDerivation rec {
     version = "10.34.1c";
-    pname = "ib-tws-native";
+    pname = "ib-tws-latest";
 
     src = fetchurl {
       url = "https://download2.interactivebrokers.com/installers/tws/latest-standalone/tws-latest-standalone-linux-x64.sh";
@@ -47,9 +47,9 @@ with pkgs; let
       # -Dsun.java2d.opengl=False not applied. Why would I disable that?
       # -Dswing.aatext=true applied
       mkdir $out/bin
-      sed -e s#__OUT__#$out# -e s#__JAVAHOME__#${jdkWithJavaFX.home}# -e s#__GTK__#${pkgs.gtk3}# -e s#__CCLIBS__#${pkgs.stdenv.cc.cc.lib}# ${./tws-wrap.sh} > $out/bin/ib-tws-native
+      sed -e s#__OUT__#$out# -e s#__JAVAHOME__#${jdkWithJavaFX.home}# -e s#__GTK__#${pkgs.gtk3}# -e s#__CCLIBS__#${pkgs.stdenv.cc.cc.lib}# ${./tws-wrap.sh} > $out/bin/ib-tws-latest
 
-      chmod a+rx $out/bin/ib-tws-native
+      chmod a+rx $out/bin/ib-tws-latest
 
       # FIXME Fixup .desktop starter.
     '';
@@ -62,13 +62,13 @@ with pkgs; let
       platforms = platforms.linux;
     };
   };
-  # IB TWS packages the JxBrowser component. It unpacks a pre-built
+  # IB TWS packages the JxBrowser component. It unpacks a prelatest
   # Chromium binary (yikes!) that needs an FHS environment. For me, that
   # doesn't yet work, and the chromium fails to launch with an error
   # code.
 in
   buildFHSUserEnv {
-    name = "ib-tws";
+    name = "ib-tws-latest";
     targetPkgs = pkgs1: [
       ibDerivation
 
@@ -99,7 +99,7 @@ in
       libxkbcommon
       systemd # for libudev.so.1
     ];
-    runScript = "/usr/bin/ib-tws-native";
+    runScript = "env QT_SCALE_FACTOR=2 /usr/bin/ib-tws-latest";
   }
 # {
 #   stdenv,

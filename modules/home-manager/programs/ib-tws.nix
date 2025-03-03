@@ -67,8 +67,9 @@ in {
     # |----------------------------------------------------------------------| #
     {
       home.packages = [
-        inputs.self.packages.${system}.ib-tws-native
+        # inputs.self.packages.${system}.ib-tws-native
         inputs.self.packages.${system}.ib-tws-native-latest
+        # pkgs.nur.repos.clefru.ib-tws
       ];
     }
     # |----------------------------------------------------------------------| #
@@ -95,6 +96,7 @@ in {
         allowOther = true;
         directories = [
           ".ib-tws-native"
+          ".tws-latest"
           ".ib-tws-native_latest"
         ];
       };
