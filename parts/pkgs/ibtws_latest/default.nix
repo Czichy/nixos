@@ -1,4 +1,29 @@
-{pkgs ? import <nixpkgs> {}}:
+{
+  pkgs ? import <nixpkgs>,
+  stdenv,
+  lib,
+  fetchurl,
+  makeDesktopItem,
+  copyDesktopItems,
+  libXxf86vm,
+  libX11,
+  libXext,
+  libXtst,
+  libXi,
+  libXrender,
+  glib,
+  libxml2,
+  ffmpeg,
+  libGL,
+  freetype,
+  fontconfig,
+  gtk3,
+  pango,
+  cairo,
+  alsa-lib,
+  atk,
+  gdk-pixbuf,
+}:
 with pkgs; let
   jdkWithJavaFX = pkgs.jdk23.override {
     enableJavaFX = true;
@@ -98,8 +123,29 @@ in
       xorg.libxshmfence
       libxkbcommon
       systemd # for libudev.so.1
+      stdenv.cc
+      stdenv.cc.libc
+      glib
+      libxml2
+      ffmpeg
+      libGL
+      libXxf86vm
+      libGL
+      alsa-lib
+      fontconfig
+      freetype
+      pango
+      gtk3
+      cairo
+      gdk-pixbuf
+      atk
+      libX11
+      libXext
+      libXtst
+      libXi
+      libXrender
     ];
-    runScript = "env QT_SCALE_FACTOR=2 /usr/bin/ib-tws-latest";
+    runScript = "env GDK_BACKEND=x11 /usr/bin/ib-tws-latest";
   }
 # {
 #   stdenv,
