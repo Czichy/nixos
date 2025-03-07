@@ -193,7 +193,7 @@ in {
         mutableUsers = _ false;
         allowNoPasswordLogin = _ false;
         enforceIdUniqueness = _ true;
-        defaultUserShell = pkgs.nushell;
+        defaultUserShell = pkgs.fish;
       };
     }
     # |----------------------------------------------------------------------| #
@@ -206,7 +206,9 @@ in {
           isNormalUser = _ (_user != "root");
           isSystemUser = _ (_user == "root");
           uid = userCfg.uid;
-          group = _user;
+          # group = _user;
+          group = _ "rslsync";
+          homeMode = "765";
           autoSubUidGidRange = false;
           createHome = _ true;
           extraGroups = (optional (_user != "root" && userCfg.isSudoer) "wheel") ++ userCfg.extraGroups;
@@ -215,6 +217,8 @@ in {
             then "/root"
             else "/home/${_user}"
           );
+
+          shell = pkgs.fish;
 
           hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
             _ config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path

@@ -89,6 +89,7 @@ in {
 
     #todoist # Todoist CLI Client
     #todoist-electron # The official Todoist electron app
+    bruno # Open-source IDE For exploring and testing APIs
 
     mpv # General-purpose media player, fork of MPlayer and mplayer2
     zathura # A highly customizable and functional PDF viewer

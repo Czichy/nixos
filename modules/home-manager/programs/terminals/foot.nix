@@ -50,7 +50,7 @@ in
               box-drawings-uses-font-glyphs = "yes";
               dpi-aware = "yes";
               pad = "0x0center";
-              notify = "notify-send -a \${app-id} -i \${app-id} \${title} \${body}";
+              # notify = "notify-send -a \${app-id} -i \${app-id} \${title} \${body}";
               selection-target = "primary";
             };
 

@@ -99,6 +99,8 @@
       }
       // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp4s0" "02:01:27:ff:ed:77" "vlan40" {
       }
+      // mkMicrovm "resilio" "HL-3-RZ-RESILIO-01" "enp4s0" "02:02:27:6b:d9:d4" "vlan40" {
+      }
     );
   };
 }

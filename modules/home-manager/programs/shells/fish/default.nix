@@ -50,6 +50,21 @@ in {
       '';
     };
 
+    withAtuin = mkOption {
+      type = bool;
+      default = true;
+      description = ''
+        Whether to enable atuin related code
+      '';
+    };
+    withZoxide = mkOption {
+      type = bool;
+      default = true;
+      description = ''
+        Whether to enable zoxide related code
+      '';
+    };
+
     shellAliases = {
       lsToEza = mkOption {
         type = bool;
@@ -117,17 +132,6 @@ in {
           snrs = "sudo nixos-rebuild --flake . switch";
           hm = "home-manager --flake .";
           hms = "home-manager --flake . switch";
-
-          # s = mkIf hasSpecialisationCli "specialisation";
-
-          # ls = mkIf hasEza "eza";
-          # exa = ls;
-
-          # mutt = mkIf hasNeomutt "neomutt";
-          # m = mutt;
-
-          # aws-switch = mkIf hasAwsCli "export AWS_PROFILE=(aws configure list-profiles | fzf)";
-          # awssw = aws-switch;
         };
         shellAliases = {
           # Clear screen and scrollback
@@ -137,7 +141,7 @@ in {
           # Disable greeting
           fish_greeting = "";
           # Merge history when pressing up
-          up-or-search = lib.readFile ./up-or-search.fish;
+          # up-or-search = lib.readFile ./up-or-search.fish;
           # Check stuff in PATH
           nix-inspect =
             /*
@@ -153,7 +157,7 @@ in {
           */
           ''
             # Open command buffer in editor when alt+e is pressed
-            bind \ee edit_command_buffer
+            # bind \ee edit_command_buffer
 
             # Use terminal colors
             set -x fish_color_autosuggestion      brblack
@@ -218,6 +222,28 @@ in {
       };
     })
     # |----------------------------------------------------------------------| #
+    (mkIf cfg.withAtuin {
+      programs.atuin.enableFishIntegration = true;
+      programs.atuin = {
+        enable = true;
+        settings = {
+          auto_sync = true;
+          sync_frequency = "5m";
+          # key_path = ;
+          # sync_address = "http://atuin-atuin.tail68e9c.ts.net";
+          sync.records = true;
+        };
+      };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.withZoxide {
+      programs.zoxide = {
+        enable = true;
+        enableFishIntegration = true;
+        options = ["--cmd j"];
+      };
+    })
+    # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       # home.file."${config.xdg.cacheHome}/oh-my-fish/.keep".enable = false;
 
@@ -225,8 +251,8 @@ in {
         directories = [
           ".local/share/atuin"
           ".local/share/zoxide"
+          ".local/share/fish"
         ];
-        files = [".local/share/fish"];
       };
     })
     # |----------------------------------------------------------------------| #

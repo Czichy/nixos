@@ -8,7 +8,7 @@
 in {
   programs.fish = {
     interactiveShellInit = ''
-      fish_vi_key_bindings
+      # fish_vi_key_bindings
       ${lib.optionalString useHelix "fish_helix_key_bindings"}
       set fish_cursor_default     block      blink
       set fish_cursor_insert      line       blink

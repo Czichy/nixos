@@ -28,6 +28,7 @@
       "qemu-libvirtd"
       "wireshark"
       "flatpak"
+      "rslsync"
     ];
   };
 }

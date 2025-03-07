@@ -1,8 +1,11 @@
 {
   pkgs,
   inputs,
+  config,
   ...
-}: {
+}: let
+  inherit (inputs.self) secretsPath;
+in {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -39,7 +42,8 @@
   # ----------------------------
   # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
-  users.defaultUserShell = pkgs.nushell;
+  users.defaultUserShell = pkgs.fish;
+  # users.defaultUserShell = pkgs.nushell;
 
   services = {
     pipewire = {
@@ -53,28 +57,6 @@
     # pcscd.enable = true;
   };
 
-  # FIXME: the ui is not directly accessible via environment.systemPackages
-  # FIXME: to control it as a user (and to allow SSO) we need to be in the netbird-home group
-  # services.netbird.ui.enable = true;
-  # services.netbird.clients.home = {
-  #   port = 51820;
-  #   name = "netbird-home";
-  #   interface = "wt-home";
-  #   autoStart = false;
-  #   openFirewall = true;
-  #   config.ServerSSHAllowed = false;
-  #   environment = rec {
-  #     NB_MANAGEMENT_URL = "https://${globals.services.netbird.domain}";
-  #     NB_ADMIN_URL = NB_MANAGEMENT_URL;
-  #   };
-  # };
-  # environment.persistence."/persist".directories = [
-  #   {
-  #     directory = "/var/lib/netbird-home";
-  #     mode = "0700";
-  #   }
-  # ];
-
   programs.nix-ld.enable = true;
 
   home-manager.users."czichy" = import (../../homes + "/czichy@desktop");
@@ -84,5 +66,45 @@
 
   security.pam.services = {
     swaylock = {};
+  };
+
+  age.secrets = {
+    dokumente = {
+      symlink = true;
+      file = secretsPath + "/resilio/dokumente.age";
+      mode = "0600";
+    };
+    trading = {
+      symlink = true;
+      file = secretsPath + "/resilio/trading.age";
+      mode = "0600";
+    };
+  };
+
+  tensorfiles.services.resilio.enable = true;
+  services.resilio = {
+    # deviceName = "HL-1-OZ-PC-01";
+    sharedFolders = [
+      {
+        secretFile = config.age.secrets.trading.path; # I want to make a mirror on the server, so the read-only key works perfectly
+        directory = "/home/czichy/Trading";
+        knownHosts = [];
+        useRelayServer = true;
+        useTracker = true;
+        useDHT = true;
+        searchLAN = true;
+        useSyncTrash = true;
+      }
+      {
+        secretFile = config.age.secrets.dokumente.path; # I want to make a mirror on the server, so the read-only key works perfectly
+        directory = "/home/czichy/Dokumente";
+        knownHosts = [];
+        useRelayServer = true;
+        useTracker = true;
+        useDHT = true;
+        searchLAN = true;
+        useSyncTrash = true;
+      }
+    ];
   };
 }

@@ -48,9 +48,9 @@ in {
         profiles.minimal.enable = _ true;
 
         programs = {
-          shells.nushell.enable = _ true;
-          starship.enable = _ true;
-          # shells.fish.enable = _ true;
+          # shells.nushell.enable = _ true;
+          # starship.enable = _ true;
+          shells.fish.enable = _ true;
           editors.helix.enable = _ true;
           file-managers.yazi.enable = _ true;
 
@@ -97,6 +97,13 @@ in {
         #  config.home.sessionVariables.TRADING_DIR != null
         #) (mkBefore "");
       };
+    }
+    # |----------------------------------------------------------------------| #
+    {
+      systemd.user.tmpfiles.rules = [
+        "d ${config.home.sessionVariables.TRADING_DIR} 0775 czichy rslsync -" # create directory for Resilio Sync files
+        "d ${config.home.sessionVariables.DOCUMENTS_DIR} 0775 czichy rslsync -" # create directory for Resilio Sync files
+      ];
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {

@@ -37,11 +37,12 @@ in {
           background-opacity = 0.8;
           confirm-close-surface = false;
           # Fonts
-          font-family = "Iosevka Nerd Font";
+          font-family = "Atkinson Monolegible";
+          # font-family = "Iosevka Nerd Font";
           font-family-bold = "Fira Code";
           font-family-italic = "Maple Mono";
           font-family-bold-italic = "Maple Mono";
-          font-size = 14;
+          font-size = 54;
           adjust-underline-position = 4;
           # Theme
           theme = "Dracula";
@@ -53,30 +54,32 @@ in {
           gtk-wide-tabs = false;
           window-padding-y = "2,0";
           window-padding-balance = true;
-          window-decoration = false;
+          window-decoration = "server";
 
           # Other
           copy-on-select = "clipboard";
           shell-integration-features = "cursor,sudo,no-title";
           keybind = [
-            "clear"
+            # "clear"
+            "ctrl+shift+plus=increase_font_size:1"
+            "ctrl+shift+minus=decrease_font_size:1"
             "ctrl+h=goto_split:left"
             "ctrl+j=goto_split:bottom"
             "ctrl+k=goto_split:top"
             "ctrl+l=goto_split:right"
-            "super+shift+t=new_tab"
-            "super+shift+h=previous_tab"
-            "super+shift+l=next_tab"
-            "super+shift+comma=move_tab:-1"
-            "super+shift+period=move_tab:1"
-            "super+shift+c=copy_to_clipboard"
-            "super+shift+v=paste_from_clipboard"
-            "super+shift+enter=new_split:auto"
-            "super+shift+i=inspector:toggle"
-            "super+shift+m=toggle_split_zoom"
-            "super+shift+r=reload_config"
-            "super+shift+s=write_screen_file:open"
-            "super+shift+w=close_surface"
+            "ctrl+shift+t=new_tab"
+            "ctrl+shift+h=previous_tab"
+            "ctrl+shift+l=next_tab"
+            "ctrl+shift+comma=move_tab:-1"
+            "ctrl+shift+period=move_tab:1"
+            "ctrl+shift+c=copy_to_clipboard"
+            "ctrl+shift+v=paste_from_clipboard"
+            "ctrl+shift+enter=new_split:auto"
+            "ctrl+shift+i=inspector:toggle"
+            "ctrl+shift+m=toggle_split_zoom"
+            "ctrl+shift+r=reload_config"
+            "ctrl+shift+s=write_screen_file:open"
+            "ctrl+shift+w=close_surface"
           ];
         };
       };

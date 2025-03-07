@@ -109,6 +109,7 @@ in {
         ];
 
       programs.nix-ld.enable = _ true; # Run unpatched dynamic binaries on NixOS
+      programs.fish.enable = _ true; # Run unpatched dynamic binaries on NixOS
     }
     # |----------------------------------------------------------------------| #
   ]);

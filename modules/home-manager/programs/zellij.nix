@@ -20,6 +20,7 @@ in {
     {
       programs.zellij = {
         enable = true;
+        enableFishIntegration = false;
         settings = {
           theme =
             if pkgs.system == "aarch64-darwin"
