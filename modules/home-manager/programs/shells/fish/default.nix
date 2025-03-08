@@ -118,6 +118,8 @@ in {
         shellAbbrs = {
           jqless = "jq -C | less -r";
 
+          # nix
+          nixroots = "nix-store --gc --print-roots";
           n = "nix";
           nd = "nix develop -c $SHELL";
           ns = "nix shell";
@@ -125,13 +127,26 @@ in {
           nb = "nix build";
           nbn = "nix build nixpkgs#";
           nf = "nix flake";
-
-          nr = "nixos-rebuild --flake .";
-          nrs = "nixos-rebuild --flake . switch";
-          snr = "sudo nixos-rebuild --flake .";
-          snrs = "sudo nixos-rebuild --flake . switch";
-          hm = "home-manager --flake .";
-          hms = "home-manager --flake . switch";
+          # git
+          gp = "git push";
+          gps = "git push --set-upstream origin HEAD";
+          gpf = "git push --force";
+          gl = "git log --pretty=oneline --abbrev-commit";
+          gb = "git branch";
+          gbd = "git branch --delete --force";
+          c = "git checkout";
+          gpp = "git pull --prune";
+          gsi = "git stash --include-untracked";
+          gsp = "git stash pop";
+          gsa = "git stage --all";
+          gfu = "git fetch upstream";
+          gmu = "git merge upstream/master master";
+          gu = "git reset --soft HEAD~1";
+          grh = "git reset --hard";
+          # misc
+          ll = "ls -la";
+          e = "yazi";
+          z = "zellij";
         };
         shellAliases = {
           # Clear screen and scrollback
