@@ -183,6 +183,7 @@ in {
 
   imports = [
     ./czichy.nix
+    {inherit (localFlake) lib;}
     ./deterministic-ids.nix
     ./root.nix
   ];
@@ -206,8 +207,7 @@ in {
           isNormalUser = _ (_user != "root");
           isSystemUser = _ (_user == "root");
           uid = userCfg.uid;
-          # group = _user;
-          group = _ "rslsync";
+          group = _user;
           homeMode = "765";
           autoSubUidGidRange = false;
           createHome = _ true;

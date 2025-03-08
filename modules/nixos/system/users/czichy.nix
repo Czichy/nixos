@@ -1,4 +1,6 @@
-{...}: {
+{lib, ...}: let
+  inherit (lib) ifTheyExist;
+in {
   config.tensorfiles.system.users.usersSettings."czichy" = {
     isMainUser = true;
     isSudoer = true;

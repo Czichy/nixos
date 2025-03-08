@@ -92,8 +92,8 @@
       // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp4s0" "02:01:27:dc:85:68" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp4s0" "02:01:27:6b:d9:d4" "vlan40" {
-      }
+      # // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp4s0" "02:01:27:6b:d9:d4" "vlan40" {
+      # }
       // mkMicrovm "forgejo" "HL-3-RZ-GIT-01" "enp4s0" "02:01:27:c4:0e:09" "vlan40" {
         enableStorageDataset = true;
       }

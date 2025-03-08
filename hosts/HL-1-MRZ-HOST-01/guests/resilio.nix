@@ -29,14 +29,14 @@ in {
       tag = "sync-trading";
       proto = "virtiofs";
     }
-    {
-      # On the host
-      source = "/shared/shares/users/christian/.credentials/";
-      # In the MicroVM
-      mountPoint = "${dataDir}/users/christian/.credentials";
-      tag = "sync-credentials";
-      proto = "virtiofs";
-    }
+    # {
+    #   # On the host
+    #   source = "/shared/shares/users/christian/.credentials/";
+    #   # In the MicroVM
+    #   mountPoint = "${dataDir}/users/christian/.credentials";
+    #   tag = "sync-credentials";
+    #   proto = "virtiofs";
+    # }
   ];
   # |----------------------------------------------------------------------| #
   age.secrets = {
@@ -73,7 +73,7 @@ in {
     {
       secretFile = config.age.secrets.trading.path; # I want to make a mirror on the server, so the read-only key works perfectly
       directory = "${config.services.resilio.storagePath}/trading";
-      knownHosts = [globals.vlan10.hosts.HL-OZ-PC-01.id];
+      knownHosts = ["${globals.net.vlan10.hosts.HL-1-OZ-PC-01.ipv4}"];
       useRelayServer = true;
       useTracker = true;
       useDHT = true;
@@ -83,7 +83,7 @@ in {
     {
       secretFile = config.age.secrets.dokumente.path; # I want to make a mirror on the server, so the read-only key works perfectly
       directory = "${config.services.resilio.storagePath}/dokumente";
-      knownHosts = [globals.vlan10.hosts.HL-OZ-PC-01.id];
+      knownHosts = ["${globals.net.vlan10.hosts.HL-1-OZ-PC-01.ipv4}"];
       useRelayServer = true;
       useTracker = true;
       useDHT = true;
@@ -93,13 +93,25 @@ in {
   ];
   # |----------------------------------------------------------------------| #
   users.users.rslsync.extraGroups = ["root"];
+  systemd.tmpfiles.rules = [
+    "d ${config.services.resilio.storagePath} 0775 rslsync rslsync -" # create directory for Resilio Sync files
+    "d ${config.services.resilio.storagePath}/dokumente 0775 rslsync rslsync -"
+    "d ${config.services.resilio.storagePath}/trading 0775 rslsync rslsync -"
+  ];
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
     files = [
       "/etc/ssh/ssh_host_rsa_key"
       "/etc/ssh/ssh_host_rsa_key.pub"
     ];
-    directories = [config.services.resilio.storagePath];
+    directories = [
+      {
+        directory = config.services.resilio.storagePath;
+        mode = "0775";
+        user = "rslsync";
+        group = "rslsync";
+      }
+    ];
   };
 
   # |----------------------------------------------------------------------| #
