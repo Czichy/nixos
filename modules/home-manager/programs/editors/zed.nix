@@ -13,15 +13,11 @@ with lib; let
   inherit
     (localFlake.lib)
     mkOverrideAtHmModuleLevel
-    isModuleLoadedAndEnabled
     mkPywalEnableOption
-    mkDummyDerivation
     ;
 
   cfg = config.tensorfiles.hm.programs.editors.zed;
   _ = mkOverrideAtHmModuleLevel;
-
-  pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
 in {
   # TODO modularize config, cant be bothered to do it now
   options.tensorfiles.hm.programs.editors.zed = with types; {
@@ -88,8 +84,8 @@ in {
             metrics = false;
           };
           vim_mode = true;
-          ui_font_size = 16;
-          buffer_font_size = 16;
+          ui_font_size = 24;
+          buffer_font_size = 24;
           theme = {
             mode = "system";
             light = "Andromeda";

@@ -1,0 +1,25 @@
+﻿platform: Linux 6.13.4 #1-NixOS SMP PREEMPT_DYNAMIC Fri Feb 21 13:11:21 UTC 2025 x86_64
+version: 3.0.2.1058
+[20250310 08:39:35.737] ZIP: Can't locate [version] in zip, error -100.
+[20250310 08:39:35.739] Torrent session shutdown: done waiting
+[20250310 08:39:35.739] Shutdown. Saving config sync.dat
+[20250310 08:40:07.058] Debug log mask has been set to FFFFFFFF
+[20250310 08:40:07.058] Features mask has been set to 0
+[20250310 08:40:07.060] ZIP: Can't locate [version] in zip, error -100.
+[20250310 08:40:07.062] Torrent session shutdown: done waiting
+[20250310 08:40:07.062] Shutdown. Saving config sync.dat
+[20250310 08:41:03.318] Debug log mask has been set to FFFFFFFF
+[20250310 08:41:03.318] Features mask has been set to 0
+[20250310 08:41:03.319] ZIP: Can't locate [version] in zip, error -100.
+[20250310 08:41:03.322] Torrent session shutdown: done waiting
+[20250310 08:41:03.322] Shutdown. Saving config sync.dat
+[20250310 08:59:39.168] Debug log mask has been set to FFFFFFFF
+[20250310 08:59:39.168] Features mask has been set to 0
+[20250310 08:59:39.170] ZIP: Can't locate [version] in zip, error -100.
+[20250310 08:59:39.173] Torrent session shutdown: done waiting
+[20250310 08:59:39.173] Shutdown. Saving config sync.dat
+[20250311 10:26:39.706] Debug log mask has been set to FFFFFFFF
+[20250311 10:26:39.706] Features mask has been set to 0
+[20250311 10:26:39.707] ZIP: Can't locate [version] in zip, error -100.
+[20250311 10:26:39.710] Torrent session shutdown: done waiting
+[20250311 10:26:39.710] Shutdown. Saving config sync.dat

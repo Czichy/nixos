@@ -31,6 +31,27 @@ in {
       Enables NixOS module that configures/handles the networkmanager service.
     '';
 
+    user = mkOption {
+      type = types.str;
+      default = "rslsync";
+      example = "yourUser";
+      description = ''
+        The user to run Resilio as.
+        By default, a user named `${defaultUser}` will be created whose home
+        directory is [dataDir](#opt-services.syncthing.dataDir).
+      '';
+    };
+
+    group = mkOption {
+      type = types.str;
+      default = "rslsync";
+      example = "yourGroup";
+      description = ''
+        The group to run Resilio under.
+        By default, a group named `${defaultGroup}` will be created.
+      '';
+    };
+
     impermanence = {
       enable = mkImpermanenceEnableOption;
     };
@@ -45,7 +66,7 @@ in {
     {
       services.resilio = {
         enable = true;
-        enableWebUI = false;
+        enableWebUI = true;
         checkForUpdates = false;
         downloadLimit = 0;
         uploadLimit = 0;
@@ -53,6 +74,8 @@ in {
         listeningPort = 4444;
       };
     }
+    # |----------------------------------------------------------------------| #
+    # {systemd.services.resilio.serviceConfig.User = lib.mkForce cfg.user;}
     # |----------------------------------------------------------------------| #
     # {
     #   services.resilio.sharedFolders = [
@@ -72,7 +95,8 @@ in {
     # Network
     {
       networking = {
-        firewall.allowedTCPPorts = [4444]; # let connect directly to Resilio Sync
+        firewall.allowedTCPPorts = [4444 9000]; # let connect directly to Resilio Sync
+        firewall.allowedUDPPorts = [3838]; # let connect directly to Resilio Sync
       };
     }
     # |----------------------------------------------------------------------| #
@@ -97,7 +121,12 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       environment.persistence."${impermanence.persistentRoot}" = {
-        directories = [config.services.resilio.storagePath];
+        directories = [
+          {
+            directory = config.services.resilio.storagePath;
+            user = cfg.user;
+          }
+        ];
       };
     })
     # |----------------------------------------------------------------------| #

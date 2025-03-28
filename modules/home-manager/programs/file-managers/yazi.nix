@@ -46,13 +46,13 @@ in {
           };
 
           opener = {
-            folder = [
-              {
-                run = ''open -R "$@"'';
-                desc = "Reveal in Finder";
-              }
-              {run = ''$EDITOR "$@"'';}
-            ];
+            # folder = [
+            #   {
+            #     run = ''open -R "$@"'';
+            #     desc = "Reveal in Finder";
+            #   }
+            #   {run = ''$EDITOR "$@"'';}
+            # ];
             archive = [
               {
                 run = ''unar "$1"'';
@@ -90,6 +90,12 @@ in {
                 run = ''mediainfo "$1"; echo "Press enter to exit"; read'';
                 block = true;
                 desc = "Show media info";
+              }
+            ];
+            pdf = [
+              {
+                run = ''zathura "$@"'';
+                for = "linux";
               }
             ];
             fallback = [
@@ -138,6 +144,10 @@ in {
             {
               mime = "*/javascript";
               use = "text";
+            }
+            {
+              mime = "application/pdf";
+              use = ["pdf" "reveal"];
             }
 
             {

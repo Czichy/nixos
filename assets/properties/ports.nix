@@ -23,6 +23,5 @@
   linkding = 9090;
   microbin = 9080;
   photoprism = 2342;
-  syncthing = 8384;
   harmonia = 5000;
 }

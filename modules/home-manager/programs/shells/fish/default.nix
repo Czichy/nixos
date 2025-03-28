@@ -156,7 +156,7 @@ in {
           # Disable greeting
           fish_greeting = "";
           # Merge history when pressing up
-          # up-or-search = lib.readFile ./up-or-search.fish;
+          up-or-search = lib.readFile ./up-or-search.fish;
           # Check stuff in PATH
           nix-inspect =
             /*

@@ -44,11 +44,7 @@ in {
     # services_x11_desktop-managers_plasma6 = import ./services/x11/desktop-managers/plasma6.nix;
     services_flatpak = importApply ./services/flatpak.nix {inherit localFlake inputs;};
     services_printing = importApply ./services/printing.nix {inherit localFlake;};
-    services_resilio = importApply ./services/resilio.nix {
-      inherit localFlake;
-      inherit secretsPath;
-    };
-    services_syncthing = importApply ./services/syncthing.nix {
+    services_resilio = importApply ./services/syncthing.nix {
       inherit localFlake;
       inherit secretsPath;
     };

@@ -6,12 +6,12 @@ in {
       "/" = {
         # May need to replace with btrfs snapshots if I use more than 8G?
         fsType = "tmpfs";
-        mountOptions = ["defaults" "size=2G" "mode=755"];
+        mountOptions = ["defaults" "size=4G" "mode=755"];
       };
       "/home/czichy" = {
         # May need to replace with btrfs snapshots if I use more than 8G?
         fsType = "tmpfs";
-        mountOptions = ["defaults" "size=2G" "mode=777"];
+        mountOptions = ["defaults" "size=4G" "mode=777"];
       };
     };
     disk = {

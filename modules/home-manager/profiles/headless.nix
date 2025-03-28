@@ -100,10 +100,10 @@ in {
     }
     # |----------------------------------------------------------------------| #
     {
-      systemd.user.tmpfiles.rules = [
-        "d ${config.home.sessionVariables.TRADING_DIR} 0775 czichy rslsync -" # create directory for Resilio Sync files
-        "d ${config.home.sessionVariables.DOCUMENTS_DIR} 0775 czichy rslsync -" # create directory for Resilio Sync files
-      ];
+      # systemd.user.tmpfiles.rules = [
+      #   "d ${config.home.sessionVariables.TRADING_DIR} 0775 czichy rslsync -" # create directory for Resilio Sync files
+      #   "d ${config.home.sessionVariables.DOCUMENTS_DIR} 0775 czichy rslsync -" # create directory for Resilio Sync files
+      # ];
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
