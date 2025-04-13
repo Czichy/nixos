@@ -33,7 +33,7 @@ in {
           terminals.foot.enable = _ true;
           terminals.ghostty.enable = _ true;
           browsers = {
-            firefox.enable = _ true;
+            # firefox.enable = _ true;
             vivaldi.enable = _ true;
             # zen-browser.enable = _ true;
           };

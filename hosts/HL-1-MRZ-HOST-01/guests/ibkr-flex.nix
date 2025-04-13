@@ -77,6 +77,9 @@ in {
     gawk
     pkg-config
     openssh
+    openssl.dev
+    openssl
+
     inputs.ibkr-rust.packages.${pkgs.system}.flex
   ];
   # |----------------------------------------------------------------------| #

@@ -3,6 +3,7 @@
   secretsPath,
   hostName,
   lib,
+  pkgs,
   ...
 }: let
   # |----------------------------------------------------------------------| #
@@ -119,7 +120,9 @@ in {
   systemd.tmpfiles.rules = [
     "d ${cfg.configDir} - christian christian"
     "d /${cfg.user}/.config - christian christian"
+    "d /${cfg.dataDir}/dokumente 2770 - christian syncthing"
   ];
+
   services.syncthing = {
     enable = true;
     configDir = "${cfg.configDir}";
@@ -164,6 +167,7 @@ in {
       gui.insecureAdminAccess = true;
     };
   };
+  systemd.services.syncthing.serviceConfig.UMask = "0007";
   # Don't create default ~/Sync folder
   systemd.services.syncthing.environment.STNODEFAULTFOLDER = "true";
   # |----------------------------------------------------------------------| #
@@ -205,7 +209,19 @@ in {
     ];
 
   users.groups = lib.mapAttrs (_: cfg: {gid = cfg.id;}) (users // groups);
-
+  # |----------------------------------------------------------------------| #
+  # tasks.fix-syncthing-permissions = {
+  #   user = "christian";
+  #   onCalendar = "*-*-* 18:00:00";
+  #   script = let
+  #     folders = pkgs.lib.concatMapStringsSep " " (folder: folder.path) (builtins.attrValues config.services.syncthing.folders);
+  #   in ''
+  #     for FOLDER in ${folders}; do
+  #       find "$FOLDER" -type f \( ! -group syncthing -or ! -perm -g=rw \) -not -path "*/.st*" -exec chgrp syncthing {} \; -exec chmod g+rw {} \;
+  #       find "$FOLDER" -type d \( ! -group syncthing -or ! -perm -g=rwxs \) -not -path "*/.st*" -exec chgrp syncthing {} \; -exec chmod g+rwxs {} \;
+  #     done
+  #   '';
+  # };
   # |----------------------------------------------------------------------| #
   systemd.network.enable = true;
   system.stateVersion = "24.05";

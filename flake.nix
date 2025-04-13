@@ -160,7 +160,7 @@
       url = "github:helix-editor/helix/master";
       inputs.nixpkgs.follows = "nixpkgs"; # ok?
     };
-    firefox-addons.url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+    # firefox-addons.url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
     git-hooks = {
