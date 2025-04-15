@@ -4,6 +4,7 @@
   pkgs,
   secretsPath,
   hostName,
+  lib,
   ...
 }: let
   # |----------------------------------------------------------------------| #
@@ -82,6 +83,9 @@ in {
 
     inputs.ibkr-rust.packages.${pkgs.system}.flex
   ];
+  environment.variables = {
+    LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];
+  };
   # |----------------------------------------------------------------------| #
   systemd.timers."ibkr-flex-download" = {
     wantedBy = ["timers.target"];

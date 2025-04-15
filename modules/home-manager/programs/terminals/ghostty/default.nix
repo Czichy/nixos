@@ -42,7 +42,7 @@ in {
           font-family-bold = "Fira Code";
           font-family-italic = "Maple Mono";
           font-family-bold-italic = "Maple Mono";
-          font-size = 54;
+          font-size = 18;
           adjust-underline-position = 4;
           # Theme
           theme = "Dracula";

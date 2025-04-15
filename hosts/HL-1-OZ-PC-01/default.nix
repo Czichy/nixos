@@ -28,6 +28,8 @@
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = with pkgs; [
+    openssl.dev
+    openssl
     inputs.ibkr-rust.packages.${pkgs.system}.flex
     libva-utils
     networkmanagerapplet # need this to configure L2TP ipsec

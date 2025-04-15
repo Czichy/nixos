@@ -63,8 +63,7 @@ in
               launch = "xdg-open \${url}";
               label-letters = "sadfjklewcmpgh";
               osc8-underline = "url-mode";
-              protocols = "http, https, ftp, ftps, file";
-              uri-characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.,~:;/?#@!$&%*+=\"'()[]";
+              regex = "(((https?://|mailto:|ftp://|file:|ssh:|ssh://|git://|tel:|magnet:|ipfs://|ipns://|gemini://|gopher://|news:)|www\.)([0-9a-zA-Z:/?#@!$&*+,;=.~_%^\-]+|\([]\[\"0-9a-zA-Z:/?#@!$&'*+,;=.~_%^\-]*\)|\[[\(\)\"0-9a-zA-Z:/?#@!$&'*+,;=.~_%^\-]*\]|\"[]\[\(\)0-9a-zA-Z:/?#@!$&'*+,;=.~_%^\-]*\"|'[]\[\(\)0-9a-zA-Z:/?#@!$&*+,;=.~_%^\-]*')+([0-9a-zA-Z/#@$&*+=~_%^\-]|\([]\[\"0-9a-zA-Z:/?#@!$&'*+,;=.~_%^\-]*\)|\[[\(\)\"0-9a-zA-Z:/?#@!$&'*+,;=.~_%^\-]*\]|\"[]\[\(\)0-9a-zA-Z:/?#@!$&'*+,;=.~_%^\-]*\"|'[]\[\(\)0-9a-zA-Z:/?#@!$&*+,;=.~_%^\-]*'))";
             };
 
             cursor = {
