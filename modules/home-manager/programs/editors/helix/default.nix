@@ -33,30 +33,30 @@ in {
       };
       programs.helix = {
         enable = true;
-        #Package = inputs.helix.packages.${pkgs.system}.default.overrideAttrs (self: {
-        #  makeWrapperArgs = with pkgs;
-        #    self.makeWrapperArgs
-        #    or []
-        #    ++ [
-        #      "--suffix"
-        #      "PATH"
-        #      ":"
-        #      (lib.makeBinPath [
-        #        clang-tools
-        #        marksman
-        #        nil
-        #        nodePackages.bash-language-server
-        #        nodePackages.vscode-css-languageserver-bin
-        #        nodePackages.vscode-langservers-extracted
-        #        shellcheck
-        #      ])
-        #    ];
-        #});
+        # Package = inputs.helix.packages.${pkgs.system}.default.overrideAttrs (self: {
+        #   makeWrapperArgs = with pkgs;
+        #     self.makeWrapperArgs
+        #     or []
+        #     ++ [
+        #       "--suffix"
+        #       "PATH"
+        #       ":"
+        #       (lib.makeBinPath [
+        #         clang-tools
+        #         marksman
+        #         nil
+        #         nodePackages.bash-language-server
+        #         nodePackages.vscode-css-languageserver-bin
+        #         nodePackages.vscode-langservers-extracted
+        #         shellcheck
+        #       ])
+        #     ];
+        # });
         settings.theme = "onedark";
         settings.editor = import ./editor.nix;
         settings.keys = import ./keys.nix;
         languages = import ./languages.nix {inherit config lib pkgs;};
-        #themes = import ./theme.nix {inherit colorscheme;};
+        # themes = import ./theme.nix {inherit colorscheme;};
       };
     }
     # |----------------------------------------------------------------------| #

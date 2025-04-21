@@ -35,8 +35,8 @@ in {
           height = 2160;
           hasBar = true;
           refreshRate = 60;
-          x = 0;
-          y = 2160;
+          x = 3840;
+          y = 1680;
           scale = "1.0";
           primary = true;
           defaultWorkspace = 1;
@@ -53,6 +53,7 @@ in {
           scale = "1.0";
           primary = false;
           defaultWorkspace = 6;
+          transform = 3;
         }
       ];
     };

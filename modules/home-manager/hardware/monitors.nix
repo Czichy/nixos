@@ -57,6 +57,11 @@ in {
               default = true;
             };
 
+            transform = mkOption {
+              type = types.int;
+              default = 0;
+            };
+
             primary = mkOption {
               type = types.bool;
               default = false;
@@ -90,7 +95,7 @@ in {
           map (
             m:
               if m.enabled
-              then "${m.name},${toString m.width}x${toString m.height}@${toString m.refreshRate},${toString m.x}x${toString m.y},${m.scale} "
+              then "${m.name},${toString m.width}x${toString m.height}@${toString m.refreshRate},${toString m.x}x${toString m.y},${m.scale} ,transform, ${toString m.transform}"
               else ""
           )
           cfg.monitors;
