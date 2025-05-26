@@ -35,7 +35,7 @@ with pkgs; let
 
     src = fetchurl {
       url = "https://download2.interactivebrokers.com/installers/tws/latest-standalone/tws-latest-standalone-linux-x64.sh";
-      sha256 = "i3okIlc2HCRtrYBugxSxcDUqBhhdL7rLd3d95tyAyh0=";
+      sha256 = "jJ5MjOZRTv+wOJf0Esjb4v88X4PNFYORtCLS553de5A=";
       executable = true;
     };
 
