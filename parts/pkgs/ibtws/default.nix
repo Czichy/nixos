@@ -38,7 +38,7 @@ in
       # url = "https://download2.interactivebrokers.com/installers/tws/latest-standalone/tws-latest-standalone-linux-x64.sh";
       # sha256 = "sha256-bpFKD1l8PwAV2g7MjApg3QC0TAO76VPHLiI5rGcfcSs=";
       url = "https://download2.interactivebrokers.com/installers/tws/stable-standalone/tws-stable-standalone-linux-x64.sh";
-      hash = "sha256-ueRlda7oHAHnmU5iVHvu+06Omf9InVIczL0QAfL4jyw=";
+      hash = "sha256-8HvQFOOJBrQmRBlxISdokoCbZlO1sPauHdr1QKlwYfA=";
     };
     phases = [
       "unpackPhase"
