@@ -195,6 +195,9 @@ in {
             #window rules
             windowrulev2 = [
               "workspace 2,title:^(.*Interactive Brokers)$"
+              "workspace 7,title:^(.*U.* Overview)$"
+              "workspace 3,title:^(.*Brokers \(Simulated Trading\)))$"
+              "workspace 3,title:^(.*U.* Overview)$"
               "workspace 3,class:obsidian"
               "workspace 8,title:^(.*Seeking Edge)$"
             ];

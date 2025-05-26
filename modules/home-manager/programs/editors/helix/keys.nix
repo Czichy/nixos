@@ -1,4 +1,8 @@
 {
+  normal.V = ["goto_first_nonwhitespace" "extend_to_line_end"];
+  normal.D = ["ensure_selections_forward" "extend_to_line_end"];
+  normal.x = "extend_line";
+
   normal."#" = "toggle_comments";
   normal."C-C" = "yank_main_selection_to_clipboard";
   normal."C-c" = "yank_joined_to_clipboard";
@@ -45,4 +49,10 @@
   select."#" = "toggle_comments";
   select."C-C" = "yank_main_selection_to_clipboard";
   select."C-c" = "yank_joined_to_clipboard";
+  select.";" = ["collapse_selection" "normal_mode"];
+  # Same behaviour as normal mode x
+  select.x = "extend_line";
+
+  # Counterpart for normal mode V
+  select.V = "extend_to_line_end";
 }

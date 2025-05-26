@@ -36,9 +36,22 @@ in {
       services.avahi = {
         enable = true;
         nssmdns4 = true;
+        # for a WiFi printer
+        openFirewall = true;
       };
-      # for a WiFi printer
-      services.avahi.openFirewall = true;
+
+      hardware.printers = {
+        ensureDefaultPrinter = "BrotherMFC";
+        ensurePrinters = [
+          {
+            name = "BrotherMFC";
+            location = "Buero";
+            description = "Brother MFC-L3750CDW";
+            deviceUri = "ipp://10.15.10.253/ipp";
+            model = "everywhere";
+          }
+        ];
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);

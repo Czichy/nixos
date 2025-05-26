@@ -46,13 +46,12 @@ in {
           };
 
           opener = {
-            # folder = [
-            #   {
-            #     run = ''open -R "$@"'';
-            #     desc = "Reveal in Finder";
-            #   }
-            #   {run = ''$EDITOR "$@"'';}
-            # ];
+            edit = [
+              {
+                run = ''$EDITOR "$@"'';
+                block = true;
+              }
+            ];
             archive = [
               {
                 run = ''unar "$1"'';

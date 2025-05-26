@@ -1,0 +1,48 @@
+[
+  {
+    "label": "lazygit",
+    "command": "lazygit",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "hide": "always",
+    "reveal": "always",
+    "cwd": "$ZED_DIRNAME"
+  },
+  {
+    "label": "yazi",
+    "command": "yazi",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "hide": "always",
+    "reveal": "always",
+    "cwd": "$ZED_DIRNAME",
+    "env": { "EDITOR": "zed" }
+  },
+  {
+    "label": "file finder",
+    "command": "zed \"$(tv files)\"",
+    "reveal": "always",
+    "hide": "always",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "allow_concurrent_runs": true,
+    "use_new_terminal": true
+  },
+  {
+    "label": "find in files",
+    "command": "zed \"$(tv text)\"",
+    "reveal": "always",
+    "hide": "always",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "allow_concurrent_runs": true,
+    "use_new_terminal": true
+  },
+  {
+    "label": "find in files - selected text",
+    "command": "zed \"$(tv text -i $ZED_SELECTED_TEXT)\"",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "allow_concurrent_runs": true,
+    "use_new_terminal": true,
+    "reveal": "always",
+    "hide": "always"
+  }
+]

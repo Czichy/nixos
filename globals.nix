@@ -6,22 +6,13 @@ in {
     domains.me = "czichy.com";
     domains.local = "czichy.com";
     net = {
-      # #VLAN1
-      # home-wan = {
-      #   cidrv4 = "10.15.1.0/24";
-      #   # OPNSense
-      #   hosts.HL-3-MRZ-FW-01.id = 99;
-      #   hosts.HL-1-MRZ-HOST-02.id = 254;
-      #   hosts.HL-1-OZ-PC-01.id = 62;
-      # };
-
       #TRUST
       vlan10 = {
         cidrv4 = "10.15.10.0/24";
         # OPNSense
         hosts.HL-3-MRZ-FW-01.id = 99;
         # cidrv6 = "fd10::/64";
-        hosts.HL-1-OZ-PC-01.id = 62;
+        hosts.HL-1-OZ-PC-01.id = 25;
         hosts.HL-1-MRZ-HOST-02.id = 254;
       };
 
@@ -47,7 +38,7 @@ in {
         # OPNSense
         hosts.HL-3-MRZ-FW-01.id = 99;
         # |------------------------------------| #
-        hosts.HL-1-OZ-PC-01.id = 62;
+        hosts.HL-1-OZ-PC-01.id = 25;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-01.id = 10;
         # Samba
@@ -102,7 +93,7 @@ in {
         hosts.HL-1-MRZ-HOST-01.id = 10;
         hosts.HL-1-MRZ-HOST-02.id = 20;
         hosts.HL-1-MRZ-HOST-03.id = 30;
-        hosts.HL-1-OZ-PC-01.id = 62;
+        hosts.HL-1-OZ-PC-01.id = 25;
         hosts.HL-3-MRZ-FW-01.id = 99;
       };
 

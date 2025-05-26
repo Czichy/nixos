@@ -46,7 +46,7 @@ in {
     programs_wofi = importApply ./programs/wofi.nix {inherit localFlake;};
     programs_wlogout = importApply ./programs/wlogout.nix {inherit localFlake;};
     programs_editors_helix = importApply ./programs/editors/helix {inherit localFlake inputs;};
-    programs_editors_zed = importApply ./programs/editors/zed.nix {inherit localFlake inputs;};
+    programs_editors_zed = importApply ./programs/editors/zed {inherit localFlake inputs;};
     programs_file-managers_lf = importApply ./programs/file-managers/lf {inherit localFlake;};
     programs_file-managers_yazi = importApply ./programs/file-managers/yazi.nix {inherit localFlake;};
     programs_git = importApply ./programs/git.nix {inherit localFlake;};

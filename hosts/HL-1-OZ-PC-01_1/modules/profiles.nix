@@ -1,6 +1,6 @@
 {
   config.tensorfiles.profiles = {
-    server.enable = true;
     packages-extra.enable = true;
+    graphical-hyprland.enable = true;
   };
 }

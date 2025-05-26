@@ -22,7 +22,7 @@
       ];
       kernelModules = [
         "kvm-amd"
-        # "nvidia"
+        "nvidia"
         "amdgpu"
         "i2c-dev"
       ];
@@ -109,10 +109,10 @@
         libvdpau-va-gl
       ];
     };
-    # nvidia = {
-    #   open = true;
-    #   nvidiaSettings = true;
-    # };
+    nvidia = {
+      open = true;
+      nvidiaSettings = true;
+    };
   };
-  # services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = ["nvidia"];
 }

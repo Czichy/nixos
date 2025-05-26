@@ -13,7 +13,7 @@
   # --------------------------
   imports = with inputs; [
     hardware.nixosModules.common-cpu-amd
-    hardware.nixosModules.common-gpu-amd
+    # hardware.nixosModules.common-gpu-amd
     # hardware.nixosModules.common-gpu
     hardware.nixosModules.common-pc-ssd
     home-manager.nixosModules.default
