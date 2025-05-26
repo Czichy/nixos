@@ -30,7 +30,7 @@ with pkgs; let
     openjfx23 = openjfx.override {withWebKit = true;};
   };
   ibDerivation = stdenv.mkDerivation rec {
-    version = "10.34.1c";
+    version = "10.37.1g";
     pname = "ib-tws-latest";
 
     src = fetchurl {
