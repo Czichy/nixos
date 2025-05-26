@@ -1,7 +1,7 @@
 {globals, ...}: let
-  macAddress_enp39s0 = "2c:f0:5d:9f:10:37";
+  macAddress_enp8s0 = "34:5a:60:62:bd:f5";
 in {
-  topology.self.interfaces.enp39s0 = {};
+  topology.self.interfaces.enp8s0 = {};
   networking.firewall.checkReversePath = false;
   # |----------------------------------------------------------------------| #
   systemd.network.netdevs."10-trust" = {
@@ -32,9 +32,9 @@ in {
   };
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {
-    "20-enp30s0-untagged" = {
+    "20-enp8s0-untagged" = {
       # matchConfig.MACAddress = config.repo.secrets.local.networking.interfaces.wan.mac;
-      matchConfig.MACAddress = macAddress_enp39s0;
+      matchConfig.MACAddress = macAddress_enp8s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
       # address = ["10.15.1.62/24"];

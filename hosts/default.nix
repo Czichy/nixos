@@ -106,6 +106,23 @@
             ];
           }
       );
+      "HL-1-OZ-PC-02" = withSystem "x86_64-linux" (
+        args:
+          mkHost args "HL-1-OZ-PC-02" {
+            withHomeManager = true;
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+              nix-topology.overlays.default
+              nixos-extra-modules.overlays.default
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              microvm.nixosModules.host
+              # nur.modules.nixos.default
+            ];
+          }
+      );
       #ward
       "HL-1-MRZ-HOST-02" = withSystem "x86_64-linux" (
         args:

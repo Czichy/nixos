@@ -29,11 +29,6 @@
     import flake {
       inherit system overlays;
       config.allowUnfree = true;
-      # config.permittedInsecurePackages = [
-      #   "electron-25.9.0"
-      #   "electron-24.8.6"
-      #   "electron-27.3.11"
-      # ];
     };
 
   mkHost = args: hostName: {
@@ -103,9 +98,4 @@
           else []
         );
     };
-  # in {
-  #   mkHosts = hosts:
-  #     lib.genAttrs (builtins.attrNames hosts) (
-  #       hostName: mkHost hostName (builtins.getAttr hostName hosts)
-  #     );
 }
