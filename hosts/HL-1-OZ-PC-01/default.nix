@@ -6,7 +6,7 @@
   # -----------------
   # | SPECIFICATION |
   # -----------------
-  # Model: Lenovo B51-80
+  # Model: AMD Ryzen 9 9950X
 
   # --------------------------
   # | ROLES & MODULES & etc. |
