@@ -34,7 +34,7 @@ in {
     # |----------------------------------------------------------------------| #
     {
       home.shellAliases = {
-        "zed" = _ "zed-editor";
+        "zed" = _ "zeditor";
       };
 
       xdg.configFile."zed/tasks.json" = {source = ./tasks.json;};
@@ -343,8 +343,8 @@ in {
           buffer_font_size = 24;
           theme = {
             mode = "dark";
-            light = "Andromeda";
-            dark = "Tokyo Night";
+            light = "One Light";
+            dark = "One Dark";
           };
           # ssh_connections = [
           #   {

@@ -28,7 +28,7 @@ in {
           isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
         );
         settings = {
-          manager = {
+          mgr = {
             sort_by = _ "natural";
             linemode = _ "size";
             show_hidden = _ false;

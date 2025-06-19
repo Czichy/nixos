@@ -17,7 +17,7 @@ fi
 # The vm options file should always refer to itself.
 sed -i -e 's#-DvmOptionsPath=.*#-DvmOptionsPath=$VMOPTIONS#' $VMOPTIONS
 export LD_LIBRARY_PATH=__GTK__/lib:__CCLIBS__/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-exec "__OUT__/libexec/tws" -J-Dsun.java2d.uiScale=1.0 -J-DjtsConfigDir=$HOME/.tws-latest --J-Dawt.useSystemAAFontSettings=lcd -J-Dswing.aatext=true -J-Dawt.useSystemAAFontSettings=on -J-Dsun.awt.nopixfmt=true -J-Dsun.java2d.noddraw=true -J-Dswing.boldMetal=false -Dsun.locale.formatasdefault=true username=czich-paper "$@"
+exec "__OUT__/libexec/tws" -J-Dsun.java2d.uiScale=1.0 -J-DjtsConfigDir=$HOME/.tws-latest --J-Dawt.useSystemAAFontSettings=lcd -J-Dswing.aatext=true -J-Dawt.useSystemAAFontSettings=on -J-Dsun.awt.nopixfmt=true -J-Dsun.java2d.noddraw=true -J-Dswing.boldMetal=false -Dsun.locale.formatasdefault=true username=czich-paper password=jbFuF8OY "$@"
 
 # cd "$out/share/${pname}/jars"
 # "$out/share/${pname}/jre/bin/java" -cp \* \$JAVA_FLAGS \$CLASS \$IB_CONFIG_DIR username="\$username" password="\$password"

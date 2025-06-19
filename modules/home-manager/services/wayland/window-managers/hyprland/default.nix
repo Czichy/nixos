@@ -95,6 +95,10 @@ in {
               (mkIf (!agenixCheck) "ib-tws-native-latest")
             ];
 
+            ecosystem = {
+              no_update_news = true;
+            };
+
             bind =
               [
                 "SUPER + CTRL + SHIFT,q,exit"

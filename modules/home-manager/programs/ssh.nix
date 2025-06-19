@@ -99,7 +99,7 @@ in {
         enableNushellIntegration = _ (
           isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
         );
-        agents = ["ssh"];
+        # agents = ["ssh"];
         extraFlags = [
           "--nogui"
           "--quiet"

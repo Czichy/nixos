@@ -32,13 +32,14 @@
           ]
           ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
       };
-      mkMicrovm = guestName: hostName: macvtap: net: opts: {
+      mkMicrovm = guestName: hostName: macvtap: mac: net: opts: {
         ${guestName} =
           mkGuest guestName opts
           // {
             microvm = {
               system = "x86_64-linux";
               macvtap = "${macvtap}";
+              mac = mac;
               # macvtap = "lan";
               # baseMac = macAddress_enp4s0; # TODO move to config
             };
@@ -55,10 +56,10 @@
       };
     in (
       {}
-      // mkMicrovm "adguardhome" "HL-3-RZ-DNS-01" "servers" "vlan40" {enableStorageDataset = true;}
-      // mkMicrovm "vaultwarden" "HL-3-RZ-VAULT-01" "servers" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "adguardhome" "HL-3-RZ-DNS-01" "servers" "02:01:27:b8:35:04" "vlan40" {enableStorageDataset = true;}
+      // mkMicrovm "vaultwarden" "HL-3-RZ-VAULT-01" "servers" "02:01:27:0d:dc:b1" "vlan40" {enableStorageDataset = true;}
       # // mkMicrovm "nginx" "dmz" "vlan70" {enableStorageDataset = true;}
-      // mkMicrovm "caddy" "HL-3-DMZ-PROXY-01" "dmz" "vlan70" {enableStorageDataset = true;}
+      // mkMicrovm "caddy" "HL-3-DMZ-PROXY-01" "dmz" "02:01:27:53:4a:97" "vlan70" {enableStorageDataset = true;}
     );
   };
 }

@@ -172,7 +172,7 @@ in {
         virtual = true;
         network = "mgmt";
         physicalConnections = [
-          (mkConnection "HL-1-MRZ-HOST-01" "30-mgmt")
+          (mkConnection "HL-1-MRZ-HOST-01" "mgmt")
           (mkConnection "HL-1-MRZ-HOST-02" "mgmt")
           (mkConnection "HL-1-MRZ-HOST-03" "mgmt")
           # (mkConnection "HL-3-MRZ-FW-01" "mgmt")

@@ -31,10 +31,11 @@
   environment.systemPackages = with pkgs; [
     openssl.dev
     openssl
-    inputs.ibkr-rust.packages.${pkgs.system}.flex
+    # inputs.ibkr-rust.packages.${pkgs.system}.flex
     libva-utils
     networkmanagerapplet # need this to configure L2TP ipsec
     wireguard-tools
+    wine
   ];
 
   # ----------------------------
@@ -52,7 +53,7 @@
       pulse.enable = true;
       jack.enable = true;
     };
-    udev.extraRules = "KERNEL==\"i2c-[0-9]*\", GROUP+=\"users\"";
+    # udev.extraRules = "KERNEL==\"i2c-[0-9]*\", GROUP+=\"users\"";
     # Needed for gpg pinetry
     # pcscd.enable = true;
   };

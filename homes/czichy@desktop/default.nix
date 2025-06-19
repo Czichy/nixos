@@ -9,7 +9,7 @@ in {
       enable = true;
       allowOther = true;
     };
-    services.keepassxc.enable = true;
+    # services.keepassxc.enable = true;
     programs = {
       bitwarden.enable = true;
       ssh = {
