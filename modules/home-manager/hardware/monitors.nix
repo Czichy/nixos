@@ -9,6 +9,7 @@ with lib; let
   cfg = config.tensorfiles.hm.hardware.monitors;
 
   hyprlandCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.services.wayland.window-managers.hyprland";
+  niriCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.services.wayland.window-managers.niri";
 in {
   options.tensorfiles.hm.hardware.monitors = with types; {
     enable = mkEnableOption ''
@@ -91,6 +92,57 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf hyprlandCheck {
       wayland.windowManager.hyprland.settings = {
+        monitor =
+          map (
+            m:
+              if m.enabled
+              then "${m.name},${toString m.width}x${toString m.height}@${toString m.refreshRate},${toString m.x}x${toString m.y},${m.scale} ,transform, ${toString m.transform}"
+              else ""
+          )
+          cfg.monitors;
+
+        #   # Binding workspaces to monitor
+        #   # By default it will always opend on the selected monitor.
+        #   # https://wiki.hyprland.org/Configuring/Advanced-config/#binding-workspaces-to-a-monitor
+        workspace = lib.concatLists (
+          map (
+            m:
+              if m.enabled
+              then
+                map
+                (
+                  ws: "${builtins.toString ws},monitor:${m.name},default:${
+                    if ws == m.defaultWorkspace
+                    then "true"
+                    else "false"
+                  }"
+                )
+                (
+                  if m.primary && builtins.length cfg.monitors == 2
+                  then [
+                    1
+                    2
+                    3
+                    4
+                    5
+                  ]
+                  else [
+                    6
+                    7
+                    8
+                    9
+                    10
+                  ]
+                )
+              else []
+          )
+          cfg.monitors
+        );
+      };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf niriCheck {
+      programs.niri.outputs = {
         monitor =
           map (
             m:

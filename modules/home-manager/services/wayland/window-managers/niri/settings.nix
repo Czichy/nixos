@@ -9,8 +9,6 @@
   };
 in {
   programs.niri = {
-    enable = true;
-    package = pkgs.niri;
     settings = {
       environment = {
         CLUTTER_BACKEND = "wayland";
@@ -29,41 +27,46 @@ in {
         {command = ["wl-paste" "--type text" "--watch" "cliphist" "store"];}
       ];
       input = {
-        keyboard.xkb.layout = "latam";
-        touchpad = {
-          click-method = "button-areas";
-          dwt = true;
-          dwtp = true;
-          natural-scroll = true;
-          scroll-method = "two-finger";
-          tap = true;
-          tap-button-map = "left-right-middle";
-          middle-emulation = true;
-          accel-profile = "adaptive";
-        };
+        keyboard.xkb.layout = "de,noted";
+        # touchpad = {
+        #   click-method = "button-areas";
+        #   dwt = true;
+        #   dwtp = true;
+        #   natural-scroll = true;
+        #   scroll-method = "two-finger";
+        #   tap = true;
+        #   tap-button-map = "left-right-middle";
+        #   middle-emulation = true;
+        #   accel-profile = "adaptive";
+        # };
         focus-follows-mouse.enable = true;
         warp-mouse-to-focus = true;
         workspace-auto-back-and-forth = true;
       };
-      screenshot-path = "~/Pictures/Screenshots/Screenshot-from-%Y-%m-%d-%H-%M-%S.png";
+      screenshot-path = "~/Screenshots/Screenshot-from-%Y-%m-%d-%H-%M-%S.png";
       outputs = {
-        "eDP-1" = {
+        "DP-2" = {
+          mode = {
+            width = 3840;
+            height = 2160;
+            refresh = null;
+          };
           scale = 1.0;
           position = {
             x = 0;
             y = 0;
           };
         };
-        "HDMI-A-1" = {
+        "DP-3" = {
           mode = {
-            width = 1920;
-            height = 1080;
+            width = 3840;
+            height = 2160;
             refresh = null;
           };
           scale = 1.0;
           position = {
-            x = 0;
-            y = -1080;
+            x = 3840;
+            y = -867;
           };
         };
       };

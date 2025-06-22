@@ -27,6 +27,7 @@ in {
     profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma {inherit localFlake inputs;};
     profiles_graphical-hyprland = importApply ./profiles/graphical-hyprland {inherit localFlake;};
+    profiles_graphical-niri = importApply ./profiles/graphical-niri {inherit localFlake;};
     profiles_server = importApply ./profiles/server.nix {inherit localFlake;};
     profiles_headless = importApply ./profiles/headless.nix {inherit localFlake;};
     profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
@@ -96,6 +97,10 @@ in {
 
     services_wayland_window-managers_hyprland =
       importApply ./services/wayland/window-managers/hyprland
+      {inherit localFlake;};
+
+    services_wayland_window-managers_niri =
+      importApply ./services/wayland/window-managers/niri
       {inherit localFlake;};
 
     # -- system --
