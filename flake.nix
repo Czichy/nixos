@@ -180,6 +180,11 @@
       url = "github:czichy/ibkr-rust";
     };
 
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     power-meter = {
       url = "github:czichy/power-meter";
     };
