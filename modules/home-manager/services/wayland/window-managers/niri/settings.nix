@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: let
-  pointer = config.home.pointerCursor;
+  # pointer = config.home.pointerCursor;
   makeCommand = command: {
     command = [command];
   };
@@ -69,7 +69,7 @@ in {
             refresh = null;
           };
           scale = 1.0;
-          transform = 270;
+          transform.rotation = 270;
           position = {
             x = 3840;
             y = -867;
@@ -84,7 +84,7 @@ in {
       gestures = {hot-corners.enable = true;};
       cursor = {
         size = 20;
-        theme = "${pointer.name}";
+        # theme = "${pointer.name}";
       };
       layout = {
         focus-ring.enable = false;
