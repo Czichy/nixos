@@ -53,7 +53,7 @@ in {
           };
       };
       storage = lib.disko.zfs.mkZpool {
-        mode = "mirror";
+        mode = "raidz2";
         datasets = {
           "safe/guests" = lib.disko.zfs.unmountable;
         };

@@ -23,8 +23,12 @@ in {
       spawn-at-startup = [
         (makeCommand "hyprlock")
         (makeCommand "swww-daemon")
+        (makeCommand "swayosd-server")
         {command = ["wl-paste" "--watch" "cliphist" "store"];}
         {command = ["wl-paste" "--type text" "--watch" "cliphist" "store"];}
+        {command = ["${pkgs.swaynotificationcenter}/bin/swaync"];}
+        {command = ["swayosd --max-volume 150"];}
+        {command = ["xprop -root -f _XWAYLAND_GLOBAL_OUTPUT_SCALE 32c -set _XWAYLAND_GLOBAL_OUTPUT_SCALE 1"];}
       ];
       input = {
         keyboard.xkb.layout = "de,noted";
@@ -46,6 +50,7 @@ in {
       screenshot-path = "~/Screenshots/Screenshot-from-%Y-%m-%d-%H-%M-%S.png";
       outputs = {
         "DP-2" = {
+          focus-at-startup = true;
           mode = {
             width = 3840;
             height = 2160;
@@ -64,6 +69,7 @@ in {
             refresh = null;
           };
           scale = 1.0;
+          transform = 270;
           position = {
             x = 3840;
             y = -867;

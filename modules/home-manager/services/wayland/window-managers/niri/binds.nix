@@ -5,7 +5,7 @@
 }: {
   programs.niri.settings.binds = with config.lib.niri.actions; let
     set-volume = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@";
-    brillo = spawn "${pkgs.brillo}/bin/brillo" "-q" "-u" "300000";
+    # brillo = spawn "${pkgs.brillo}/bin/brillo" "-q" "-u" "300000";
     playerctl = spawn "${pkgs.playerctl}/bin/playerctl";
   in {
     "XF86AudioMute".action = spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle";
@@ -19,8 +19,8 @@
     "XF86AudioRaiseVolume".action = set-volume "5%+";
     "XF86AudioLowerVolume".action = set-volume "5%-";
 
-    "XF86MonBrightnessUp".action = brillo "-A" "5";
-    "XF86MonBrightnessDown".action = brillo "-U" "5";
+    # "XF86MonBrightnessUp".action = brillo "-A" "5";
+    # "XF86MonBrightnessDown".action = brillo "-U" "5";
 
     "Print".action.screenshot-screen = {write-to-disk = true;};
     "Mod+Shift+Alt+S".action = screenshot-window;
