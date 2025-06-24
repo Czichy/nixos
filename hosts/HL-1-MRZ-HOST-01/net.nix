@@ -5,12 +5,12 @@
 }
 : let
   inherit (inputs.self) lib;
-  macAddress_enp1s0 = "a8:b8:e0:03:8d:e5";
-  macAddress_enp4s0 = "a8:b8:e0:03:8d:e8";
+  macAddress_enp37s0 = "10:27:f5:bf:d9:d7";
+  macAddress_enp38s0 = "2c:f0:5d:9f:10:37";
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
-  topology.self.interfaces.enp1s0 = {};
-  topology.self.interfaces.enp4s0 = {};
+  topology.self.interfaces.enp37s0 = {};
+  topology.self.interfaces.enp38s0 = {};
 
   globals.monitoring.ping.HL-1-MRZ-HOST-01 = {
     hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.cidrv4;
@@ -29,7 +29,7 @@ in {
   boot.initrd.systemd.network = {
     enable = true;
     networks."10-servers" = {
-      matchConfig.MACAddress = macAddress_enp4s0;
+      matchConfig.MACAddress = macAddress_enp38s0;
       # address = [
       #   "10.15.1.30/24"
       # ];
@@ -46,7 +46,7 @@ in {
       linkConfig.RequiredForOnline = "routable";
     };
     networks."30-mgmt" = {
-      matchConfig.MACAddress = macAddress_enp1s0;
+      matchConfig.MACAddress = macAddress_enp37s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
       # matchConfig.Name = "mgmt";
@@ -84,7 +84,7 @@ in {
   # |----------------------------------------------------------------------| #
   systemd.network.networks = {
     "30-servers" = {
-      matchConfig.MACAddress = macAddress_enp4s0;
+      matchConfig.MACAddress = macAddress_enp38s0;
       # This interface should only be used from attached macvtaps.
       # So don't acquire a link local address and only wait for
       # this interface to gain a carrier.
@@ -104,7 +104,7 @@ in {
     };
 
     "30-mgmt" = {
-      matchConfig.MACAddress = macAddress_enp1s0;
+      matchConfig.MACAddress = macAddress_enp37s0;
       # to prevent conflicts with vlan networks as they have the same MAC
       matchConfig.Type = "ether";
       # matchConfig.Name = "mgmt";

@@ -5,7 +5,7 @@
     main = {
       name = "main";
       path = null;
-      id = "nvme-Force_MP510_1945823800012888371B";
+      id = "nvme-WD_BLACK_SN770_1TB_241408806855";
     };
 
     hdd1_1 = {
@@ -17,6 +17,16 @@
       name = "hdd1_2";
       path = null;
       id = "wwn-0x5000c500e961274e";
+    };
+    hdd1_3 = {
+      name = "hdd1_3";
+      path = null;
+      id = "ata-WDC_WD30EFRX-68N32N0_WD-WCC7K4SJ5NJ9";
+    };
+    hdd1_4 = {
+      name = "hdd1_4";
+      path = null;
+      id = "ata-WDC_WD30EFRX-68N32N0_WD-WCC7K7RTE9CL";
     };
   };
 in {
@@ -42,6 +52,16 @@ in {
         type = "disk";
         device = disk-id "${disks.hdd1_2.id}";
         content = lib.disko.content.luksZfs disks.hdd1_2.name "storage";
+      };
+      hdd1_3 = {
+        type = "disk";
+        device = disk-id "${disks.hdd1_3.id}";
+        content = lib.disko.content.luksZfs disks.hdd1_3.name "storage";
+      };
+      hdd1_4 = {
+        type = "disk";
+        device = disk-id "${disks.hdd1_4.id}";
+        content = lib.disko.content.luksZfs disks.hdd1_4.name "storage";
       };
     };
     zpool = {
