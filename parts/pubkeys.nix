@@ -14,7 +14,7 @@ let
 
   # Hosts
   machines = {
-    HL-1-MRZ-HOST-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILIb2E40lvAExeY61+57FWes7YKuh8kKEahcVknrT0cX czichy@HL-1-MRZ-HOST-01"];
+    HL-1-MRZ-HOST-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIELTffOa/Vh2x/CxDqKJXnwfji/aHLYbbG3ewwjFMHxZ czichy@HL-1-MRZ-HOST-01"];
     HL-1-MRZ-HOST-02 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPR8KYYsWTQ+sOFMlKXTJU6ZDG84ebHtqI4wotvCYzH"];
     HL-1-MRZ-HOST-03 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE1mhPCuc7o7lNp1FWaByYr0snO2rnwd9gH8WabEeybt"];
     #    HL-1-OZ-PC-01 = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKfYUpuZeYCkKCNL22+jUBroV4gaZYJOjcRVPDZDVXSp root@desktop"];
@@ -31,8 +31,8 @@ in {
   inherit recovery_key;
   inherit
     (machines)
-    HL-1-MRZ-HOST-02
     HL-1-MRZ-HOST-01
+    HL-1-MRZ-HOST-02
     HL-1-MRZ-HOST-03
     HL-1-OZ-PC-01
     ;
