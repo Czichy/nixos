@@ -218,7 +218,12 @@ zpool export -a
 reboot
 ```
 
+## Remote Deploying the NixOS configuration
 
+```bash
+nixos-rebuild switch --flake .#my-nixos \
+  --target-host root@192.168.4.1 --build-host localhost --verbose
+```
 
 ## Deploying the main flake's NixOS configuration
 
