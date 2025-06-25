@@ -11,6 +11,7 @@
   boot = {
     initrd = {
       availableKernelModules = [
+        "nvme"
         "ahci"
         "xhci_pci"
         "nvme"
@@ -20,6 +21,8 @@
         "sdhci_pci"
       ];
       kernelModules = [
+        "kvm-amd"
+        "nvidia"
         "i2c-dev"
         "vfio"
         "vfio_iommu_type1"
@@ -40,10 +43,9 @@
         storePaths = ["${pkgs.bashInteractive}/bin/bash"];
       };
     };
-    kernelModules = ["kvm-intel"];
     extraModulePackages = [];
     # NOTE: Add "rd.systemd.unit=rescue.target" to debug initrd
-    kernelParams = ["intel_iommu=on" "iommu=pt" "log_buf_len=16M"]; # must be {power of two}[KMG]
+    kernelParams = ["log_buf_len=16M"]; # must be {power of two}[KMG]
     tmp.useTmpfs = true;
 
     # loader.timeout = lib.mkDefault 2;

@@ -83,21 +83,21 @@
     in (
       {}
       # TODO: calculate mac
-      // mkMicrovm "samba" "HL-3-RZ-SMB-01" "enp4s0" "02:01:27:d7:9e:16" "vlan40" {
+      // mkMicrovm "samba" "HL-3-RZ-SMB-01" "enp38s0" "02:01:27:d7:9e:16" "vlan40" {
         enableStorageDataset = true;
         enableBunkerDataset = true;
         enablePaperlessDataset = true;
         enableSharedDataset = true;
       }
-      // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp4s0" "02:01:27:6b:d9:d4" "vlan40" {
+      // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp38s0" "02:01:27:6b:d9:d4" "vlan40" {
       }
-      // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp4s0" "02:01:27:dc:85:68" "vlan40" {
+      // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp38s0" "02:01:27:dc:85:68" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "forgejo" "HL-3-RZ-GIT-01" "enp4s0" "02:01:27:c4:0e:09" "vlan40" {
+      // mkMicrovm "forgejo" "HL-3-RZ-GIT-01" "enp38s0" "02:01:27:c4:0e:09" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp4s0" "02:01:27:ff:ed:77" "vlan40" {
+      // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp38s0" "02:01:27:ff:ed:77" "vlan40" {
       }
     );
   };
