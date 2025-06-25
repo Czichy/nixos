@@ -11,12 +11,11 @@
     initrd = {
       availableKernelModules = [
         "ata_piix"
-        "uhci_hcd"
-        "virtio_pci"
         "sr_mod"
+        "uhci_hcd"
         "virtio_blk"
-        "virtio_scsi"
         "virtio_net"
+        "virtio_pci"
         "virtio_scsi"
       ];
       kernelModules = [];

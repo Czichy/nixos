@@ -12,12 +12,12 @@
     initrd = {
       availableKernelModules = [
         "ahci"
-        "xhci_pci"
         "nvme"
-        "usb_storage"
-        "usbhid"
         "sd_mod"
         "sdhci_pci"
+        "usb_storage"
+        "usbhid"
+        "xhci_pci"
       ];
       kernelModules = [
         "i2c-dev"

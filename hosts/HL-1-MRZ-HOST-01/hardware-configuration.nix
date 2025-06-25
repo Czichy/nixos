@@ -11,24 +11,25 @@
   boot = {
     initrd = {
       availableKernelModules = [
-        "nvme"
         "ahci"
-        "xhci_pci"
         "nvme"
-        "usb_storage"
-        "usbhid"
         "sd_mod"
         "sdhci_pci"
+        "usb_storage"
+        "usbhid"
+        "xhci_pci"
       ];
       kernelModules = [
         "kvm-amd"
-        # "nvidia"
         "i2c-dev"
         "vfio"
         "vfio_iommu_type1"
         "vfio_pci"
-        # "vfio_virqfd"
         "xhci_pci"
+        "virtio_blk"
+        "virtio_net"
+        "virtio_pci"
+        "virtio_scsi"
       ];
 
       systemd = {
@@ -88,6 +89,6 @@
   hardware = {
     enableAllFirmware = true;
     enableRedistributableFirmware = lib.mkDefault true;
-    cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    # cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   };
 }
