@@ -22,7 +22,7 @@
       ];
       kernelModules = [
         "kvm-amd"
-        "nvidia"
+        # "nvidia"
         "i2c-dev"
         "vfio"
         "vfio_iommu_type1"
