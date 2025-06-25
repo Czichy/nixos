@@ -101,4 +101,34 @@
       }
     );
   };
+
+  systemd.tmpfiles.settings = {
+    "10-samba-shares" = {
+      "/storage/shares/bibliothek".d = {
+        user = "christian";
+        group = "czichys";
+        mode = "0777";
+      };
+      "/storage/shares/media".d = {
+        user = "christian";
+        group = "czichys";
+        mode = "0777";
+      };
+      "/storage/shares/dokumente".d = {
+        user = "christian";
+        group = "czichys";
+        mode = "0777";
+      };
+      "/storage/shares/dokumente/scanned_documents".d = {
+        user = "brother";
+        group = "czichys";
+        mode = "0777";
+      };
+      "/storage/shares/users".d = {
+        user = "root";
+        group = "czichys";
+        mode = "0777";
+      };
+    };
+  };
 }

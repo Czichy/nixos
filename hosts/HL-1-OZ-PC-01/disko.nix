@@ -7,17 +7,6 @@
       path = null;
       id = "nvme-Samsung_SSD_990_PRO_2TB_S7HENJ0Y327168K";
     };
-
-    # hdd1_1 = {
-    #   name = "hdd1_1";
-    #   path = null;
-    #   id = "wwn-0x5000c500e95e6764";
-    # };
-    # hdd1_2 = {
-    #   name = "hdd1_2";
-    #   path = null;
-    #   id = "wwn-0x5000c500e961274e";
-    # };
   };
 in {
   disko.devices = {
@@ -33,16 +22,6 @@ in {
           };
         };
       };
-      # hdd1_1 = {
-      #   type = "disk";
-      #   device = disk-id "${disks.hdd1_1.id}";
-      #   content = lib.disko.content.luksZfs disks.hdd1_1.name "storage";
-      # };
-      # hdd1_2 = {
-      #   type = "disk";
-      #   device = disk-id "${disks.hdd1_2.id}";
-      #   content = lib.disko.content.luksZfs disks.hdd1_2.name "storage";
-      # };
     };
     zpool = {
       rpool = lib.disko.zfs.mkZpool {
@@ -52,12 +31,6 @@ in {
             "safe/guests" = lib.disko.zfs.unmountable;
           };
       };
-      # storage = lib.disko.zfs.mkZpool {
-      #   mode = "mirror";
-      #   datasets = {
-      #     "safe/guests" = lib.disko.zfs.unmountable;
-      #   };
-      # };
     };
   };
   services.zrepl = {
