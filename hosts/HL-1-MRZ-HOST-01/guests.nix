@@ -129,6 +129,16 @@
         group = "czichys";
         mode = "0777";
       };
+      "/storage/shares/users/christian".d = {
+        user = "christian";
+        group = "christian";
+        mode = "0777";
+      };
+      "/storage/shares/users/ina".d = {
+        user = "ina";
+        group = "ina";
+        mode = "0777";
+      };
     };
   };
 }
