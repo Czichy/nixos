@@ -321,6 +321,19 @@ in {
         };
       })
       # |----------------------------------------------------------------------| #
+      {
+        systemd.tmpfiles.rules =
+          map (
+            guest: "d /var/lib/microvms/${guest}/journal 0755 root root - -"
+          ) (lib.attrNames cfg.guests)
+          ++ map (
+            guest: "d /var/cache/${guest} 0755 root root - -"
+          ) (lib.attrNames cfg.guests)
+          ++ map (
+            guest: "d /lib/vm-persist/${guest} 0755 root root - -"
+          ) (lib.attrNames cfg.guests);
+      }
+      # |----------------------------------------------------------------------| #
     ]
   );
   meta.maintainers = with localFlake.lib.maintainers; [czichy];

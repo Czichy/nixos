@@ -149,11 +149,6 @@ in {
           }
         );
     };
-    systemd.tmpfiles.rules = [
-      "d /var/lib/microvms/${config.networking.hostName}/journal 0755 root root - -"
-      "d /etc/vm-persist/${config.networking.hostName} 0755 root root - -"
-      "d /var/cache/${config.networking.hostName} 0755 root root - -"
-    ];
     # systemd.tmpfiles.settings = {
     #   "10-microvm-shares-${guestName}" = {
     #     "/var/lib/microvms/${guestName}/journal".d = {
