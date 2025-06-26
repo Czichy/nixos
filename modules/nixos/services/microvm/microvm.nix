@@ -151,17 +151,17 @@ in {
     };
     systemd.tmpfiles.settings = {
       "10-microvm-shares" = {
-        "/var/lib/microvms/${config.networking.hostName}/journal".d = {
+        "/var/lib/microvms/${guestName}/journal".d = {
           user = "root";
           group = "root";
           mode = "0777";
         };
-        "/etc/vm-persist/${config.networking.hostName}".d = {
+        "/etc/vm-persist/${guestName}".d = {
           user = "root";
           group = "root";
           mode = "0777";
         };
-        "/var/cache/${config.networking.hostName}".d = {
+        "/var/cache/${guestName}".d = {
           user = "root";
           group = "root";
           mode = "0777";
