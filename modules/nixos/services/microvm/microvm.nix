@@ -149,6 +149,25 @@ in {
           }
         );
     };
+    systemd.tmpfiles.settings = {
+      "10-microvm-shares" = {
+        "/var/lib/microvms/${config.networking.hostName}/journal".d = {
+          user = "root";
+          group = "root";
+          mode = "0777";
+        };
+        "/etc/vm-persist/${config.networking.hostName}".d = {
+          user = "root";
+          group = "root";
+          mode = "0777";
+        };
+        "/var/cache/${config.networking.hostName}".d = {
+          user = "root";
+          group = "root";
+          mode = "0777";
+        };
+      };
+    };
 
     # networking.renameInterfacesByMac.${guestCfg.networking.mainLinkName} = guestCfg.microvm.mac;
     systemd.network.networks."10-${guestCfg.networking.mainLinkName}".matchConfig = mkForce {
