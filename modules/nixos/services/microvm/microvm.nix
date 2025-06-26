@@ -149,25 +149,30 @@ in {
           }
         );
     };
-    systemd.tmpfiles.settings = {
-      "10-microvm-shares-${guestName}" = {
-        "/var/lib/microvms/${guestName}/journal".d = {
-          user = "root";
-          group = "root";
-          mode = "0777";
-        };
-        "/etc/vm-persist/${guestName}".d = {
-          user = "root";
-          group = "root";
-          mode = "0777";
-        };
-        "/var/cache/${guestName}".d = {
-          user = "root";
-          group = "root";
-          mode = "0777";
-        };
-      };
-    };
+    systemd.tmpfiles.rules = [
+      "d /var/lib/microvms/${guestName}/journal 0755 root root - -"
+      "d /etc/vm-persist${guestName}/journal 0755 root root - -"
+      "d /var/cache/${guestName}/journal 0755 root root - -"
+    ];
+    # systemd.tmpfiles.settings = {
+    #   "10-microvm-shares-${guestName}" = {
+    #     "/var/lib/microvms/${guestName}/journal".d = {
+    #       user = "root";
+    #       group = "root";
+    #       mode = "0777";
+    #     };
+    #     "/etc/vm-persist/${guestName}".d = {
+    #       user = "root";
+    #       group = "root";
+    #       mode = "0777";
+    #     };
+    #     "/var/cache/${guestName}".d = {
+    #       user = "root";
+    #       group = "root";
+    #       mode = "0777";
+    #     };
+    #   };
+    # };
 
     # networking.renameInterfacesByMac.${guestCfg.networking.mainLinkName} = guestCfg.microvm.mac;
     systemd.network.networks."10-${guestCfg.networking.mainLinkName}".matchConfig = mkForce {
