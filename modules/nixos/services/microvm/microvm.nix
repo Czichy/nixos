@@ -150,7 +150,7 @@ in {
         );
     };
     systemd.tmpfiles.settings = {
-      "10-microvm-shares" = {
+      "10-microvm-shares-${guestName}" = {
         "/var/lib/microvms/${guestName}/journal".d = {
           user = "root";
           group = "root";

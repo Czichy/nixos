@@ -105,38 +105,38 @@
   systemd.tmpfiles.settings = {
     "10-samba-shares" = {
       "/storage/shares/bibliothek".d = {
-        user = "christian";
-        group = "czichys";
+        user = "root";
+        group = "root";
         mode = "0777";
       };
       "/storage/shares/media".d = {
-        user = "christian";
-        group = "czichys";
+        user = "root";
+        group = "root";
         mode = "0777";
       };
       "/storage/shares/dokumente".d = {
-        user = "christian";
-        group = "czichys";
+        user = "root";
+        group = "root";
         mode = "0777";
       };
       "/storage/shares/dokumente/scanned_documents".d = {
-        user = "brother";
-        group = "czichys";
+        user = "root";
+        group = "root";
         mode = "0777";
       };
       "/storage/shares/users".d = {
         user = "root";
-        group = "czichys";
+        group = "root";
         mode = "0777";
       };
       "/storage/shares/users/christian".d = {
-        user = "christian";
-        group = "christian";
+        user = "root";
+        group = "root";
         mode = "0777";
       };
       "/storage/shares/users/ina".d = {
-        user = "ina";
-        group = "ina";
+        user = "root";
+        group = "root";
         mode = "0777";
       };
     };
