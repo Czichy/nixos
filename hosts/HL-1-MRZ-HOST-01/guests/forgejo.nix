@@ -54,7 +54,7 @@ in {
     group = config.services.forgejo.group;
   };
 
-  age.secrets.vaultwarden-hc-ping = {
+  age.secrets.forgejo-hc-ping = {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
