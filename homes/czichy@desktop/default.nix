@@ -2,7 +2,8 @@
   homeDir = "/home/czichy";
 in {
   tensorfiles.hm = {
-    profiles.graphical-hyprland.enable = true;
+    profiles.graphical-niri.enable = true;
+    # profiles.graphical-hyprland.enable = true;
     security.agenix.enable = true;
 
     system.impermanence = {

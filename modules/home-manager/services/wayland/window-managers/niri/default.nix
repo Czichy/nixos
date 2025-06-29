@@ -18,11 +18,6 @@ with lib; let
   cfg = config.tensorfiles.hm.services.wayland.window-managers.niri;
   agenixCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.agenix.enable;
-
-  pointer = config.home.pointerCursor;
-  makeCommand = command: {
-    command = [command];
-  };
 in {
   options.tensorfiles.hm.services.wayland.window-managers.niri = with types; {
     enable = mkEnableOption ''
@@ -34,7 +29,13 @@ in {
     };
   };
 
-  imports = [inputs.niri.homeModules.niri ./settings.nix ./binds.nix ./rules.nix];
+  imports = [
+    inputs.niri.homeModules.niri
+    ./settings.nix
+    ./keybinds.nix
+    ./rules.nix
+    ./autostart.nix
+  ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
