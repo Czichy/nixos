@@ -9,20 +9,25 @@ in {
   programs.niri.settings.binds = with config.lib.niri.actions; let
     pactl = "${pkgs.pulseaudio}/bin/pactl";
 
-    volume-up = spawn pactl ["set-sink-volume" "@DEFAULT_SINK@" "+5%"];
-    volume-down = spawn pactl ["set-sink-volume" "@DEFAULT_SINK@" "-5%"];
+    volume-up = spawn swayosd-client ["output-volume" "raise"];
+    volume-down = spawn swayosd-client ["output-volume" "raise"];
+    volume-mute = spawn swayosd-client ["output-volume" "mute-toggle"];
   in {
     "xf86audioraisevolume".action = volume-up;
     "xf86audiolowervolume".action = volume-down;
+    "xf86audiomute".action = volume-mute;
 
     "super+q".action = close-window;
     "super+b".action = spawn apps.browser;
     "super+Return".action = spawn apps.terminal;
     "super+Control+Return".action = spawn apps.editor;
     "super+E".action = spawn apps.fileManager;
+    "super+n".action = spawn swaync-client ["-t" "-sw"];
 
     "super+f".action = fullscreen-window;
     "super+t".action = toggle-window-floating;
+
+    "super+v".action = spawn "${pkgs.cliphist}" ["list" "|" "wofi" "-dmenu" "|" "cliphist" "decode" "|" "wl-copy"];
 
     "control+shift+1".action = spawn "${pkgs.bash}/bin/bash" [
       "-c"
@@ -45,6 +50,8 @@ in {
     "super+Shift+Up".action = move-column-to-workspace-up;
 
     "super+1".action = focus-workspace "browser";
-    "super+2".action = focus-workspace "vesktop";
+
+    # Lock screen
+    "super+Escape".action = spawn "${pkgs.wlogout}" ["-p" "layer-shell"];
   };
 }

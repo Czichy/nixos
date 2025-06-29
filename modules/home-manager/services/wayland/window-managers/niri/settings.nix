@@ -3,97 +3,106 @@
   pkgs,
   ...
 }: {
-  programs.niri = {
-    enable = true;
-    package = pkgs.niri;
-    settings = {
-      workspaces = {
-        "browser" = {};
-        "vesktop" = {};
+  programs.niri.settings = {
+    workspaces = {
+      "browser" = {
+        open-on-output = "DP-3";
       };
-
-      prefer-no-csd = true;
-
-      hotkey-overlay = {
-        skip-at-startup = true;
+      "tws" = {
+        open-on-output = "DP-2";
       };
+    };
 
-      layout = {
-        focus-ring = {
-          enable = true;
-          width = 3;
-          active = {
-            color = "#c488ec";
-          };
-          inactive = {
-            color = "#505050";
-          };
+    prefer-no-csd = true;
+
+    hotkey-overlay = {
+      skip-at-startup = true;
+    };
+
+    layout = {
+      focus-ring = {
+        enable = true;
+        width = 3;
+        active = {
+          color = "#c488ec";
         };
-
-        gaps = 6;
-
-        struts = {
-          left = 20;
-          right = 20;
-          top = 20;
-          bottom = 20;
+        inactive = {
+          color = "#505050";
         };
       };
 
-      input = {
-        keyboard.xkb.layout = "de,noted";
-        focus-follows-mouse.enable = true;
-        warp-mouse-to-focus.enable = false;
-      };
+      gaps = 6;
 
-      outputs = {
-        "DP-2" = {
-          focus-at-startup = true;
-          mode = {
-            width = 3840;
-            height = 2160;
-            refresh = null;
-          };
-          scale = 1.0;
-          position = {
-            x = 0;
-            y = 0;
-          };
-        };
-        "DP-3" = {
-          mode = {
-            width = 3840;
-            height = 2160;
-            refresh = null;
-          };
-          scale = 1.0;
-          transform.rotation = 270;
-          position = {
-            x = 3840;
-            y = -867;
-          };
+      struts = {
+        left = 20;
+        right = 20;
+        top = 20;
+        bottom = 20;
+      };
+    };
+
+    input = {
+      keyboard = {
+        repeat-delay = 150;
+        repeat-rate = 100;
+        track-layout = "global";
+        xkb = {
+          layout = "de,noted";
+          options = "grp:sclk_toggle";
         };
       };
+      numlock = true;
+      focus-follows-mouse.enable = true;
+      warp-mouse-to-focus.enable = false;
+    };
 
-      cursor = {
-        size = 20;
-        theme = "Adwaita";
+    outputs = {
+      "DP-2" = {
+        focus-at-startup = true;
+        mode = {
+          width = 3840;
+          height = 2160;
+          refresh = null;
+        };
+        scale = 1.0;
+        position = {
+          x = 0;
+          y = 0;
+        };
       };
-
-      environment = {
-        CLUTTER_BACKEND = "wayland";
-        GDK_BACKEND = "wayland,x11";
-        MOZ_ENABLE_WAYLAND = "1";
-        NIXOS_OZONE_WL = "1";
-        QT_QPA_PLATFORM = "wayland";
-        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-        ELECTRON_OZONE_PLATFORM_HINT = "auto";
-        ELECTRON_ENABLE_HARDWARE_ACCELERATION = "1";
-
-        XDG_SESSION_TYPE = "wayland";
-        XDG_CURRENT_DESKTOP = "niri";
-        DISPLAY = ":0";
+      "DP-3" = {
+        mode = {
+          width = 3840;
+          height = 2160;
+          refresh = null;
+        };
+        scale = 1.0;
+        transform.rotation = 270;
+        position = {
+          x = 3840;
+          y = -867;
+        };
       };
+    };
+
+    cursor = {
+      size = 20;
+      theme = "Adwaita";
+    };
+
+    environment = {
+      CLUTTER_BACKEND = "wayland";
+      GDK_BACKEND = "wayland,x11";
+      MOZ_ENABLE_WAYLAND = "1";
+      NIXOS_OZONE_WL = "1";
+      QT_QPA_PLATFORM = "wayland";
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+      ELECTRON_OZONE_PLATFORM_HINT = "auto";
+      ELECTRON_ENABLE_HARDWARE_ACCELERATION = "1";
+
+      XDG_SESSION_TYPE = "wayland";
+      XDG_CURRENT_DESKTOP = "niri";
+      DISPLAY = ":0";
     };
   };
 }

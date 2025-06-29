@@ -17,7 +17,7 @@
     window-rules = [
       {
         matches = [
-          {app-id = "firefox";}
+          {app-id = "vivaldi";}
         ];
         open-on-workspace = "browser";
         geometry-corner-radius = {
@@ -32,9 +32,9 @@
       # Vesktop with rounded corners
       {
         matches = [
-          {app-id = "vesktop";}
+          {title = "^(.*Interactive Brokers)$";}
         ];
-        open-on-workspace = "vesktop";
+        open-on-workspace = "tws";
         geometry-corner-radius = {
           top-left = 20.0;
           top-right = 20.0;
