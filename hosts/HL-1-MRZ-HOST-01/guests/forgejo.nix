@@ -41,7 +41,7 @@ in {
     group = config.services.forgejo.group;
   };
   age.secrets.restic-forgejo = {
-    file = secretsPath + "/hosts/HL-1-HOST-SBC-01/guests/forgejo/restic-forgejo.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/forgejo/restic-forgejo.age";
     mode = "440";
     owner = config.services.forgejo.user;
     group = config.services.forgejo.group;
@@ -52,6 +52,11 @@ in {
     mode = "440";
     owner = config.services.forgejo.user;
     group = config.services.forgejo.group;
+  };
+
+  age.secrets.vaultwarden-hc-ping = {
+    file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
+    mode = "440";
   };
   # |----------------------------------------------------------------------| #
   globals.services.forgejo.domain = forgejoDomain;
@@ -303,20 +308,22 @@ in {
   services.restic.backups = let
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-    uptime-kuma_url = "https://uptime.czichy.com/api/push/GKSOjgPE8e?status=up&msg=OK&ping=";
+    slug = "https://health.czichy.com/ping/";
 
-    script-post = host: site: uptime_url: ''
+    script-post = host: site: ''
+      pingKey="$(cat ${config.age.secrets.forgejo-hc-ping.path})"
       if [ $EXIT_STATUS -ne 0 ]; then
         ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
         -H 'Title: Backup (${site}) on ${host} failed!' \
         -H 'Tags: backup,restic,${host},${site}' \
         -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail"
       else
         ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
         -H 'Title: Backup (${site}) on ${host} successful!' \
         -H 'Tags: backup,restic,${host},${site}' \
         -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl '${uptime_url}'
+        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}"
       fi
     '';
   in {
@@ -339,7 +346,7 @@ in {
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "forgejo" uptime-kuma_url;
+      backupCleanupCommand = script-post config.networking.hostName "forgejo";
 
       # A list of options (--keep-* et al.) for 'restic forget --prune',
       # to automatically prune old snapshots.
