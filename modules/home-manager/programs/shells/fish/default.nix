@@ -151,6 +151,17 @@ in {
         shellAliases = {
           # Clear screen and scrollback
           clear = "printf '\\033[2J\\033[3J\\033[1;1H'";
+          # rage quit
+          q = "exit";
+          Q = "exit";
+          ":q" = "exit";
+          ":Q" = "exit";
+
+          gs = "git status";
+          gd = "git diff";
+          ga = "git add";
+          gc = "git commit";
+          ghb = "gh browse";
         };
         functions = {
           # Disable greeting

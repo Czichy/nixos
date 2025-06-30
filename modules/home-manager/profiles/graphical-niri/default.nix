@@ -102,10 +102,14 @@ in {
 
       programs = {
         fish.loginShellInit = ''
-          if test (tty) = "/dev/tty1"
+          if status is-login; and test -z "$DISPLAY"; and test (tty) = "/dev/tty1"
             set _JAVA_AWT_WM_NONEREPARENTING 1
-            exec niri-session
+            niri-session
           end
+          # if test (tty) = "/dev/tty1"
+          #   set _JAVA_AWT_WM_NONEREPARENTING 1
+          #   exec niri-session
+          # end
         '';
         #  zsh.loginExtra = ''
         #    if [ "$(tty)" = "/dev/tty1" ]; then
