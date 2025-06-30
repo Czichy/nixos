@@ -51,7 +51,7 @@
           options = "grp:sclk_toggle";
         };
       };
-      numlock = true;
+      # numlock = true;
       focus-follows-mouse.enable = true;
       warp-mouse-to-focus.enable = false;
     };

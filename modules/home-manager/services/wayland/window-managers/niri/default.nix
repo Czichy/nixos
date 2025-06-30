@@ -8,7 +8,6 @@
 with builtins;
 with lib; let
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkAgenixEnableOption;
-  inherit (config.home.sessionVariables) TERMINAL BROWSER EXPLORER; # EDITOR
 
   ibkr = {
     user = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.userSecretsPath}".path;

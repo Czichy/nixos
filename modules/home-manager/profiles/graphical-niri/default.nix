@@ -38,7 +38,7 @@ in {
           };
           editors.helix.enable = _ true;
           wlogout.enable = _ true;
-          wofi.enable = _ true;
+          walker.enable = _ true;
         };
       };
 
@@ -57,6 +57,7 @@ in {
         EXPLORER = _ "yazi";
         # TERMINAL = _ "foot";
         EDITOR = _ "hx";
+        LAUNCHER = _ "walker";
 
         # Wayland
         MOZ_ENABLE_WAYLAND = 1;
@@ -103,7 +104,7 @@ in {
         fish.loginShellInit = ''
           if test (tty) = "/dev/tty1"
             set _JAVA_AWT_WM_NONEREPARENTING 1
-            exec niri-session &> /dev/null
+            exec niri-session
           end
         '';
         #  zsh.loginExtra = ''
@@ -121,7 +122,7 @@ in {
       ## Enter Hyprland when logging into tty1 if Hyprland is enabled.
       xdg.configFile."nushell/login.nu".text = ''
         if (tty) == "/dev/tty1" {
-          exec Hyprland | ignore
+          exec niri-session | ignore
         }
       '';
     }

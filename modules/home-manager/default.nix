@@ -44,6 +44,7 @@ in {
     programs_zellij = importApply ./programs/zellij.nix {inherit localFlake;};
     programs_direnv = importApply ./programs/direnv.nix {inherit localFlake;};
     programs_dmenu = importApply ./programs/dmenu.nix {inherit localFlake;};
+    programs_walker = importApply ./programs/walker.nix {inherit localFlake;};
     programs_wofi = importApply ./programs/wofi.nix {inherit localFlake;};
     programs_wlogout = importApply ./programs/wlogout.nix {inherit localFlake;};
     programs_editors_helix = importApply ./programs/editors/helix {inherit localFlake inputs;};
