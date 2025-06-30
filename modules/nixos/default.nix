@@ -27,6 +27,9 @@ in {
     profiles_graphical-hyprland = importApply ./profiles/graphical-hyprland.nix {
       inherit localFlake inputs;
     };
+    profiles_graphical-niri = importApply ./profiles/graphical-niri.nix {
+      inherit localFlake inputs;
+    };
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;
     };
