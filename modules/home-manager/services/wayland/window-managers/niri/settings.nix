@@ -109,7 +109,7 @@
 
       XDG_SESSION_TYPE = "wayland";
       XDG_CURRENT_DESKTOP = "niri";
-      DISPLAY = ":0";
+      # DISPLAY = ":0";
     };
   };
 }
