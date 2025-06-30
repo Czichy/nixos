@@ -106,10 +106,10 @@ in {
           #   set _JAVA_AWT_WM_NONEREPARENTING 1
           #   niri-session
           # end
-          if test (tty) = "/dev/tty1"
-            set _JAVA_AWT_WM_NONEREPARENTING 1
-            pgrep niri >/dev/null || exec niri-session
-          end
+          # if test (tty) = "/dev/tty1"
+          #   set _JAVA_AWT_WM_NONEREPARENTING 1
+          #   pgrep niri >/dev/null || exec niri-session
+          # end
         '';
         #  zsh.loginExtra = ''
         #    if [ "$(tty)" = "/dev/tty1" ]; then
