@@ -17,7 +17,7 @@ in {
   #, `niri msg action do-something`.
   programs.niri.settings.binds = with config.lib.niri.actions; let
     volume-up = spawn "swayosd-client" ["--output-volume" "raise"];
-    volume-down = spawn "swayosd-client" ["--output-volume" "raise"];
+    volume-down = spawn "swayosd-client" ["--output-volume" "lower"];
     volume-mute = spawn "swayosd-client" ["--output-volume" "mute-toggle"];
   in {
     # Mod-Shift-/, which is usually the same as Mod-?,

@@ -92,6 +92,18 @@ in {
     mode = "440";
     group = "influxdb2";
   };
+
+  age.secrets.influxdb-user-smart-home-token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/smart-home-token.age";
+    mode = "440";
+    group = "influxdb2";
+  };
+
+  age.secrets.influxdb-user-home_assistant-token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/home_assistant-token.age";
+    mode = "440";
+    group = "influxdb2";
+  };
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist".directories = [
     {
@@ -117,8 +129,29 @@ in {
         passwordFile = config.age.secrets.influxdb-admin-password.path;
         tokenFile = config.age.secrets.influxdb-admin-token.path;
       };
-      organizations.machines.buckets.telegraf = {};
-      organizations.home.buckets.home_assistant = {};
+      organizations.machines = {
+        buckets.telegraf = {};
+      };
+      organizations.home = {
+        buckets = {
+          home_assistant = {};
+          smart-home = {};
+        };
+        auths = {
+          smart-home = {
+            readBuckets = ["smart-home"];
+            writeBuckets = ["smart-home"];
+            tokenFile =
+              config.age.secrets."influxdb-user-smart-home-token".path;
+          };
+          home_assistant = {
+            readBuckets = ["home_assistant"];
+            writeBuckets = ["home_assistant"];
+            tokenFile =
+              config.age.secrets."influxdb-user-home_assistant-token".path;
+          };
+        };
+      };
     };
   };
 
