@@ -29,44 +29,19 @@
         # clip-to-geometry = true;
       }
 
-      # Vesktop with rounded corners
       {
         matches = [
           {title = "^(.*Interactive Brokers)$";}
         ];
         open-on-workspace = "tws";
-        # geometry-corner-radius = {
-        #   top-left = 20.0;
-        #   top-right = 20.0;
-        #   bottom-left = 20.0;
-        #   bottom-right = 20.0;
-        # };
         clip-to-geometry = true;
       }
 
       # Default rule for all other windows with rounded corners
       {
         matches = [{}]; # Matches all windows not matched by above rules
-        # geometry-corner-radius = {
-        #   top-left = 20.0;
-        #   top-right = 20.0;
-        #   bottom-left = 20.0;
-        #   bottom-right = 20.0;
-        # };
         clip-to-geometry = true;
       }
-      # {
-      #   geometry-corner-radius = let
-      #     radius = 16.0;
-      #   in {
-      #     bottom-left = radius;
-      #     bottom-right = radius;
-      #     top-left = radius;
-      #     top-right = radius;
-      #   };
-      #   clip-to-geometry = true;
-      #   draw-border-with-background = false;
-      # }
       {
         matches = [
           {is-floating = true;}
@@ -115,6 +90,7 @@
         matches = [
           {app-id = "zen";}
           {app-id = "firefox";}
+          {app-id = "vivaldi";}
           {app-id = "chromium-browser";}
           {app-id = "edge";}
         ];
@@ -180,10 +156,6 @@
       }
       {
         matches = [{app-id = "com.saivert.pwvucontrol";}];
-        open-floating = true;
-      }
-      {
-        matches = [{app-id = "io.github.fsobolev.Cavalier";}];
         open-floating = true;
       }
       {

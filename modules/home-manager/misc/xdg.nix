@@ -1,53 +1,46 @@
-# --- parts/modules/home-manager/misc/xdg.nix
-#
-# Author:  czichy <christian@czichy.com>
-# URL:     https://github.com/czichy/tensorfiles
-# License: MIT
-#
-# 888                                                .d888 d8b 888
-# 888                                               d88P"  Y8P 888
-# 888                                               888        888
-# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
-# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
-# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
-# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
-#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
-{ config, lib, ... }:
+{localFlake}: {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.misc.xdg;
   _ = mkOverrideAtHmModuleLevel;
 
   defaultBrowser =
-    if cfg.defaultApplications.browser != null then
-      cfg.defaultApplications.browser
+    if cfg.defaultApplications.browser != null
+    then cfg.defaultApplications.browser
     else
       (
-        if config.home.sessionVariables.BROWSER != null then config.home.sessionVariables.BROWSER else null
+        if config.home.sessionVariables.BROWSER != null
+        then config.home.sessionVariables.BROWSER
+        else null
       );
 
   defaultEditor =
-    if cfg.defaultApplications.editor != null then
-      cfg.defaultApplications.editor
-    else
-      (if config.home.sessionVariables.EDITOR != null then config.home.sessionVariables.EDITOR else null);
-
-  defaultTerminal =
-    if cfg.defaultApplications.terminal != null then
-      cfg.defaultApplications.terminal
+    if cfg.defaultApplications.editor != null
+    then cfg.defaultApplications.editor
     else
       (
-        if config.home.sessionVariables.TERMINAL != null then
-          config.home.sessionVariables.TERMINAL
-        else
-          null
+        if config.home.sessionVariables.EDITOR != null
+        then config.home.sessionVariables.EDITOR
+        else null
       );
-in
-{
+
+  defaultTerminal =
+    if cfg.defaultApplications.terminal != null
+    then cfg.defaultApplications.terminal
+    else
+      (
+        if config.home.sessionVariables.TERMINAL != null
+        then config.home.sessionVariables.TERMINAL
+        else null
+      );
+in {
   options.tensorfiles.hm.misc.xdg = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the xdg toolset.
@@ -98,6 +91,30 @@ in
       };
     }
     # |----------------------------------------------------------------------| #
+    {
+      xdg.portal = {
+        enable = true;
+        config = {
+          #common.default = "*";
+          common = {
+            default = ["gnome" "gtk"];
+            "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+            "org.freedesktop.impl.portal.Screenshot" = "gnome";
+            "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
+          };
+        };
+        xdgOpenUsePortal = true;
+        extraPortals = with pkgs; [
+          xdg-desktop-portal
+          #  xdg-desktop-portal-hyprland
+          xdg-desktop-portal-gtk
+
+          # Niri
+          xdg-desktop-portal-gnome
+        ];
+      };
+    }
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.defaultApplications.enable {
       xdg.mimeApps = {
         defaultApplications = {
@@ -139,5 +156,5 @@ in
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
+  meta.maintainers = with localFlake.lib.maintainers; [czichy];
 }

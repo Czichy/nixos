@@ -16,9 +16,9 @@ in {
   #, Most actions that you can bind here can also be invoked programmatically with
   #, `niri msg action do-something`.
   programs.niri.settings.binds = with config.lib.niri.actions; let
-    volume-up = spawn "swayosd-client" ["output-volume" "raise"];
-    volume-down = spawn "swayosd-client" ["output-volume" "raise"];
-    volume-mute = spawn "swayosd-client" ["output-volume" "mute-toggle"];
+    volume-up = spawn "swayosd-client" ["--output-volume" "raise"];
+    volume-down = spawn "swayosd-client" ["--output-volume" "raise"];
+    volume-mute = spawn "swayosd-client" ["--output-volume" "mute-toggle"];
   in {
     # Mod-Shift-/, which is usually the same as Mod-?,
     #, shows a list of important hotkeys.

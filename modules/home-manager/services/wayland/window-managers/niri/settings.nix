@@ -33,6 +33,7 @@
 
       gaps = 6;
       center-focused-column = "never";
+      always-center-single-column = true;
       preset-column-widths = [
         {proportion = 1.0 / 3.0;}
         {proportion = 1.0 / 2.0;}
