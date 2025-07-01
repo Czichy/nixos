@@ -100,12 +100,14 @@ in {
 
       services.network-manager-applet.enable = _ true;
 
+      # using greetd!?
       programs = {
         fish.loginShellInit = ''
-          # if status is-login; and test -z "$DISPLAY"; and test (tty) = "/dev/tty1"
-          #   set _JAVA_AWT_WM_NONEREPARENTING 1
-          #   niri-session
-          # end
+          if test (tty) = "/dev/tty1"
+            set _JAVA_AWT_WM_NONEREPARENTING 1
+            niri-session
+            exit
+          end
           # if test (tty) = "/dev/tty1"
           #   set _JAVA_AWT_WM_NONEREPARENTING 1
           #   pgrep niri >/dev/null || exec niri-session

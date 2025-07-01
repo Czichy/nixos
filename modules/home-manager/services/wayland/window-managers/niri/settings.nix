@@ -41,10 +41,10 @@
       default-column-width = {proportion = 0.5;};
 
       struts = {
-        left = 20;
-        right = 20;
-        top = 20;
-        bottom = 20;
+        left = -6;
+        right = -6;
+        top = -6;
+        bottom = -6;
       };
     };
 

@@ -40,10 +40,10 @@ in {
     "super+x".action = spawn apps.launcher;
     # "super+x".action = spawn "wofi" ["-S" "drun" "-x" "10" "-y" "10" "-W" "25%" "-H" "60%"];
     # "super+d".action = spawn "wofi" ["-S" "run"];
-    "super+v".action = spawn "${pkgs.bash}/bin/bash" [
-      "-c"
-      "cliphist list | wofi -dmenu | cliphist decode | wl-copy"
-    ];
+    # "super+v".action = spawn "${pkgs.bash}/bin/bash" [
+    #   "-c"
+    #   "cliphist list | wofi -dmenu | cliphist decode | wl-copy"
+    # ];
 
     "control+shift+1".action = spawn "${pkgs.bash}/bin/bash" [
       "-c"
