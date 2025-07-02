@@ -104,7 +104,7 @@ in {
       programs = {
         fish.loginShellInit = ''
           if test (tty) = "/dev/tty1"
-            set _JAVA_AWT_WM_NONEREPARENTING 1
+            # set _JAVA_AWT_WM_NONEREPARENTING 1
             niri-session
             exit
           end

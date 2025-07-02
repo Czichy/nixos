@@ -22,7 +22,7 @@ in {
   in {
     # Mod-Shift-/, which is usually the same as Mod-?,
     #, shows a list of important hotkeys.
-    "super+Shift+Slash". action = show-hotkey-overlay;
+    "super+F1". action = show-hotkey-overlay;
 
     "super+Tab".action = toggle-overview;
 
@@ -38,12 +38,6 @@ in {
     "super+t".action = toggle-window-floating;
 
     "super+x".action = spawn apps.launcher;
-    # "super+x".action = spawn "wofi" ["-S" "drun" "-x" "10" "-y" "10" "-W" "25%" "-H" "60%"];
-    # "super+d".action = spawn "wofi" ["-S" "run"];
-    # "super+v".action = spawn "${pkgs.bash}/bin/bash" [
-    #   "-c"
-    #   "cliphist list | wofi -dmenu | cliphist decode | wl-copy"
-    # ];
 
     "control+shift+1".action = spawn "${pkgs.bash}/bin/bash" [
       "-c"
@@ -71,10 +65,11 @@ in {
     # Lock screen
     "super+Escape".action = spawn "wlogout" ["-p" "layer-shell"];
 
-    "super+Shift+Left".action = focus-monitor-left;
-    "super+Shift+Down".action = focus-monitor-down;
+    "alt+Left".action = focus-monitor-next;
+    "alt+Down".action = focus-monitor-next;
     "super+Shift+Up".action = focus-monitor-up;
     "super+Shift+Right".action = focus-monitor-right;
+    # "alt+Tab".action = focus-monitor-next;
     # "super+Shift+H".action = focus-monitor-left;
     # "super+Shift+J".action = focus-monitor-down;
     # "super+Shift+K".action = focus-monitor-up;
