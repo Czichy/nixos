@@ -66,7 +66,7 @@ in {
     "super+Escape".action = spawn "wlogout" ["-p" "layer-shell"];
 
     "alt+Left".action = focus-monitor-next;
-    "alt+Down".action = focus-monitor-next;
+    "alt+Right".action = focus-monitor-next;
     "super+Shift+Up".action = focus-monitor-up;
     "super+Shift+Right".action = focus-monitor-right;
     # "alt+Tab".action = focus-monitor-next;
@@ -75,10 +75,10 @@ in {
     # "super+Shift+K".action = focus-monitor-up;
     # "super+Shift+L".action = focus-monitor-right;
 
-    "super+Shift+Ctrl+Left".action = move-column-to-monitor-left;
-    "super+Shift+Ctrl+Down".action = move-column-to-monitor-down;
-    "super+Shift+Ctrl+Up".action = move-column-to-monitor-up;
-    "super+Shift+Ctrl+Right".action = move-column-to-monitor-right;
+    "alt+Shift+Left".action = move-column-to-monitor-left;
+    "alt+Shift+Down".action = move-column-to-monitor-down;
+    "alt+Shift+Up".action = move-column-to-monitor-up;
+    "alt+Shift+Right".action = move-column-to-monitor-right;
     "super+Shift+Ctrl+H".action = move-column-to-monitor-left;
     "super+Shift+Ctrl+J".action = move-column-to-monitor-down;
     "super+Shift+Ctrl+K".action = move-column-to-monitor-up;
