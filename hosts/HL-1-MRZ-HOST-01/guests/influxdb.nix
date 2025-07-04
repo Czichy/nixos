@@ -2,8 +2,6 @@
   config,
   globals,
   secretsPath,
-  lib,
-  nodes,
   pkgs,
   ...
 }: let
@@ -12,31 +10,6 @@
 
   certloc = "/var/lib/acme/czichy.com";
 in {
-  # age.secrets.github-access-token = {
-  #   rekeyFile = config.node.secretsDir + "/github-access-token.age";
-  #   mode = "440";
-  #   group = "telegraf";
-  # };
-
-  # meta.telegraf.secrets."@GITHUB_ACCESS_TOKEN@" = config.age.secrets.github-access-token.path;
-  # services.telegraf.extraConfig.outputs.influxdb_v2.urls = lib.mkForce ["http://localhost:${toString influxdbPort}"];
-
-  # services.telegraf.extraConfig.inputs = {
-  #   github = {
-  #     interval = "10m";
-  #     access_token = "@GITHUB_ACCESS_TOKEN@";
-  #     repositories = [
-  #       "oddlama/agenix-rekey"
-  #       "oddlama/autokernel"
-  #       "oddlama/gentoo-install"
-  #       "oddlama/idmail"
-  #       "oddlama/nix-config"
-  #       "oddlama/nix-topology"
-  #       "oddlama/vane"
-  #     ];
-  #   };
-  # };
-
   # |----------------------------------------------------------------------| #
   globals.services.influxdb.domain = influxdbDomain;
   networking.hostName = "HL-3-RZ-INFLUX-01";

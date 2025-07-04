@@ -20,22 +20,30 @@
           {app-id = "vivaldi";}
         ];
         open-on-workspace = "browser";
-        # geometry-corner-radius = {
-        #   top-left = 20.0;
-        #   top-right = 20.0;
-        #   bottom-left = 20.0;
-        #   bottom-right = 20.0;
-        # };
-        # clip-to-geometry = true;
       }
 
       {
         matches = [
-          {title = "^(.*Interactive Brokers)$";}
+          {
+            # title = "^(.*Interactive Brokers)$";
+            app-id = "install4j-jclient-LoginFrame";
+          }
         ];
         open-on-workspace = "tws";
+        open-on-output = "DP-2";
         clip-to-geometry = true;
+        open-maximized = true;
       }
+
+      # {
+      #   matches = [{title = "Discord Popout";}];
+      #   open-floating = true;
+      #   default-floating-position = {
+      #     x = 32;
+      #     y = 32;
+      #     relative-to = "bottom-right";
+      #   };
+      # }
 
       # Default rule for all other windows with rounded corners
       {
