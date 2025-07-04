@@ -65,8 +65,6 @@
 
       disko = callLibs ./disko.nix;
 
-      ente = callLibs ./ente.nix;
-
       # Helpers for working with the firewall, which is currently nftables. The
       # below library contains helpers for building nftables chains and tables
       # from nix attribute sets.

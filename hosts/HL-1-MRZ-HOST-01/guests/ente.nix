@@ -4,12 +4,14 @@
   lib,
   pkgs,
   secretsPath,
+  utils,
   ...
 }:
 # NOTE: To increase storage for all users:
 #  $ runuser -u ente -- psql
 #  ente => UPDATE subscriptions SET storage = 6597069766656;
 let
+  enteModule = import ./ente {inherit config pkgs lib utils;};
   enteAccountsDomain = "accounts.photos.${globals.domains.me}";
   enteAlbumsDomain = "albums.photos.${globals.domains.me}";
   enteApiDomain = "api.photos.${globals.domains.me}";
