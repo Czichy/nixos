@@ -89,7 +89,7 @@
         enablePaperlessDataset = true;
         enableSharedDataset = true;
       }
-      // mkMicrovm "samba" "HL-3-RZ-ENTE-01" "enp38s0" "02:01:27:ee:9e:16" "vlan40" {
+      // mkMicrovm "ente" "HL-3-RZ-ENTE-01" "enp38s0" "02:01:27:ee:9e:16" "vlan40" {
         enableStorageDataset = true;
         enableBunkerDataset = true;
         enableSharedDataset = true;
