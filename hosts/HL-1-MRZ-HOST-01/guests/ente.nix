@@ -6,12 +6,15 @@
   secretsPath,
   utils,
   ...
-}:
-# NOTE: To increase storage for all users:
-#  $ runuser -u ente -- psql
-#  ente => UPDATE subscriptions SET storage = 6597069766656;
-let
-  enteModule = import ./ente {inherit config pkgs lib utils;};
+}: let
+  inherit
+    (lib)
+    getExe
+    mkDefault
+    ;
+  # NOTE: To increase storage for all users:
+  #  $ runuser -u ente -- psql
+  #  ente => UPDATE subscriptions SET storage = 6597069766656;
   enteAccountsDomain = "accounts.photos.${globals.domains.me}";
   enteAlbumsDomain = "albums.photos.${globals.domains.me}";
   enteApiDomain = "api.photos.${globals.domains.me}";
@@ -19,69 +22,121 @@ let
   entePhotosDomain = "photos.${globals.domains.me}";
   s3Domain = "s3.photos.${globals.domains.me}";
 
-  proxyConfig = remoteAddr: nginxExtraConfig: {
-    upstreams.museum = {
-      servers."${remoteAddr}:8080" = {};
-      extraConfig = ''
-        zone museum 64k;
-        keepalive 20;
-      '';
-      monitoring = {
-        enable = true;
-        path = "/ping";
-        expectedStatus = 200;
-      };
-    };
+  defaultUser = "ente";
+  defaultGroup = "ente";
+  dataDir = "/var/lib/ente";
 
-    upstreams.minio = {
-      servers."${remoteAddr}:9000" = {};
-      extraConfig = ''
-        zone minio 64k;
-        keepalive 20;
-      '';
-      monitoring = {
-        enable = true;
-        path = "/minio/health/live";
-        expectedStatus = 200;
-      };
-    };
+  yamlFormat = pkgs.formats.yaml {};
 
-    virtualHosts =
-      {
-        ${enteApiDomain} = {
-          forceSSL = true;
-          useACMEWildcardHost = true;
-          locations."/".proxyPass = "http://museum";
-          extraConfig = ''
-            client_max_body_size 4M;
-            ${nginxExtraConfig}
-          '';
-        };
-        ${s3Domain} = {
-          forceSSL = true;
-          useACMEWildcardHost = true;
-          locations."/".proxyPass = "http://minio";
-          extraConfig = ''
-            client_max_body_size 32M;
-            proxy_buffering off;
-            proxy_request_buffering off;
-            ${nginxExtraConfig}
-          '';
-        };
-      }
-      // lib.genAttrs
-      [
-        enteAccountsDomain
-        enteAlbumsDomain
-        enteCastDomain
-        entePhotosDomain
-      ]
-      (_domain: {
-        useACMEWildcardHost = true;
-        extraConfig = nginxExtraConfig;
-      });
-  };
+  # proxyConfig = remoteAddr: nginxExtraConfig: {
+  #   upstreams.museum = {
+  #     servers."${remoteAddr}:8080" = {};
+  #     extraConfig = ''
+  #       zone museum 64k;
+  #       keepalive 20;
+  #     '';
+  #     monitoring = {
+  #       enable = true;
+  #       path = "/ping";
+  #       expectedStatus = 200;
+  #     };
+  #   };
+
+  #   upstreams.minio = {
+  #     servers."${remoteAddr}:9000" = {};
+  #     extraConfig = ''
+  #       zone minio 64k;
+  #       keepalive 20;
+  #     '';
+  #     monitoring = {
+  #       enable = true;
+  #       path = "/minio/health/live";
+  #       expectedStatus = 200;
+  #     };
+  #   };
+
+  #   virtualHosts =
+  #     {
+  #       ${enteApiDomain} = {
+  #         forceSSL = true;
+  #         useACMEWildcardHost = true;
+  #         locations."/".proxyPass = "http://museum";
+  #         extraConfig = ''
+  #           client_max_body_size 4M;
+  #           ${nginxExtraConfig}
+  #         '';
+  #       };
+  #       ${s3Domain} = {
+  #         forceSSL = true;
+  #         useACMEWildcardHost = true;
+  #         locations."/".proxyPass = "http://minio";
+  #         extraConfig = ''
+  #           client_max_body_size 32M;
+  #           proxy_buffering off;
+  #           proxy_request_buffering off;
+  #           ${nginxExtraConfig}
+  #         '';
+  #       };
+  #     }
+  #     // lib.genAttrs
+  #     [
+  #       enteAccountsDomain
+  #       enteAlbumsDomain
+  #       enteCastDomain
+  #       entePhotosDomain
+  #     ]
+  #     (_domain: {
+  #       useACMEWildcardHost = true;
+  #       extraConfig = nginxExtraConfig;
+  #     });
+  # };
   certloc = "/var/lib/acme/czichy.com";
+
+  settings = {
+    log-file = mkDefault "";
+    apps = {
+      accounts = "https://${enteAccountsDomain}";
+      cast = "https://${enteCastDomain}";
+      public-albums = "https://${enteAlbumsDomain}";
+    };
+
+    webauthn = {
+      rpid = enteAccountsDomain;
+      rporigins = ["https://${enteAccountsDomain}"];
+    };
+
+    # FIXME: blocked on https://github.com/ente-io/ente/issues/5958
+    # smtp = {
+    #   host = config.repo.secrets.local.ente.mail.host;
+    #   port = 465;
+    #   email = config.repo.secrets.local.ente.mail.from;
+    #   username = config.repo.secrets.local.ente.mail.user;
+    #   password._secret = config.age.secrets.ente-smtp-password.path;
+    # };
+    db = {
+      host = "/run/postgresql";
+      port = 5432;
+      name = "ente";
+      user = "ente";
+    };
+
+    s3 = {
+      use_path_style_urls = true;
+      b2-eu-cen = {
+        endpoint = "https://${s3Domain}";
+        region = "us-east-1";
+        bucket = "ente";
+        key._secret = config.age.secrets.minio-access-key.path;
+        secret._secret = config.age.secrets.minio-secret-key.path;
+      };
+    };
+
+    jwt.secret._secret = config.age.secrets.ente-jwt.path;
+    key = {
+      encryption._secret = config.age.secrets.ente-encryption-key.path;
+      hash._secret = config.age.secrets.ente-hash-key.path;
+    };
+  };
 in {
   networking.hostName = "HL-3-RZ-ENTE-01";
   globals.services.ente.domain = entePhotosDomain;
@@ -195,48 +250,120 @@ in {
     '';
   };
 
-  systemd.services.ente.after = ["minio.service"];
-  services.ente.api = {
+  # |----------------------------------------------------------------------| #
+
+  services.postgresql = {
     enable = true;
-    enableLocalDB = true;
-    domain = enteApiDomain;
-    settings = {
-      apps = {
-        accounts = "https://${enteAccountsDomain}";
-        cast = "https://${enteCastDomain}";
-        public-albums = "https://${enteAlbumsDomain}";
-      };
+    ensureUsers = [
+      {
+        name = "ente";
+        ensureDBOwnership = true;
+      }
+    ];
+    ensureDatabases = ["ente"];
+  };
 
-      webauthn = {
-        rpid = enteAccountsDomain;
-        rporigins = ["https://${enteAccountsDomain}"];
-      };
+  systemd.services.ente = {
+    description = "Ente.io Museum API Server";
+    after = ["network.target" "minio.service"] ++ "postgresql.service";
+    requires = "postgresql.service";
+    wantedBy = ["multi-user.target"];
 
-      # FIXME: blocked on https://github.com/ente-io/ente/issues/5958
-      # smtp = {
-      #   host = config.repo.secrets.local.ente.mail.host;
-      #   port = 465;
-      #   email = config.repo.secrets.local.ente.mail.from;
-      #   username = config.repo.secrets.local.ente.mail.user;
-      #   password._secret = config.age.secrets.ente-smtp-password.path;
-      # };
+    preStart = ''
+      # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
+      ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
 
-      s3 = {
-        use_path_style_urls = true;
-        b2-eu-cen = {
-          endpoint = "https://${s3Domain}";
-          region = "us-east-1";
-          bucket = "ente";
-          key._secret = config.age.secrets.minio-access-key.path;
-          secret._secret = config.age.secrets.minio-secret-key.path;
-        };
-      };
+      # Setup paths
+      mkdir -p ${dataDir}/configurations
+      ln -sTf /run/ente/local.yaml ${dataDir}/configurations/local.yaml
+    '';
 
-      jwt.secret._secret = config.age.secrets.ente-jwt.path;
-      key = {
-        encryption._secret = config.age.secrets.ente-encryption-key.path;
-        hash._secret = config.age.secrets.ente-hash-key.path;
-      };
+    serviceConfig = {
+      ExecStart = getExe pkgs.museum;
+      Type = "simple";
+      Restart = "on-failure";
+
+      AmbientCapablities = [];
+      CapabilityBoundingSet = [];
+      LockPersonality = true;
+      MemoryDenyWriteExecute = true;
+      NoNewPrivileges = true;
+      PrivateMounts = true;
+      PrivateTmp = true;
+      PrivateUsers = false;
+      ProcSubset = "pid";
+      ProtectClock = true;
+      ProtectControlGroups = true;
+      ProtectHome = true;
+      ProtectHostname = true;
+      ProtectKernelLogs = true;
+      ProtectKernelModules = true;
+      ProtectKernelTunables = true;
+      ProtectProc = "invisible";
+      ProtectSystem = "strict";
+      RestrictAddressFamilies = [
+        "AF_INET"
+        "AF_INET6"
+        "AF_NETLINK"
+        "AF_UNIX"
+      ];
+      RestrictNamespaces = true;
+      RestrictRealtime = true;
+      RestrictSUIDSGID = true;
+      SystemCallArchitectures = "native";
+      SystemCallFilter = "@system-service";
+      UMask = "077";
+
+      BindReadOnlyPaths = [
+        "${pkgs.museum}/share/museum/migrations:${dataDir}/migrations"
+        "${pkgs.museum}/share/museum/mail-templates:${dataDir}/mail-templates"
+      ];
+
+      User = defaultUser;
+      Group = defaultGroup;
+
+      SyslogIdentifier = "ente";
+      StateDirectory = "ente";
+      WorkingDirectory = dataDir;
+      RuntimeDirectory = "ente";
+    };
+
+    # Environment MUST be called local, otherwise we cannot log to stdout
+    environment = {
+      ENVIRONMENT = "local";
+      GIN_MODE = "release";
     };
   };
+
+  users = {
+    users = {
+      ${defaultUser} = {
+        description = "ente.io museum service user";
+        inherit defaultGroup;
+        isSystemUser = true;
+        home = dataDir;
+      };
+    };
+    groups = {${defaultGroup} = {};};
+  };
+
+  # services.nginx = mkIf cfgApi.nginx.enable {
+  #   enable = true;
+  #   upstreams.museum = {
+  #     servers."localhost:8080" = {};
+  #     extraConfig = ''
+  #       zone museum 64k;
+  #       keepalive 20;
+  #     '';
+  #   };
+
+  #   virtualHosts.${cfgApi.domain} = {
+  #     forceSSL = mkDefault true;
+  #     locations."/".proxyPass = "http://museum";
+  #     extraConfig = ''
+  #       client_max_body_size 4M;
+  #     '';
+  #   };
+  # };
+  # |----------------------------------------------------------------------| #
 }
