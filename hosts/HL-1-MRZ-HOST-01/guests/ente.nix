@@ -339,12 +339,12 @@ in {
     users = {
       "${defaultUser}" = {
         description = "ente.io museum service user";
-        inherit defaultGroup;
+        group = "&{defaultGroup}";
         isSystemUser = true;
         home = dataDir;
       };
     };
-    groups = {${defaultGroup} = {};};
+    groups."${defaultGroup}" = {};
   };
 
   # services.nginx = mkIf cfgApi.nginx.enable {
