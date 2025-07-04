@@ -75,6 +75,7 @@ in {
   };
 
   home.packages = with pkgs; [
+    ente-desktop
     #thunderbird # A full-featured e-mail client
     #beeper # Universal chat app.
     #armcord # Lightweight, alternative desktop client for Discord
