@@ -339,7 +339,7 @@ in {
     users = {
       "${defaultUser}" = {
         description = "ente.io museum service user";
-        group = "&{defaultGroup}";
+        group = "${defaultGroup}";
         isSystemUser = true;
         home = dataDir;
       };
