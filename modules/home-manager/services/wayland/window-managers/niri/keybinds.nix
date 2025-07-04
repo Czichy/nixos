@@ -67,7 +67,7 @@ in {
 
     "alt+Left".action = focus-monitor-next;
     "alt+Right".action = focus-monitor-next;
-    "super+Shift+Up".action = focus-monitor-up;
+    "super+Shift+Left".action = focus-monitor-left;
     "super+Shift+Right".action = focus-monitor-right;
     # "alt+Tab".action = focus-monitor-next;
     # "super+Shift+H".action = focus-monitor-left;
