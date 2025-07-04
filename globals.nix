@@ -51,8 +51,10 @@ in {
         hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader
         hosts.HL-3-RZ-IBKR-01.id = 15;
-        # Resilio
-        hosts.HL-3-RZ-RESILIO-01.id = 16;
+        # # Resilio
+        # hosts.HL-3-RZ-RESILIO-01.id = 16;
+        # Ente
+        hosts.HL-3-RZ-ENTE-01.id = 16;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome
