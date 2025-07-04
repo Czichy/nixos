@@ -337,7 +337,7 @@ in {
 
   users = {
     users = {
-      ${defaultUser} = {
+      "${defaultUser}" = {
         description = "ente.io museum service user";
         inherit defaultGroup;
         isSystemUser = true;
