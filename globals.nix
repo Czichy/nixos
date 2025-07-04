@@ -54,7 +54,7 @@ in {
         # # Resilio
         # hosts.HL-3-RZ-RESILIO-01.id = 16;
         # Ente
-        hosts.HL-3-RZ-ENTE-01.id = 16;
+        hosts.HL-3-RZ-ENTE-01.id = 17;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome
