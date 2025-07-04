@@ -194,16 +194,16 @@ in {
   # NOTE: don't use the root user for access. In this case it doesn't matter
   # since the whole minio server is only for ente anyway, but it would be a
   # good practice.
-  # age.secrets.minio-access-key = {
-  #   file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-access-key.age";
-  #   mode = "440";
-  #   group = "ente";
-  # };
-  # age.secrets.minio-secret-key = {
-  #   file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-secret-key.age";
-  #   mode = "440";
-  #   group = "ente";
-  # };
+  age.secrets.minio-access-key = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-access-key.age";
+    mode = "440";
+    group = "ente";
+  };
+  age.secrets.minio-secret-key = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-secret-key.age";
+    mode = "440";
+    group = "ente";
+  };
   age.secrets.minio-root-credentials = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-root-credentials.age";
     mode = "440";
