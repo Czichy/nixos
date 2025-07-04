@@ -266,7 +266,7 @@ in {
   systemd.services.ente = {
     description = "Ente.io Museum API Server";
     after = ["network.target" "minio.service" "postgresql.service"];
-    requires = "postgresql.service";
+    requires = ["postgresql.service"];
     wantedBy = ["multi-user.target"];
 
     preStart = ''
