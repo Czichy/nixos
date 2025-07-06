@@ -79,6 +79,12 @@ in {
   networking.hostName = "HL-3-RZ-ENTE-01";
   globals.services.ente.domain = entePhotosDomain;
 
+  # |----------------------------------------------------------------------| #
+  networking.firewall = {
+    allowedTCPPorts = [8080 9000];
+  };
+  # |----------------------------------------------------------------------| #
+
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
