@@ -228,14 +228,14 @@ in {
     requires = ["postgresql.service"];
     wantedBy = ["multi-user.target"];
 
+    # ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
     preStart = ''
       # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
-      # ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
       ${utils.genJqSecretsReplacementSnippet settings "${dataDir}/configurations/local.yaml"}
 
       # Setup paths
-      mkdir -p ${dataDir}/configurations
-      ln -sTf /run/ente/local.yaml ${dataDir}/configurations/local.yaml
+      # mkdir -p ${dataDir}/configurations
+      # ln -sTf /run/ente/local.yaml ${dataDir}/configurations/local.yaml
     '';
 
     serviceConfig = {
