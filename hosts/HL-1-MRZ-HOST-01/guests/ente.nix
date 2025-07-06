@@ -28,68 +28,6 @@
 
   yamlFormat = pkgs.formats.yaml {};
 
-  # proxyConfig = remoteAddr: nginxExtraConfig: {
-  #   upstreams.museum = {
-  #     servers."${remoteAddr}:8080" = {};
-  #     extraConfig = ''
-  #       zone museum 64k;
-  #       keepalive 20;
-  #     '';
-  #     monitoring = {
-  #       enable = true;
-  #       path = "/ping";
-  #       expectedStatus = 200;
-  #     };
-  #   };
-
-  #   upstreams.minio = {
-  #     servers."${remoteAddr}:9000" = {};
-  #     extraConfig = ''
-  #       zone minio 64k;
-  #       keepalive 20;
-  #     '';
-  #     monitoring = {
-  #       enable = true;
-  #       path = "/minio/health/live";
-  #       expectedStatus = 200;
-  #     };
-  #   };
-
-  #   virtualHosts =
-  #     {
-  #       ${enteApiDomain} = {
-  #         forceSSL = true;
-  #         useACMEWildcardHost = true;
-  #         locations."/".proxyPass = "http://museum";
-  #         extraConfig = ''
-  #           client_max_body_size 4M;
-  #           ${nginxExtraConfig}
-  #         '';
-  #       };
-  #       ${s3Domain} = {
-  #         forceSSL = true;
-  #         useACMEWildcardHost = true;
-  #         locations."/".proxyPass = "http://minio";
-  #         extraConfig = ''
-  #           client_max_body_size 32M;
-  #           proxy_buffering off;
-  #           proxy_request_buffering off;
-  #           ${nginxExtraConfig}
-  #         '';
-  #       };
-  #     }
-  #     // lib.genAttrs
-  #     [
-  #       enteAccountsDomain
-  #       enteAlbumsDomain
-  #       enteCastDomain
-  #       entePhotosDomain
-  #     ]
-  #     (_domain: {
-  #       useACMEWildcardHost = true;
-  #       extraConfig = nginxExtraConfig;
-  #     });
-  # };
   certloc = "/var/lib/acme/czichy.com";
 
   settings = {
@@ -144,7 +82,21 @@ in {
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
-      virtualHosts."${entePhotosDomain}".extraConfig = ''
+      virtualHosts."${enteApiDomain}".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+            transport http {
+            	tls_server_name ${entePhotosDomain}
+            }
+        }
+
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+          protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+    sevices.caddy = {
+      virtualHosts."${s3Domain}".extraConfig = ''
         reverse_proxy https://10.15.70.1:443 {
             transport http {
             	tls_server_name ${entePhotosDomain}
@@ -161,8 +113,17 @@ in {
   # reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:${toString influxdbPort}
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
-      virtualHosts."${entePhotosDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}
+      virtualHosts."${enteApiDomain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:8080
+        tls ${certloc}/cert.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+    services.caddy = {
+      virtualHosts."${s3Domain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:9000
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }
