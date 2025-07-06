@@ -75,6 +75,7 @@
       hash._secret = config.age.secrets.ente-hash-key.path;
     };
   };
+  # ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
 in {
   networking.hostName = "HL-3-RZ-ENTE-01";
   globals.services.ente.domain = entePhotosDomain;
@@ -228,10 +229,7 @@ in {
     requires = ["postgresql.service"];
     wantedBy = ["multi-user.target"];
 
-    # ${utils.genJqSecretsReplacementSnippet settings "${dataDir}/configurations/local.yaml"}
-    # ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
     preStart = ''
-      # mkdir -p /run/ente
       # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
       ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
 
@@ -285,9 +283,9 @@ in {
       Group = defaultGroup;
 
       SyslogIdentifier = "ente";
-      StateDirectory = "ente";
+      StateDirectory = "/run/ente";
       WorkingDirectory = dataDir;
-      RuntimeDirectory = "ente";
+      RuntimeDirectory = "/run/ente";
     };
 
     # Environment MUST be called local, otherwise we cannot log to stdout
