@@ -328,5 +328,5 @@ in {
   #   };
   # };
   # |----------------------------------------------------------------------| #
-  systemd.tmpfiles.rules = ["d /run/ente 0755 root root - -"];
+  systemd.tmpfiles.rules = ["d /run/ente 0755 ente ente - -"];
 }
