@@ -285,9 +285,9 @@ in {
       Group = defaultGroup;
 
       SyslogIdentifier = "ente";
-      StateDirectory = "ente";
+      # StateDirectory = "ente";
       WorkingDirectory = dataDir;
-      RuntimeDirectory = "ente";
+      # RuntimeDirectory = "ente";
     };
 
     # Environment MUST be called local, otherwise we cannot log to stdout
