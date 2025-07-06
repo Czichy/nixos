@@ -231,13 +231,13 @@ in {
     # ${utils.genJqSecretsReplacementSnippet settings "${dataDir}/configurations/local.yaml"}
     # ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
     preStart = ''
-          mkdir -p /run/ente
-          # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
-      ${utils.genJqSecretsReplacementSnippet settings "${dataDir}/configurations/local.yaml"}
+      # mkdir -p /run/ente
+      # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
+      ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
 
-          # Setup paths
-          # mkdir -p ${dataDir}/configurations
-          # ln -sTf /run/ente/local.yaml ${dataDir}/configurations/local.yaml
+      # Setup paths
+      mkdir -p ${dataDir}/configurations
+      ln -sTf /run/ente/local.yaml ${dataDir}/configurations/local.yaml
     '';
 
     serviceConfig = {
@@ -285,9 +285,9 @@ in {
       Group = defaultGroup;
 
       SyslogIdentifier = "ente";
-      # StateDirectory = "ente";
+      StateDirectory = "ente";
       WorkingDirectory = dataDir;
-      # RuntimeDirectory = "ente";
+      RuntimeDirectory = "ente";
     };
 
     # Environment MUST be called local, otherwise we cannot log to stdout
@@ -328,8 +328,8 @@ in {
   #   };
   # };
   # |----------------------------------------------------------------------| #
-  systemd.tmpfiles.rules = [
-    "d /run/ente 0755 ente ente - -"
-    "d ${dataDir}/configurations 0755 ente ente - -"
-  ];
+  # systemd.tmpfiles.rules = [
+  #   "d /run/ente 0755 ente ente - -"
+  #   # "d ${dataDir}/configurations 0755 ente ente - -"
+  # ];
 }
