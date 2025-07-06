@@ -101,7 +101,7 @@ in {
         import czichy_headers
       '';
     };
-    sevices.caddy = {
+    services.caddy = {
       virtualHosts."${s3Domain}".extraConfig = ''
         reverse_proxy https://10.15.70.1:443 {
             transport http {
