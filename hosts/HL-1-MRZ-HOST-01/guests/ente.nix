@@ -328,13 +328,5 @@ in {
   #   };
   # };
   # |----------------------------------------------------------------------| #
-  systemd.tmpfiles.settings = {
-    "ente" = {
-      "/run/ente".d = {
-        user = "root";
-        group = "root";
-        mode = "0750";
-      };
-    };
-  };
+  systemd.tmpfiles.rules = ["d /run/ente 0755 root root - -"];
 }
