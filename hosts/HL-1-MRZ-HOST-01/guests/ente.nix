@@ -331,8 +331,8 @@ in {
   systemd.tmpfiles.settings = {
     "ente" = {
       "/run/ente".d = {
-        user = "ente";
-        group = "ente";
+        user = "root";
+        group = "root";
         mode = "0750";
       };
     };
