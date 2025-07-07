@@ -342,6 +342,7 @@ in {
   # |----------------------------------------------------------------------| #
   systemd.tmpfiles.rules = [
     "d /run/ente 0755 ente ente - -"
+    "d /etc/ente 0755 ente ente - -"
     "d ${dataDir}/configurations 0755 ente ente - -"
   ];
 }
