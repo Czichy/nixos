@@ -223,6 +223,19 @@ in {
     ensureDatabases = ["ente"];
   };
 
+  environment.etc = {
+    # Creates /etc/nanorc
+    ente = {
+      text = ''
+        # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
+        ${utils.genJqSecretsReplacementSnippet settings "/etc/ente/local.yaml"}
+      '';
+
+      # The UNIX file mode bits
+      mode = "0440";
+    };
+  };
+
   systemd.services.ente = {
     description = "Ente.io Museum API Server";
     after = ["network.target" "minio.service" "postgresql.service"];
@@ -233,11 +246,10 @@ in {
     preStart = ''
       # mkdir /run/ente
       # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
-      ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
 
       # Setup paths
       # mkdir -p ${dataDir}/configurations
-      ln -sTf /run/ente/local.yaml ${dataDir}/configurations/local.yaml
+      ln -sTf /etc/ente/local.yaml ${dataDir}/configurations/local.yaml
     '';
 
     serviceConfig = {
