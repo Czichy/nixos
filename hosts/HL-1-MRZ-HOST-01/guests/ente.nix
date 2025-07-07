@@ -24,7 +24,7 @@
 
   defaultUser = "ente";
   defaultGroup = "ente";
-  dataDir = "/var/lib/ente";
+  dataDir = "/persist/var/lib/ente";
 
   yamlFormat = pkgs.formats.yaml {};
 
