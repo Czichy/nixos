@@ -231,13 +231,13 @@ in {
 
     # ${utils.genJqSecretsReplacementSnippet settings "/run/ente/local.yaml"}
     preStart = ''
-        # mkdir /run/ente
-        # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
-      # ${utils.genJqSecretsReplacementSnippet settings "/etc/ente/local.yaml"}
+      # mkdir /run/ente
+      # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
+       ${utils.genJqSecretsReplacementSnippet settings "/etc/ente/local.yaml"}
 
-        # Setup paths
-        # mkdir -p ${dataDir}/configurations
-        ln -sTf /etc/ente/local.yaml ${dataDir}/configurations/local.yaml
+      # Setup paths
+      mkdir -p ${dataDir}/configurations
+      ln -sTf /etc/ente/local.yaml ${dataDir}/configurations/local.yaml
     '';
 
     serviceConfig = {
