@@ -123,22 +123,22 @@ in {
             proto = "virtiofs";
             socket = "journal.sock";
           }
-          {
-            # On the host
-            source = "/etc/vm-persist/${config.networking.hostName}";
-            # In the MicroVM
-            mountPoint = "/persist";
-            tag = "persist";
-            proto = "virtiofs";
-          }
-          {
-            # On the host
-            source = "/var/cache/${config.networking.hostName}";
-            # In the MicroVM
-            mountPoint = "/var/cache";
-            tag = "cache";
-            proto = "virtiofs";
-          }
+          # {
+          #   # On the host
+          #   source = "/etc/vm-persist/${config.networking.hostName}";
+          #   # In the MicroVM
+          #   mountPoint = "/persist";
+          #   tag = "persist";
+          #   proto = "virtiofs";
+          # }
+          # {
+          #   # On the host
+          #   source = "/var/cache/${config.networking.hostName}";
+          #   # In the MicroVM
+          #   mountPoint = "/var/cache";
+          #   tag = "cache";
+          #   proto = "virtiofs";
+          # }
         ]
         ++ flip mapAttrsToList guestCfg.zfs (
           _: zfsCfg: {
