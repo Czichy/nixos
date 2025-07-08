@@ -74,6 +74,7 @@
   hardware = {
     enableAllFirmware = true;
     cpu.amd.updateMicrocode = true;
+    opengl.enable = true;
 
     graphics = {
       enable = true;
