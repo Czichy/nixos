@@ -22,6 +22,7 @@ in {
   # |----------------------------------------------------------------------| #
   networking.firewall = {
     allowedTCPPorts = [8080 9000 9001];
+    allowedUDPPorts = [8080 9000 9001];
   };
   # |----------------------------------------------------------------------| #
   globals.services.ente.domain = entePhotosDomain;

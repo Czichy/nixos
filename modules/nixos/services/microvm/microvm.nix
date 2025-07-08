@@ -149,6 +149,8 @@ in {
           }
         );
     };
+
+    systemd.tmpfiles.rules = ["d /var/cache/${config.networking.hostName} 0755 root root - -"];
     # systemd.tmpfiles.settings = {
     #   "10-microvm-shares-${guestName}" = {
     #     "/var/lib/microvms/${guestName}/journal".d = {

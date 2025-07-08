@@ -273,24 +273,24 @@ in {
         groups = mkIf (cfgApi.group == defaultGroup) {${defaultGroup} = {};};
       };
 
-      services.nginx = mkIf cfgApi.nginx.enable {
-        enable = true;
-        upstreams.museum = {
-          servers."localhost:8080" = {};
-          extraConfig = ''
-            zone museum 64k;
-            keepalive 20;
-          '';
-        };
+      # services.nginx = mkIf cfgApi.nginx.enable {
+      #   enable = true;
+      #   upstreams.museum = {
+      #     servers."localhost:8080" = {};
+      #     extraConfig = ''
+      #       zone museum 64k;
+      #       keepalive 20;
+      #     '';
+      #   };
 
-        virtualHosts.${cfgApi.domain} = {
-          forceSSL = mkDefault true;
-          locations."/".proxyPass = "http://museum";
-          extraConfig = ''
-            client_max_body_size 4M;
-          '';
-        };
-      };
+      #   virtualHosts.${cfgApi.domain} = {
+      #     forceSSL = mkDefault true;
+      #     locations."/".proxyPass = "http://museum";
+      #     extraConfig = ''
+      #       client_max_body_size 4M;
+      #     '';
+      #   };
+      # };
     })
     (mkIf cfgWeb.enable {
       services.ente.api.settings = mkIf cfgApi.enable {
@@ -306,44 +306,44 @@ in {
         };
       };
 
-      services.nginx = let
-        domainFor = app: cfgWeb.domains.${app};
-      in {
-        enable = true;
-        virtualHosts.${domainFor "accounts"} = {
-          forceSSL = mkDefault true;
-          locations."/" = {
-            root = webPackage "accounts";
-            tryFiles = "$uri $uri.html /index.html";
-            extraConfig = ''
-              add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
-            '';
-          };
-        };
-        virtualHosts.${domainFor "cast"} = {
-          forceSSL = mkDefault true;
-          locations."/" = {
-            root = webPackage "cast";
-            tryFiles = "$uri $uri.html /index.html";
-            extraConfig = ''
-              add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
-            '';
-          };
-        };
-        virtualHosts.${domainFor "photos"} = {
-          serverAliases = [
-            (domainFor "albums") # the albums app is shared with the photos frontend
-          ];
-          forceSSL = mkDefault true;
-          locations."/" = {
-            root = webPackage "photos";
-            tryFiles = "$uri $uri.html /index.html";
-            extraConfig = ''
-              add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
-            '';
-          };
-        };
-      };
+      # services.nginx = let
+      #   domainFor = app: cfgWeb.domains.${app};
+      # in {
+      #   enable = true;
+      #   virtualHosts.${domainFor "accounts"} = {
+      #     forceSSL = mkDefault true;
+      #     locations."/" = {
+      #       root = webPackage "accounts";
+      #       tryFiles = "$uri $uri.html /index.html";
+      #       extraConfig = ''
+      #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+      #       '';
+      #     };
+      #   };
+      #   virtualHosts.${domainFor "cast"} = {
+      #     forceSSL = mkDefault true;
+      #     locations."/" = {
+      #       root = webPackage "cast";
+      #       tryFiles = "$uri $uri.html /index.html";
+      #       extraConfig = ''
+      #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+      #       '';
+      #     };
+      #   };
+      #   virtualHosts.${domainFor "photos"} = {
+      #     serverAliases = [
+      #       (domainFor "albums") # the albums app is shared with the photos frontend
+      #     ];
+      #     forceSSL = mkDefault true;
+      #     locations."/" = {
+      #       root = webPackage "photos";
+      #       tryFiles = "$uri $uri.html /index.html";
+      #       extraConfig = ''
+      #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+      #       '';
+      #     };
+      #   };
+      # };
     })
   ];
 
