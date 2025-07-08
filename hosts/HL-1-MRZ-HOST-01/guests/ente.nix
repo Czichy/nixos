@@ -33,7 +33,7 @@ in {
     network = "internet";
   };
 
-  # fileSystems."/storage".neededForBoot = true;
+  fileSystems."/storage".neededForBoot = true;
   environment.persistence."/storage".directories = [
     {
       directory = "/var/lib/minio";
