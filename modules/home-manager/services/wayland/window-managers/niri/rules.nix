@@ -25,7 +25,7 @@
       {
         matches = [
           {
-            # title = "^(.*Interactive Brokers)$";
+            title = "^(.*Interactive Brokers)$";
             app-id = "install4j-jclient-LoginFrame";
           }
         ];
@@ -35,15 +35,20 @@
         open-maximized = true;
       }
 
-      # {
-      #   matches = [{title = "Discord Popout";}];
-      #   open-floating = true;
-      #   default-floating-position = {
-      #     x = 32;
-      #     y = 32;
-      #     relative-to = "bottom-right";
-      #   };
-      # }
+      {
+        matches = [
+          {
+            # title = "^(.*Interactive Brokers)$";
+            app-id = "install4j-jclient-LoginFrame";
+          }
+        ];
+        open-floating = true;
+        default-floating-position = {
+          x = 32;
+          y = 32;
+          relative-to = "bottom-right";
+        };
+      }
 
       # Default rule for all other windows with rounded corners
       {
