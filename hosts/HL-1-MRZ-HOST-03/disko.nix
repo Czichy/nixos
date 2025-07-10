@@ -5,13 +5,18 @@
     main = {
       name = "main";
       path = null;
-      id = "mmc-BJTD4R_0xad934b39";
+      id = "nvme-Force_MP510_1945823800012888371B";
     };
 
-    sata_1 = {
-      name = "sata_1";
+    hdd1_1 = {
+      name = "hdd1_1";
       path = null;
-      id = "ata-Samsung_SSD_840_Series_S14JNEACC24945P";
+      id = "wwn-0x5000039ff6e81827";
+    };
+    hdd1_2 = {
+      name = "hdd1_2";
+      path = null;
+      id = "wwn-0x5000039ff6e8186f";
     };
   };
 in {
@@ -28,34 +33,28 @@ in {
           };
         };
       };
-      sata_1 = {
+      hdd1_1 = {
         type = "disk";
-        device = disk-id "${disks.sata_1.id}";
-        content = lib.disko.content.luksZfs disks.sata_1.name "storage";
+        device = disk-id "${disks.hdd1_1.id}";
+        content = lib.disko.content.luksZfs disks.hdd1_1.name "storage";
+      };
+      hdd1_2 = {
+        type = "disk";
+        device = disk-id "${disks.hdd1_2.id}";
+        content = lib.disko.content.luksZfs disks.hdd1_2.name "storage";
       };
     };
     zpool = {
       rpool = lib.disko.zfs.mkZpool {
-        datasets = {
-          # lib.disko.zfs.impermanenceZfsDatasets "rpool"
-          "local" = lib.disko.zfs.unmountable;
-          # "local/nix" = lib.disko.zfs.filesystem "/nix";
-          "local/root" =
-            lib.disko.zfs.filesystem "/"
-            // {
-              postCreateHook = "zfs snapshot rpool/local/root@blank";
-            };
-          "local/state" = lib.disko.zfs.filesystem "/state";
-          "safe" = lib.disko.zfs.unmountable;
-          "safe/persist" = lib.disko.zfs.filesystem "/persist";
-          "safe/guests" = lib.disko.zfs.unmountable;
-        };
+        datasets =
+          lib.disko.zfs.impermanenceZfsDatasets "rpool"
+          // {
+            "safe/guests" = lib.disko.zfs.unmountable;
+          };
       };
       storage = lib.disko.zfs.mkZpool {
-        # mode = "mirror";
+        mode = "raidz2";
         datasets = {
-          "local" = lib.disko.zfs.unmountable;
-          "local/nix" = lib.disko.zfs.filesystem "/nix";
           "safe/guests" = lib.disko.zfs.unmountable;
         };
       };
@@ -135,5 +134,5 @@ in {
   # Needed for impermanence, because we mount /persist/save on /persist, we need to make sure /persist is mounted before /persist/save
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/state".neededForBoot = true;
-  # boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target"];
+  boot.initrd.systemd.services."zfs-import-storage".after = ["cryptsetup.target"];
 }
