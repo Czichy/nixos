@@ -29,7 +29,7 @@
     # url = "jdbc:postgresql://localhost:5432/docspell";
     url = "jdbc:postgresql://localhost:5432/docspell";
     user = "docspell";
-    password = "";
+    password = "docspell";
   };
   # |----------------------------------------------------------------------| #
 in {
@@ -53,18 +53,14 @@ in {
     inputs.docspell.nixosModules.default
   ];
   # |----------------------------------------------------------------------| #
-  age.secrets.mailer-password = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/forgejo/mailer-password.age";
+  age.secrets.server-secret = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/docspell/server-secret.age";
     mode = "440";
-    owner = config.services.forgejo.user;
-    group = config.services.forgejo.group;
   };
 
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
-    owner = config.services.forgejo.user;
-    group = config.services.forgejo.group;
   };
 
   age.secrets.docspell-hc-ping = {
@@ -131,14 +127,23 @@ in {
   #       host  all  all 0.0.0.0/0 md5
   #     '';
   # };
-  services.postgresql = {
+  services.postgresql = let
+    pginit = pkgs.writeText "pginit.sql" ''
+      CREATE USER docspell WITH PASSWORD 'docspell' LOGIN CREATEDB;
+      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO docspell;
+      GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO docspell;
+      CREATE DATABASE DOCSPELL OWNER 'docspell';
+    '';
+  in {
     enable = true;
+    initialScript = pginit;
     # package = pkgs.postgresql_15;
     # enableTCPIP = true;
     ensureDatabases = ["docspell"];
     ensureUsers = [
       {
         name = "docspell";
+        password = "docspell";
         ensureDBOwnership = true;
         ensureClauses.login = true;
       }
@@ -190,13 +195,14 @@ in {
     scheduler = {
       pool-size = 1;
     };
-    jdbc = {
-      # FIXME docspll does NOT support UNIX sockets!
-      # url = "jdbc:postgresql://localhost:5432/docspell";
-      url = "jdbc:postgresql://%2Fvar%2Frun%2Fpostgresql/docspell";
-      user = "docspell";
-      password = "";
-    };
+    inherit jdbc;
+    # jdbc = {
+    #   # FIXME docspll does NOT support UNIX sockets!
+    #   # url = "jdbc:postgresql://localhost:5432/docspell";
+    #   url = "jdbc:postgresql://%2Fvar%2Frun%2Fpostgresql/docspell";
+    #   user = "docspell";
+    #   password = "";
+    # };
   };
   # |----------------------------------------------------------------------| #
   services.docspell-restserver = {
@@ -292,13 +298,13 @@ in {
       "/etc/ssh/ssh_host_rsa_key"
       "/etc/ssh/ssh_host_rsa_key.pub"
     ];
-    directories = [
-      {
-        directory = config.services.forgejo.stateDir;
-        inherit (config.services.forgejo) user group;
-        mode = "0700";
-      }
-    ];
+    # directories = [
+    #   {
+    #     directory = config.services.forgejo.stateDir;
+    #     inherit (config.services.forgejo) user group;
+    #     mode = "0700";
+    #   }
+    # ];
   };
   # Needed so we don't run out of tmpfs space for large backups.
   # Technically this could be cleared each boot but whatever.
