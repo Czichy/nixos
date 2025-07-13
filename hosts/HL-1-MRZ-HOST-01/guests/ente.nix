@@ -16,6 +16,8 @@ let
   enteCastDomain = "cast.photos.${globals.domains.me}";
   entePhotosDomain = "photos.${globals.domains.me}";
   s3Domain = "s3.photos.${globals.domains.me}";
+
+  certloc = "/var/lib/acme/czichy.com";
 in {
   networking.hostName = "HL-3-RZ-ENTE-01";
 
@@ -23,6 +25,50 @@ in {
   networking.firewall = {
     allowedTCPPorts = [8080 9000 9001];
     allowedUDPPorts = [8080 9000 9001];
+  };
+  # |----------------------------------------------------------------------| #
+  #
+  nodes.HL-4-PAZ-PROXY-01 = {
+    # SSL config and forwarding to local reverse proxy
+    services.caddy.virtualHosts."${enteApiDomain}".extraConfig = ''
+      reverse_proxy https://10.15.70.1:443 {
+          transport http {
+          	tls_server_name ${entePhotosDomain}
+          }
+      }
+      tls ${certloc}/cert.pem ${certloc}/key.pem {
+        protocols tls1.3
+      }
+      import czichy_headers
+    '';
+    services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
+      reverse_proxy https://10.15.70.1:443 {
+          transport http {
+          	tls_server_name ${entePhotosDomain}
+          }
+      }
+      tls ${certloc}/cert.pem ${certloc}/key.pem {
+        protocols tls1.3
+      }
+      import czichy_headers
+    '';
+  };
+  # reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:${toString influxdbPort}
+  nodes.HL-1-MRZ-HOST-02-caddy = {
+    services.caddy.virtualHosts."${enteApiDomain}".extraConfig = ''
+      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:8080
+      tls ${certloc}/cert.pem ${certloc}/key.pem {
+         protocols tls1.3
+      }
+      import czichy_headers
+    '';
+    services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
+      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:9000
+      tls ${certloc}/cert.pem ${certloc}/key.pem {
+         protocols tls1.3
+      }
+      import czichy_headers
+    '';
   };
   # |----------------------------------------------------------------------| #
   globals.services.ente.domain = entePhotosDomain;
