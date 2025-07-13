@@ -17,8 +17,9 @@
     enabled = true;
     backend = "postgres";
     postgresql = {
+      use-default-connection = true;
       pg-config = {
-        "german" = "my-germam";
+        "german" = "my-german";
       };
     };
     # solr.url = "http://localhost:8983/solr/docspell";
@@ -179,6 +180,7 @@ in {
   # joex: job executor
   services.docspell-joex = {
     enable = true;
+    app-id = "joexina";
     package = inputs.docspell.packages.${pkgs.system}.docspell-joex;
     base-url = "http://localhost:7878";
     bind = {
@@ -200,6 +202,7 @@ in {
   services.docspell-restserver = {
     enable = true;
     package = inputs.docspell.packages.${pkgs.system}.docspell-restserver;
+    app-id = "ina";
     base-url = "http://localhost:7880";
     bind = {
       address = "127.0.0.1";
@@ -213,7 +216,7 @@ in {
       };
     };
     auth = {
-      server-secret = "b64:EirgaudMyNvWg4TvxVGxTu-fgtrto4ETz--Hk9Pv2o4=";
+      server-secret = "b64:bdUqcdpFgYl/MrkMlGnRDClUTKIU30CW0IMM/OSE6lk=";
     };
     backend = {
       addons.enabled = true;
@@ -228,6 +231,60 @@ in {
       secret = "admin123";
     };
     inherit full-text-search;
+    # files {
+    #   # Defines the chunk size (in bytes) used to store the files.
+    #   # This will affect the memory footprint when uploading and
+    #   # downloading files. At most this amount is loaded into RAM for
+    #   # down- and uploading.
+    #   #
+    #   # It also defines the chunk size used for the blobs inside the
+    #   # database.
+    #   chunk-size = 524288
+
+    #   # The file content types that are considered valid. Docspell
+    #   # will only pass these files to processing. The processing code
+    #   # itself has also checks for which files are supported and which
+    #   # not. This affects the uploading part and can be used to
+    #   # restrict file types that should be handed over to processing.
+    #   # By default all files are allowed.
+    #   valid-mime-types = [ ]
+
+    #   # The id of an enabled store from the `stores` array that should
+    #   # be used.
+    #   #
+    #   # IMPORTANT NOTE: All nodes must have the exact same file store
+    #   # configuration!
+    #   default-store = "database"
+
+    #   # A list of possible file stores. Each entry must have a unique
+    #   # id. The `type` is one of: default-database, filesystem, s3.
+    #   #
+    #   # The enabled property serves currently to define target stores
+    #   # for te "copy files" task. All stores with enabled=false are
+    #   # removed from the list. The `default-store` must be enabled.
+    #   stores = {
+    #     database =
+    #       { enabled = true
+    #         type = "default-database"
+    #       }
+
+    #     filesystem =
+    #       { enabled = false
+    #         type = "file-system"
+    #         directory = "/some/directory"
+    #       }
+
+    #     minio =
+    #      { enabled = false
+    #        type = "s3"
+    #        endpoint = "http://localhost:9000"
+    #        access-key = "username"
+    #        secret-key = "password"
+    #        bucket = "docspell"
+    #        region = ""
+    #      }
+    #   }
+    # }
   };
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
