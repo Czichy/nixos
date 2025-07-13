@@ -143,7 +143,7 @@ in {
     ensureUsers = [
       {
         name = "docspell";
-        password = "docspell";
+        # password = "docspell";
         ensureDBOwnership = true;
         ensureClauses.login = true;
       }
