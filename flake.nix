@@ -144,11 +144,11 @@
     nix-alien.url = "github:thiagokokada/nix-alien";
 
     # --- PACKAGES --------------------------------------------------
+    docspell.url = "github:eikek/docspell";
     dsc = {
       url = "github:docspell/dsc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    ds4e.url = "github:docspell/ds4e";
     plasma-manager = {
       url = "github:pjones/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
