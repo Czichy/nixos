@@ -16,5 +16,6 @@
     {command = ["${pkgs.swaynotificationcenter}/bin/swaync"];}
     {command = ["swayosd --max-volume 150"];}
     {command = ["xprop -root -f _XWAYLAND_GLOBAL_OUTPUT_SCALE 32c -set _XWAYLAND_GLOBAL_OUTPUT_SCALE 1"];}
+    {command = ["vivaldi"];}
   ];
 }

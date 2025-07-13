@@ -92,7 +92,7 @@ in {
 
     #todoist # Todoist CLI Client
     #todoist-electron # The official Todoist electron app
-    # gitbutler # Git client for simultaneous branches on top of your existing workflow
+    gitbutler # Git client for simultaneous branches on top of your existing workflow
     bruno # Open-source IDE For exploring and testing APIs
 
     mpv # General-purpose media player, fork of MPlayer and mplayer2

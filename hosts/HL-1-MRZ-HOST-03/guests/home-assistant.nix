@@ -5,17 +5,11 @@
   nodes,
   pkgs,
   ...
-}:
-let
-  homeassistantDomain = "home.${globals.domains.personal}";
-  fritzboxDomain = "fritzbox.${globals.domains.personal}";
-in
-{
-  imports = [ ./hass-modbus/mennekes-amtron-xtra.nix ];
-
-  wireguard.proxy-home.firewallRuleForNode.ward-web-proxy.allowedTCPPorts = [
-    config.services.home-assistant.config.http.server_port
-  ];
+}: let
+  homeassistantDomain = "home.${globals.domains.me}";
+  certloc = "/var/lib/acme/czichy.com";
+in {
+  imports = [./hass-modbus/mennekes-amtron-xtra.nix];
 
   environment.persistence."/persist".directories = [
     {
@@ -59,14 +53,14 @@ in
     ];
 
     customComponents = with pkgs.home-assistant-custom-components; [
-      (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix { })
+      (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
       dwd
       waste_collection_schedule
     ];
 
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
-      (pkgs.callPackage ./hass-lovelace/config-template-card/package.nix { })
-      (pkgs.callPackage ./hass-lovelace/hui-element/package.nix { })
+      (pkgs.callPackage ./hass-lovelace/config-template-card/package.nix {})
+      (pkgs.callPackage ./hass-lovelace/hui-element/package.nix {})
       apexcharts-card
       bubble-card
       button-card
@@ -82,12 +76,12 @@ in
     ];
 
     config = {
-      default_config = { };
+      default_config = {};
       http = {
-        server_host = [ "0.0.0.0" ];
+        server_host = ["0.0.0.0"];
         server_port = 8123;
         use_x_forwarded_for = true;
-        trusted_proxies = [ nodes.ward-web-proxy.config.wireguard.proxy-home.ipv4 ];
+        trusted_proxies = [nodes.ward-web-proxy.config.wireguard.proxy-home.ipv4];
       };
 
       zha.zigpy_config.source_routing = true;
@@ -150,19 +144,19 @@ in
           platform = "waste_collection_schedule";
           name = "restmuell_upcoming";
           value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-          types = [ "Restmüll" ];
+          types = ["Restmüll"];
         }
         {
           platform = "waste_collection_schedule";
           name = "papiermuell_upcoming";
           value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-          types = [ "Papiermüll" ];
+          types = ["Papiermüll"];
         }
       ];
     };
 
-    extraPackages =
-      python3Packages: with python3Packages; [
+    extraPackages = python3Packages:
+      with python3Packages; [
         adguardhome
         aioelectricitymaps
         dwdwfsapi
@@ -196,8 +190,8 @@ in
       INFLUXDB_TOKEN="$(cat "$CREDENTIALS_DIRECTORY/hass-influxdb-token")" \
         ${lib.getExe pkgs.yq-go} '.influxdb_token = strenv(INFLUXDB_TOKEN)' \
         ${
-          config.age.secrets."home-assistant-secrets.yaml".path
-        } > ${config.services.home-assistant.configDir}/secrets.yaml
+        config.age.secrets."home-assistant-secrets.yaml".path
+      } > ${config.services.home-assistant.configDir}/secrets.yaml
 
       touch -a ${config.services.home-assistant.configDir}/{automations,scenes,scripts,manual}.yaml
     '';
@@ -215,8 +209,7 @@ in
   nodes.ward-web-proxy = {
     services.nginx = {
       upstreams."home-assistant" = {
-        servers."${config.wireguard.proxy-home.ipv4}:${toString config.services.home-assistant.config.http.server_port}" =
-          { };
+        servers."${config.wireguard.proxy-home.ipv4}:${toString config.services.home-assistant.config.http.server_port}" = {};
         extraConfig = ''
           zone home-assistant 64k;
           keepalive 2;

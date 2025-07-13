@@ -72,6 +72,8 @@ in {
         hosts.HL-3-RZ-POWER-02.id = 34;
         # node-red
         hosts.HL-3-RZ-RED-01.id = 35;
+        # node-red
+        hosts.HL-3-RZ-HASS-01.id = 36;
       };
 
       #IoT
