@@ -2977,10 +2977,10 @@
     "private": {
       "flake": false,
       "locked": {
-        "lastModified": 1752166967,
-        "narHash": "sha256-jmMPk+NmjZ7FfRnavavA7++F9NpKKNNyI5mijBTb04I=",
+        "lastModified": 1752423791,
+        "narHash": "sha256-ol6CY3nBdg4Ag9fiH7yAZCWa0DIPxYITxBX/2MFVmrs=",
         "ref": "refs/heads/main",
-        "rev": "36a75bebc9e4534aed4cde2cfcf1f55088da368c",
+        "rev": "13bbd9b986b5694167f72aa60cc83c6ebb9a3634",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/czichy/nix-secrets.git"

@@ -15,7 +15,7 @@
 
   full-text-search = {
     enabled = true;
-    backend = "postgres";
+    backend = "postgresql";
     postgresql = {
       use-default-connection = true;
       pg-config = {
