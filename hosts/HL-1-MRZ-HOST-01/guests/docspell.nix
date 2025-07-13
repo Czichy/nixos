@@ -15,8 +15,13 @@
 
   full-text-search = {
     enabled = true;
-    backend = "solr";
-    solr.url = "http://localhost:8983/solr/docspell";
+    backend = "postgres";
+    postgresql = {
+      pg-config = {
+        "german" = "my-germam";
+      };
+    };
+    # solr.url = "http://localhost:8983/solr/docspell";
   };
   jdbc = {
     # FIXME docspll does NOT support UNIX sockets!
@@ -43,6 +48,9 @@ in {
 
   networking.hostName = hostName;
 
+  imports = [
+    inputs.docspell.nixosModules.default
+  ];
   # |----------------------------------------------------------------------| #
   age.secrets.mailer-password = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/forgejo/mailer-password.age";
@@ -159,35 +167,35 @@ in {
     ];
   };
   # |----------------------------------------------------------------------| #
-  services.solr = {
-    enable = true;
-    cores = ["docspell"];
-    heap = 512;
-  };
-  # This is needed to run solr script as user solr
-  users.users.solr.useDefaultShell = true;
-  users.users.docspell.isSystemUser = pkgs.lib.mkForce true;
+  # services.solr = {
+  #   enable = true;
+  #   cores = ["docspell"];
+  #   heap = 512;
+  # };
+  # # This is needed to run solr script as user solr
+  # users.users.solr.useDefaultShell = true;
+  # users.users.docspell.isSystemUser = pkgs.lib.mkForce true;
 
-  systemd.services.solr-init = let
-    solrPort = toString config.services.solr.port;
-    initSolr = ''
-      if [ ! -f ${config.services.solr.stateDir}/docspell_core ]; then
-        while ! echo "" | ${pkgs.inetutils}/bin/telnet localhost ${solrPort}
-        do
-           echo "Waiting for SOLR become ready..."
-           sleep 1.5
-        done
-        ${pkgs.su}/bin/su -s ${pkgs.bash}/bin/sh solr -c "${pkgs.solr}/bin/solr create_core -c docspell -p ${solrPort}";
-        touch ${config.services.solr.stateDir}/docspell_core
-      fi
-    '';
-  in {
-    script = initSolr;
-    after = ["solr.target"];
-    wantedBy = ["multi-user.target"];
-    requires = ["solr.target"];
-    description = "Create a core at solr";
-  };
+  # systemd.services.solr-init = let
+  #   solrPort = toString config.services.solr.port;
+  #   initSolr = ''
+  #     if [ ! -f ${config.services.solr.stateDir}/docspell_core ]; then
+  #       while ! echo "" | ${pkgs.inetutils}/bin/telnet localhost ${solrPort}
+  #       do
+  #          echo "Waiting for SOLR become ready..."
+  #          sleep 1.5
+  #       done
+  #       ${pkgs.su}/bin/su -s ${pkgs.bash}/bin/sh solr -c "${pkgs.solr}/bin/solr create_core -c docspell -p ${solrPort}";
+  #       touch ${config.services.solr.stateDir}/docspell_core
+  #     fi
+  #   '';
+  # in {
+  #   script = initSolr;
+  #   after = ["solr.target"];
+  #   wantedBy = ["multi-user.target"];
+  #   requires = ["solr.target"];
+  #   description = "Create a core at solr";
+  # };
   # |----------------------------------------------------------------------| #
   # https://docspell.org/docs/install/nix/
 
