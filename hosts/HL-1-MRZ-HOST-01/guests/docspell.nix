@@ -68,7 +68,7 @@ in {
     mode = "440";
   };
   # |----------------------------------------------------------------------| #
-  globals.services.forgejo.domain = docspellDomain;
+  globals.services.docspell.domain = docspellDomain;
   # |----------------------------------------------------------------------| #
   networking.firewall = {
     allowedTCPPorts = [
@@ -98,7 +98,7 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${docspellDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.forgejo.settings.server.HTTP_PORT}
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }
