@@ -9,7 +9,7 @@
   ...
 }: let
   # |----------------------------------------------------------------------| #
-  docspellDomain = "git.${globals.domains.me}";
+  docspellDomain = "docs.${globals.domains.me}";
 
   certloc = "/var/lib/acme/czichy.com";
 
@@ -110,29 +110,6 @@ in {
     };
   };
 
-  # |----------------------------------------------------------------------| #
-  users.groups.git = {};
-  users.users.git = {
-    isSystemUser = true;
-    useDefaultShell = true;
-    group = "git";
-    home = config.services.forgejo.stateDir;
-  };
-
-  services.openssh = {
-    authorizedKeysFiles = lib.mkForce [
-      # Only allow system-level authorized_keys to avoid injections.
-      # We currently don't enable this when git-based software that relies on this is enabled.
-      # It would be nicer to make it more granular using `Match`.
-      # However those match blocks cannot be put after other `extraConfig` lines
-      # with the current sshd config module, which is however something the sshd
-      # config parser mandates.
-      "/etc/ssh/authorized_keys.d/%u" # remove after instial setup
-      "${config.services.forgejo.stateDir}/.ssh/authorized_keys"
-    ];
-    # Recommended by forgejo: https://forgejo.org/docs/latest/admin/recommendations/#git-over-ssh
-    settings.AcceptEnv = "GIT_PROTOCOL";
-  };
   # |----------------------------------------------------------------------| #
   # # install postgresql and initially create user/database
   # services.postgresql =

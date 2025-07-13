@@ -55,8 +55,10 @@ in {
         hosts.HL-3-RZ-DOCSPL-01.id = 16;
         # Ente
         hosts.HL-3-RZ-ENTE-01.id = 17;
-        # Ente
+        # Paperless
         hosts.HL-3-RZ-PAPERLESS-01.id = 18;
+        # Meilisearch
+        hosts.HL-3-RZ-SEARCH-01.id = 19;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome
