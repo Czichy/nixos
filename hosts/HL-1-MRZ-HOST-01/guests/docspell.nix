@@ -150,36 +150,6 @@ in {
     ];
   };
   # |----------------------------------------------------------------------| #
-  # services.solr = {
-  #   enable = true;
-  #   cores = ["docspell"];
-  #   heap = 512;
-  # };
-  # # This is needed to run solr script as user solr
-  # users.users.solr.useDefaultShell = true;
-  # users.users.docspell.isSystemUser = pkgs.lib.mkForce true;
-
-  # systemd.services.solr-init = let
-  #   solrPort = toString config.services.solr.port;
-  #   initSolr = ''
-  #     if [ ! -f ${config.services.solr.stateDir}/docspell_core ]; then
-  #       while ! echo "" | ${pkgs.inetutils}/bin/telnet localhost ${solrPort}
-  #       do
-  #          echo "Waiting for SOLR become ready..."
-  #          sleep 1.5
-  #       done
-  #       ${pkgs.su}/bin/su -s ${pkgs.bash}/bin/sh solr -c "${pkgs.solr}/bin/solr create_core -c docspell -p ${solrPort}";
-  #       touch ${config.services.solr.stateDir}/docspell_core
-  #     fi
-  #   '';
-  # in {
-  #   script = initSolr;
-  #   after = ["solr.target"];
-  #   wantedBy = ["multi-user.target"];
-  #   requires = ["solr.target"];
-  #   description = "Create a core at solr";
-  # };
-  # |----------------------------------------------------------------------| #
   # https://docspell.org/docs/install/nix/
 
   # joex: job executor
@@ -187,7 +157,7 @@ in {
     enable = true;
     app-id = "joexina";
     package = inputs.docspell.packages.${pkgs.system}.docspell-joex;
-    base-url = "http://localhost:7878";
+    base-url = "http://127.0.0.1:7878";
     bind = {
       address = "127.0.0.1";
       port = 7878;
@@ -196,20 +166,13 @@ in {
       pool-size = 1;
     };
     inherit jdbc;
-    # jdbc = {
-    #   # FIXME docspll does NOT support UNIX sockets!
-    #   # url = "jdbc:postgresql://localhost:5432/docspell";
-    #   url = "jdbc:postgresql://%2Fvar%2Frun%2Fpostgresql/docspell";
-    #   user = "docspell";
-    #   password = "";
-    # };
   };
   # |----------------------------------------------------------------------| #
   services.docspell-restserver = {
     enable = true;
     package = inputs.docspell.packages.${pkgs.system}.docspell-restserver;
     app-id = "ina";
-    base-url = "http://localhost:7880";
+    base-url = "http://127.0.0.1:7880";
     bind = {
       address = "127.0.0.1";
       port = 7880;
