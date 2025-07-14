@@ -55,7 +55,9 @@ in {
 
   # Add dsc to the environment
   # # Add dsc to the environment
-  # environment.systemPackages = [pkgs.dsc.packages.${system}.default];
+  environment.systemPackages = [
+    inputs.dsc.packages.${pkgs.system}.default
+  ];
   imports = [
     inputs.docspell.nixosModules.default
     inputs.dsc.nixosModules.default
@@ -271,6 +273,7 @@ in {
     docspell-url = "http://10.15.40.18:7880";
   in {
     enable = true;
+    package = inputs.dsc.packages.${pkgs.system}.default;
     inherit docspell-url;
     # docspell-url = "http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}";
     exclude-filter = null;
