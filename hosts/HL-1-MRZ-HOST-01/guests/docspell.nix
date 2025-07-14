@@ -6,6 +6,7 @@
   lib,
   pkgs,
   inputs,
+  system,
   ...
 }: let
   # |----------------------------------------------------------------------| #
@@ -53,9 +54,11 @@ in {
   networking.hostName = hostName;
 
   # Add dsc to the environment
-  environment.systemPackages = [pkgs.dsc];
+  # # Add dsc to the environment
+  # environment.systemPackages = [pkgs.dsc.packages.${system}.default];
   imports = [
     inputs.docspell.nixosModules.default
+    inputs.dsc.nixosModules.default
   ];
   # |----------------------------------------------------------------------| #
   age.secrets.server-secret = {
@@ -263,9 +266,13 @@ in {
     # }
   };
   # |----------------------------------------------------------------------| #
-  services.dsc-watch = {
+
+  services.dsc-watch = let
+    docspell-url = "http://10.15.40.18:7880";
+  in {
     enable = true;
-    docspell-url = "http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}";
+    inherit docspell-url;
+    # docspell-url = "http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}";
     exclude-filter = null;
     watchDirs = [
       watchDir # Note, dsc expects files to be in a subdirectory corresponding to a collective. There is no way to declaratively create a collective as of the time of writing

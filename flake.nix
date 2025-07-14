@@ -4,6 +4,7 @@
   outputs = inputs @ {
     flake-parts,
     nixpkgs,
+    dsc,
     ...
   }: let
     inherit (inputs) nixpkgs;
