@@ -157,10 +157,10 @@ in {
     enable = true;
     app-id = "joexina";
     package = inputs.docspell.packages.${pkgs.system}.docspell-joex;
-    base-url = "http://localhost:7878";
+    base-url = "http://localhost:7880";
     bind = {
       address = "localhost";
-      port = 7878;
+      port = 7880;
     };
     scheduler = {
       pool-size = 1;
@@ -172,10 +172,10 @@ in {
     enable = true;
     package = inputs.docspell.packages.${pkgs.system}.docspell-restserver;
     app-id = "ina";
-    base-url = "http://localhost:7880";
+    base-url = "http://localhost:7878";
     bind = {
       address = "localhost";
-      port = 7880;
+      port = 7878;
     };
     integration-endpoint = {
       enabled = true;
