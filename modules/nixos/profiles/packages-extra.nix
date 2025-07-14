@@ -43,6 +43,10 @@ in {
           gitoxide #An idiomatic, lean, fast & safe pure Rust implementation of Git
           gitui # Blazing 💥 fast terminal-ui for git written in rust 🦀
 
+          # --- APPLICATIONS ---
+          # nautilus
+          nemo-with-extensions
+
           # --- NET UTILS ---
           dig # Domain name server
           netcat # Free TLS/SSL implementation
