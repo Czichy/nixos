@@ -33,6 +33,7 @@
   };
 
   watchDir = "/shared/ina";
+  header-value = "test123";
   # |----------------------------------------------------------------------| #
 in {
   microvm.mem = 1024 * 6;
@@ -185,7 +186,7 @@ in {
       enabled = true;
       http-header = {
         enabled = true;
-        header-value = "test123";
+        inherit header-value;
       };
     };
     auth = {
@@ -271,7 +272,7 @@ in {
     ];
     integration-endpoint = let
       headerFile = pkgs.writeText "int-header-file" ''
-        Docspell-Integration:${config.services.docspell-restserver.integration-endpoint.http-header.header-value}
+        Docspell-Integration:${header-value}
       '';
     in {
       enabled = true;
