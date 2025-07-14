@@ -31,9 +31,11 @@
     user = "docspell";
     password = "docspell";
   };
+
+  watchDir = "/shared/ina";
   # |----------------------------------------------------------------------| #
 in {
-  microvm.mem = 1024 * 3;
+  microvm.mem = 1024 * 6;
   microvm.vcpu = 2;
 
   microvm.shares = [
@@ -49,6 +51,8 @@ in {
 
   networking.hostName = hostName;
 
+  # Add dsc to the environment
+  environment.systemPackages = [pkgs.dsc];
   imports = [
     inputs.docspell.nixosModules.default
   ];
@@ -157,10 +161,10 @@ in {
     enable = true;
     app-id = "joexina";
     package = inputs.docspell.packages.${pkgs.system}.docspell-joex;
-    base-url = "http://localhost:7880";
+    base-url = "http://10.15.40.18:7878";
     bind = {
-      address = "localhost";
-      port = 7880;
+      address = "10.15.40.18";
+      port = 7878;
     };
     scheduler = {
       pool-size = 1;
@@ -172,10 +176,10 @@ in {
     enable = true;
     package = inputs.docspell.packages.${pkgs.system}.docspell-restserver;
     app-id = "ina";
-    base-url = "http://localhost:7878";
+    base-url = "http://10.15.40.18:7880";
     bind = {
-      address = "localhost";
-      port = 7878;
+      address = "10.15.40.18";
+      port = 7880;
     };
     integration-endpoint = {
       enabled = true;
@@ -189,6 +193,8 @@ in {
     };
     backend = {
       addons.enabled = true;
+      # Create invitation
+      # curl -X POST -d '{"password":"dsinvite2"}' "http://localhost:7880/api/v1/open/signup/newinvite"
       signup = {
         mode = "invite";
         new-invite-password = "dsinvite2";
@@ -256,11 +262,29 @@ in {
     # }
   };
   # |----------------------------------------------------------------------| #
+  services.dsc-watch = {
+    enable = true;
+    docspell-url = "http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}";
+    exclude-filter = null;
+    watchDirs = [
+      watchDir # Note, dsc expects files to be in a subdirectory corresponding to a collective. There is no way to declaratively create a collective as of the time of writing
+    ];
+    integration-endpoint = let
+      headerFile = pkgs.writeText "int-header-file" ''
+        Docspell-Integration:${config.services.docspell-restserver.integration-endpoint.http-header.header-value}
+      '';
+    in {
+      enabled = true;
+      header-file = headerFile;
+    };
+  };
+  # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
     files = [
       "/etc/ssh/ssh_host_rsa_key"
       "/etc/ssh/ssh_host_rsa_key.pub"
     ];
+    # |----------------------------------------------------------------------| #
     # directories = [
     #   {
     #     directory = config.services.forgejo.stateDir;
