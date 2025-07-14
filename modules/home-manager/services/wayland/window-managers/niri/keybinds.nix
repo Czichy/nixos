@@ -56,6 +56,8 @@ in {
 
     "super+Shift+H".action = move-column-left;
     "super+Shift+L".action = move-column-right;
+    # "super+Shift+Left".action = move-column-left;
+    # "super+Shift+Right".action = move-column-right;
     "super+Shift+J".action = move-column-to-workspace-down;
     "super+Shift+K".action = move-column-to-workspace-up;
 
