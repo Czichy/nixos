@@ -52,7 +52,7 @@ in {
         # IBKR Flex Downloader
         hosts.HL-3-RZ-IBKR-01.id = 15;
         # Docspell
-        hosts.HL-3-RZ-DOCSPL-01.id = 18;
+        # hosts.HL-3-RZ-DOCSPL-01.id = 18;
         # Ente
         hosts.HL-3-RZ-ENTE-01.id = 17;
         # Paperless
