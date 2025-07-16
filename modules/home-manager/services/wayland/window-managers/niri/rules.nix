@@ -31,24 +31,33 @@
         ];
         open-on-workspace = "tws";
         open-on-output = "DP-2";
-        clip-to-geometry = true;
-        open-maximized = true;
+        # clip-to-geometry = true;
+        # open-maximized = true;
       }
-
       {
         matches = [
           {
-            # title = "^(.*Interactive Brokers)$";
-            app-id = "install4j-jclient-LoginFrame";
+            title = "^(.*Overview)$";
+            app-id = "jclient-LoginFrame";
           }
         ];
-        open-floating = true;
-        default-floating-position = {
-          x = 32;
-          y = 32;
-          relative-to = "bottom-right";
-        };
+        open-on-output = "DP-3";
+        # open-maximized = true;
       }
+      # {
+      #   matches = [
+      #     {
+      #       # title = "^(.*Interactive Brokers)$";
+      #       app-id = "install4j-jclient-LoginFrame";
+      #     }
+      #   ];
+      #   open-floating = true;
+      #   default-floating-position = {
+      #     x = 32;
+      #     y = 32;
+      #     relative-to = "bottom-right";
+      #   };
+      # }
 
       # Default rule for all other windows with rounded corners
       {

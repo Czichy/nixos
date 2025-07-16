@@ -101,12 +101,12 @@ in {
       services.network-manager-applet.enable = _ true;
 
       programs = {
-        fish.loginShellInit = ''
-          if test (tty) = "/dev/tty1"
-            set _JAVA_AWT_WM_NONEREPARENTING 1
-            exec Hyprland &> /dev/null
-          end
-        '';
+        # fish.loginShellInit = ''
+        #   if test (tty) = "/dev/tty1"
+        #     set _JAVA_AWT_WM_NONEREPARENTING 1
+        #     exec Hyprland &> /dev/null
+        #   end
+        # '';
         #  zsh.loginExtra = ''
         #    if [ "$(tty)" = "/dev/tty1" ]; then
         #      exec Hyprland &> /dev/null
@@ -118,13 +118,13 @@ in {
         #    fi
         #  '';
       };
-      ## WARN: Check if this breaks when the hyprland module is not in imports.
-      ## Enter Hyprland when logging into tty1 if Hyprland is enabled.
-      xdg.configFile."nushell/login.nu".text = ''
-        if (tty) == "/dev/tty1" {
-          exec Hyprland | ignore
-        }
-      '';
+      # ## WARN: Check if this breaks when the hyprland module is not in imports.
+      # ## Enter Hyprland when logging into tty1 if Hyprland is enabled.
+      # xdg.configFile."nushell/login.nu".text = ''
+      #   if (tty) == "/dev/tty1" {
+      #     exec Hyprland | ignore
+      #   }
+      # '';
     }
     # |----------------------------------------------------------------------| #
   ]);

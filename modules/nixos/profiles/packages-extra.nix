@@ -45,7 +45,7 @@ in {
 
           # --- APPLICATIONS ---
           # nautilus
-          nemo-with-extensions
+          # nemo-with-extensions
 
           # --- NET UTILS ---
           dig # Domain name server

@@ -44,7 +44,7 @@ in
 
           settings = {
             main = {
-              font = "Atkinson Monolegible:size=12";
+              font = "Atkinson Monolegible:size=14";
               # font = "Iosevka Nerd Font:size=12";
               # font = "${config.fontProfiles.monospace.family}:size=${toString default.terminal.size}";
               box-drawings-uses-font-glyphs = "yes";
@@ -55,7 +55,7 @@ in
             };
 
             scrollback = {
-              lines = 100000;
+              lines = 1000000;
               multiplier = 3;
             };
 

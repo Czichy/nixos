@@ -196,10 +196,34 @@
       "[ {" = ["vim::UnmatchedBackward" {"char" = "{";}];
       "] )" = ["vim::UnmatchedForward" {"char" = ")";}];
       "[ (" = ["vim::UnmatchedBackward" {"char" = "(";}];
-      "f" = ["vim::PushFindForward" {"before" = false;}];
-      "t" = ["vim::PushFindForward" {"before" = true;}];
-      "shift-f" = ["vim::PushFindBackward" {"after" = false;}];
-      "shift-t" = ["vim::PushFindBackward" {"after" = true;}];
+      "f" = [
+        "vim::PushFindForward"
+        {
+          "before" = false;
+          "multiline" = false;
+        }
+      ];
+      "t" = [
+        "vim::PushFindForward"
+        {
+          "before" = true;
+          "multiline" = false;
+        }
+      ];
+      "shift-f" = [
+        "vim::PushFindBackward"
+        {
+          "after" = false;
+          "multiline" = false;
+        }
+      ];
+      "shift-t" = [
+        "vim::PushFindBackward"
+        {
+          "after" = true;
+          "multiline" = false;
+        }
+      ];
       "m" = "vim::PushMark";
       "'" = ["vim::PushJump" {"line" = true;}];
       "`" = ["vim::PushJump" {"line" = false;}];
