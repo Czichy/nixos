@@ -35,8 +35,10 @@
     libva-utils
     networkmanagerapplet # need this to configure L2TP ipsec
     wireguard-tools
-    wine
+    docker-compose
   ];
+  virtualisation.podman.enable = true;
+  users.users."czichy".extraGroups = ["docker"];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |

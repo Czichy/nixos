@@ -10,7 +10,6 @@
     {command = ["qs"];}
     {command = ["hyprlock"];}
     {command = ["swww-daemon"];}
-    {command = ["swayosd-server"];}
     {command = ["wl-paste" "--watch" "cliphist" "store"];}
     {command = ["wl-paste" "--type text" "--watch" "cliphist" "store"];}
     {command = ["${pkgs.swaynotificationcenter}/bin/swaync"];}

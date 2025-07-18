@@ -102,7 +102,7 @@
       CLUTTER_BACKEND = "wayland";
       ELECTRON_ENABLE_HARDWARE_ACCELERATION = "1";
       ELECTRON_OZONE_PLATFORM_HINT = "auto";
-      GDK_BACKEND = "wayland,x11";
+      GDK_BACKEND = "wayland";
       _JAVA_AWT_WM_NONEREPARENTING = "1";
       MOZ_ENABLE_WAYLAND = "1";
       MOZ_WEBRENDER = "1";

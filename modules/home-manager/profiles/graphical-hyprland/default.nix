@@ -26,7 +26,6 @@ in {
     {
       tensorfiles.hm = {
         profiles.headless.enable = _ true;
-        # hardware.nixGL.enable = _ true;
         services.wayland.window-managers.hyprland.enable = _ true;
         services.swaync.enable = _ true;
         programs = {
@@ -39,7 +38,7 @@ in {
           };
           editors.helix.enable = _ true;
           wlogout.enable = _ true;
-          wofi.enable = _ true;
+          walker.enable = _ true;
         };
       };
 
@@ -58,6 +57,7 @@ in {
         EXPLORER = _ "yazi";
         # TERMINAL = _ "foot";
         EDITOR = _ "hx";
+        LAUNCHER = _ "walker";
 
         # Wayland
         MOZ_ENABLE_WAYLAND = 1;

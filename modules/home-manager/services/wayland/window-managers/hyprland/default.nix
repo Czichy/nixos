@@ -87,8 +87,7 @@ in {
               "wl-paste --type text --watch cliphist store #Stores only text data"
               "wl-paste --type image --watch cliphist store #Stores only image data"
               "[workspace special:pass silent] bitwarden"
-              # "[workspace special:pass silent] keepassxc"
-              "swayosd --max-volume 150"
+              "swayosd-server"
               "xprop -root -f _XWAYLAND_GLOBAL_OUTPUT_SCALE 32c -set _XWAYLAND_GLOBAL_OUTPUT_SCALE 1"
 
               (mkIf agenixCheck "ib-tws-native-latest -u $(< ${ibkr.user}) -p $(< ${ibkr.password})")
@@ -111,8 +110,7 @@ in {
                 "SUPER,b,exec,[workspace 6] ${BROWSER}"
                 "SUPER,t,exec,[workspace 7] ${BROWSER} -P tradingview1 --class=tradingview"
 
-                "SUPER,x,exec,wofi -S drun -x 10 -y 10 -W 25% -H 60%"
-                "SUPER,d,exec,wofi -S run"
+                "SUPER,x,exec,walker"
                 "SUPER,v,exec, cliphist list | wofi -dmenu | cliphist decode | wl-copy"
                 #",Scroll_Lock,exec,pass-wofi # fn+k"
                 #",XF86Calculator,exec,pass-wofi # fn+f12"
@@ -186,8 +184,8 @@ in {
             bindle = [
               ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
               ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
-              "SHIFT, XF86AudioRaiseVolume, exec, swayosd-client--input-volume raise"
-              "SHIFT, XF86AudioLowerVolume, exec, swayosd-client--input-volume lower"
+              "SHIFT, XF86AudioRaiseVolume, exec, swayosd-client --input-volume raise"
+              "SHIFT, XF86AudioLowerVolume, exec, swayosd-client --input-volume lower"
             ];
 
             bindm = [

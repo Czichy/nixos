@@ -26,11 +26,11 @@ in {
 
     "super+Tab".action = toggle-overview;
 
-    "super+q".action = close-window;
+    "super+Shift+q".action = close-window;
 
     "super+b".action = spawn apps.browser;
     "super+Return".action = spawn apps.terminal;
-    "super+Control+Return".action = spawn apps.editor;
+    "super+Shift+Return".action = spawn apps.editor;
     "super+E".action = spawn apps.fileManager;
     "super+n".action = spawn "swaync-client" ["-t" "-sw"];
 

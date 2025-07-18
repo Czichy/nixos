@@ -1,6 +1,7 @@
 #!/bin/sh
 export INSTALL4J_JAVA_HOME_OVERRIDE='__JAVAHOME__'
 export GDK_BACKEND=x11
+export DISPLAY=:0
 
 # JAVA_GC="-Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:ParallelGCThreads=20 -XX:ConcGCThreads=5 -XX:InitiatingHeapOccupancyPercent=70 "
 JAVA_UI_FLAGS="-J-Dsun.java2d.uiScale=1.0 -J-Dswing.aatext=TRUE -J-Dawt.useSystemAAFontSettings=on -J-Dsun.awt.nopixfmt=true -J-Dsun.java2d.noddraw=true -J-Dswing.boldMetal=false -J-Dsun.locale.formatasdefault=true"

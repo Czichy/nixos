@@ -145,7 +145,7 @@ in
       libXi
       libXrender
     ];
-    runScript = "env GDK_BACKEND=x11 /usr/bin/ib-tws-latest";
+    runScript = "env GDK_BACKEND=x11 DISPLAY=:0 /usr/bin/ib-tws-latest";
   }
 # {
 #   stdenv,
