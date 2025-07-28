@@ -174,12 +174,12 @@ in {
       };
 
       # Add auto-start for Hyprland if runAsService is enabled
-      wayland.windowManager.hyprland.extraConfig = mkIf (cfg.runAsService && config.tensorfiles.hm.services.wayland.window-managers.niri.enable) ''
+      wayland.windowManager.hyprland.extraConfig = mkIf (cfg.runAsService && config.tensorfiles.hm.desktop.window-managers.niri.enable) ''
         exec-once=walker --gapplication-service
       '';
 
       # Add auto-start for Sway if runAsService is enabled
-      programs.niri.settings.spawn-at-startup = mkIf (cfg.runAsService && config.tensorfiles.hm.services.wayland.window-managers.niri.enable) [
+      programs.niri.settings.spawn-at-startup = mkIf (cfg.runAsService && config.tensorfiles.hm.desktop.window-managers.niri.enable) [
         {command = ["walker" "--gapplication-service"];}
       ];
     }

@@ -20,8 +20,6 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    #(import ./rc2nix.nix)
-    # |----------------------------------------------------------------------| #
     {
       tensorfiles.hm = {
         profiles.headless.enable = _ true;
@@ -32,14 +30,11 @@ in {
 
       home.sessionVariables = {
         # Default programs
-        BROWSER = _ "firefox";
+        BROWSER = _ "";
         EXPLORER = _ "yazi";
         TERMINAL = _ "foot";
         EDITOR = _ "hx";
       };
-      # home.packages = with pkgs; [
-
-      # ];
 
       fonts.fontconfig.enable = _ true;
     }

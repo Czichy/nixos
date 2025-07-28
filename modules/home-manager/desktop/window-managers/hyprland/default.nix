@@ -14,11 +14,11 @@ with lib; let
     password = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.passwordSecretsPath}".path;
   };
 
-  cfg = config.tensorfiles.hm.services.wayland.window-managers.hyprland;
+  cfg = config.tensorfiles.hm.desktop.window-managers.hyprland;
   agenixCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.agenix.enable;
 in {
-  options.tensorfiles.hm.services.wayland.window-managers.hyprland = with types; {
+  options.tensorfiles.hm.desktop.window-managers.hyprland = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the hyprland window manager.
     '';
@@ -35,11 +35,6 @@ in {
         packages = with pkgs; [
           hyprland-qtutils
           hyprpicker
-          grimblast
-          swaybg
-          slurp
-          swappy
-          # swayidle
           jaq
           xorg.xprop
           wdisplays
@@ -63,20 +58,20 @@ in {
 
         settings = mkMerge [
           {
-            env = [
-              "NIXOS_OZONE_WL,1"
-              "MOZ_ENABLE_WAYLAND,1"
-              "MOZ_WEBRENDER,1"
-              "_JAVA_AWT_WM_NONREPARENTING,1"
-              "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
-              "QT_QPA_PLATFORM,wayland"
-              "SDL_VIDEODRIVER,wayland"
-              "GDK_BACKEND,wayland"
-              # toolkit-specific scale
-              "GDK_SCALE,2"
-              "QT_SCALE_FACTOR,2"
-              "XCURSOR_SIZE,32"
-            ];
+            # env = [
+            #   "NIXOS_OZONE_WL,1"
+            #   "MOZ_ENABLE_WAYLAND,1"
+            #   "MOZ_WEBRENDER,1"
+            #   "_JAVA_AWT_WM_NONREPARENTING,1"
+            #   "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
+            #   "QT_QPA_PLATFORM,wayland"
+            #   "SDL_VIDEODRIVER,wayland"
+            #   "GDK_BACKEND,wayland"
+            #   # toolkit-specific scale
+            #   "GDK_SCALE,2"
+            #   "QT_SCALE_FACTOR,2"
+            #   "XCURSOR_SIZE,32"
+            # ];
             exec-once = [
               # Startup
               "swayosd-server"

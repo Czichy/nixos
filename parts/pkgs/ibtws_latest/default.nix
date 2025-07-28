@@ -92,7 +92,7 @@ with pkgs; let
   # doesn't yet work, and the chromium fails to launch with an error
   # code.
 in
-  buildFHSUserEnv {
+  buildFHSEnv {
     name = "ib-tws-latest";
     targetPkgs = pkgs1: [
       ibDerivation

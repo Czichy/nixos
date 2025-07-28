@@ -8,8 +8,8 @@ with lib; let
   inherit (localFlake.lib) isModuleLoadedAndEnabled;
   cfg = config.tensorfiles.hm.hardware.monitors;
 
-  hyprlandCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.services.wayland.window-managers.hyprland";
-  niriCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.services.wayland.window-managers.niri";
+  hyprlandCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.desktop.window-managers.hyprland";
+  niriCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.desktop.window-managers.niri";
 in {
   options.tensorfiles.hm.hardware.monitors = with types; {
     enable = mkEnableOption ''

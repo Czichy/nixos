@@ -45,7 +45,7 @@ in {
           font-size = 18;
           adjust-underline-position = 4;
           # Theme
-          theme = "Dracula";
+          # theme = "Dracula";
           # Mouse
           mouse-hide-while-typing = true;
           # Window

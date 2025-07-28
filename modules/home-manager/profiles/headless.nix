@@ -48,6 +48,7 @@ in {
         profiles.minimal.enable = _ true;
 
         programs = {
+          terminals.foot.enable = _ true;
           # shells.nushell.enable = _ true;
           # starship.enable = _ true;
           shells.fish.enable = _ true;

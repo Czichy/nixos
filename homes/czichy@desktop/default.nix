@@ -2,15 +2,14 @@
   homeDir = "/home/czichy";
 in {
   tensorfiles.hm = {
-    profiles.graphical-niri.enable = true;
     profiles.graphical-hyprland.enable = true;
+    profiles.graphical-niri.enable = true;
     security.agenix.enable = true;
 
     system.impermanence = {
       enable = true;
       allowOther = true;
     };
-    # services.keepassxc.enable = true;
     programs = {
       bitwarden.enable = true;
       ssh = {
@@ -72,6 +71,13 @@ in {
   home.sessionVariables = {
     DEFAULT_USERNAME = "czichy";
     DEFAULT_MAIL = "christian@czichy.com";
+    # Default programs
+    BROWSER = "zen";
+    # BROWSER = "brave --enable-features='VaapiVideoDecoder,VaapiVideoEncoder' --enable-raw-draw";
+    EXPLORER = "yazi";
+    TERMINAL = "foot";
+    EDITOR = "hx";
+    LAUNCHER = "walker";
   };
 
   home.packages = with pkgs; [

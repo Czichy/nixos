@@ -4,6 +4,7 @@
   outputs = inputs @ {
     flake-parts,
     nixpkgs,
+    nur,
     ...
   }: let
     inherit (inputs) nixpkgs;
@@ -155,6 +156,10 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    firefox-addons = {
+      url = "github:seadome/firefox-addons";
+    };
+
     ghostty = {
       url = "github:ghostty-org/ghostty";
     };
@@ -163,7 +168,6 @@
       url = "github:helix-editor/helix/master";
       inputs.nixpkgs.follows = "nixpkgs"; # ok?
     };
-    # firefox-addons.url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
     git-hooks = {
@@ -194,6 +198,10 @@
 
     walker.url = "github:abenz1267/walker";
 
+    # zen-browser = {
+    #   url = "github:youwen5/zen-browser-flake";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -25,6 +25,7 @@ in {
 
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
+    profiles_graphical = importApply ./profiles/graphical.nix {inherit localFlake;};
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma {inherit localFlake inputs;};
     profiles_graphical-hyprland = importApply ./profiles/graphical-hyprland {inherit localFlake;};
     profiles_graphical-niri = importApply ./profiles/graphical-niri {inherit localFlake;};
@@ -35,9 +36,10 @@ in {
     # -- programs --
     programs_bitwarden = importApply ./programs/bitwarden.nix {inherit localFlake;};
 
+    programs_browsers_chromium = importApply ./programs/browsers/chromium.nix {inherit localFlake;};
     programs_browsers_firefox = importApply ./programs/browsers/firefox {inherit localFlake;};
     programs_browsers_vivaldi = importApply ./programs/browsers/vivaldi.nix {inherit localFlake;};
-    # programs_browsers_zen = importApply ./programs/browsers/zen-browser {inherit localFlake;};
+    programs_browsers_zen = importApply ./programs/browsers/zen-browser {inherit localFlake;};
 
     programs_btop = importApply ./programs/btop.nix {inherit localFlake;};
     programs_tmux = importApply ./programs/tmux.nix {inherit localFlake;};
@@ -96,12 +98,14 @@ in {
     services_x11_picom = importApply ./services/x11/picom.nix {inherit localFlake;};
     services_x11_redshift = importApply ./services/x11/redshift.nix {inherit localFlake;};
 
-    services_wayland_window-managers_hyprland =
-      importApply ./services/wayland/window-managers/hyprland
+    # -- desktop --
+    dektop_env_wayland = importApply ./desktop/environment/wayland.nix {inherit localFlake;};
+    desktop_wayland_window-managers_hyprland =
+      importApply ./desktop/window-managers/hyprland
       {inherit localFlake;};
 
-    services_wayland_window-managers_niri =
-      importApply ./services/wayland/window-managers/niri
+    desktop_wayland_window-managers_niri =
+      importApply ./desktop/window-managers/niri
       {inherit localFlake;};
 
     # -- system --

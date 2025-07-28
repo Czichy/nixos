@@ -14,11 +14,11 @@ with lib; let
     password = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.passwordSecretsPath}".path;
   };
 
-  cfg = config.tensorfiles.hm.services.wayland.window-managers.niri;
+  cfg = config.tensorfiles.hm.desktop.window-managers.niri;
   agenixCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.agenix.enable;
 in {
-  options.tensorfiles.hm.services.wayland.window-managers.niri = with types; {
+  options.tensorfiles.hm.desktop.window-managers.niri = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the niriwindow manager.
     '';
@@ -43,13 +43,8 @@ in {
       home = {
         packages = with pkgs; [
           labwc
-          grimblast
-          swaybg
-          slurp
-          swappy
           jaq
           xorg.xprop
-          wdisplays
         ];
       };
 
