@@ -41,7 +41,7 @@
       #"rd.systemd.unit=rescue.target"
     ];
 
-    tmp.useTmpfs = true;
+    # tmp.useTmpfs = true;
     loader = {
       timeout = lib.mkDefault 2;
       grub.enable = false;

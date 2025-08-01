@@ -10,7 +10,7 @@
 in {
   # networking.hostId = config.repo.secrets.local.networking.hostId;
   topology.self.interfaces.enp1s0 = {};
-  topology.self.interfaces.enp2s0 = {};
+  topology.self.interfaces.enp4s0 = {};
 
   globals.monitoring.ping.HL-1-MRZ-HOST-03 = {
     hostv4 = lib.net.cidr.ip globals.net.vlan40.hosts.HL-1-MRZ-HOST-03.cidrv4;
