@@ -95,6 +95,7 @@
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
+              # (final: _prev: {ceph-client = import ../flake-parts/overlays/ceph-client.nix;})
               nix-topology.overlays.default
               nixos-extra-modules.overlays.default
             ];

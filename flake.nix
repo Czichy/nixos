@@ -42,7 +42,9 @@
     };
   inputs = {
     # --- BASE DEPENDENCIES -----------------------------------------
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:nixos/nixpkgs/pull/427905/head"; # https://github.com/NixOS/nixpkgs/issues/426401
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";

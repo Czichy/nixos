@@ -72,8 +72,7 @@ in {
     DEFAULT_USERNAME = "czichy";
     DEFAULT_MAIL = "christian@czichy.com";
     # Default programs
-    BROWSER = "zen";
-    # BROWSER = "brave --enable-features='VaapiVideoDecoder,VaapiVideoEncoder' --enable-raw-draw";
+    BROWSER = "zen-beta";
     EXPLORER = "yazi";
     TERMINAL = "foot";
     EDITOR = "hx";

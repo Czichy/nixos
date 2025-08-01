@@ -63,7 +63,7 @@
       };
     };
     #binfmt.emulatedSystems = [ "aarch64-linux" ];
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_6_6;
   };
 
   services.hardware.openrgb.enable = true;

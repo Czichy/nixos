@@ -66,7 +66,8 @@ in {
         #     modDirVersion = "6.10.14";
         #   };
         # });
-        kernelPackages = lib.mkForce config.boot.zfs.package.latestCompatibleLinuxPackages;
+        kernelPackages = lib.mkForce pkgs.linuxPackages_6_6;
+        # kernelPackages = lib.mkForce config.boot.zfs.package.latestCompatibleLinuxPackages;
         # ZFS does not support swapfiles, disable hibernate and set cache max
         kernelParams = [
           "nohibernate"
