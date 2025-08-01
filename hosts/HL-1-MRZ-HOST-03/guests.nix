@@ -74,19 +74,19 @@
       };
     in (
       {}
-      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "servers" "02:05:27:11:7f:17" "vlan40" {
+      // mkMicrovm "unifi" "HL-3-RZ-UNIFI-01" "enp4s0" "02:05:27:11:7f:17" "vlan40" {
         enableStorageDataset = true;
       }
       # // mkMicrovm "minecraft" "HL-3-RZ-MC-01" "servers" "02:04:27:11:8f:17" "vlan40" {
       #   enableStorageDataset = true;
       # }
-      // mkMicrovm "powermeter" "HL-3-RZ-POWER-02" "servers" "02:04:27:12:8f:17" "vlan40" {
+      // mkMicrovm "powermeter" "HL-3-RZ-POWER-02" "enp4s0" "02:04:27:12:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "mosquitto" "HL-3-RZ-MQTT-01" "servers" "02:04:27:15:8f:17" "vlan40" {
+      // mkMicrovm "mosquitto" "HL-3-RZ-MQTT-01" "enp4s0" "02:04:27:15:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "node-red" "HL-3-RZ-RED-01" "servers" "02:04:27:14:8f:17" "vlan40" {
+      // mkMicrovm "node-red" "HL-3-RZ-RED-01" "enp4s0" "02:04:27:14:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
       # // mkMicrovm "home-assistant" "HL-3-RZ-HASS-01" "servers" "02:05:27:14:8f:17" "vlan40" {
