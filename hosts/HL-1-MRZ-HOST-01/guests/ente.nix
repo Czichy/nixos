@@ -9,6 +9,8 @@
 # NOTE: To increase storage for all users:
 #  $ runuser -u ente -- psql
 #  ente => UPDATE subscriptions SET storage = 6597069766656;
+# get One Time Password for user registration
+# journalctl -au ente | grep SendEmailOTT | tail -n 1
 let
   enteAccountsDomain = "accounts.photos.${globals.domains.me}";
   enteAlbumsDomain = "albums.photos.${globals.domains.me}";
@@ -16,6 +18,8 @@ let
   enteCastDomain = "cast.photos.${globals.domains.me}";
   entePhotosDomain = "photos.${globals.domains.me}";
   s3Domain = "s3.photos.${globals.domains.me}";
+
+  admin_id = "1580559962386438";
 
   certloc = "/var/lib/acme/czichy.com";
 in {
@@ -182,7 +186,6 @@ in {
       #   username = config.repo.secrets.local.ente.mail.user;
       #   password._secret = config.age.secrets.ente-smtp-password.path;
       # };
-
       s3 = {
         use_path_style_urls = true;
         b2-eu-cen = {
@@ -198,6 +201,10 @@ in {
       key = {
         encryption._secret = config.age.secrets.ente-encryption-key.path;
         hash._secret = config.age.secrets.ente-hash-key.path;
+      };
+
+      internal = {
+        admin = admin_id;
       };
     };
   };
