@@ -61,7 +61,7 @@ in {
     {
       # https://github.com/NixOS/nixpkgs/issues/45492
       # Set limits for esync.
-      systemd.extraConfig = "DefaultLimitNOFILE=1048576";
+      # systemd.settings.Manager = "DefaultLimitNOFILE=1048576";
       systemd.user.extraConfig = "DefaultLimitNOFILE=32000";
       # Increase open file limit for sudoers
       security.pam.loginLimits = [

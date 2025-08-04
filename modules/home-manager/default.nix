@@ -26,7 +26,7 @@ in {
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
     profiles_graphical = importApply ./profiles/graphical.nix {inherit localFlake;};
-    profiles_graphical-plasma = importApply ./profiles/graphical-plasma {inherit localFlake inputs;};
+    # profiles_graphical-plasma = importApply ./profiles/graphical-plasma {inherit localFlake inputs;};
     profiles_graphical-hyprland = importApply ./profiles/graphical-hyprland {inherit localFlake;};
     profiles_graphical-niri = importApply ./profiles/graphical-niri {inherit localFlake;};
     profiles_server = importApply ./profiles/server.nix {inherit localFlake;};
@@ -78,20 +78,20 @@ in {
     programs_terminals_ghostty = importApply ./programs/terminals/ghostty/default.nix {
       inherit localFlake inputs;
     };
-    programs_terminals_kitty = importApply ./programs/terminals/kitty.nix {
-      inherit localFlake inputs;
-    };
+    # programs_terminals_kitty = importApply ./programs/terminals/kitty.nix {
+    # inherit localFlake inputs;
+    # };
     programs_terminals_foot = importApply ./programs/terminals/foot.nix {inherit localFlake;};
-    programs_thunderbird = importApply ./programs/thunderbird.nix {inherit localFlake;};
+    # programs_thunderbird = importApply ./programs/thunderbird.nix {inherit localFlake;};
 
     programs_steam = importApply ./programs/games/steam.nix {inherit localFlake inputs;};
     programs_minecraft = importApply ./programs/games/minecraft.nix {inherit localFlake;};
     # -- security --
 
     # -- services --
-    services_dunst = importApply ./services/dunst.nix {inherit localFlake;};
+    # services_dunst = importApply ./services/dunst.nix {inherit localFlake;};
     services_swaync = importApply ./services/swaync {inherit localFlake;};
-    services_keepassxc = importApply ./services/keepassxc.nix {inherit localFlake;};
+    # services_keepassxc = importApply ./services/keepassxc.nix {inherit localFlake;};
     services_pywalfox-native = importApply ./services/pywalfox-native.nix {
       inherit localFlake inputs;
     };
