@@ -123,14 +123,14 @@ in {
             proto = "virtiofs";
             socket = "journal.sock";
           }
-          # {
-          #   # On the host
-          #   source = "/etc/vm-persist/${config.networking.hostName}";
-          #   # In the MicroVM
-          #   mountPoint = "/persist";
-          #   tag = "persist";
-          #   proto = "virtiofs";
-          # }
+          {
+            # On the host
+            source = "/etc/vm-persist/${config.networking.hostName}";
+            # In the MicroVM
+            mountPoint = "/persist";
+            tag = "persist";
+            proto = "virtiofs";
+          }
           # {
           #   # On the host
           #   source = "/var/cache/${config.networking.hostName}";
@@ -158,11 +158,11 @@ in {
           group = "root";
           mode = "0777";
         };
-        # "/etc/vm-persist/${guestName}".d = {
-        #   user = "root";
-        #   group = "root";
-        #   mode = "0777";
-        # };
+        "/etc/vm-persist/${guestName}".d = {
+          user = "root";
+          group = "root";
+          mode = "0777";
+        };
         # "/var/cache/${guestName}".d = {
         #   user = "root";
         #   group = "root";
