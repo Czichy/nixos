@@ -25,6 +25,7 @@ in {
     {
       tensorfiles = {
         profiles.headless.enable = _ true;
+        programs.file-managers.thunar.enable = true;
 
         services.x11.desktop-managers.startx-home-manager.enable = _ true;
       };
@@ -47,7 +48,7 @@ in {
         vulkan-tools # Khronos official Vulkan Tools and Utilities
         wayland-utils # Wayland utilities (wayland-info)
         #aha # ANSI HTML Adapter
-
+        #
         # -- KDE PACKAGES --
         kdePackages.kate # Advanced text editor
         kdePackages.kcalc # Scientific calculator

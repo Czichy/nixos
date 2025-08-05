@@ -25,6 +25,7 @@ in {
     {
       tensorfiles = {
         profiles.headless.enable = _ true;
+        programs.file-managers.thunar.enable = true;
 
         services = {
           x11.desktop-managers.startx-home-manager.enable = _ true;

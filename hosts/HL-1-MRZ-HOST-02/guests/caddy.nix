@@ -65,19 +65,6 @@ in {
         		Permissions-Policy "geolocation=(self czichy.com *.czichy.com *.*.czichy.com), microphone=()"
         	}
         }
-        # (personal_headers) {
-        # 	header {
-        # 		Permissions-Policy interest-cohort=()
-        # 		Strict-Transport-Security "max-age=31536000; includeSubdomains"
-        # 		X-XSS-Protection "1; mode=block"
-        # 		X-Content-Type-Options "nosniff"
-        # 		X-Robots-Tag noindex, nofollow
-        # 		Referrer-Policy "same-origin"
-        # 		Content-Security-Policy "frame-ancestors {{ secret_personal_url }} *.{{ secret_personal_url }}"
-        # 		-Server
-        # 		Permissions-Policy "geolocation=(self {{ secret_personal_url }} *.{{ secret_personal_url }}), microphone=()"
-        # 	}
-        # }
     '';
     # package = pkgs.callPackage ./custom-caddy.nix {
     #   plugins = [
@@ -132,7 +119,7 @@ in {
       reloadServices = ["caddy"];
     };
     certs = genAttrs acme-cfg.wildcardDomains (domain: {
-      extraDomainNames = ["*.${domain}"];
+      extraDomainNames = ["*.${domain}" "*.*.${domain}"];
     });
   };
 

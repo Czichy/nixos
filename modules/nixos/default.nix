@@ -38,6 +38,7 @@ in {
     profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
 
     # -- programs --
+    programs_thunar = importApply ./programs/thunar.nix {inherit localFlake;};
 
     # -- security --
 

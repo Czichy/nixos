@@ -19,6 +19,7 @@ let
   entePhotosDomain = "photos.${globals.domains.me}";
   s3Domain = "s3.photos.${globals.domains.me}";
 
+  # SELECT * from users;
   admin_id = "1580559962386438";
 
   certloc = "/var/lib/acme/czichy.com";

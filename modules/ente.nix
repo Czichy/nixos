@@ -3,6 +3,8 @@
   lib,
   pkgs,
   utils,
+  inputs,
+  system,
   ...
 }: let
   inherit
@@ -37,11 +39,13 @@
   dataDir = "/var/lib/ente";
 
   yamlFormat = pkgs.formats.yaml {};
+
+  certloc = "/var/lib/acme/czichy.com";
 in {
   options.services.ente = {
     web = {
       enable = mkEnableOption "Ente web frontend (Photos, Albums)";
-      package = mkPackageOption pkgs "ente-web" {};
+      package = mkPackageOption inputs.self.packages.${system} "ente-web" {};
 
       domains = {
         api = mkOption {
@@ -167,6 +171,10 @@ in {
 
   config = mkMerge [
     (mkIf cfgApi.enable {
+      environment.systemPackages = with pkgs; [
+        inputs.self.packages.${system}.ente-web
+      ];
+
       services.postgresql = mkIf cfgApi.enableLocalDB {
         enable = true;
         ensureUsers = [
@@ -308,6 +316,34 @@ in {
         };
       };
 
+      # |----------------------------------------------------------------------| #
+      nodes.HL-4-PAZ-PROXY-01 = {
+        services.caddy = let
+          domainFor = app: cfgWeb.domains.${app};
+        in {
+          virtualHosts."${domainFor "photos"}".extraConfig = ''
+               # reverse_proxy http://localhost:3000
+               root * ${webPackage "photos"}
+
+               tls ${certloc}/cert.pem ${certloc}/key.pem {
+                 protocols tls1.3
+               }
+            header {
+            	Permissions-Policy interest-cohort=()
+            	Strict-Transport-Security "max-age=31536000; includeSubdomains"
+            	X-XSS-Protection "1; mode=block"
+            	X-Content-Type-Options "nosniff"
+            	X-Robots-Tag noindex, nofollow
+            	Referrer-Policy "same-origin"
+            	Content-Security-Policy "frame-ancestors czichy.com *.czichy.com *.*.czichy.com"
+            	-Server
+            	Permissions-Policy "geolocation=(self czichy.com *.czichy.com *.*.czichy.com), microphone=()"
+               Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+             }
+          '';
+        };
+      };
+      # |----------------------------------------------------------------------| #
       # services.nginx = let
       #   domainFor = app: cfgWeb.domains.${app};
       # in {

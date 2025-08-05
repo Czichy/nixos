@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  globals,
   ...
 }: let
   certloc = "/var/lib/acme/czichy.com";
@@ -21,6 +22,7 @@ in {
     ./disko.nix
     ./net.nix
     ./modules
+    ../../modules/ente.nix
   ];
 
   # topology.self.hardware.image = ../../topology/images/odroid-h3.png;
@@ -37,7 +39,16 @@ in {
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
   # home-manager.users.${user} = {home.packages = with pkgs; [];};
-
+  services.ente.web = {
+    enable = true;
+    domains = {
+      api = "api.photos.${globals.domains.me}";
+      accounts = "accounts.photos.${globals.domains.me}";
+      albums = "albums.photos.${globals.domains.me}";
+      cast = "cast.photos.${globals.domains.me}";
+      photos = "photos.${globals.domains.me}";
+    };
+  };
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------

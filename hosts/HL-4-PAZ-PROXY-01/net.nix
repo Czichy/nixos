@@ -136,12 +136,8 @@ in {
 
   # |----------------------------------------------------------------------| #
 
-  # port forwarding
-  # PreUp = iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
-  # PreUp = iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
-  # PostDown = iptables -t nat -D PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination 10.10.10.2:80
-  networking.firewall.allowedUDPPorts = [51820];
-  networking.firewall.allowedTCPPorts = [8095 8090];
+  networking.firewall.allowedUDPPorts = [51820 443];
+  networking.firewall.allowedTCPPorts = [8095 8090 80 443];
 
   networking.nftables.chains.forward.dnat = {
     after = ["conntrack"];
@@ -174,13 +170,6 @@ in {
 
         allowedUDPPorts = [wireguardPort];
       };
-
-      #     # Forward traffic between participants
-      #     forward-proxy-home-vpn-traffic = {
-      #       from = ["proxy-home"];
-      #       to = ["proxy-home"];
-      #       verdict = "accept";
-      #     };
     };
   };
 }
