@@ -322,12 +322,14 @@ in {
           domainFor = app: cfgWeb.domains.${app};
         in {
           virtualHosts."${domainFor "photos"}".extraConfig = ''
-               # reverse_proxy http://localhost:3000
-               root * ${webPackage "photos"}
+            # reverse_proxy http://localhost:3000
+            root * ${webPackage "photos"}
+            file_server
+            try_files {path} {path}.html /index.html
 
-               tls ${certloc}/cert.pem ${certloc}/key.pem {
+             tls ${certloc}/cert.pem ${certloc}/key.pem {
                  protocols tls1.3
-               }
+             }
             header {
             	Permissions-Policy interest-cohort=()
             	Strict-Transport-Security "max-age=31536000; includeSubdomains"

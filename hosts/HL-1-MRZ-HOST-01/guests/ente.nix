@@ -12,12 +12,12 @@
 # get One Time Password for user registration
 # journalctl -au ente | grep SendEmailOTT | tail -n 1
 let
-  enteAccountsDomain = "accounts.photos.${globals.domains.me}";
-  enteAlbumsDomain = "albums.photos.${globals.domains.me}";
-  enteApiDomain = "api.photos.${globals.domains.me}";
-  enteCastDomain = "cast.photos.${globals.domains.me}";
+  enteAccountsDomain = "photos-accounts.${globals.domains.me}";
+  enteAlbumsDomain = "photos-albums.${globals.domains.me}";
+  enteApiDomain = "photos-api.${globals.domains.me}";
+  enteCastDomain = "photos-cast.${globals.domains.me}";
   entePhotosDomain = "photos.${globals.domains.me}";
-  s3Domain = "s3.photos.${globals.domains.me}";
+  s3Domain = "photos-s3.${globals.domains.me}";
 
   # SELECT * from users;
   admin_id = "1580559962386438";
@@ -218,7 +218,7 @@ in {
         use_path_style_urls = true;
         b2-eu-cen = {
           endpoint = "https://${s3Domain}";
-          region = "us-east-1";
+          region = "eu-west-1";
           bucket = "ente";
           key._secret = config.age.secrets.minio-access-key.path;
           secret._secret = config.age.secrets.minio-secret-key.path;

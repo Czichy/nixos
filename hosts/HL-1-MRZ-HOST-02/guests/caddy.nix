@@ -119,7 +119,7 @@ in {
       reloadServices = ["caddy"];
     };
     certs = genAttrs acme-cfg.wildcardDomains (domain: {
-      extraDomainNames = ["*.${domain}" "*.*.${domain}"];
+      extraDomainNames = ["*.${domain}"];
     });
   };
 

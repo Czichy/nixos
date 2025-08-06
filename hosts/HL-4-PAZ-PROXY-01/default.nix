@@ -42,10 +42,10 @@ in {
   services.ente.web = {
     enable = true;
     domains = {
-      api = "api.photos.${globals.domains.me}";
-      accounts = "accounts.photos.${globals.domains.me}";
-      albums = "albums.photos.${globals.domains.me}";
-      cast = "cast.photos.${globals.domains.me}";
+      api = "photos-api.${globals.domains.me}";
+      accounts = "photos-accounts.photos.${globals.domains.me}";
+      albums = "photos-albums.${globals.domains.me}";
+      cast = "photos-cast.${globals.domains.me}";
       photos = "photos.${globals.domains.me}";
     };
   };
