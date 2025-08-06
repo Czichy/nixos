@@ -218,7 +218,7 @@ in {
         use_path_style_urls = true;
         b2-eu-cen = {
           endpoint = "https://${s3Domain}";
-          region = "eu-west-1";
+          region = "us-east-1";
           bucket = "ente";
           key._secret = config.age.secrets.minio-access-key.path;
           secret._secret = config.age.secrets.minio-secret-key.path;
