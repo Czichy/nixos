@@ -55,6 +55,10 @@ in {
           transport http {
           	tls_server_name ${s3Domain}
           }
+          header_up Host {http.request.host}
+          header_up X-Real-IP {http.request.remote}
+          header_up X-Forwarded-For {http.request.remote}
+          header_up X-Forwarded-Proto {http.request.scheme}
       }
       tls ${certloc}/cert.pem ${certloc}/key.pem {
         protocols tls1.3
@@ -92,6 +96,10 @@ in {
       tls ${certloc}/cert.pem ${certloc}/key.pem {
          protocols tls1.3
       }
+          header_up Host {http.request.host}
+          header_up X-Real-IP {http.request.remote}
+          header_up X-Forwarded-For {http.request.remote}
+          header_up X-Forwarded-Proto {http.request.scheme}
       import czichy_headers
     '';
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
