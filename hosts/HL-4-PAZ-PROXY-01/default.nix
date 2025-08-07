@@ -43,7 +43,7 @@ in {
     enable = true;
     domains = {
       api = "photos-api.${globals.domains.me}";
-      accounts = "photos-accounts.photos.${globals.domains.me}";
+      accounts = "photos-accounts.${globals.domains.me}";
       albums = "photos-albums.${globals.domains.me}";
       cast = "photos-cast.${globals.domains.me}";
       photos = "photos.${globals.domains.me}";
