@@ -101,7 +101,7 @@ in {
           header_up X-Forwarded-For {http.request.remote}
           header_up X-Forwarded-Proto {http.request.scheme}
           }
-      # import czichy_headers
+      import czichy_headers
     '';
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
       reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:9000 {
@@ -113,7 +113,7 @@ in {
       header_up X-Forwarded-For {http.request.remote}
       header_up X-Forwarded-Proto {http.request.scheme}
       }
-      # import czichy_headers
+      import czichy_headers
     '';
   };
   # |----------------------------------------------------------------------| #
