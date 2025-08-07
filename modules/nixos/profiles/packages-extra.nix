@@ -33,6 +33,7 @@ in {
           htop # An interactive process viewer
           jq # A lightweight and flexible command-line JSON processor
           killall
+          minio-client
           #vim # The most popular clone of the VI editor
           # calcurse # A calendar and scheduling application for the command line
           #w3m # A text-mode web browser
