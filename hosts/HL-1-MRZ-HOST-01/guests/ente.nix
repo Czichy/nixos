@@ -38,7 +38,7 @@ in {
     services.caddy.virtualHosts."${enteApiDomain}".extraConfig = ''
       reverse_proxy https://10.15.70.1:443 {
           transport http {
-          	tls_server_name ${entePhotosDomain}
+          	tls_server_name ${enteApiDomain}
           }
       }
       tls ${certloc}/cert.pem ${certloc}/key.pem {
@@ -49,7 +49,7 @@ in {
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
       reverse_proxy https://10.15.70.1:443 {
           transport http {
-          	tls_server_name ${entePhotosDomain}
+          	tls_server_name ${s3Domain}
           }
       }
       tls ${certloc}/cert.pem ${certloc}/key.pem {
@@ -177,6 +177,7 @@ in {
   services.minio = {
     enable = true;
     rootCredentialsFile = config.age.secrets.minio-root-credentials.path;
+    region = "germany-frankfurt-1";
   };
   systemd.services.minio = {
     environment.MINIO_SERVER_URL = "https://${s3Domain}";
@@ -218,7 +219,7 @@ in {
         use_path_style_urls = true;
         b2-eu-cen = {
           endpoint = "https://${s3Domain}";
-          region = "us-east-1";
+          region = "germany-frankfurt-1";
           bucket = "ente";
           key._secret = config.age.secrets.minio-access-key.path;
           secret._secret = config.age.secrets.minio-secret-key.path;
