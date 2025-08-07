@@ -93,25 +93,25 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${enteApiDomain}".extraConfig = ''
       reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:8080
-      tls ${certloc}/cert.pem ${certloc}/key.pem {
-         protocols tls1.3
-      }
+      # tls ${certloc}/cert.pem ${certloc}/key.pem {
+      #    protocols tls1.3
+      # }
           header_up Host {http.request.host}
           header_up X-Real-IP {http.request.remote}
           header_up X-Forwarded-For {http.request.remote}
           header_up X-Forwarded-Proto {http.request.scheme}
-      import czichy_headers
+      # import czichy_headers
     '';
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
       reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:9000
-      tls ${certloc}/cert.pem ${certloc}/key.pem {
-         protocols tls1.3
-      }
+      # tls ${certloc}/cert.pem ${certloc}/key.pem {
+      #    protocols tls1.3
+      # }
       header_up Host {http.request.host}
       header_up X-Real-IP {http.request.remote}
       header_up X-Forwarded-For {http.request.remote}
       header_up X-Forwarded-Proto {http.request.scheme}
-      import czichy_headers
+      # import czichy_headers
     '';
   };
   # |----------------------------------------------------------------------| #
