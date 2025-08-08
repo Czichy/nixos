@@ -75,32 +75,73 @@ in {
     allowedUDPPorts = [22 8012];
   };
 
+  # Der äußere Caddy (HL-4-PAZ-PROXY-01) muss die Verbindung zum inneren Caddy
+  # über HTTPS aufbauen. Da es sich um eine interne Verbindung handelt und der
+  # innere Caddy möglicherweise ein selbst-signiertes Zertifikat verwendet,
+  # müssen Sie die Zertifikatsprüfung deaktivieren.
+
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
-        reverse_proxy https://10.15.70.1:443 {
-            transport http {
-            	tls_server_name ${vaultwardenDomain}
-            }
+        reverse_proxy https://10.15.70.1 {
+          transport http {
+            # Da der innere Caddy ein eigenes Zertifikat ausstellt,
+            # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
+            tls_insecure_skip_verify
+            tls_server_name ${vaultwardenDomain}
+          }
         }
-
         tls ${certloc}/cert.pem ${certloc}/key.pem {
           protocols tls1.3
         }
         import czichy_headers
       '';
+      # ''
+      #   reverse_proxy https://10.15.70.1:443{
+      #       transport http {
+      #       	tls_server_name ${vaultwardenDomain}
+      #       }
+      #   }
+
+      #   tls ${certloc}/cert.pem ${certloc}/key.pem {
+      #     protocols tls1.3
+      #   }
+      #   import czichy_headers
+      # '';
     };
   };
+  # Der innere Caddy (HL-1-MRZ-HOST-02-caddy) muss nun ein eigenes TLS-Zertifikat bereitstellen,
+  # damit der äußere Caddy eine sichere Verbindung aufbauen kann.
+  # Der innere Caddy muss auch seine eigene reverse_proxy-Verbindung zum
+  # Vaultwarden-Server über HTTPS herstellen.
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
-        # tls ${certloc}/cert.pem ${certloc}/key.pem {
-        #    protocols tls1.3
+        # Wichtige Änderung: Der innere Caddy lauscht auf HTTPS
+        https://10.15.70.1 {
+          # ... oder auf den Hostnamen für interne Clients ...
+          # tls intern kann mit caddys eigener ca erstellt werden, dies ist ein einfaches besipiel
+          # tls {
+          #   issuer acme
+          # }
+          # da der outer proxy ein cert hat ist es besser hier das gleiche zu nehmen.
+          # tls ${certloc}/cert.pem ${certloc}/key.pem {
+          #   protocols tls1.3
+          # }
+          reverse_proxy https://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+          tls ${certloc}/cert.pem ${certloc}/key.pem {
+            protocols tls1.3
+          }
+          import czichy_headers
         }
-        # import czichy_headers
       '';
+      #   reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+      #   tls ${certloc}/cert.pem ${certloc}/key.pem {
+      #      protocols tls1.3
+      #   }
+      #   import czichy_headers
+      # '';
     };
   };
 
