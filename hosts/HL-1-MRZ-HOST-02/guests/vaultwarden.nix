@@ -79,7 +79,6 @@ in {
   # über HTTPS aufbauen. Da es sich um eine interne Verbindung handelt und der
   # innere Caddy möglicherweise ein selbst-signiertes Zertifikat verwendet,
   # müssen Sie die Zertifikatsprüfung deaktivieren.
-
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
@@ -118,21 +117,25 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
-        # Wichtige Änderung: Der innere Caddy lauscht auf HTTPS
-        https://10.15.70.1 {
-          # ... oder auf den Hostnamen für interne Clients ...
-          # tls intern kann mit caddys eigener ca erstellt werden, dies ist ein einfaches besipiel
-          # tls {
-          #   issuer acme
-          # }
-          # da der outer proxy ein cert hat ist es besser hier das gleiche zu nehmen.
-          # tls ${certloc}/cert.pem ${certloc}/key.pem {
-          #   protocols tls1.3
-          # }
-          reverse_proxy https://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+        # Caddy lauscht auf der internen IP und dem Hostnamen.
+        # Der äußere Proxy leitet auf https://10.15.70.1 weiter.
+        # Interne Clients können vault.czichy.com direkt über diese IP auflösen.
+        https://10.15.70.1:443, https://${vaultwardenDomain} {
+          # Die TLS-Zertifikate müssen hier ebenfalls konfiguriert werden,
+          # da der innere Caddy die TLS-Verbindung vom äußeren Proxy empfängt.
           tls ${certloc}/cert.pem ${certloc}/key.pem {
             protocols tls1.3
           }
+
+          # Die Verbindung zum Vaultwarden-Backend erfolgt nun ebenfalls über HTTPS.
+          reverse_proxy https://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort} {
+            transport http {
+              # Da das Vaultwarden-Zertifikat möglicherweise selbst-signiert ist oder
+              # nicht von Caddy verifiziert werden kann, überspringen wir die Überprüfung hier.
+              tls_insecure_skip_verify
+            }
+          }
+
           import czichy_headers
         }
       '';
