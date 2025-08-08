@@ -75,13 +75,22 @@ in {
   };
   # |----------------------------------------------------------------------| #
 
+  # Der äußere Caddy (HL-4-PAZ-PROXY-01) muss die Verbindung zum inneren Caddy
+  # über HTTPS aufbauen. Da es sich um eine interne Verbindung handelt und der
+  # innere Caddy möglicherweise ein selbst-signiertes Zertifikat verwendet,
+  # müssen Sie die Zertifikatsprüfung deaktivieren.
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
       virtualHosts."${forgejoDomain}".extraConfig = ''
         reverse_proxy https://10.15.70.1:443 {
             transport http {
-            	tls_server_name ${forgejoDomain}
+                # Da der innere Caddy ein eigenes Zertifikat ausstellt,
+                # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
+                # Dies ist ein Workaround, wenn die Zertifikatskette nicht vertrauenswürdig ist.
+                # tls_insecure_skip_verify
+                # tls_server_name stellt sicher, dass der Hostname für die TLS-Handshake übermittelt wird.
+                tls_server_name ${forgejoDomain}
             }
         }
 

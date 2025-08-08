@@ -60,9 +60,9 @@ in {
         		X-Content-Type-Options "nosniff"
         		X-Robots-Tag noindex, nofollow
         		Referrer-Policy "same-origin"
-        		Content-Security-Policy "frame-ancestors czichy.com *.czichy.com *.*.czichy.com"
+        		Content-Security-Policy "frame-ancestors czichy.com *.czichy.com "
         		-Server
-        		Permissions-Policy "geolocation=(self czichy.com *.czichy.com *.*.czichy.com), microphone=()"
+        		Permissions-Policy "geolocation=(self czichy.com *.czichy.com ), microphone=()"
         	}
         }
     '';

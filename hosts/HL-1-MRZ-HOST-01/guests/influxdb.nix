@@ -25,6 +25,11 @@ in {
       virtualHosts."${influxdbDomain}".extraConfig = ''
         reverse_proxy https://10.15.70.1:443 {
             transport http {
+                # Da der innere Caddy ein eigenes Zertifikat ausstellt,
+                # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
+                # Dies ist ein Workaround, wenn die Zertifikatskette nicht vertrauenswürdig ist.
+                # tls_insecure_skip_verify
+                # tls_server_name stellt sicher, dass der Hostname für die TLS-Handshake übermittelt wird.
             	tls_server_name ${influxdbDomain}
             }
         }

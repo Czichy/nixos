@@ -83,11 +83,11 @@ in {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
-        reverse_proxy https://10.15.70.1 {
-          transport http {
+        reverse_proxy https://10.15.70.1:443 {
+          transport http{
             # Da der innere Caddy ein eigenes Zertifikat ausstellt,
             # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
-            tls_insecure_skip_verify
+            # tls_insecure_skip_verify
             tls_server_name ${vaultwardenDomain}
           }
         }
