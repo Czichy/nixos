@@ -81,7 +81,6 @@ in {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
         reverse_proxy https://10.15.70.1:443 {
             transport http {
-            tls_insecure_skip_verify
             	tls_server_name ${vaultwardenDomain}
             }
         }
@@ -97,10 +96,10 @@ in {
     services.caddy = {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
         reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
-        tls ${certloc}/cert.pem ${certloc}/key.pem {
-           protocols tls1.3
+        # tls ${certloc}/cert.pem ${certloc}/key.pem {
+        #    protocols tls1.3
         }
-        import czichy_headers
+        # import czichy_headers
       '';
     };
   };
