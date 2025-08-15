@@ -58,6 +58,7 @@ in {
     # programs_file-managers_thunar = importApply ./programs/file-managers/thunar.nix {inherit localFlake;};
 
     programs_git = importApply ./programs/git.nix {inherit localFlake;};
+    programs_jujutsu = importApply ./programs/jujutsu.nix {inherit localFlake;};
     programs_gpg = importApply ./programs/gpg.nix {inherit localFlake;};
     programs_ibtws = importApply ./programs/ib-tws.nix {
       inherit localFlake inputs;

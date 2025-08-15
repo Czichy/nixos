@@ -49,6 +49,7 @@ in {
 
         programs = {
           terminals.foot.enable = _ true;
+          jujutsu.enable = _ true;
           # shells.nushell.enable = _ true;
           # starship.enable = _ true;
           shells.fish.enable = _ true;
