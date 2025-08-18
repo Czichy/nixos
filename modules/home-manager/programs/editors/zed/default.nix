@@ -375,7 +375,7 @@ in {
           ];
         };
 
-        # userKeymaps = import ./keymaps.nix;
+        userKeymaps = import ./keymaps.nix;
       };
     }
     # |----------------------------------------------------------------------| #
