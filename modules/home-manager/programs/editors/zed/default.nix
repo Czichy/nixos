@@ -66,6 +66,7 @@ in {
         #   exec ${zed-editor}/bin/zed "$@"
         # '';
         userSettings = {
+          helix_mode = true;
           features = {
             copilot = true;
             inline_completion_provider = "copilot";
