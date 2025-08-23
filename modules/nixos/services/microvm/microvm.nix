@@ -164,11 +164,11 @@ in {
           group = "root";
           mode = "0777";
         };
-        # "/var/cache/${guestName}".d = {
-        #   user = "root";
-        #   group = "root";
-        #   mode = "0777";
-        # };
+        "/var/cache/${guestName}".d = {
+          user = "root";
+          group = "root";
+          mode = "0777";
+        };
       };
     };
 
