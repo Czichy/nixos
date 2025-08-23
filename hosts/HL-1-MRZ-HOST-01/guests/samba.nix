@@ -38,6 +38,17 @@
       }
     ];
   };
+  # microvm.shares = [
+  #   {
+  #     # On the host
+  #     source = "/var/cache/${config.networking.hostName}";
+  #     # In the MicroVM
+  #     mountPoint = "/var/cache";
+  #     tag = "cache";
+  #     proto = "virtiofs";
+  #   }
+  # ];
+
   mkCustomShare = {
     name,
     path,
