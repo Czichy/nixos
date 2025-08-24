@@ -194,7 +194,10 @@
       url = "github:czichy/power-meter";
     };
 
-    walker.url = "github:abenz1267/walker";
+    walker = {
+      url = "github:abenz1267/walker/0.13.26";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
