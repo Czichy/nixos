@@ -98,9 +98,9 @@
       // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp38s0" "02:01:27:dc:85:68" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "forgejo" "HL-3-RZ-GIT-01" "enp38s0" "02:01:27:c4:0e:09" "vlan40" {
-        enableStorageDataset = true;
-      }
+      # // mkMicrovm "forgejo" "HL-3-RZ-GIT-01" "enp38s0" "02:01:37:c4:0e:09" "vlan40" {
+      #   enableStorageDataset = true;
+      # }
       // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp38s0" "02:01:27:ff:ed:77" "vlan40" {
       }
       # // mkMicrovm "docspell" "HL-3-RZ-DOCSPL-01" "enp38s0" "02:03:27:ff:ed:77" "vlan40" {

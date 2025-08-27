@@ -43,16 +43,25 @@
   inputs = {
     # --- BASE DEPENDENCIES -----------------------------------------
     # nixpkgs.url = "github:nixos/nixpkgs/pull/427905/head"; # https://github.com/NixOS/nixpkgs/issues/426401
-    # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+
+    # nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
+
+    # home-manager = {
+    #   # FIXME: only using a fork to fix https://github.com/nix-community/home-manager/issues/6638
+    #   url = "github:oddlama/home-manager";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      # url = "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     impermanence.url = "github:nix-community/impermanence";
@@ -214,12 +223,16 @@
       "https://nix-community.cachix.org/"
       "https://devenv.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
+      "https://zed.cachix.org"
+      "https://cache.garnix.io"
     ];
     extra-trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+      "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU="
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
     ];
   };
 }

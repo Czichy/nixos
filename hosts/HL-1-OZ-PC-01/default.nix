@@ -37,7 +37,7 @@
     wireguard-tools
     docker-compose
   ];
-  virtualisation.podman.enable = true;
+  # virtualisation.podman.enable = true;
   users.users."czichy".extraGroups = ["docker"];
 
   # ----------------------------

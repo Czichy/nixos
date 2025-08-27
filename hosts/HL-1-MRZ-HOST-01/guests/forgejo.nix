@@ -373,5 +373,5 @@ in {
 
   # |----------------------------------------------------------------------| #
   systemd.network.enable = true;
-  system.stateVersion = "24.05";
+  system.stateVersion = "25.11";
 }
