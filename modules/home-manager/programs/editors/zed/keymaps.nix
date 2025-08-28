@@ -200,28 +200,28 @@
         "vim::PushFindForward"
         {
           "before" = false;
-          # "multiline" = false;
+          "multiline" = false;
         }
       ];
       "t" = [
         "vim::PushFindForward"
         {
           "before" = true;
-          # "multiline" = false;
+          "multiline" = false;
         }
       ];
       "shift-f" = [
         "vim::PushFindBackward"
         {
           "after" = false;
-          # "multiline" = false;
+          "multiline" = false;
         }
       ];
       "shift-t" = [
         "vim::PushFindBackward"
         {
           "after" = true;
-          # "multiline" = false;
+          "multiline" = false;
         }
       ];
       "m" = "vim::PushMark";
