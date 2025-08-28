@@ -148,6 +148,8 @@
     "context" = "Editor && vim_mode == helix_normal && !menu";
     "bindings" = {
       "space" = "vim::Space";
+      "#" = "editor::ToggleComments";
+
       "$" = "vim::EndOfLine";
       "end" = "vim::EndOfLine";
       "^" = "vim::FirstNonWhitespace";
@@ -188,7 +190,7 @@
       "g /" = "pane::DeploySearch";
       "?" = ["vim::Search" {"backwards" = true;}];
       "*" = "vim::MoveToNext";
-      "#" = "vim::MoveToPrevious";
+      # "#" = "vim::MoveToPrevious";
       "n" = "vim::MoveToNextMatch";
       "shift-n" = "vim::MoveToPreviousMatch";
       "%" = "vim::Matching";
@@ -409,7 +411,6 @@
       "space r" = "editor::Rename";
       "space a" = "editor::ToggleCodeActions";
       "space h" = "editor::SelectAllMatches";
-      "space c" = "editor::ToggleComments";
       "space y" = "editor::Copy";
       "space p" = "editor::Paste";
       # // Match mod;

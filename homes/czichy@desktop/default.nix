@@ -25,6 +25,7 @@ in {
       };
       terminals.foot.makeDefault = true;
       editors.zed.enable = true;
+      # wine.enable = true;
     };
     hardware.monitors = {
       enable = true;

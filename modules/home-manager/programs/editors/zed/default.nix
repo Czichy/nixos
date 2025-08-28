@@ -57,6 +57,7 @@ in {
         extensions = [
           "nix"
           "xy-zed" # a gorgeous dark theme
+          "toml"
         ];
         # package = with pkgs; writeShellScriptBin "zed" ''
         #   export PATH=${lib.makeBinPath bins}:$PATH
@@ -67,6 +68,9 @@ in {
         # '';
         userSettings = {
           helix_mode = true;
+          vim = {
+            default_mode = "helix_normal";
+          };
           features = {
             copilot = true;
             inline_completion_provider = "copilot";
@@ -339,7 +343,7 @@ in {
             tokyo-night = true;
             vscode-icons = true;
           };
-          vim_mode = true;
+          # vim_mode = true;
           ui_font_size = 24;
           buffer_font_size = 24;
           theme = {

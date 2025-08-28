@@ -64,8 +64,6 @@
 
   home-manager.users."czichy" = import (../../homes + "/czichy@desktop");
 
-  tensorfiles.hm.programs.wine.enable = true;
-
   # users.users.qemu-libvirtd.group = "qemu-libvirtd";
   # users.groups.qemu-libvirtd = {};
 
