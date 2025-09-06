@@ -75,12 +75,24 @@ in {
             copilot = true;
             inline_completion_provider = "copilot";
           };
-
           # Language Models.
           language_models = {
             openai = {
               version = 1;
-              available_models = [];
+              available_models = [
+                {
+                  name = "gpt-5";
+                  display_name = "gpt-5 high";
+                  reasoning_effort = "high";
+                  max_tokens = 272000;
+                  max_completion_tokens = 20000;
+                }
+                {
+                  name = "gpt-4o-2024-08-06";
+                  display_name = "GPT 4o Summer 2024";
+                  max_tokens = 128000;
+                }
+              ];
             };
             anthropic = {
               version = 1;

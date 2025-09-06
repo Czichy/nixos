@@ -58,24 +58,8 @@ in {
 
         settings = mkMerge [
           {
-            # env = [
-            #   "NIXOS_OZONE_WL,1"
-            #   "MOZ_ENABLE_WAYLAND,1"
-            #   "MOZ_WEBRENDER,1"
-            #   "_JAVA_AWT_WM_NONREPARENTING,1"
-            #   "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
-            #   "QT_QPA_PLATFORM,wayland"
-            #   "SDL_VIDEODRIVER,wayland"
-            #   "GDK_BACKEND,wayland"
-            #   # toolkit-specific scale
-            #   "GDK_SCALE,2"
-            #   "QT_SCALE_FACTOR,2"
-            #   "XCURSOR_SIZE,32"
-            # ];
             exec-once = [
               # Startup
-              "swayosd-server"
-              # "swaybg -i ${wallpaper} --mode fill"
               "${pkgs.swaynotificationcenter}/bin/swaync"
               # "[workspace 7] firefox -P 'tradingview1' --class=tradingview"
               "[workspace 6] ${BROWSER}"
@@ -85,8 +69,9 @@ in {
               "swayosd-server"
               "xprop -root -f _XWAYLAND_GLOBAL_OUTPUT_SCALE 32c -set _XWAYLAND_GLOBAL_OUTPUT_SCALE 1"
 
-              (mkIf agenixCheck "ib-tws-native-latest -u $(< ${ibkr.user}) -p $(< ${ibkr.password})")
-              (mkIf (!agenixCheck) "ib-tws-native-latest")
+              "ib-tws-latest"
+              # (mkIf agenixCheck "ib-tws-latest -u $(< ${ibkr.user}) -p $(< ${ibkr.password})")
+              # (mkIf (!agenixCheck) "ib-tws-latest")
             ];
 
             ecosystem = {
