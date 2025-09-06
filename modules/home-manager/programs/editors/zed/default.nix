@@ -57,6 +57,7 @@ in {
         extensions = [
           "nix"
           "xy-zed" # a gorgeous dark theme
+          "toml"
         ];
         # package = with pkgs; writeShellScriptBin "zed" ''
         #   export PATH=${lib.makeBinPath bins}:$PATH
@@ -67,16 +68,31 @@ in {
         # '';
         userSettings = {
           helix_mode = true;
+          vim = {
+            default_mode = "helix_normal";
+          };
           features = {
             copilot = true;
             inline_completion_provider = "copilot";
           };
-
           # Language Models.
           language_models = {
             openai = {
               version = 1;
-              available_models = [];
+              available_models = [
+                {
+                  name = "gpt-5";
+                  display_name = "gpt-5 high";
+                  reasoning_effort = "high";
+                  max_tokens = 272000;
+                  max_completion_tokens = 20000;
+                }
+                {
+                  name = "gpt-4o-2024-08-06";
+                  display_name = "GPT 4o Summer 2024";
+                  max_tokens = 128000;
+                }
+              ];
             };
             anthropic = {
               version = 1;
@@ -339,7 +355,7 @@ in {
             tokyo-night = true;
             vscode-icons = true;
           };
-          vim_mode = true;
+          # vim_mode = true;
           ui_font_size = 24;
           buffer_font_size = 24;
           theme = {

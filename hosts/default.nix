@@ -107,24 +107,20 @@
             ];
           }
       );
-      # "HL-1-OZ-PC-02" = withSystem "x86_64-linux" (
-      #   args:
-      #     mkHost args "HL-1-OZ-PC-02" {
-      #       withHomeManager = true;
-      #       extraOverlays = with inputs; [
-      #         (final: _prev: {nur = import nur {pkgs = final;};})
-      #         nix-topology.overlays.default
-      #         nixos-extra-modules.overlays.default
-      #       ];
-      #       extraModules = with inputs; [
-      #         nix-topology.nixosModules.default
-      #         nixos-nftables-firewall.nixosModules.default
-      #         microvm.nixosModules.host
-      #         # nur.modules.nixos.default
-      #       ];
-      #     }
-      # );
-      #ward
+      "HL-1-MRZ-HOST-01" = withSystem "x86_64-linux" (
+        args:
+          mkHost args "HL-1-MRZ-HOST-01" {
+            withHomeManager = true;
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import nur {pkgs = final;};})
+            ];
+            extraModules = with inputs; [
+              nix-topology.nixosModules.default
+              nixos-nftables-firewall.nixosModules.default
+              microvm.nixosModules.host
+            ];
+          }
+      );
       "HL-1-MRZ-HOST-02" = withSystem "x86_64-linux" (
         args:
           mkHost args "HL-1-MRZ-HOST-02" {
@@ -154,36 +150,6 @@
             ];
           }
       );
-      "HL-1-MRZ-HOST-01" = withSystem "x86_64-linux" (
-        args:
-          mkHost args "HL-1-MRZ-HOST-01" {
-            withHomeManager = true;
-            extraOverlays = with inputs; [
-              (final: _prev: {nur = import nur {pkgs = final;};})
-            ];
-            extraModules = with inputs; [
-              nix-topology.nixosModules.default
-              nixos-nftables-firewall.nixosModules.default
-              microvm.nixosModules.host
-            ];
-          }
-      );
-
-      #OPNSense dummy - for Wiregard Server
-      "HL-3-MRZ-FW-01" = withSystem "x86_64-linux" (
-        args:
-          mkHost args "HL-3-MRZ-FW-01" {
-            withHomeManager = true;
-            extraOverlays = with inputs; [
-              (final: _prev: {nur = import nur {pkgs = final;};})
-            ];
-            extraModules = with inputs; [
-              nix-topology.nixosModules.default
-              nixos-nftables-firewall.nixosModules.default
-              microvm.nixosModules.host
-            ];
-          }
-      );
 
       #sentinel
       "HL-4-PAZ-PROXY-01" = withSystem "x86_64-linux" (
@@ -200,6 +166,21 @@
             ];
           }
       );
+      #   #OPNSense dummy - for Wiregard Server
+      #   "HL-3-MRZ-FW-01" = withSystem "x86_64-linux" (
+      #     args:
+      #       mkHost args "HL-3-MRZ-FW-01" {
+      #         withHomeManager = true;
+      #         extraOverlays = with inputs; [
+      #           (final: _prev: {nur = import nur {pkgs = final;};})
+      #         ];
+      #         extraModules = with inputs; [
+      #           nix-topology.nixosModules.default
+      #           nixos-nftables-firewall.nixosModules.default
+      #           microvm.nixosModules.host
+      #         ];
+      #       }
+      #   );
     };
     # True NixOS nodes can define additional guest nodes that are built
     # together with it. We collect all defined guests from each node here
