@@ -38,16 +38,6 @@
       }
     ];
   };
-  # microvm.shares = [
-  #   {
-  #     # On the host
-  #     source = "/var/cache/${config.networking.hostName}";
-  #     # In the MicroVM
-  #     mountPoint = "/var/cache";
-  #     tag = "cache";
-  #     proto = "virtiofs";
-  #   }
-  # ];
 
   mkCustomShare = {
     name,
@@ -159,6 +149,16 @@
 in {
   networking.hostName = "HL-3-RZ-SMB-01";
 
+  microvm.shares = [
+    {
+      # On the host
+      source = "/var/cache/samba";
+      # In the MicroVM
+      mountPoint = "/var/cache";
+      tag = "cache";
+      proto = "9p";
+    }
+  ];
   # |----------------------------------------------------------------------| #
   # Use user and group information from TDB database.
   # The age-encrypted database is created by setting in the config

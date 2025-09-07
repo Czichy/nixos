@@ -4,7 +4,7 @@
   pkgs,
   utils,
   inputs,
-  system,
+  # system,
   ...
 }: let
   inherit
@@ -45,7 +45,8 @@ in {
   options.services.ente = {
     web = {
       enable = mkEnableOption "Ente web frontend (Photos, Albums)";
-      package = mkPackageOption inputs.self.packages.${system} "ente-web" {};
+      package = mkPackageOption pkgs "ente-web" {};
+      # package = mkPackageOption inputs.self.packages.${system} "ente-web" {};
 
       domains = {
         api = mkOption {

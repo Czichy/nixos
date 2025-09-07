@@ -131,15 +131,15 @@ in {
             tag = "persist_${guestName}";
             proto = "virtiofs";
           }
-          {
-            # On the host
-            # source = "/var/cache/${config.networking.hostName}";
-            source = "/var/cache/${guestName}";
-            # In the MicroVM
-            mountPoint = "/var/cache";
-            tag = "cache_${guestName}";
-            proto = "virtiofs";
-          }
+          # {
+          #   # On the host
+          #   # source = "/var/cache/${config.networking.hostName}";
+          #   source = "/var/cache/${guestName}";
+          #   # In the MicroVM
+          #   mountPoint = "/var/cache";
+          #   tag = "cache_${guestName}";
+          #   proto = "virtiofs";
+          # }
         ]
         ++ flip mapAttrsToList guestCfg.zfs (
           _: zfsCfg: {
