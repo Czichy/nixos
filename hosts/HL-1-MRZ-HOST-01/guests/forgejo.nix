@@ -1,6 +1,6 @@
 {
   config,
-  globals,
+  # globals,
   secretsPath,
   hostName,
   lib,
@@ -8,7 +8,8 @@
   ...
 }: let
   # |----------------------------------------------------------------------| #
-  forgejoDomain = "git.${globals.domains.me}";
+  forgejoDomain = "git.czichy.com";
+  # forgejoDomain = "git.${globals.domains.me}";
 
   certloc = "/var/lib/acme/czichy.com";
   # |----------------------------------------------------------------------| #
@@ -59,12 +60,12 @@ in {
     mode = "440";
   };
   # |----------------------------------------------------------------------| #
-  globals.services.forgejo.domain = forgejoDomain;
-  globals.monitoring.http.vaultwarden = {
-    url = "https://${forgejoDomain}/user/login";
-    expectedBodyRegex = "Redlew Git";
-    network = "internet";
-  };
+  # globals.services.forgejo.domain = forgejoDomain;
+  # globals.monitoring.http.forgejo = {
+  #   url = "https://${forgejoDomain}/user/login";
+  #   expectedBodyRegex = "Redlew Git";
+  #   network = "internet";
+  # };
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
@@ -104,7 +105,7 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${forgejoDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-GIT-01".ipv4}:${toString config.services.forgejo.settings.server.HTTP_PORT}
+        reverse_proxy http://10.15.40.14:${toString config.services.forgejo.settings.server.HTTP_PORT}
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }
@@ -316,7 +317,7 @@ in {
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
   services.restic.backups = let
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+    ntfy_url = "https://ntfy.czichy.com/backups";
     slug = "https://health.czichy.com/ping/";
 
     script-post = host: site: ''
@@ -373,5 +374,5 @@ in {
 
   # |----------------------------------------------------------------------| #
   systemd.network.enable = true;
-  system.stateVersion = "25.11";
+  # system.stateVersion = "25.11";
 }
