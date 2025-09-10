@@ -73,7 +73,7 @@ in {
       ["wan"]
     ];
     interfaces.wan = {
-      # addresses = ["10.15.100.250"];
+      addresses = ["10.15.100.9"];
       network = "internet";
     };
 
