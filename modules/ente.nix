@@ -212,6 +212,9 @@ in {
           # Setup paths
           mkdir -p ${dataDir}/configurations
           ln -sTf /run/agenix/ente-local ${dataDir}/configurations/local.yaml
+
+          touch /var/lib/ente/web-templates/account_recovered.html
+          touch /var/lib/ente/web-templates/account_recovery_error.html
         '';
 
         serviceConfig = {
