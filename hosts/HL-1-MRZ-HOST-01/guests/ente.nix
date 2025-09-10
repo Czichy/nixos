@@ -193,6 +193,11 @@ in {
     mode = "440";
     group = "ente";
   };
+  age.secrets.ente-local = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/ente-local.age";
+    mode = "440";
+    group = "ente";
+  };
   # age.secrets.ente-smtp-password = {
   #   file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-root-credentials.age";
   #   mode = "440";
