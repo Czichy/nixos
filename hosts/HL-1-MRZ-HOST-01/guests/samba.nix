@@ -149,14 +149,16 @@
 in {
   networking.hostName = "HL-3-RZ-SMB-01";
 
-  microvm.shares = [
+  # Block device images for persistent storage
+  # microvm use tmpfs for root(/), so everything else
+  # is ephemeral and will be lost on reboot.
+  #
+  # you can check this by running `df -Th` & `lsblk` in the VM.
+  microvm.volumes = [
     {
-      # On the host
-      source = "/var/cache/samba";
-      # In the MicroVM
       mountPoint = "/var/cache";
-      tag = "cache";
-      proto = "9p";
+      image = "samba_restic_cache.img";
+      size = 31457280;
     }
   ];
   # |----------------------------------------------------------------------| #

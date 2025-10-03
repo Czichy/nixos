@@ -278,6 +278,7 @@ in {
       };
 
       jwt.secret._secret = config.age.secrets.ente-jwt.path;
+      local-yaml = config.age.secrets.ente-local.path;
       key = {
         encryption._secret = config.age.secrets.ente-encryption-key.path;
         hash._secret = config.age.secrets.ente-hash-key.path;

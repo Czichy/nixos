@@ -207,9 +207,6 @@ in {
         preStart = ''
           mkdir -p /run/ente
 
-          # Generate config including secret values. YAML is a superset of JSON, so we can use this here.
-          # ${utils.genJqSecretsReplacementSnippet cfgApi.settings "/run/ente/local.yaml"}
-
           # Setup paths
           mkdir -p ${dataDir}/configurations
           ln -sTf /run/agenix/ente-local ${dataDir}/configurations/local.yaml
