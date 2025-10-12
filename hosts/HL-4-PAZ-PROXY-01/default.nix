@@ -22,7 +22,7 @@ in {
     ./disko.nix
     ./net.nix
     ./modules
-    # ../../modules/ente.nix
+    ../../modules/ente.nix
   ];
 
   # topology.self.hardware.image = ../../topology/images/odroid-h3.png;

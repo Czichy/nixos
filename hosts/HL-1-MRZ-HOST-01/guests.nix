@@ -49,7 +49,7 @@
           [
             ../config/default.nix
             ../../modules/globals.nix
-            # ../../modules/ente.nix
+            ../../modules/ente.nix
             ./guests/${guestName}.nix
             {
               networking.nftables.firewall = {
