@@ -21,18 +21,18 @@
     ;
 
   cfgApi = config.services.ente.api;
-  cfgWeb = config.services.ente.web;
+  # cfgWeb = config.services.ente.web;
 
-  webPackage = enteApp:
-    cfgWeb.package.override {
-      inherit enteApp;
-      enteMainUrl = "https://${cfgWeb.domains.photos}";
-      extraBuildEnv = {
-        NEXT_PUBLIC_ENTE_ENDPOINT = "https://${cfgWeb.domains.api}";
-        NEXT_PUBLIC_ENTE_ALBUMS_ENDPOINT = "https://${cfgWeb.domains.albums}";
-        NEXT_TELEMETRY_DISABLED = "1";
-      };
-    };
+  # webPackage = enteApp:
+  #   cfgWeb.package.override {
+  #     inherit enteApp;
+  #     enteMainUrl = "https://${cfgWeb.domains.photos}";
+  #     extraBuildEnv = {
+  #       NEXT_PUBLIC_ENTE_ENDPOINT = "https://${cfgWeb.domains.api}";
+  #       NEXT_PUBLIC_ENTE_ALBUMS_ENDPOINT = "https://${cfgWeb.domains.albums}";
+  #       NEXT_TELEMETRY_DISABLED = "1";
+  #     };
+  #   };
 
   defaultUser = "ente";
   defaultGroup = "ente";
@@ -43,42 +43,42 @@
   certloc = "/var/lib/acme/czichy.com";
 in {
   options.services.ente = {
-    web = {
-      enable = mkEnableOption "Ente web frontend (Photos, Albums)";
-      # package = mkPackageOption pkgs "ente-web" {};
-      package = mkPackageOption inputs.self.packages.${system} "ente-web" {};
+    # web = {
+    #   enable = mkEnableOption "Ente web frontend (Photos, Albums)";
+    #   # package = mkPackageOption pkgs "ente-web" {};
+    #   package = mkPackageOption inputs.self.packages.${system} "ente-web" {};
 
-      domains = {
-        api = mkOption {
-          type = types.str;
-          description = ''
-            The domain under which the api is served. This will NOT serve the api itself,
-            but is a required setting to host the frontends! This will automatically be set
-            for you if you enable both the api server and web frontends.
-          '';
-        };
+    #   domains = {
+    #     api = mkOption {
+    #       type = types.str;
+    #       description = ''
+    #         The domain under which the api is served. This will NOT serve the api itself,
+    #         but is a required setting to host the frontends! This will automatically be set
+    #         for you if you enable both the api server and web frontends.
+    #       '';
+    #     };
 
-        accounts = mkOption {
-          type = types.str;
-          description = "The domain under which the accounts frontend will be served.";
-        };
+    #     accounts = mkOption {
+    #       type = types.str;
+    #       description = "The domain under which the accounts frontend will be served.";
+    #     };
 
-        cast = mkOption {
-          type = types.str;
-          description = "The domain under which the cast frontend will be served.";
-        };
+    #     cast = mkOption {
+    #       type = types.str;
+    #       description = "The domain under which the cast frontend will be served.";
+    #     };
 
-        albums = mkOption {
-          type = types.str;
-          description = "The domain under which the albums frontend will be served.";
-        };
+    #     albums = mkOption {
+    #       type = types.str;
+    #       description = "The domain under which the albums frontend will be served.";
+    #     };
 
-        photos = mkOption {
-          type = types.str;
-          description = "The domain under which the photos frontend will be served.";
-        };
-      };
-    };
+    #     photos = mkOption {
+    #       type = types.str;
+    #       description = "The domain under which the photos frontend will be served.";
+    #     };
+    #   };
+    # };
 
     api = {
       enable = mkEnableOption "Museum (API server for ente.io)";
@@ -187,7 +187,7 @@ in {
         ensureDatabases = ["ente"];
       };
 
-      services.ente.web.domains.api = mkIf cfgWeb.enable cfgApi.domain;
+      # services.ente.web.domains.api = mkIf cfgWeb.enable cfgApi.domain;
       services.ente.api.settings = {
         log-file = mkDefault "";
         db = mkIf cfgApi.enableLocalDB {
@@ -305,89 +305,89 @@ in {
       #   };
       # };
     })
-    (mkIf cfgWeb.enable {
-      services.ente.api.settings = mkIf cfgApi.enable {
-        apps = {
-          accounts = "https://${cfgWeb.domains.accounts}";
-          cast = "https://${cfgWeb.domains.cast}";
-          public-albums = "https://${cfgWeb.domains.albums}";
-        };
+    # (mkIf cfgWeb.enable {
+    #   services.ente.api.settings = mkIf cfgApi.enable {
+    #     apps = {
+    #       accounts = "https://${cfgWeb.domains.accounts}";
+    #       cast = "https://${cfgWeb.domains.cast}";
+    #       public-albums = "https://${cfgWeb.domains.albums}";
+    #     };
 
-        webauthn = {
-          rpid = cfgWeb.domains.accounts;
-          rporigins = ["https://${cfgWeb.domains.accounts}"];
-        };
-      };
+    #     webauthn = {
+    #       rpid = cfgWeb.domains.accounts;
+    #       rporigins = ["https://${cfgWeb.domains.accounts}"];
+    #     };
+    #   };
 
-      # |----------------------------------------------------------------------| #
-      nodes.HL-4-PAZ-PROXY-01 = {
-        services.caddy = let
-          domainFor = app: cfgWeb.domains.${app};
-        in {
-          virtualHosts."${domainFor "photos"}".extraConfig = ''
-            # reverse_proxy http://localhost:3000
-            root * ${webPackage "photos"}
-            file_server
-            try_files {path} {path}.html /index.html
+    #   # |----------------------------------------------------------------------| #
+    #   nodes.HL-4-PAZ-PROXY-01 = {
+    #     services.caddy = let
+    #       domainFor = app: cfgWeb.domains.${app};
+    #     in {
+    #       virtualHosts."${domainFor "photos"}".extraConfig = ''
+    #         # reverse_proxy http://localhost:3000
+    #         root * ${webPackage "photos"}
+    #         file_server
+    #         try_files {path} {path}.html /index.html
 
-             tls ${certloc}/cert.pem ${certloc}/key.pem {
-                 protocols tls1.3
-             }
-            header {
-            	Permissions-Policy interest-cohort=()
-            	Strict-Transport-Security "max-age=31536000; includeSubdomains"
-            	X-XSS-Protection "1; mode=block"
-            	X-Content-Type-Options "nosniff"
-            	X-Robots-Tag noindex, nofollow
-            	Referrer-Policy "same-origin"
-            	Content-Security-Policy "frame-ancestors czichy.com *.czichy.com *.*.czichy.com"
-            	-Server
-            	Permissions-Policy "geolocation=(self czichy.com *.czichy.com *.*.czichy.com), microphone=()"
-               Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
-             }
-          '';
-        };
-      };
-      # |----------------------------------------------------------------------| #
-      # services.nginx = let
-      #   domainFor = app: cfgWeb.domains.${app};
-      # in {
-      #   enable = true;
-      #   virtualHosts.${domainFor "accounts"} = {
-      #     forceSSL = mkDefault true;
-      #     locations."/" = {
-      #       root = webPackage "accounts";
-      #       tryFiles = "$uri $uri.html /index.html";
-      #       extraConfig = ''
-      #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
-      #       '';
-      #     };
-      #   };
-      #   virtualHosts.${domainFor "cast"} = {
-      #     forceSSL = mkDefault true;
-      #     locations."/" = {
-      #       root = webPackage "cast";
-      #       tryFiles = "$uri $uri.html /index.html";
-      #       extraConfig = ''
-      #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
-      #       '';
-      #     };
-      #   };
-      #   virtualHosts.${domainFor "photos"} = {
-      #     serverAliases = [
-      #       (domainFor "albums") # the albums app is shared with the photos frontend
-      #     ];
-      #     forceSSL = mkDefault true;
-      #     locations."/" = {
-      #       root = webPackage "photos";
-      #       tryFiles = "$uri $uri.html /index.html";
-      #       extraConfig = ''
-      #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
-      #       '';
-      #     };
-      #   };
-      # };
-    })
+    #          tls ${certloc}/cert.pem ${certloc}/key.pem {
+    #              protocols tls1.3
+    #          }
+    #         header {
+    #         	Permissions-Policy interest-cohort=()
+    #         	Strict-Transport-Security "max-age=31536000; includeSubdomains"
+    #         	X-XSS-Protection "1; mode=block"
+    #         	X-Content-Type-Options "nosniff"
+    #         	X-Robots-Tag noindex, nofollow
+    #         	Referrer-Policy "same-origin"
+    #         	Content-Security-Policy "frame-ancestors czichy.com *.czichy.com *.*.czichy.com"
+    #         	-Server
+    #         	Permissions-Policy "geolocation=(self czichy.com *.czichy.com *.*.czichy.com), microphone=()"
+    #            Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+    #          }
+    #       '';
+    #     };
+    #   };
+    #   # |----------------------------------------------------------------------| #
+    #   # services.nginx = let
+    #   #   domainFor = app: cfgWeb.domains.${app};
+    #   # in {
+    #   #   enable = true;
+    #   #   virtualHosts.${domainFor "accounts"} = {
+    #   #     forceSSL = mkDefault true;
+    #   #     locations."/" = {
+    #   #       root = webPackage "accounts";
+    #   #       tryFiles = "$uri $uri.html /index.html";
+    #   #       extraConfig = ''
+    #   #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+    #   #       '';
+    #   #     };
+    #   #   };
+    #   #   virtualHosts.${domainFor "cast"} = {
+    #   #     forceSSL = mkDefault true;
+    #   #     locations."/" = {
+    #   #       root = webPackage "cast";
+    #   #       tryFiles = "$uri $uri.html /index.html";
+    #   #       extraConfig = ''
+    #   #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+    #   #       '';
+    #   #     };
+    #   #   };
+    #   #   virtualHosts.${domainFor "photos"} = {
+    #   #     serverAliases = [
+    #   #       (domainFor "albums") # the albums app is shared with the photos frontend
+    #   #     ];
+    #   #     forceSSL = mkDefault true;
+    #   #     locations."/" = {
+    #   #       root = webPackage "photos";
+    #   #       tryFiles = "$uri $uri.html /index.html";
+    #   #       extraConfig = ''
+    #   #         add_header Access-Control-Allow-Origin 'https://${cfgWeb.domains.api}';
+    #   #       '';
+    #   #     };
+    #   #   };
+    #   # };
+    # })
   ];
 
   meta.maintainers = with lib.maintainers; [oddlama];
