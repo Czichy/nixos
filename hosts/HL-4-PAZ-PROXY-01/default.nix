@@ -22,7 +22,7 @@ in {
     ./disko.nix
     ./net.nix
     ./modules
-    ../../modules/ente.nix
+    # ../../modules/ente.nix
   ];
 
   # topology.self.hardware.image = ../../topology/images/odroid-h3.png;
@@ -39,16 +39,16 @@ in {
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
   # home-manager.users.${user} = {home.packages = with pkgs; [];};
-  services.ente.web = {
-    enable = true;
-    domains = {
-      api = "photos-api.${globals.domains.me}";
-      accounts = "photos-accounts.${globals.domains.me}";
-      albums = "photos-albums.${globals.domains.me}";
-      cast = "photos-cast.${globals.domains.me}";
-      photos = "photos.${globals.domains.me}";
-    };
-  };
+  # services.ente.web = {
+  #   enable = true;
+  #   domains = {
+  #     api = "photos-api.${globals.domains.me}";
+  #     accounts = "photos-accounts.${globals.domains.me}";
+  #     albums = "photos-albums.${globals.domains.me}";
+  #     cast = "photos-cast.${globals.domains.me}";
+  #     photos = "photos.${globals.domains.me}";
+  #   };
+  # };
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
