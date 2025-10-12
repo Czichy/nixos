@@ -197,21 +197,21 @@ in {
       #   ];
       # };
 
-    #   sensor = [
-    #     {
-    #       platform = "waste_collection_schedule";
-    #       name = "restmuell_upcoming";
-    #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-    #       types = ["Restmüll"];
-    #     }
-    #     {
-    #       platform = "waste_collection_schedule";
-    #       name = "papiermuell_upcoming";
-    #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-    #       types = ["Papiermüll"];
-    #     }
-    #   ];
-    # };
+      #   sensor = [
+      #     {
+      #       platform = "waste_collection_schedule";
+      #       name = "restmuell_upcoming";
+      #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
+      #       types = ["Restmüll"];
+      #     }
+      #     {
+      #       platform = "waste_collection_schedule";
+      #       name = "papiermuell_upcoming";
+      #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
+      #       types = ["Papiermüll"];
+      #     }
+      #   ];
+    };
 
     extraPackages = python3Packages:
       with python3Packages; [
