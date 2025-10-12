@@ -89,7 +89,7 @@
       // mkMicrovm "node-red" "HL-3-RZ-RED-01" "enp4s0" "02:04:27:14:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "home-assistant" "HL-3-RZ-HASS-01" "servers" "02:05:27:14:8f:17" "vlan40" {
+      // mkMicrovm "hass" "HL-3-RZ-HASS-01" "servers" "02:05:27:14:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
     );
