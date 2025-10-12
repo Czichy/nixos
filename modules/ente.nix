@@ -4,7 +4,7 @@
   pkgs,
   utils,
   inputs,
-  # system,
+  system,
   ...
 }: let
   inherit
