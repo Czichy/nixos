@@ -146,9 +146,9 @@ in {
         # longitude = "!secret ha_longitude";
         # elevation = "!secret ha_elevation";
         name = "Czichy Home";
-        latitude = 37;
-        longitude = 37;
-        elevation = 12;
+        latitude = "37";
+        longitude = "37";
+        elevation = "12";
         currency = "EUR";
         time_zone = "Europe/Berlin";
         unit_system = "metric";
