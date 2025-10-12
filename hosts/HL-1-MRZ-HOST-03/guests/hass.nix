@@ -21,7 +21,7 @@ in {
   #   network = "internet";
   # };
   #
-  imports = [./hass-modbus/mennekes-amtron-xtra.nix];
+  # imports = [./hass-modbus/mennekes-amtron-xtra.nix];
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
