@@ -242,7 +242,7 @@ in {
 
   systemd.services.home-assistant = {
     serviceConfig.LoadCredential = [
-      "hass-influxdb-token:${config.age.secrets.hass-influxdb-token.path}"
+      "hass-influxdb-token:${config.age.secrets.influxdb-user-home_assistant-token.path}"
     ];
     preStart = lib.mkBefore ''
       if [[ -e ${config.services.home-assistant.configDir}/secrets.yaml ]]; then
