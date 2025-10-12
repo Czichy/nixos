@@ -37,11 +37,11 @@ in {
 
           qemu = {
             package = pkgs.qemu_full;
-            ovmf.enable = true;
-            ovmf.packages =
-              if pkgs.stdenv.isx86_64
-              then [pkgs.OVMFFull.fd]
-              else [pkgs.OVMF.fd];
+            # ovmf.enable = true;
+            # ovmf.packages =
+            #   if pkgs.stdenv.isx86_64
+            #   then [pkgs.OVMFFull.fd]
+            #   else [pkgs.OVMF.fd];
             swtpm.enable = true;
             swtpm.package = pkgs.swtpm;
             runAsRoot = false;
