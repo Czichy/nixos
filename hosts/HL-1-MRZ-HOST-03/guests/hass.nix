@@ -146,9 +146,9 @@ in {
         # longitude = "!secret ha_longitude";
         # elevation = "!secret ha_elevation";
         name = "Czichy Home";
-        latitude = "37";
-        longitude = "37";
-        elevation = "12";
+        latitude = "50.248329";
+        longitude = "8.256039";
+        elevation = "241";
         currency = "EUR";
         time_zone = "Europe/Berlin";
         unit_system = "metric";
@@ -177,41 +177,41 @@ in {
         bucket = "hass";
       };
 
-      waste_collection_schedule = {
-        sources = [
-          {
-            name = "ics";
-            args.url = "!secret muell_ics_url";
-            calendar_title = "Abfalltermine";
-            customize = [
-              {
-                type = "Restmüll 2-wöchentlich";
-                alias = "Restmüll";
-              }
-              {
-                type = "Papiertonne 4-wöchentlich";
-                alias = "Papiermüll";
-              }
-            ];
-          }
-        ];
-      };
+      # waste_collection_schedule = {
+      #   sources = [
+      #     {
+      #       name = "ics";
+      #       args.url = "!secret muell_ics_url";
+      #       calendar_title = "Abfalltermine";
+      #       customize = [
+      #         {
+      #           type = "Restmüll 2-wöchentlich";
+      #           alias = "Restmüll";
+      #         }
+      #         {
+      #           type = "Papiertonne 4-wöchentlich";
+      #           alias = "Papiermüll";
+      #         }
+      #       ];
+      #     }
+      #   ];
+      # };
 
-      sensor = [
-        {
-          platform = "waste_collection_schedule";
-          name = "restmuell_upcoming";
-          value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-          types = ["Restmüll"];
-        }
-        {
-          platform = "waste_collection_schedule";
-          name = "papiermuell_upcoming";
-          value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-          types = ["Papiermüll"];
-        }
-      ];
-    };
+    #   sensor = [
+    #     {
+    #       platform = "waste_collection_schedule";
+    #       name = "restmuell_upcoming";
+    #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
+    #       types = ["Restmüll"];
+    #     }
+    #     {
+    #       platform = "waste_collection_schedule";
+    #       name = "papiermuell_upcoming";
+    #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
+    #       types = ["Papiermüll"];
+    #     }
+    #   ];
+    # };
 
     extraPackages = python3Packages:
       with python3Packages; [
