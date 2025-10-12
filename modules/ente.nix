@@ -172,9 +172,9 @@ in {
 
   config = mkMerge [
     (mkIf cfgApi.enable {
-      environment.systemPackages = with pkgs; [
-        inputs.self.packages.${system}.ente-web
-      ];
+      # environment.systemPackages = with pkgs; [
+      #   inputs.self.packages.${system}.ente-web
+      # ];
 
       services.postgresql = mkIf cfgApi.enableLocalDB {
         enable = true;
