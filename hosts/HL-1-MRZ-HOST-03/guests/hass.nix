@@ -111,6 +111,7 @@ in {
       ntfy
       solax
       solax_modbus
+      unifi
       # waste_collection_schedule
     ];
 
@@ -127,7 +128,6 @@ in {
       mini-graph-card
       multiple-entity-row
       mushroom
-      unifi
       weather-card
       weather-chart-card
     ];
