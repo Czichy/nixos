@@ -106,11 +106,11 @@ in {
       "zha"
     ];
 
-    customComponents = with pkgs.home-assistant-custom-components; [
-      (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
-      dwd
-      waste_collection_schedule
-    ];
+    # customComponents = with pkgs.home-assistant-custom-components; [
+    #   (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
+    #   dwd
+    #   waste_collection_schedule
+    # ];
 
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
       (pkgs.callPackage ./hass-lovelace/config-template-card/package.nix {})
@@ -135,6 +135,7 @@ in {
         server_host = ["0.0.0.0"];
         server_port = 8123;
         use_x_forwarded_for = true;
+        trusted_proxies = ["10.15.70.1"];
         # trusted_proxies = [nodes.ward-web-proxy.config.wireguard.proxy-home.ipv4];
       };
 
@@ -167,7 +168,7 @@ in {
 
       influxdb = {
         api_version = 2;
-        host = "localhost";
+        host = globals.net.vlan40.hosts."HL-3-RZ-INFLUX-01".ipv4;
         port = "8086";
         max_retries = 10;
         ssl = false;
