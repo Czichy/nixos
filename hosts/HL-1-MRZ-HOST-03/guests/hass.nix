@@ -99,7 +99,6 @@ in {
       "ollama"
       "radio_browser"
       "solax"
-      "solax_modbus"
       "unifi"
       "vicare"
       "wake_word"
