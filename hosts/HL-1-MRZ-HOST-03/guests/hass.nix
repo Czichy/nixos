@@ -99,6 +99,7 @@ in {
       "ollama"
       "radio_browser"
       "solax"
+      "solax_modbus"
       "unifi"
       "vicare"
       "wake_word"
@@ -127,7 +128,6 @@ in {
       mini-graph-card
       multiple-entity-row
       mushroom
-      solax_modbus
       weather-card
       weather-chart-card
     ];
