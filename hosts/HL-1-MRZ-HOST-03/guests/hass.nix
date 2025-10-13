@@ -100,6 +100,7 @@ in {
       "radio_browser"
       "solax"
       "unifi"
+      "vicare"
       "wake_word"
       "whisper"
       "wyoming"
@@ -126,6 +127,7 @@ in {
       mini-graph-card
       multiple-entity-row
       mushroom
+      solax_modbus
       weather-card
       weather-chart-card
     ];
