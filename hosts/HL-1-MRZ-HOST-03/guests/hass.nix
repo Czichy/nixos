@@ -97,8 +97,6 @@ in {
       "mqtt"
       "ollama"
       "radio_browser"
-      "soundtouch" # Bose SoundTouch
-      "spotify"
       "wake_word"
       "webostv" # LG WebOS TV
       "whisper"
@@ -106,11 +104,14 @@ in {
       "zha"
     ];
 
-    # customComponents = with pkgs.home-assistant-custom-components; [
-    #   (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
-    #   dwd
-    #   waste_collection_schedule
-    # ];
+    customComponents = with pkgs.home-assistant-custom-components; [
+      # (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
+      solax_modbus
+      ntfy
+      solax
+      # dwd
+      # waste_collection_schedule
+    ];
 
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
       (pkgs.callPackage ./hass-lovelace/config-template-card/package.nix {})
@@ -125,6 +126,8 @@ in {
       mini-graph-card
       multiple-entity-row
       mushroom
+      forecast_solar
+      unifi
       weather-card
       weather-chart-card
     ];
