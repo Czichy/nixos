@@ -176,7 +176,7 @@ in {
         verify_ssl = false;
         token = "!secret influxdb_token";
         organization = "home";
-        bucket = "hass";
+        bucket = "home_assistant";
       };
 
       # waste_collection_schedule = {
