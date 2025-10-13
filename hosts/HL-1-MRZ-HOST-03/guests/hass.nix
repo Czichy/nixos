@@ -106,10 +106,11 @@ in {
 
     customComponents = with pkgs.home-assistant-custom-components; [
       # (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
-      solax_modbus
+      dwd
+      forecast_solar
       ntfy
       solax
-      # dwd
+      solax_modbus
       # waste_collection_schedule
     ];
 
@@ -126,7 +127,6 @@ in {
       mini-graph-card
       multiple-entity-row
       mushroom
-      forecast_solar
       unifi
       weather-card
       weather-chart-card
