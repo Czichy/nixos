@@ -95,10 +95,13 @@ in {
       "matter"
       "met"
       "mqtt"
+      "ntfy"
       "ollama"
       "radio_browser"
+      "solax"
+      "solax_modbus"
+      "unifi"
       "wake_word"
-      "webostv" # LG WebOS TV
       "whisper"
       "wyoming"
       "zha"
@@ -107,10 +110,6 @@ in {
     customComponents = with pkgs.home-assistant-custom-components; [
       # (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
       dwd
-      ntfy
-      solax
-      solax_modbus
-      unifi
       # waste_collection_schedule
     ];
 
