@@ -111,7 +111,7 @@ in {
       # (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
       dwd
       solax_modbus
-      # waste_collection_schedule
+      waste_collection_schedule
     ];
 
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
@@ -144,14 +144,10 @@ in {
       zha.zigpy_config.source_routing = true;
 
       homeassistant = {
-        # name = "!secret ha_name";
-        # latitude = "!secret ha_latitude";
-        # longitude = "!secret ha_longitude";
-        # elevation = "!secret ha_elevation";
-        name = "Czichy Home";
-        latitude = "50.248329";
-        longitude = "8.256039";
-        elevation = "241";
+        name = "!secret ha_name";
+        latitude = "!secret ha_latitude";
+        longitude = "!secret ha_longitude";
+        elevation = "!secret ha_elevation";
         currency = "EUR";
         time_zone = "Europe/Berlin";
         unit_system = "metric";
@@ -180,40 +176,40 @@ in {
         bucket = "home_assistant";
       };
 
-      # waste_collection_schedule = {
-      #   sources = [
-      #     {
-      #       name = "ics";
-      #       args.url = "!secret muell_ics_url";
-      #       calendar_title = "Abfalltermine";
-      #       customize = [
-      #         {
-      #           type = "Restmüll 2-wöchentlich";
-      #           alias = "Restmüll";
-      #         }
-      #         {
-      #           type = "Papiertonne 4-wöchentlich";
-      #           alias = "Papiermüll";
-      #         }
-      #       ];
-      #     }
-      #   ];
-      # };
+      waste_collection_schedule = {
+        sources = [
+          {
+            name = "ics";
+            args.url = "!secret muell_ics_url";
+            calendar_title = "Abfalltermine";
+            customize = [
+              {
+                type = "Restmüll 2-wöchentlich";
+                alias = "Restmüll";
+              }
+              {
+                type = "Papiertonne 4-wöchentlich";
+                alias = "Papiermüll";
+              }
+            ];
+          }
+        ];
+      };
 
-      #   sensor = [
-      #     {
-      #       platform = "waste_collection_schedule";
-      #       name = "restmuell_upcoming";
-      #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-      #       types = ["Restmüll"];
-      #     }
-      #     {
-      #       platform = "waste_collection_schedule";
-      #       name = "papiermuell_upcoming";
-      #       value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-      #       types = ["Papiermüll"];
-      #     }
-      #   ];
+      sensor = [
+        {
+          platform = "waste_collection_schedule";
+          name = "restmuell_upcoming";
+          value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
+          types = ["Restmüll"];
+        }
+        {
+          platform = "waste_collection_schedule";
+          name = "papiermuell_upcoming";
+          value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
+          types = ["Papiermüll"];
+        }
+      ];
     };
 
     extraPackages = python3Packages:

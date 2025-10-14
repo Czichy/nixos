@@ -55,6 +55,8 @@ in {
           shells.fish.enable = _ true;
           editors.helix.enable = _ true;
           file-managers.yazi.enable = _ true;
+          fastfetch.enable = _ true;
+          starship.enable = _ true;
 
           btop.enable = _ true;
           zellij.enable = _ true;
