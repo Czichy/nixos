@@ -165,10 +165,12 @@
 
     firefox-addons = {
       url = "github:seadome/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     ghostty = {
       url = "github:ghostty-org/ghostty";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     helix = {

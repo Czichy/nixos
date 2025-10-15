@@ -21,7 +21,10 @@ in {
   #   network = "internet";
   # };
   #
-  # imports = [./hass-modbus/mennekes-amtron-xtra.nix];
+  imports = [
+    ./hass/mqtt-sensors.nix
+    # ./hass-modbus/mennekes-amtron-xtra.nix
+  ];
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
@@ -115,8 +118,8 @@ in {
     ];
 
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
-      (pkgs.callPackage ./hass-lovelace/config-template-card/package.nix {})
-      (pkgs.callPackage ./hass-lovelace/hui-element/package.nix {})
+      (pkgs.callPackage ./hass/lovelace/config-template-card/package.nix {})
+      (pkgs.callPackage ./hass/lovelace/hui-element/package.nix {})
       apexcharts-card
       bubble-card
       button-card
