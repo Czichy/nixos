@@ -51,12 +51,16 @@ in {
         hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader
         hosts.HL-3-RZ-IBKR-01.id = 15;
+        # Paperless
+        hosts.HL-3-RZ-PAPERLESS-01.id = 16;
         # Docspell
         # hosts.HL-3-RZ-DOCSPL-01.id = 18;
         # Ente
         hosts.HL-3-RZ-ENTE-01.id = 17;
-        # Paperless
-        hosts.HL-3-RZ-PAPERLESS-01.id = 16;
+        # Parseable
+        hosts.HL-3-RZ-LOG-01.id = 18;
+        # S3 Minio
+        hosts.HL-3-RZ-S3-01.id = 19;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome

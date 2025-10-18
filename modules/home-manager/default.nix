@@ -76,7 +76,7 @@ in {
       inherit secretsPath pubkeys;
       inherit localFlake;
     };
-    programs_starship = importApply ./programs/starship.nix {inherit localFlake;};
+    programs_starship = importApply ./programs/starship {inherit localFlake;};
     programs_fastfetch = importApply ./programs/fastfetch.nix {inherit localFlake;};
 
     programs_terminals_alacritty = importApply ./programs/terminals/alacritty.nix {
