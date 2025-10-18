@@ -21,8 +21,8 @@ in {
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
-    allowedTCPPorts = [8080 9000 9001];
-    allowedUDPPorts = [8080 9000 9001];
+    allowedTCPPorts = [8000];
+    allowedUDPPorts = [8000];
   };
   # |----------------------------------------------------------------------| #
   #
@@ -84,17 +84,32 @@ in {
   age.secrets.parseable-config = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/parseable/parseable.age";
     mode = "440";
-    group = "parseable";
+    group = "parseable-user";
   };
 
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
-    group = "vaultwarden";
+    group = "parseable-user";
   };
   # |----------------------------------------------------------------------| #
-
-  systemd.services.parseable.after = ["minio.service"];
+  #
+  systemd.services."parseable-s3" = {
+    serviceConfig = {
+      Description = "Parseable";
+      Type = "simple";
+      User = "parseable-user";
+      Group = "parseable-user";
+      EnvironmentFile = "/etc/default/parseable";
+      WorkingDirectory = "/usr/local/";
+      ExecStart = "/usr/local/bin/parseable s3-store";
+      wantedBy = ["multi-user.target"];
+      Wants = ["network-online.target"];
+      After = ["network-online.target"];
+      LimitNOFILE = 1048576;
+      # AssertFileIsExecutable=/usr/local/bin/parseable
+    };
+  };
 
   systemd.tmpfiles.rules = [
     "C /etc/default/parseable - - - - ${config.age.secrets.parseable-config.path}"
