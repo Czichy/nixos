@@ -99,13 +99,13 @@ in {
     type = "simple";
     user = "parseable-user";
     group = "parseable-user";
-    environmentFile = "/etc/default/parseable";
     execStart = "/usr/local/bin/parseable s3-store";
     wantedBy = ["multi-user.target"];
     wants = ["network-online.target"];
     after = ["network-online.target"];
     # LimitNOFILE = 1048576;
     serviceConfig = {
+      environmentFile = "/etc/default/parseable";
       workingDirectory = "/usr/local/";
       # AssertFileIsExecutable=/usr/local/bin/parseable
     };
