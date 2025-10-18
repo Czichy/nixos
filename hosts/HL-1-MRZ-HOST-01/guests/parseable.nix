@@ -95,10 +95,10 @@ in {
   # |----------------------------------------------------------------------| #
   #
   systemd.services."parseable-s3" = {
-    Description = "Parseable";
-    WantedBy = ["multi-user.target"];
-    Wants = ["network-online.target"];
-    After = ["network-online.target"];
+    description = "Parseable";
+    wantedBy = ["multi-user.target"];
+    wants = ["network-online.target"];
+    after = ["network-online.target"];
 
     # type = "simple";
     # LimitNOFILE = 1048576;
