@@ -103,7 +103,7 @@ in {
     # type = "simple";
     # LimitNOFILE = 1048576;
     serviceConfig = {
-      EnvironmentFile = "/etc/default/parseable";
+      EnvironmentFile = config.age.secrets.parseable-config.path; #"/etc/default/parseable";
       WorkingDirectory = "/usr/local/";
       User = "parseable-user";
       Group = "parseable-user";
