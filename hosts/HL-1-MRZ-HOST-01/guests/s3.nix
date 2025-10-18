@@ -25,27 +25,27 @@ in {
   };
   # |----------------------------------------------------------------------| #
   #
-  nodes.HL-4-PAZ-PROXY-01 = {
-    # SSL config and forwarding to local reverse proxy
-    services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
-      reverse_proxy https://10.15.70.1:443 {
-          transport http {
-            # Wichtige Einstellung: Deaktiviert die TLS-Zertifikatsprüfung
-            tls_insecure_skip_verify
-          	tls_server_name ${s3Domain}
-          }
-          # Diese Header sind entscheidend für die Weiterleitung
-          header_up Host {http.request.host}
-          header_up X-Real-IP {http.request.remote}
-          header_up X-Forwarded-For {http.request.remote}
-          header_up X-Forwarded-Proto {http.request.scheme}
-      }
-      # tls ${certloc}/cert.pem ${certloc}/key.pem {
-      #   protocols tls1.3
-      # }
-      import czichy_headers
-    '';
-  };
+  # nodes.HL-4-PAZ-PROXY-01 = {
+  #   # SSL config and forwarding to local reverse proxy
+  #   services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
+  #     reverse_proxy https://10.15.70.1:443 {
+  #         transport http {
+  #           # Wichtige Einstellung: Deaktiviert die TLS-Zertifikatsprüfung
+  #           tls_insecure_skip_verify
+  #         	tls_server_name ${s3Domain}
+  #         }
+  #         # Diese Header sind entscheidend für die Weiterleitung
+  #         header_up Host {http.request.host}
+  #         header_up X-Real-IP {http.request.remote}
+  #         header_up X-Forwarded-For {http.request.remote}
+  #         header_up X-Forwarded-Proto {http.request.scheme}
+  #     }
+  #     # tls ${certloc}/cert.pem ${certloc}/key.pem {
+  #     #   protocols tls1.3
+  #     # }
+  #     import czichy_headers
+  #   '';
+  # };
   # reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:${toString influxdbPort}
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
