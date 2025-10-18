@@ -95,21 +95,21 @@ in {
   # |----------------------------------------------------------------------| #
   #
   systemd.services."parseable-s3" = {
-    description = "Parseable";
-    wantedBy = ["multi-user.target"];
-    wants = ["network-online.target"];
-    after = ["network-online.target"];
+    Description = "Parseable";
+    WantedBy = ["multi-user.target"];
+    Wants = ["network-online.target"];
+    After = ["network-online.target"];
 
     # type = "simple";
     # LimitNOFILE = 1048576;
     serviceConfig = {
-      environmentFile = "/etc/default/parseable";
-      workingDirectory = "/usr/local/";
-      user = "parseable-user";
-      group = "parseable-user";
+      EnvironmentFile = "/etc/default/parseable";
+      WorkingDirectory = "/usr/local/";
+      User = "parseable-user";
+      Group = "parseable-user";
       Restart = "always";
-      execStart = "/usr/local/bin/parseable s3-store";
-      # AssertFileIsExecutable=/usr/local/bin/parseable
+      ExecStart = "/usr/local/bin/parseable s3-store";
+      AssertFileIsExecutable = "/usr/local/bin/parseable";
     };
   };
 
