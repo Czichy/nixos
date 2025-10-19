@@ -127,7 +127,7 @@ with lib; let
     # }
     {
       name = "niri.desktop";
-      path = desktopSession "niri" "${pkgs.niri-unstable}/bin/niri-session";
+      path = desktopSession "niri" "${pkgs.niri}/bin/niri-session";
     }
   ];
 
@@ -163,7 +163,7 @@ in {
 
       programs.regreet.settings = {
         background = {
-          path = ../files/background.jpg;
+          path = ../../../assets/wallpapers/headphones-paint-color-splash.jpg;
           fit = "Cover";
         };
         commands = {
@@ -185,7 +185,7 @@ in {
         enable = true;
         restart = true;
         settings = {
-          default_session.command = "${createGreeter "${pkgs.niri-unstable}/bin/niri-session" sessions}/bin/greeter";
+          default_session.command = "${createGreeter "${pkgs.niri}/bin/niri-session" sessions}/bin/greeter";
         };
       };
       ## prevents systemd spewing the console with log messages when greeter is active

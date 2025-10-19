@@ -108,8 +108,8 @@ in {
       User = "parseable-user";
       Group = "parseable-user";
       Restart = "always";
-      ExecStart = "${pkgs.parseable} s3-store";
-      AssertFileIsExecutable = "/usr/local/bin/parseable";
+      ExecStart = "${pkgs.parseable}/bin/parseable s3-store";
+      AssertFileIsExecutable = "${pkgs.parseable}/bin/parseable";
     };
   };
 
