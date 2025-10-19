@@ -91,9 +91,6 @@ in {
             tls_server_name ${vaultwardenDomain}
           }
         }
-        tls ${certloc}/cert.pem ${certloc}/key.pem {
-          protocols tls1.3
-        }
         import czichy_headers
       '';
       # ''
@@ -117,12 +114,37 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${vaultwardenDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
-        tls ${certloc}/cert.pem ${certloc}/key.pem {
-           protocols tls1.3
+        # TLS-Terminierung
+        # Caddy generiert automatisch ein Zertifikat, signiert mit der privaten CA.
+        tls {
+          issuer internal
+          protocols tls1.3
         }
+
+        # Reverse Proxy zum Backend (Vaultwarden)
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+
         import czichy_headers
       '';
+      # Füge einen zusätzlichen HTTP-Block für einfache interne Erreichbarkeit hinzu
+      # Dieser Block kann interne Clients bedienen, wenn sie per HTTP auf die Domain zugreifen
+      # oder wenn der DNS-Server die Domain auf Port 80 des Internal Caddy auflöst.
+      # WICHTIG: Die URL wird von internen Clients direkt angesprochen.
+      # Wenn Sie HTTPS auch intern erzwingen wollen, lassen Sie diesen Block weg
+      # und müssen das interne Zertifikat auf internen Clients installieren.
+
+      # extraConfig = ''
+      #   http://${vaultwardenDomain} {
+      #     reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+      #     import czichy_headers
+      #   }
+      # '';
+      # reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.services.vaultwarden.config.rocketPort}
+      # tls ${certloc}/cert.pem ${certloc}/key.pem {
+      #    protocols tls1.3
+      # }
+      # import czichy_headers
+      # '';
     };
   };
 
