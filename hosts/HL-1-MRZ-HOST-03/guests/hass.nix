@@ -74,7 +74,7 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${homeassistantDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:${toString config.http.server_port}
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-VAULT-01".ipv4}:8123
         tls ${certloc}/cert.pem ${certloc}/key.pem {
            protocols tls1.3
         }
