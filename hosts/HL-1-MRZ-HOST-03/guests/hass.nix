@@ -44,7 +44,7 @@ in {
           transport http{
             # Da der innere Caddy ein eigenes Zertifikat ausstellt,
             # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
-            # tls_insecure_skip_verify
+            tls_insecure_skip_verify
             tls_server_name ${homeassistantDomain}
           }
         }
