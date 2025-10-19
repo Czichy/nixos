@@ -21,8 +21,8 @@ in {
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
-    allowedTCPPorts = [8000];
-    allowedUDPPorts = [8000];
+    allowedTCPPorts = [8000 8001 8002];
+    allowedUDPPorts = [8000 8001 8002];
   };
   # |----------------------------------------------------------------------| #
   #
@@ -104,7 +104,7 @@ in {
     # LimitNOFILE = 1048576;
     serviceConfig = {
       EnvironmentFile = config.age.secrets.parseable-config.path; #"/etc/default/parseable";
-      WorkingDirectory = "/usr/local/";
+      # WorkingDirectory = "/usr/local/";
       # User = "parseable-user";
       # Group = "parseable-user";
       Restart = "always";
