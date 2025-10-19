@@ -112,13 +112,14 @@ in {
     region = "germany-frankfurt-1";
   };
   systemd.services.minio = {
-    environment.MINIO_SERVER_URL = "https://${s3Domain}";
+    environment.MINIO_SERVER_URL = "http://10.15.40.19:9000";
+    # environment.MINIO_SERVER_URL = "https://${s3Domain}";
     postStart = ''
       # Wait until minio is up
       ${lib.getExe pkgs.curl} --retry 5 --retry-connrefused --fail --no-progress-meter -o /dev/null "http://localhost:9000/minio/health/live"
 
       # Make sure bucket exists
-      mkdir -p ${lib.escapeShellArg config.services.minio.dataDir}/ente
+      mkdir -p ${lib.escapeShellArg config.services.minio.dataDir}/parseable
     '';
   };
 }
