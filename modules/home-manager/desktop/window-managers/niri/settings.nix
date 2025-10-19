@@ -59,6 +59,19 @@
           options = "grp:sclk_toggle";
         };
       };
+      mouse = {
+        # // natural-scroll
+        accel-speed = 0.2;
+        # // accel-profile "flat"
+        scroll-factor = 3.0;
+        # scroll-factor vertical=1.0 horizontal=-2.0
+        # // scroll-method "no-scroll"
+        # // scroll-button 273
+        # // scroll-button-lock
+        # // left-handed
+        # // middle-emulation
+      };
+
       # numlock = true;
       focus-follows-mouse.enable = true;
       warp-mouse-to-focus.enable = false;

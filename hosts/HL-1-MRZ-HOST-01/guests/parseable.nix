@@ -104,7 +104,7 @@ in {
     # LimitNOFILE = 1048576;
     serviceConfig = {
       EnvironmentFile = config.age.secrets.parseable-config.path; #"/etc/default/parseable";
-      # WorkingDirectory = "/usr/local/";
+      WorkingDirectory = "/usr/local/";
       # User = "parseable-user";
       # Group = "parseable-user";
       Restart = "always";
@@ -116,4 +116,14 @@ in {
   systemd.tmpfiles.rules = [
     "C /etc/default/parseable - - - - ${config.age.secrets.parseable-config.path}"
   ];
+
+  systemd.tmpfiles.settings = {
+    "10-working-dir" = {
+      "/usr/local".d = {
+        user = "root";
+        group = "root";
+        mode = "0777";
+      };
+    };
+  };
 }
