@@ -37,12 +37,6 @@ in {
       }
     '';
     globalConfig = ''
-      # Caddy-Setup zur automatischen Erstellung und Nutzung einer privaten CA
-      # pki {
-      #     ca local {
-      #       name "czichy_internal_ca"
-      #     }
-      #   }
       servers {
       	trusted_proxies static private_ranges
       	trusted_proxies static 10.46.0.0/24
@@ -67,15 +61,6 @@ in {
         	}
         }
     '';
-    # package = pkgs.callPackage ./custom-caddy.nix {
-    #   plugins = [
-    #     # "github.com/mholt/caddy-l4"
-    #     # "github.com/caddyserver/caddy/v2/modules/standard"
-    #     # "github.com/hslatman/caddy-crowdsec-bouncer/http@main"
-    #     # "github.com/hslatman/caddy-crowdsec-bouncer/layer4@main"
-    #     "github.com/caddy-dns/cloudflare"
-    #   ];
-    # };
   };
 
   # |----------------------------------------------------------------------| #
