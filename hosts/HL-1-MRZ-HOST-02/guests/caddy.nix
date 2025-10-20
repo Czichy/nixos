@@ -112,5 +112,23 @@ in {
       # ...
     };
   };
+  # 2. Systemd Timer zur regelmäßigen Ausführung (z.B. 1x wöchentlich)
+  systemd.timers.acme-cert-sync = {
+    description = "Run ACME cert sync weekly for internal Caddy";
+    # Ziel, damit der Timer im System aktiviert wird
+    wantedBy = ["timers.target"];
+    timerConfig = {
+      # Führe einmal wöchentlich aus (ideal nach der möglichen LE-Erneuerung)
+      OnCalendar = "weekly";
+      # Startet den Service direkt nach dem ersten Boot
+      Persistent = true;
+      # Der Timer startet den Service "acme-cert-sync.service"
+    };
+  };
+
+  # 3. Notwendige Pakete
+  environment.systemPackages = [pkgs.rsync];
+  #
+  # |----------------------------------------------------------------------| #
   system.stateVersion = "24.05";
 }
