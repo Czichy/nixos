@@ -6,6 +6,7 @@
   config,
   lib,
   hostName,
+  pkgs,
   ...
 }:
 with builtins;
