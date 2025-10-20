@@ -50,10 +50,10 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
       reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:9000 {
-        header_up Host {http.request.host}
-        header_up X-Real-IP {http.request.remote}
-        header_up X-Forwarded-For {http.request.remote}
-        header_up X-Forwarded-Proto {http.request.scheme}
+        # header_up Host {http.request.host}
+        # header_up X-Real-IP {http.request.remote}
+        # header_up X-Forwarded-For {http.request.remote}
+        # header_up X-Forwarded-Proto {http.request.scheme}
       }
       tls ${certloc}/cert.pem ${certloc}/key.pem {
          protocols tls1.3

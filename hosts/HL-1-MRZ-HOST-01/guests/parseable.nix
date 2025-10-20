@@ -35,10 +35,10 @@ in {
             tls_insecure_skip_verify
           	tls_server_name ${parseableDomain}
           }
-          header_up Host {http.request.host}
-          header_up X-Real-IP {http.request.remote}
-          header_up X-Forwarded-For {http.request.remote}
-          header_up X-Forwarded-Proto {http.request.scheme}
+          # header_up Host {http.request.host}
+          # header_up X-Real-IP {http.request.remote}
+          # header_up X-Forwarded-For {http.request.remote}
+          # header_up X-Forwarded-Proto {http.request.scheme}
       }
       tls ${certloc}/cert.pem ${certloc}/key.pem {
         protocols tls1.3
@@ -50,10 +50,10 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${parseableDomain}".extraConfig = ''
       reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-LOG-01".ipv4}:8080 {
-          header_up Host {http.request.host}
-          header_up X-Real-IP {http.request.remote}
-          header_up X-Forwarded-For {http.request.remote}
-          header_up X-Forwarded-Proto {http.request.scheme}
+          # header_up Host {http.request.host}
+          # header_up X-Real-IP {http.request.remote}
+          # header_up X-Forwarded-For {http.request.remote}
+          # header_up X-Forwarded-Proto {http.request.scheme}
           }
       tls ${certloc}/cert.pem ${certloc}/key.pem {
          protocols tls1.3

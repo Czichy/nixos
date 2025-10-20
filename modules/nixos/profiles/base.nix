@@ -9,6 +9,9 @@ with lib; let
 
   cfg = config.tensorfiles.profiles.base;
   _ = mkOverrideAtProfileLevel;
+
+  # Pfad zur kopierten Root-CA-Datei im Flake-Repository
+  internalCARoot = ../../../assets/certs/caddy_internal_root.crt;
 in {
   options.tensorfiles.profiles.base = with types; {
     enable = mkEnableOption ''
@@ -23,6 +26,21 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
+    {
+      # Aktiviert die PKI-Dienste (falls nicht bereits geschehen)
+      # security.pki.enable = true;
+
+      # Importiert die Root-CA-Datei in den globalen System-Trust-Store
+      security.pki.certificateFiles = [internalCARoot];
+      #   {
+      #     # Laden der Datei aus dem Flake
+      #     cert = builtins.readFile internalCARoot;
+
+      #     # Name, wie es im Zertifikatsmanager erscheinen soll
+      #     name = "Caddy Internal CA for czichy.com";
+      #   }
+      # ];
+    }
     {system.stateVersion = _ "24.11";}
     # |----------------------------------------------------------------------| #
   ]);
