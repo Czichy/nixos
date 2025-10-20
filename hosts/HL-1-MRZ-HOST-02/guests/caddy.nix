@@ -14,7 +14,14 @@ with builtins; let
 
   acme-cfg = config.tensorfiles.services.networking.acme;
   caddyMetricsPort = 2019;
-  syncKeyName = "id_sync_vps_key"; # Name Deines Secrets
+
+  syncKeyName = "id_sync_vps_key";
+  vpsUserHost = "acme-sync@10.46.0.90";
+  vpsCertPath = "/var/lib/acme/*.czichy.com/";
+  localCertDir = "/var/lib/acme-sync/czichy.com";
+
+  # Der Pfad, unter dem das Secret von NixOS im Dateisystem bereitgestellt wird
+  privateKeyPath = "/run/keys/sync/${syncKeyName}";
 in {
   networking.hostName = "HL-3-DMZ-PROXY-01";
   # |----------------------------------------------------------------------| #
@@ -83,6 +90,7 @@ in {
   # Du musst den Inhalt von ~/.ssh/id_sync_vps verschlüsselt in Deinem Flake-Repo ablegen.
   age.secrets.${syncKeyName} = {
     # Der Schlüssel wird unter /run/keys/sync/id_sync_vps_key abgelegt
+    #
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-02/acme-sync/id_sync_vps_key.age";
     # Wichtig: Lesbar für den root-Benutzer, der den systemd-Service ausführt
     owner = "root";
@@ -107,7 +115,16 @@ in {
     # ... (restliche Service-Definition aus der vorherigen Antwort) ...
     serviceConfig = {
       # Füge die private Schlüsseldatei als Identität hinzu
-      ExecStart = "${pkgs.rsync}/bin/rsync -az --include='*/' --include='fullchain.pem' --include='key.pem' --exclude='*' -e \"${pkgs.openssh}/bin/ssh -i /run/keys/sync/${syncKeyName} -o StrictHostKeyChecking=yes\" acme-sync@10.10.0.1:/var/lib/acme/czichy.com/ /var/lib/acme-sync/czichy.com";
+      ExecStart = ''
+        ${pkgs.rsync}/bin/rsync -az \
+          --include='*/' \
+          --include='fullchain.pem' \
+          --include='key.pem' \
+          --exclude='*' \
+          -e "${pkgs.openssh}/bin/ssh -i ${age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes" \
+          ${vpsUserHost}:${vpsCertPath} \
+          ${localCertDir}
+      '';
       User = "root";
       # ...
     };
