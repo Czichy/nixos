@@ -81,7 +81,7 @@ in {
   # |----------------------------------------------------------------------| #
   # 1. Private Schlüsseldatei über Age einbinden
   # Du musst den Inhalt von ~/.ssh/id_sync_vps verschlüsselt in Deinem Flake-Repo ablegen.
-  config.age.secrets.${syncKeyName} = {
+  age.secrets.${syncKeyName} = {
     # Der Schlüssel wird unter /run/keys/sync/id_sync_vps_key abgelegt
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-02/acme-sync/id_sync_vps_key.age";
     # Wichtig: Lesbar für den root-Benutzer, der den systemd-Service ausführt
@@ -91,7 +91,7 @@ in {
   };
 
   # 2. Konfiguration des SSH-Clients
-  config.services.ssh = {
+  services.ssh = {
     # Stelle sicher, dass der Client die WireGuard-IP kennt (ansonsten wird das erste Mal nach Bestätigung gefragt)
     knownHosts = {
       "vps-wireguard" = {
@@ -103,7 +103,7 @@ in {
   };
 
   # 3. Synchronisations-Service anpassen
-  config.systemd.services.acme-cert-sync = {
+  systemd.services.acme-cert-sync = {
     # ... (restliche Service-Definition aus der vorherigen Antwort) ...
     serviceConfig = {
       # Füge die private Schlüsseldatei als Identität hinzu
@@ -112,41 +112,5 @@ in {
       # ...
     };
   };
-  # age.secrets.acme-cloudflare-dns-token = {
-  #   file = secretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
-  #   mode = "440";
-  #   group = "acme";
-  # };
-
-  # age.secrets.acme-cloudflare-zone-token = {
-  #   file = secretsPath + "/cloudflare/acme-cloudflare-dns-token.age";
-  #   mode = "440";
-  #   group = "acme";
-  # };
-
-  # |----------------------------------------------------------------------| #
-  # users.groups.acme.members = ["caddy"];
-  # security.acme = {
-  #   acceptTerms = true;
-  #   defaults = {
-  #     email = "christian@czichy.com";
-  #     credentialFiles = {
-  #       CF_DNS_API_TOKEN_FILE = config.age.secrets.acme-cloudflare-dns-token.path;
-  #       CF_ZONE_API_TOKEN_FILE = config.age.secrets.acme-cloudflare-zone-token.path;
-  #     };
-  #     dnsProvider = "cloudflare";
-  #     dnsPropagationCheck = true;
-  #     reloadServices = ["caddy"];
-  #   };
-  #   certs = genAttrs acme-cfg.wildcardDomains (domain: {
-  #     extraDomainNames = ["*.${domain}"];
-  #   });
-  # };
-
-  # |----------------------------------------------------------------------| #
-
-  # topology.self.services.caddy.info = "https://" + caddyLocalDomain;
-
-  # topology.self.connections.dmz = mkConnection "HL-3-MRZ-FW-01" "dmz";
   system.stateVersion = "24.05";
 }
