@@ -91,7 +91,7 @@ in {
   };
 
   # 2. Konfiguration des SSH-Clients
-  services.ssh = {
+  config.services.ssh = {
     # Stelle sicher, dass der Client die WireGuard-IP kennt (ansonsten wird das erste Mal nach Bestätigung gefragt)
     knownHosts = {
       "vps-wireguard" = {
@@ -103,7 +103,7 @@ in {
   };
 
   # 3. Synchronisations-Service anpassen
-  systemd.services.acme-cert-sync = {
+  config.systemd.services.acme-cert-sync = {
     # ... (restliche Service-Definition aus der vorherigen Antwort) ...
     serviceConfig = {
       # Füge die private Schlüsseldatei als Identität hinzu
