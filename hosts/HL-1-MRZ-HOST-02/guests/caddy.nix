@@ -121,7 +121,7 @@ in {
           --include='fullchain.pem' \
           --include='key.pem' \
           --exclude='*' \
-          -e "${pkgs.openssh}/bin/ssh -i ${age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes" \
+          -e "${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes" \
           ${vpsUserHost}:${vpsCertPath} \
           ${localCertDir}
       '';
