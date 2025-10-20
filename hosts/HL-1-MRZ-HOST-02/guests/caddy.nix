@@ -92,7 +92,6 @@ in {
 
   # 2. Konfiguration des SSH-Clients
   programs.ssh = {
-    enable = true;
     # Stelle sicher, dass der Client die WireGuard-IP kennt (ansonsten wird das erste Mal nach Bestätigung gefragt)
     knownHosts = {
       "vps-wireguard" = {
