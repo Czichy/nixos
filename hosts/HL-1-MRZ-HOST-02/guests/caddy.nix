@@ -81,7 +81,7 @@ in {
   # |----------------------------------------------------------------------| #
   # 1. Private Schlüsseldatei über Age einbinden
   # Du musst den Inhalt von ~/.ssh/id_sync_vps verschlüsselt in Deinem Flake-Repo ablegen.
-  age.secrets.${syncKeyName} = {
+  config.age.secrets.${syncKeyName} = {
     # Der Schlüssel wird unter /run/keys/sync/id_sync_vps_key abgelegt
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-02/acme-sync/id_sync_vps_key.age";
     # Wichtig: Lesbar für den root-Benutzer, der den systemd-Service ausführt
