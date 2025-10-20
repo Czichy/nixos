@@ -9,7 +9,7 @@
     isSystemUser = true;
     group = "acme-sync";
     # optional: Shell deaktivieren für mehr Sicherheit
-    shell = pkgs.zsh; # oder pkgs.bash, aber z.B. /bin/false ist sicherer
+    shell = pkgs.fish; # oder pkgs.bash, aber z.B. /bin/false ist sicherer
   };
   users.groups.acme-sync = {};
 
