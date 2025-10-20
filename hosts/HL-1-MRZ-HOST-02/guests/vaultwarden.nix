@@ -97,6 +97,7 @@ in {
         ''
           reverse_proxy https://10.15.70.1:443{
               transport http {
+                tls_insecure_skip_verify
               	tls_server_name ${vaultwardenDomain}
               }
           }
