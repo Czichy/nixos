@@ -23,6 +23,7 @@ in {
     ./net.nix
     ./modules
     ../../modules/ente.nix
+    ./acme-sync.nix
   ];
 
   # topology.self.hardware.image = ../../topology/images/odroid-h3.png;
