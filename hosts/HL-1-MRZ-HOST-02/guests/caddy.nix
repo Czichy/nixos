@@ -38,11 +38,11 @@ in {
     '';
     globalConfig = ''
       # Caddy-Setup zur automatischen Erstellung und Nutzung einer privaten CA
-      pki {
-          ca local {
-            name "czichy_internal_ca"
-          }
-        }
+      # pki {
+      #     ca local {
+      #       name "czichy_internal_ca"
+      #     }
+      #   }
       servers {
       	trusted_proxies static private_ranges
       	trusted_proxies static 10.46.0.0/24
