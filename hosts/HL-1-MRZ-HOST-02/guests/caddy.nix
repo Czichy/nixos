@@ -91,7 +91,7 @@ in {
   };
 
   # 2. Konfiguration des SSH-Clients
-  services.ssh = {
+  users.users.root.openssh = {
     # Stelle sicher, dass der Client die WireGuard-IP kennt (ansonsten wird das erste Mal nach Bestätigung gefragt)
     knownHosts = {
       "vps-wireguard" = {
