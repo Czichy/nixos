@@ -82,31 +82,21 @@ in {
   nodes.HL-4-PAZ-PROXY-01 = {
     # SSL config and forwarding to local reverse proxy
     services.caddy = {
-      virtualHosts."${vaultwardenDomain}".extraConfig =
-        # ''
-        # reverse_proxy https://10.15.70.1:443 {
-        #   transport http{
-        #     # Da der innere Caddy ein eigenes Zertifikat ausstellt,
-        #     # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
-        #     # tls_insecure_skip_verify
-        #     tls_server_name ${vaultwardenDomain}
-        #   }
-        # }
-        # import czichy_headers
-        # '';
-        ''
-          reverse_proxy https://10.15.70.1:443{
-              transport http {
-                tls_insecure_skip_verify
-              	tls_server_name ${vaultwardenDomain}
-              }
+      virtualHosts."${vaultwardenDomain}".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+          transport http{
+            # Da der innere Caddy ein eigenes Zertifikat ausstellt,
+            # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
+            # tls_insecure_skip_verify
+            tls_server_name ${vaultwardenDomain}
           }
+        }
+        import czichy_headers
+      '';
 
-          tls ${certloc}/cert.pem ${certloc}/key.pem {
-            protocols tls1.3
-          }
-          import czichy_headers
-        '';
+      # tls ${certloc}/cert.pem ${certloc}/key.pem {
+      #   protocols tls1.3
+      # }
     };
   };
   # Der innere Caddy (HL-1-MRZ-HOST-02-caddy) muss nun ein eigenes TLS-Zertifikat bereitstellen,
