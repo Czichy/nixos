@@ -91,17 +91,17 @@ in {
   };
 
   # 2. Konfiguration des SSH-Clients
-  services.ssh = {
-    enable = true;
-    # Stelle sicher, dass der Client die WireGuard-IP kennt (ansonsten wird das erste Mal nach Bestätigung gefragt)
-    knownHosts = {
-      "vps-wireguard" = {
-        # Ersetze 10.10.0.1 durch die WireGuard-IP Deines VPS
-        hostNames = ["10.46.0.90"];
-        publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAe95eSPkz/ASkZkfuXKtzufGdyI3s6d9Ms4ZuQaUXjs"; # Öffentlichen Schlüssel des VPS eintragen
-      };
-    };
-  };
+  # services.ssh = {
+  #   enable = true;
+  #   # Stelle sicher, dass der Client die WireGuard-IP kennt (ansonsten wird das erste Mal nach Bestätigung gefragt)
+  #   knownHosts = {
+  #     "vps-wireguard" = {
+  #       # Ersetze 10.10.0.1 durch die WireGuard-IP Deines VPS
+  #       hostNames = ["10.46.0.90"];
+  #       publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAe95eSPkz/ASkZkfuXKtzufGdyI3s6d9Ms4ZuQaUXjs"; # Öffentlichen Schlüssel des VPS eintragen
+  #     };
+  #   };
+  # };
 
   # 3. Synchronisations-Service anpassen
   systemd.services.acme-cert-sync = {
