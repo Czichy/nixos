@@ -49,7 +49,7 @@ in {
   # reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:${toString influxdbPort}
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${parseableDomain}".extraConfig = ''
-      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-LOG-01".ipv4}:8080 {
+      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-LOG-01".ipv4}:8000 {
           # header_up Host {http.request.host}
           # header_up X-Real-IP {http.request.remote}
           # header_up X-Forwarded-For {http.request.remote}
