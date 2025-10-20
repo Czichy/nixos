@@ -83,6 +83,12 @@ in {
           # FIXME: enable ipv6 "2001:4860:4860::8844"
         ];
         dhcp.enabled = false;
+        rewrites = [
+          {
+            domain = "vault.czichy.com";
+            answer = "10.15.40.22";
+          }
+        ];
       };
       filtering.rewrites =
         [
