@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  # globals,
+  pkgs,
   secretsPath,
   ...
 }:
