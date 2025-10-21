@@ -11,7 +11,15 @@
     # optional: Shell deaktivieren für mehr Sicherheit
     shell = "${pkgs.bash}/bin/sh"; # Use /bin/sh or /bin/bash
   };
+  # Stelle sicher, dass die Gruppe acme existiert
+  users.groups.acme = {};
   users.groups.acme-sync = {};
+
+  # Füge acme-sync zur Gruppe acme hinzu
+  users.users.acme-sync = {
+    # ...
+    groups = ["acme" "acme-sync"]; # Füge "acme" hinzu
+  };
 
   # 2. Öffentlichen Schlüssel hinzufügen
   users.users.acme-sync.openssh.authorizedKeys.keys = [
