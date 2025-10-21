@@ -7,7 +7,7 @@
   ...
 }: let
   vaultwardenDomain = "vault.czichy.com";
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
   # backupPrepareScript = pkgs.writeShellApplication {
   #   name = "backup-prepare";
   #   runtimeInputs = [pkgs.home-assistant-cli];
