@@ -112,7 +112,17 @@ in {
 
   # 3. Synchronisations-Service anpassen
   systemd.services.acme-cert-sync = {
-    # ... (restliche Service-Definition aus der vorherigen Antwort) ...
+    preStart = ''
+      # 1. Stelle sicher, dass der Root-Ordner existiert und root/caddy gehört
+      mkdir -p ${localSyncRoot}
+      chown root:caddy ${localSyncRoot}
+      chmod 750 ${localSyncRoot}
+
+      # 2. Stelle sicher, dass das Zielverzeichnis existiert und caddy darauf zugreifen kann
+      mkdir -p ${localCertDir}
+      chown -R caddy:caddy ${localCertDir}
+      chmod -R 750 ${localCertDir}
+    '';
     serviceConfig = {
       # Füge die private Schlüsseldatei als Identität hinzu
       ExecStart = ''
