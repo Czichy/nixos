@@ -127,21 +127,27 @@ in {
     '';
     serviceConfig = {
       # Füge die private Schlüsseldatei als Identität hinzu
-      ExecStart = ''
-        ${pkgs.rsync}/bin/rsync -az \
-          --include='*/' \
-          --include='fullchain.pem' \
-          --include='key.pem' \
-          --exclude='*' \
-          -e "${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes" \
-          ${vpsUserHost}:${vpsCertPath} \
-          ${localCertDir}
+      # # WICHTIG: Verwende &&, um chown nur bei erfolgreichem rsync auszuführen
+      ExecStart = "${pkgs.bash}/bin/bash -c '\
+        ${pkgs.rsync}/bin/rsync -az --include='\*/' --include='fullchain.pem' --include='key.pem' --exclude='*' -e \"${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes\" ${vpsUserHost}:${vpsCertPath} ${localCertDir} && \
+        ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir} && \
+        ${pkgs.coreutils}/bin/chmod -R 640 ${localCertDir}/\* \
+      '";
+      # ExecStart = ''
+      #   ${pkgs.rsync}/bin/rsync -az \
+      #     --include='*/' \
+      #     --include='fullchain.pem' \
+      #     --include='key.pem' \
+      #     --exclude='*' \
+      #     -e "${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes" \
+      #     ${vpsUserHost}:${vpsCertPath} \
+      #     ${localCertDir}
 
-        # 2. **CRITICAL STEP:** Change ownership of the synchronized files to Caddy
-        # We assume your Caddy user is named 'caddy'.
-        ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir}
-        ${pkgs.coreutils}/bin/chmod -R 640 ${localCertDir}/*
-      '';
+      #   # 2. **CRITICAL STEP:** Change ownership of the synchronized files to Caddy
+      #   # We assume your Caddy user is named 'caddy'.
+      #   ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir}
+      #   ${pkgs.coreutils}/bin/chmod -R 640 ${localCertDir}/*
+      # '';
       User = "root";
     };
   };
