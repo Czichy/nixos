@@ -11,6 +11,7 @@
   # 1. Benutzer "acme-sync" erstellen, falls noch nicht vorhanden
   users.users.acme-sync = {
     isSystemUser = true;
+    group = "acme-sync";
     extraGroups = ["acme"]; # Füge "acme" hinzu
     # optional: Shell deaktivieren für mehr Sicherheit
     shell = "${pkgs.bash}/bin/sh"; # Use /bin/sh or /bin/bash
