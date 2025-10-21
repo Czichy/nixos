@@ -8,7 +8,7 @@
   ...
 }: let
   homeassistantDomain = "home.${globals.domains.me}";
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
 in {
   microvm.mem = 4196;
   microvm.vcpu = 4;

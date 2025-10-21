@@ -12,7 +12,7 @@
   # |----------------------------------------------------------------------| #
   docspellDomain = "docs.${globals.domains.me}";
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
 
   full-text-search = {
     enabled = true;

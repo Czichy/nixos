@@ -7,7 +7,7 @@
   ...
 }: let
   sambaDomain = "smb.czichy.com";
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
   # smbUsers = config.repo.secrets.local.samba.users;
   smbUsers = {
     christian = {

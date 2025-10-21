@@ -10,7 +10,7 @@
   influxdbDomain = "influxdb.${globals.domains.me}";
   influxdbPort = 8086;
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
 in {
   # age.secrets.github-access-token = {
   #   rekeyFile = config.node.secretsDir + "/github-access-token.age";

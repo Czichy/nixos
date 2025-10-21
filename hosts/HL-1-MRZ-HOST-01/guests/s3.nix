@@ -14,7 +14,7 @@
 let
   s3Domain = "s3.${globals.domains.me}";
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
 in {
   networking.hostName = "HL-3-RZ-S3-01";
 

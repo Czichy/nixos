@@ -8,7 +8,7 @@
   influxdbDomain = "influxdb.${globals.domains.me}";
   influxdbPort = 8086;
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
 in {
   # |----------------------------------------------------------------------| #
   globals.services.influxdb.domain = influxdbDomain;

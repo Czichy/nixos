@@ -11,7 +11,7 @@
   # |----------------------------------------------------------------------| #
   docspellDomain = "search.${globals.domains.me}";
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
   # |----------------------------------------------------------------------| #
 in {
   microvm.mem = 1024 * 2;

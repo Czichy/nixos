@@ -15,7 +15,7 @@ let
   parseableDomain = "log.${globals.domains.me}";
   s3Domain = "log-s3.${globals.domains.me}";
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
 in {
   networking.hostName = "HL-3-RZ-LOG-01";
 

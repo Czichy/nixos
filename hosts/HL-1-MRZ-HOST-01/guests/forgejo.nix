@@ -11,7 +11,7 @@
   forgejoDomain = "git.czichy.com";
   # forgejoDomain = "git.${globals.domains.me}";
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
   # |----------------------------------------------------------------------| #
 in {
   networking.hostName = hostName;

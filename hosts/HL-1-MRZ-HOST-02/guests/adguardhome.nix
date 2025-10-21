@@ -4,7 +4,7 @@
   ...
 }: let
   adguardhomeDomain = "adguardhome.czichy.com";
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
   # adguardhomeDomain = "adguardhome.${config.repo.secrets.global.domains.me}";
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {

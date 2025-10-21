@@ -22,7 +22,7 @@ let
   # SELECT * from users;
   admin_id = "1580559962386438";
 
-  certloc = "/var/lib/acme/czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
 in {
   networking.hostName = "HL-3-RZ-ENTE-01";
 
