@@ -20,6 +20,8 @@ with builtins; let
 
   vpsCertPath = "/var/lib/acme/czichy.com/";
   localCertDir = "/var/lib/acme-sync/czichy.com";
+  # Wir brauchen nur den Pfad zum Root-Sync-Ordner
+  localSyncRoot = "/var/lib/acme-sync";
   # Der Pfad, unter dem das Secret von NixOS im Dateisystem bereitgestellt wird
   # privateKeyPath = "/run/keys/sync/${syncKeyName}";
 in {
