@@ -136,9 +136,13 @@ in {
           -e "${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes" \
           ${vpsUserHost}:${vpsCertPath} \
           ${localCertDir}
+
+        # 2. **CRITICAL STEP:** Change ownership of the synchronized files to Caddy
+        # We assume your Caddy user is named 'caddy'.
+        ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir}
+        ${pkgs.coreutils}/bin/chmod -R 640 ${localCertDir}/*
       '';
       User = "root";
-      # ...
     };
   };
   # 2. Systemd Timer zur regelmäßigen Ausführung (z.B. 1x wöchentlich)
@@ -154,6 +158,11 @@ in {
       # Der Timer startet den Service "acme-cert-sync.service"
     };
   };
+
+  # 2. Ensure Sync runs before Caddy
+  # This section MUST be added to your internal Caddy host config to ensure the sync runs first.
+  systemd.services.caddy.requires = ["acme-cert-sync.service"];
+  systemd.services.caddy.after = ["acme-cert-sync.service"];
 
   # 3. Notwendige Pakete
   environment.systemPackages = [pkgs.rsync];
