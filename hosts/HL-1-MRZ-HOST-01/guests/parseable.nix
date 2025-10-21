@@ -40,7 +40,7 @@ in {
           # header_up X-Forwarded-For {http.request.remote}
           # header_up X-Forwarded-Proto {http.request.scheme}
       }
-      tls ${certloc}/cert.pem ${certloc}/key.pem {
+      tls ${certloc}/fullchain.pem ${certloc}/key.pem {
         protocols tls1.3
       }
       import czichy_headers
@@ -55,7 +55,7 @@ in {
           # header_up X-Forwarded-For {http.request.remote}
           # header_up X-Forwarded-Proto {http.request.scheme}
           }
-      tls ${certloc}/cert.pem ${certloc}/key.pem {
+      tls ${certloc}/fullchain.pem ${certloc}/key.pem {
          protocols tls1.3
       }
       import czichy_headers

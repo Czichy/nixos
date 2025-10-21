@@ -34,7 +34,7 @@ in {
             }
         }
 
-        tls ${certloc}/cert.pem ${certloc}/key.pem {
+        tls ${certloc}/fullchain.pem ${certloc}/key.pem {
           protocols tls1.3
         }
         import czichy_headers
@@ -45,7 +45,7 @@ in {
     services.caddy = {
       virtualHosts."${influxdbDomain}".extraConfig = ''
         reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-INFLUX-01".ipv4}:${toString influxdbPort}
-        tls ${certloc}/cert.pem ${certloc}/key.pem {
+        tls ${certloc}/fullchain.pem ${certloc}/key.pem {
            protocols tls1.3
         }
         import czichy_headers

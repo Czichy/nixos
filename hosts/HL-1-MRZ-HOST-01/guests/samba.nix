@@ -227,7 +227,7 @@ in {
     services.caddy = {
       virtualHosts."${sambaDomain}".extraConfig = ''
         reverse_proxy http://${globals.net.vlan40.hosts."${config.networking.hostName}".ipv4}:445
-        tls ${certloc}/cert.pem ${certloc}/key.pem {
+        tls ${certloc}/fullchain.pem ${certloc}/key.pem {
            protocols tls1.3
         }
         import czichy_headers

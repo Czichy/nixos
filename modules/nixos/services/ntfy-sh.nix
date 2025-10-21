@@ -95,7 +95,7 @@ in {
         services.caddy.virtualHosts."${ntfy-host}".extraConfig = ''
             reverse_proxy localhost:${ntfy-port}
 
-            tls ${certloc}/cert.pem ${certloc}/key.pem {
+            tls ${certloc}/fullchain.pem ${certloc}/key.pem {
               protocols tls1.3
             }
           import czichy_headers
