@@ -4,21 +4,16 @@
   pkgs,
   ...
 }: {
-  # 1. Benutzer "acme-sync" erstellen, falls noch nicht vorhanden
-  users.users.acme-sync = {
-    isSystemUser = true;
-    group = "acme-sync";
-    # optional: Shell deaktivieren für mehr Sicherheit
-    shell = "${pkgs.bash}/bin/sh"; # Use /bin/sh or /bin/bash
-  };
   # Stelle sicher, dass die Gruppe acme existiert
   users.groups.acme = {};
   users.groups.acme-sync = {};
 
-  # Füge acme-sync zur Gruppe acme hinzu
+  # 1. Benutzer "acme-sync" erstellen, falls noch nicht vorhanden
   users.users.acme-sync = {
-    # ...
+    isSystemUser = true;
     groups = ["acme" "acme-sync"]; # Füge "acme" hinzu
+    # optional: Shell deaktivieren für mehr Sicherheit
+    shell = "${pkgs.bash}/bin/sh"; # Use /bin/sh or /bin/bash
   };
 
   # 2. Öffentlichen Schlüssel hinzufügen
