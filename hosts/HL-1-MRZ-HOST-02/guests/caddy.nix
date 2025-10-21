@@ -86,6 +86,10 @@ in {
       # ];
       TimeoutStartSec = "5m";
     };
+    # 2. Ensure Sync runs before Caddy
+    # This section MUST be added to your internal Caddy host config to ensure the sync runs first.
+    requires = ["acme-cert-sync.service"];
+    after = ["acme-cert-sync.service"];
   };
   # |----------------------------------------------------------------------| #
   # 1. Private Schlüsseldatei über Age einbinden
@@ -128,11 +132,11 @@ in {
     serviceConfig = {
       # Füge die private Schlüsseldatei als Identität hinzu
       # # WICHTIG: Verwende &&, um chown nur bei erfolgreichem rsync auszuführen
-      ExecStart = "${pkgs.bash}/bin/bash -c '\
-        ${pkgs.rsync}/bin/rsync -az --include='\*/' --include='fullchain.pem' --include='key.pem' --exclude='*' -e \"${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes\" ${vpsUserHost}:${vpsCertPath} ${localCertDir} && \
-        ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir} && \
-        ${pkgs.coreutils}/bin/chmod -R 640 ${localCertDir}/\* \
-      '";
+      ExecStart = ''        ${pkgs.bash}/bin/bash -c '\
+                ${pkgs.rsync}/bin/rsync -az --include='\*/' --include='fullchain.pem' --include='key.pem' --exclude='*' -e \"${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes\" ${vpsUserHost}:${vpsCertPath} ${localCertDir} && \
+                ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir} && \
+                ${pkgs.coreutils}/bin/chmod -R 640 ${localCertDir}/\* \
+              ' '';
       # ExecStart = ''
       #   ${pkgs.rsync}/bin/rsync -az \
       #     --include='*/' \
@@ -165,10 +169,8 @@ in {
     };
   };
 
-  # 2. Ensure Sync runs before Caddy
-  # This section MUST be added to your internal Caddy host config to ensure the sync runs first.
-  systemd.services.caddy.requires = ["acme-cert-sync.service"];
-  systemd.services.caddy.after = ["acme-cert-sync.service"];
+  # systemd.services.caddy.requires = ["acme-cert-sync.service"];
+  # systemd.services.caddy.after = ["acme-cert-sync.service"];
 
   # 3. Notwendige Pakete
   environment.systemPackages = [pkgs.rsync];
