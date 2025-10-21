@@ -17,11 +17,11 @@ with builtins; let
 
   syncKeyName = "id_sync_vps_key";
   vpsUserHost = "acme-sync@10.46.0.90";
-  vpsCertPath = "/var/lib/acme/*.czichy.com/";
-  localCertDir = "/var/lib/acme-sync/czichy.com";
 
+  vpsCertPath = "/var/lib/acme/czichy.com/";
+  localCertDir = "/var/lib/acme-sync/czichy.com";
   # Der Pfad, unter dem das Secret von NixOS im Dateisystem bereitgestellt wird
-  privateKeyPath = "/run/keys/sync/${syncKeyName}";
+  # privateKeyPath = "/run/keys/sync/${syncKeyName}";
 in {
   networking.hostName = "HL-3-DMZ-PROXY-01";
   # |----------------------------------------------------------------------| #

@@ -31,7 +31,7 @@
         };
       };
 
-      gaps = 6;
+      gaps = 12;
       center-focused-column = "never";
       always-center-single-column = true;
       preset-column-widths = [
