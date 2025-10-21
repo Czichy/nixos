@@ -75,7 +75,7 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      users.groups.acme.members = ["nginx" "caddy"];
+      users.groups.acme.members = ["nginx" "caddy" "acme-sync"];
       security.acme = {
         acceptTerms = true;
         defaults = {
