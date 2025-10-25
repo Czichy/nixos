@@ -115,7 +115,7 @@
               (
                 final: _prev: {
                   nur = import nur {pkgs = final;};
-                  affine-server = prev.callPackage ../pkgs/affine-server.nix {};
+                  # affine-server = prev.callPackage ../pkgs/affine-server.nix {};
                 }
               )
             ];
