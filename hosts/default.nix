@@ -112,7 +112,12 @@
           mkHost args "HL-1-MRZ-HOST-01" {
             withHomeManager = true;
             extraOverlays = with inputs; [
-              (final: _prev: {nur = import nur {pkgs = final;};})
+              (
+                final: _prev: {
+                  nur = import nur {pkgs = final;};
+                  affine-server = prev.callPackage ../pkgs/affine-server.nix {};
+                }
+              )
             ];
             extraModules = with inputs; [
               nix-topology.nixosModules.default
