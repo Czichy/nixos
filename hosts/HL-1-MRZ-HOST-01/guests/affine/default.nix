@@ -3,6 +3,7 @@
   lib,
   pkgs,
   utils,
+  inputs,
   ...
 }: let
   inherit
@@ -105,6 +106,9 @@ in {
   };
 
   config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [
+      inputs.self.packages.${system}.affine-server
+    ];
     services.redis.servers.affine = {
       enable = true;
       port = 6379;
