@@ -29,7 +29,8 @@
 in {
   options.services.affine = {
     enable = mkEnableOption "AFFiNE server.";
-    package = mkPackageOption pkgs "affine-server" {};
+    # package = "affine-server";
+    # package = mkPackageOption pkgs "affine-server" {};
 
     user = mkOption {
       type = types.str;
@@ -106,8 +107,8 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      inputs.self.packages.${system}.affine-server
+    environment.systemPackages = [
+      (import ../../../../affine-server.nix)
     ];
     services.redis.servers.affine = {
       enable = true;
