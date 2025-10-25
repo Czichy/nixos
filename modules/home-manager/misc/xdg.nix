@@ -120,11 +120,11 @@ in {
         xdgOpenUsePortal = true;
         extraPortals = with pkgs; [
           xdg-desktop-portal
-          #  xdg-desktop-portal-hyprland
+          xdg-desktop-portal-hyprland
           xdg-desktop-portal-gtk
 
           # Niri
-          xdg-desktop-portal-gnome
+          # xdg-desktop-portal-gnome
         ];
       };
     }

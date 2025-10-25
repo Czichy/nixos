@@ -36,6 +36,9 @@ in {
       home.shellAliases = {
         "zed" = _ "zeditor";
       };
+      home.sessionVariables = {
+        GEMINI_API_KEY = "AIzaSyDhnUgG4pmseeru80h8ryBKI7isou9Q6e0";
+      };
 
       xdg.configFile."zed/tasks.json" = {source = ./tasks.json;};
       programs.zed-editor = let
@@ -59,13 +62,6 @@ in {
           "xy-zed" # a gorgeous dark theme
           "toml"
         ];
-        # package = with pkgs; writeShellScriptBin "zed" ''
-        #   export PATH=${lib.makeBinPath bins}:$PATH
-        #   export LD_LIBRARY_PATH=${lib.makeLibraryPath libraries}
-        #   export NIX_LD_LIBRARY_PATH=${lib.makeLibraryPath libraries}
-        #   export NIX_LD=${stdenv.cc.bintools.dynamicLinker}
-        #   exec ${zed-editor}/bin/zed "$@"
-        # '';
         userSettings = {
           helix_mode = true;
           vim = {
@@ -99,7 +95,15 @@ in {
               available_models = [];
             };
             copilot_chat = {available_models = [];};
-            google = {available_models = [];};
+            google = {
+              available_models = [
+                {
+                  name = "gemini-2.5-pro-exp-03-25";
+                  display_name = "Gemini 2.5 Pro Exp";
+                  max_tokens = 1000000;
+                }
+              ];
+            };
             deepseek = {
               api_url = "https://api.deepseek.com";
               available_models = [

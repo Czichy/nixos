@@ -17,22 +17,18 @@
     window-rules = [
       {
         matches = [
-          {app-id = "vivaldi";}
+          {app-id = "zen-beta";}
         ];
-        open-on-workspace = "browser";
+        open-on-workspace = "browser-main";
       }
-
       {
         matches = [
           {
-            title = "^(.*Interactive Brokers)$";
+            # title = "^(.*Interactive Brokers)$";
             app-id = "install4j-jclient-LoginFrame";
           }
         ];
-        open-on-workspace = "tws";
-        open-on-output = "DP-2";
-        # clip-to-geometry = true;
-        # open-maximized = true;
+        open-on-workspace = "tws-simu";
       }
       {
         matches = [
@@ -41,8 +37,15 @@
             app-id = "jclient-LoginFrame";
           }
         ];
-        open-on-output = "DP-3";
-        # open-maximized = true;
+        open-on-workspace = "tws-prod-overview";
+      }
+      {
+        matches = [
+          {
+            app-id = "jclient-LoginFrame";
+          }
+        ];
+        open-on-workspace = "tws-prod";
       }
       # {
       #   matches = [
@@ -99,15 +102,15 @@
         matches = [{app-id = "app.drey.PaperPlane";}];
         block-out-from = "screencast";
       }
-      {
-        matches = [
-          {app-id = "zen";}
-          {app-id = "firefox";}
-          {app-id = "chromium-browser";}
-          {app-id = "xdg-desktop-portal-gtk";}
-        ];
-        scroll-factor = 0.2;
-      }
+      # {
+      #   matches = [
+      #     {app-id = "zen";}
+      #     {app-id = "firefox";}
+      #     {app-id = "chromium-browser";}
+      #     {app-id = "xdg-desktop-portal-gtk";}
+      #   ];
+      #   scroll-factor = 0.2;
+      # }
       {
         matches = [
           {app-id = "zen";}

@@ -36,6 +36,11 @@ in {
 
     "super+f".action = fullscreen-window;
     "super+t".action = toggle-window-floating;
+    "super+shift+f".action = maximize-column;
+
+    # Expand the focused column to space not taken up by other fully visible columns.
+    # Makes the column "fill the rest of the space".
+    "super+Ctrl+F".action = expand-column-to-available-width;
 
     "super+x".action = spawn apps.launcher;
 
@@ -56,8 +61,6 @@ in {
 
     "super+Shift+H".action = move-column-left;
     "super+Shift+L".action = move-column-right;
-    # "super+Shift+Left".action = move-column-left;
-    # "super+Shift+Right".action = move-column-right;
     "super+Shift+J".action = move-column-to-workspace-down;
     "super+Shift+K".action = move-column-to-workspace-up;
 
@@ -67,15 +70,12 @@ in {
     # Lock screen
     "super+Escape".action = spawn "wlogout" ["-p" "layer-shell"];
 
+    "alt+Up".action = focus-monitor-next;
+    "alt+Down".action = focus-monitor-next;
     "alt+Left".action = focus-monitor-next;
     "alt+Right".action = focus-monitor-next;
-    "super+Shift+Left".action = focus-monitor-left;
-    "super+Shift+Right".action = focus-monitor-right;
-    # "alt+Tab".action = focus-monitor-next;
-    # "super+Shift+H".action = focus-monitor-left;
-    # "super+Shift+J".action = focus-monitor-down;
-    # "super+Shift+K".action = focus-monitor-up;
-    # "super+Shift+L".action = focus-monitor-right;
+    "super+Shift+Up".action = focus-monitor-left;
+    "super+Shift+Down".action = focus-monitor-right;
 
     "alt+Shift+Left".action = move-column-to-monitor-left;
     "alt+Shift+Down".action = move-column-to-monitor-down;

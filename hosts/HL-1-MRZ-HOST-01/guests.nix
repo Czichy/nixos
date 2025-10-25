@@ -109,6 +109,9 @@
       // mkMicrovm "s3" "HL-3-RZ-S3-01" "enp38s0" "02:03:27:ee:9e:16" "vlan40" {
         enableStorageDataset = true;
       }
+      // mkMicrovm "affine" "HL-3-RZ-AFFINE-01" "enp38s0" "02:04:27:ee:9e:16" "vlan40" {
+        enableStorageDataset = true;
+      }
       # // mkMicrovm "docspell" "HL-3-RZ-DOCSPL-01" "enp38s0" "02:03:27:ff:ed:77" "vlan40" {
       # }
     );

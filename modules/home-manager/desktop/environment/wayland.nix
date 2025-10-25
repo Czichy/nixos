@@ -44,21 +44,6 @@ in {
       ];
     }
     # |----------------------------------------------------------------------| #
-    # {
-    #   xdg.portal = {
-    #     enable = true;
-    #     config.hyprland.default = ["hyprland"];
-    #     extraPortals = with pkgs; [
-    #       xdg-desktop-portal-hyprland
-    #     ];
-    #   };
-
-    #   xdg.configFile."electron-flags.conf".text = ''
-    #     --enable-features=UseOzonePlatform
-    #     --ozone-platform=wayland
-    #   '';
-    # }
-    # |----------------------------------------------------------------------| #
     {
       home.sessionVariables = {
         GDK_BACKEND = "wayland,x11";

@@ -5,10 +5,16 @@
 }: {
   programs.niri.settings = {
     workspaces = {
-      "browser" = {
+      "browser-main" = {
         open-on-output = "DP-3";
       };
-      "tws" = {
+      "tws-simu" = {
+        open-on-output = "DP-3";
+      };
+      "tws-prod-overview" = {
+        open-on-output = "DP-3";
+      };
+      "tws-prod" = {
         open-on-output = "DP-2";
       };
     };
@@ -73,7 +79,7 @@
       };
 
       # numlock = true;
-      focus-follows-mouse.enable = true;
+      focus-follows-mouse.enable = false;
       warp-mouse-to-focus.enable = false;
     };
 
@@ -98,10 +104,10 @@
           refresh = null;
         };
         scale = 1.0;
-        transform.rotation = 270;
+        transform.rotation = 180;
         position = {
-          x = 3840;
-          y = -867;
+          x = 0;
+          y = -2160;
         };
       };
     };

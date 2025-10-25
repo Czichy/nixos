@@ -10,7 +10,6 @@
   wgName = "proxy-vps";
   inherit
     (lib.wireguard inputs wgName)
-    peerPublicKeyPath
     peerPrivateKeyPath
     peerPresharedKeyPath
     ;

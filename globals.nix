@@ -61,6 +61,8 @@ in {
         hosts.HL-3-RZ-LOG-01.id = 18;
         # S3 Minio
         hosts.HL-3-RZ-S3-01.id = 19;
+        # Affine
+        hosts.HL-3-RZ-AFFINE-01.id = 110;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome

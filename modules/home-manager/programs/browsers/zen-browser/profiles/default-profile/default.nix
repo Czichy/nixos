@@ -46,6 +46,13 @@
 
     # --- Download Settings ---
     "browser.download.lastDir" = "${config.home.homeDirectory}/Downloads";
+
+    # --- File Picker ---
+    "widget.use-xdg-desktop-portal.file-picker" = true;
+    "widget.use-xdg-desktop-portal.location" = true;
+    "widget.use-xdg-desktop-portal.mime-handler" = true;
+    "widget.use-xdg-desktop-portal.open-uri" = true;
+    "widget.use-xdg-desktop-portal.settings" = true;
   };
 in {
   # shortcuts

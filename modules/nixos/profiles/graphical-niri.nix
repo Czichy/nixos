@@ -34,6 +34,9 @@ in {
       };
 
       environment.systemPackages = with pkgs; [
+        # xdg-desktop-portal-gnome
+        # |----------------------------------------------------------------------| #
+        nautilus
         # -- GENERAL PACKAGES --
         #libnotify # A library that sends desktop notifications to a notification daemon
         #notify-desktop # Little application that lets you send desktop notifications with one command

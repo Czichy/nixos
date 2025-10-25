@@ -45,6 +45,7 @@ in {
           labwc
           jaq
           xorg.xprop
+          xdg-desktop-portal-gnome
         ];
       };
 
