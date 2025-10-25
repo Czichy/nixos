@@ -29,8 +29,7 @@
 in {
   options.services.affine = {
     enable = mkEnableOption "AFFiNE server.";
-    package = pkgs.affine-server;
-    # package = mkPackageOption pkgs "affine-server" {};
+    package = mkPackageOption pkgs "affine-server" {};
 
     user = mkOption {
       type = types.str;
