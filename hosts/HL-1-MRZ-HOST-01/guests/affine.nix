@@ -1,7 +1,6 @@
 {
   config,
   globals,
-  lib,
   pkgs,
   secretsPath,
   ...
@@ -16,6 +15,10 @@ let
 
   certloc = "/var/lib/acme-sync/czichy.com";
 in {
+  imports = [
+    ./affine
+  ];
+
   microvm.mem = 1024 * 3;
   microvm.vcpu = 4;
   networking.hostName = "HL-3-RZ-AFFINE-01";
@@ -70,7 +73,7 @@ in {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/restic/affine.age";
     mode = "440";
   };
-  age.secrets.ntfy-alert-pass = {
+  age.secrets.affine-ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
   };
@@ -88,24 +91,12 @@ in {
         allowSignupForOauth = true;
         "session.ttl" = 365 * 86400; # ~1 year
       };
-      oauth."providers.oidc" = rec {
-        clientId = "affine";
-        clientSecret._secret = config.age.secrets.affine-oauth2-client-secret.path;
-        issuer = "https://${globals.services.kanidm.domain}/oauth2/openid/${clientId}";
-        args = {
-          scope = "openid profile email";
-          claim_id = "preferred_username";
-          claim_name = "name";
-          claim_email = "email";
-        };
-      };
       server = {
         name = "Panzerbeere";
         host = "0.0.0.0";
         https = true;
         hosts = [
-          globals.wireguard.proxy-sentinel.hosts.sentinel.ipv4
-          globals.wireguard.proxy-home.hosts.ward-web-proxy.ipv4
+          "10.15.70.1"
         ];
         externalUrl = "https://${affineDomain}";
       };
@@ -115,7 +106,7 @@ in {
   # |----------------------------------------------------------------------| #
 
   services.restic.backups = let
-    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+    ntfy_pass = "$(cat ${config.age.secrets.affine.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
     # pingKey = "$(cat ${config.age.secrets.samba-hc-ping.path})";
     slug = "https://health.czichy.com/ping";
