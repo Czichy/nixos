@@ -15,9 +15,9 @@ let
 
   certloc = "/var/lib/acme-sync/czichy.com";
 in {
-  imports = [
-    ./affine
-  ];
+  # imports = [
+  #   ./affine
+  # ];
 
   microvm.mem = 1024 * 3;
   microvm.vcpu = 4;

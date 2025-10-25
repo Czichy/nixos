@@ -50,6 +50,7 @@
             ../config/default.nix
             ../../modules/globals.nix
             ../../modules/ente.nix
+            ./guests/affine/default.nix
             ./guests/${guestName}.nix
             {
               networking.nftables.firewall = {

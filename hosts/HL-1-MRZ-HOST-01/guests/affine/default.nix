@@ -4,6 +4,7 @@
   pkgs,
   utils,
   inputs,
+  system,
   ...
 }: let
   inherit
@@ -107,7 +108,8 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = [
-      (import ../../../../affine-server.nix)
+      inputs.self.packages.${system}.ib-tws-native
+      # (import ../../../../affine-server.nix)
     ];
     services.redis.servers.affine = {
       enable = true;
