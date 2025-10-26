@@ -15,6 +15,7 @@
         enableSharedDataset ? false,
         enableTradingDataset ? false,
         enablePaperlessDataset ? false,
+        extraModules ? [],
         ...
       }: {
         autostart = true;
@@ -49,7 +50,7 @@
           [
             ../config/default.nix
             ../../modules/globals.nix
-            # ../../modules/ente.nix
+            ../../modules/ente.nix
             # ./guests/affine/default.nix
             ./guests/${guestName}.nix
             {
@@ -60,6 +61,7 @@
               };
             }
           ]
+          ++ extraModules
           ++ (inputs.nixpkgs.lib.attrValues inputs.self.nixosModules);
       };
       mkMicrovm = guestName: hostName: macvtap: mac: net: opts: {
@@ -91,7 +93,11 @@
         enablePaperlessDataset = true;
         enableSharedDataset = true;
       }
-      // mkMicrovm "ente" "HL-3-RZ-ENTE-01" "enp38s0" "02:01:27:ee:9e:16" "vlan40" {
+      // mkMicrovm "ente" "HL-3-RZ-ENTE-01" "enp38s0" "02:01:27:ee:9e:16" "vlan40"
+      [
+        ../../modules/ente.nix
+      ]
+      {
         enableStorageDataset = true;
       }
       // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp38s0" "02:01:27:6b:d9:d4" "vlan40" {
