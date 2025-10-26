@@ -109,5 +109,28 @@ in {
     "xf86audioraisevolume".action = volume-up;
     "xf86audiolowervolume".action = volume-down;
     "xf86audiomute".action = volume-mute;
+
+    # Finer width adjustments.
+    # This command can also:
+    # * set width in pixels: "1000"
+    # * adjust width in pixels: "-5" or "+5"
+    # * set width as a percentage of screen width: "25%"
+    # * adjust width as a percentage of screen width: "-10%" or "+10%"
+    # Pixel sizes use logical, or scaled, pixels. I.e. on an output with scale 2.0,
+    # set-column-width "100" will make the column occupy 200 physical screen pixels.
+    "super+Minus".action.set-column-width = "-10%";
+    "super+Plus".action.set-column-width = "+10%";
+
+    # Finer height adjustments when in column with other windows.
+    "super+Shift+Minus".action.set-window-height = "-10%";
+    "super+Shift+Plus".action.set-window-height = "+10%";
+
+    # Actions to switch layouts.
+    # Note: if you uncomment these, make sure you do NOT have
+    # a matching layout switch hotkey configured in xkb options above.
+    # Having both at once on the same hotkey will break the switching,
+    # since it will switch twice upon pressing the hotkey (once by xkb, once by niri).
+    # Mod+Space       { switch-layout "next"; }
+    # Mod+Shift+Space { switch-layout "prev"; }
   };
 }

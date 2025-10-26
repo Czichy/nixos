@@ -116,6 +116,9 @@ in {
             "org.freedesktop.impl.portal.Screenshot" = "gnome";
             "org.freedesktop.impl.portal.RemoteDesktop" = "gnome";
           };
+          niri = {
+            default = ["gtk" "gnome"];
+          };
         };
         xdgOpenUsePortal = true;
         extraPortals = with pkgs; [
@@ -124,7 +127,8 @@ in {
           xdg-desktop-portal-gtk
 
           # Niri
-          # xdg-desktop-portal-gnome
+          xdg-desktop-portal-gnome
+          # xdg-desktop-portal-lxqt
         ];
       };
     }

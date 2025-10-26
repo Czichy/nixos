@@ -24,6 +24,7 @@ let
 
   certloc = "/var/lib/acme-sync/czichy.com";
 in {
+  import = [../../../modules/ente.nix];
   networking.hostName = "HL-3-RZ-ENTE-01";
 
   # |----------------------------------------------------------------------| #

@@ -22,7 +22,7 @@
       my_cookies = pkgs.callPackage ./my_cookies.nix {};
       ib-tws-native = pkgs.callPackage ./ibtws {};
       ib-tws-native-latest = pkgs.callPackage ./ibtws_latest {};
-      affine-server = pkgs.callPackage ./affine-server.nix {inherit inputs lib;};
+      # affine-server = pkgs.callPackage ./affine-server.nix {inherit inputs lib;};
       # ibkr-rust = pkgs.callPackage ./ibkr-rust.nix {};
       # ente-web = pkgs.callPackage ./ente-web.nix {};
       polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix {inherit lib;};
