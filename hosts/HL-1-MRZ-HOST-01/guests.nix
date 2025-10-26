@@ -50,7 +50,6 @@
           [
             ../config/default.nix
             ../../modules/globals.nix
-            ../../modules/ente.nix
             # ./guests/affine/default.nix
             ./guests/${guestName}.nix
             {
@@ -96,9 +95,9 @@
       // mkMicrovm "ente" "HL-3-RZ-ENTE-01" "enp38s0" "02:01:27:ee:9e:16" "vlan40"
       {
         enableStorageDataset = true;
-        extraModules = [
-          ../../modules/ente.nix
-        ];
+        # extraModules = [
+        #   ../../modules/ente.nix
+        # ];
       }
       // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp38s0" "02:01:27:6b:d9:d4" "vlan40" {
       }
