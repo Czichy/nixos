@@ -132,9 +132,9 @@ in {
         services.caddy.virtualHosts."${uptime-host}".extraConfig = ''
             reverse_proxy localhost:${uptime-port}
 
-            tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-              protocols tls1.3
-            }
+            # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
+            #   protocols tls1.3
+            # }
           import czichy_headers
         '';
       };

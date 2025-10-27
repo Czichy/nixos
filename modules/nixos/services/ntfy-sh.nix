@@ -95,9 +95,9 @@ in {
         services.caddy.virtualHosts."${ntfy-host}".extraConfig = ''
             reverse_proxy localhost:${ntfy-port}
 
-            tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-              protocols tls1.3
-            }
+            # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
+            #   protocols tls1.3
+            # }
           import czichy_headers
         '';
       };

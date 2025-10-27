@@ -332,7 +332,7 @@
       # "escape" = "editor::Cancel";
       # "ctrl-[" = "editor::Cancel";
       # ":" = "command_palette::Toggle";
-      # "." = "vim::Repeat";
+      "." = "vim::Repeat";
       # "shift-d" = "vim::DeleteToEndOfLine";
       # "shift-j" = "vim::JoinLines";
       # "y" = "editor::Copy";
@@ -365,7 +365,7 @@
       # "g q" = "vim::PushRewrap";
       # "g w" = "vim::PushRewrap";
       # "ctrl-pagedown" = "pane::ActivateNextItem";
-      # "ctrl-pageup" = "pane::ActivatePreviousItem";
+      "space space" = "pane::ActivatePreviousItem";
       # "insert" = "vim::InsertBefore";
       # # // tree-sitter related command;
       # "[ x" = "editor::SelectLargerSyntaxNode";
