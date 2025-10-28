@@ -40,6 +40,12 @@ in {
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
   # home-manager.users.${user} = {home.packages = with pkgs; [];};
+  # nodes.HL-4-PAZ-PROXY-01 = {
+  #   services.caddy.virtualHosts.services.ente.web.domains.photos.extraConfig = ''
+  #       reverse_proxy localhost:80
+  #     import czichy_headers
+  #   '';
+  # };
   # services.ente.web = {
   #   enable = true;
   #   domains = {

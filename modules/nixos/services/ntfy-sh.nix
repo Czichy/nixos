@@ -53,7 +53,7 @@ in {
 
       users.users.ntfy-sh = {
         home = "/var/lib/ntfy-sh";
-        createHome = true;
+        # createHome = true;
       };
     }
     # |----------------------------------------------------------------------| #
