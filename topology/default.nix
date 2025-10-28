@@ -83,6 +83,26 @@ in {
     };
   };
 
+  nodes.lte = mkRouter "TL-MR 100" {
+    info = "tp-link TL-MR 100";
+    # image = ./images/Vigor166.jpg;
+    interfaceGroups = [
+      [
+        "p1"
+      ]
+      ["wan"]
+    ];
+    interfaces.wan = {
+      addresses = ["10.15.100.8"];
+      network = "internet";
+    };
+
+    interfaces.p1 = {
+      virtual = false;
+      physicalConnections = [(mkConnection "HL-3-MRZ-FW-01" "enp1s0")];
+    };
+  };
+
   # |---------------------------------------------------------------------| #
   nodes.switch-keller = mkSwitch "Switch Keller" {
     info = "TP-Link TL-SG2218 - 16 Port Switch";
@@ -168,16 +188,16 @@ in {
         # (mkConnection "HL-3-MRZ-FW-01" "guest")
         # ];
       };
-      mgmt = {
-        virtual = true;
-        network = "mgmt";
-        physicalConnections = [
-          (mkConnection "HL-1-MRZ-HOST-01" "30-mgmt")
-          (mkConnection "HL-1-MRZ-HOST-02" "mgmt")
-          (mkConnection "HL-1-MRZ-HOST-03" "30-mgmt")
-          (mkConnection "HL-3-MRZ-FW-01" "mgmt")
-        ];
-      };
+      # mgmt = {
+      #   virtual = true;
+      #   network = "mgmt";
+      #   physicalConnections = [
+      #     (mkConnection "HL-1-MRZ-HOST-01" "30-mgmt")
+      #     (mkConnection "HL-1-MRZ-HOST-02" "mgmt")
+      #     (mkConnection "HL-1-MRZ-HOST-03" "30-mgmt")
+      #     (mkConnection "HL-3-MRZ-FW-01" "mgmt")
+      #   ];
+      # };
     };
   };
 

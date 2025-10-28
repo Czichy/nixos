@@ -64,9 +64,9 @@ in {
         ];
         userSettings = {
           helix_mode = true;
-          vim = {
-            default_mode = "helix_normal";
-          };
+          # vim = {
+          #   default_mode = "helix_normal";
+          # };
           features = {
             copilot = true;
             inline_completion_provider = "copilot";
