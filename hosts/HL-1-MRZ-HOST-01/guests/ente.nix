@@ -39,35 +39,17 @@ in {
       reverse_proxy https://10.15.70.1:443 {
           transport http {
             # Wichtige Einstellung: Deaktiviert die TLS-Zertifikatsprüfung
-            tls_insecure_skip_verify
           	tls_server_name ${enteApiDomain}
           }
-          header_up Host {http.request.host}
-          header_up X-Real-IP {http.request.remote}
-          header_up X-Forwarded-For {http.request.remote}
-          header_up X-Forwarded-Proto {http.request.scheme}
       }
-      # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-      #   protocols tls1.3
-      # }
       import czichy_headers
     '';
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
       reverse_proxy https://10.15.70.1:443 {
           transport http {
-            # Wichtige Einstellung: Deaktiviert die TLS-Zertifikatsprüfung
-            tls_insecure_skip_verify
           	tls_server_name ${s3Domain}
           }
-          # Diese Header sind entscheidend für die Weiterleitung
-          header_up Host {http.request.host}
-          header_up X-Real-IP {http.request.remote}
-          header_up X-Forwarded-For {http.request.remote}
-          header_up X-Forwarded-Proto {http.request.scheme}
       }
-      # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-      #   protocols tls1.3
-      # }
       import czichy_headers
     '';
   };
@@ -98,10 +80,6 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${enteApiDomain}".extraConfig = ''
       reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:8080 {
-          header_up Host {http.request.host}
-          header_up X-Real-IP {http.request.remote}
-          header_up X-Forwarded-For {http.request.remote}
-          header_up X-Forwarded-Proto {http.request.scheme}
           }
       tls ${certloc}/fullchain.pem ${certloc}/key.pem {
          protocols tls1.3
@@ -110,10 +88,6 @@ in {
     '';
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
       reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:9000 {
-        header_up Host {http.request.host}
-        header_up X-Real-IP {http.request.remote}
-        header_up X-Forwarded-For {http.request.remote}
-        header_up X-Forwarded-Proto {http.request.scheme}
       }
       tls ${certloc}/fullchain.pem ${certloc}/key.pem {
          protocols tls1.3

@@ -69,7 +69,6 @@ in
             cursor = {
               style = "beam";
               beam-thickness = 1;
-              # color = "000000 fcfad6";
             };
             mouse-bindings = {
               selection-override-modifiers = "Shift";

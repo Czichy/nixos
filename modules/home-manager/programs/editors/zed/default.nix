@@ -67,10 +67,10 @@ in {
           # vim = {
           #   default_mode = "helix_normal";
           # };
-          features = {
-            copilot = true;
-            inline_completion_provider = "copilot";
-          };
+          # features = {
+          # copilot = true;
+          # inline_completion_provider = "copilot";
+          # };
           # Language Models.
           language_models = {
             openai = {
@@ -233,91 +233,78 @@ in {
           "use_smartcase_search" = false;
 
           # Inlay Hints
-          "inlay_hints" = {
-            "enabled" = true;
-            "show_type_hints" = true;
-            "show_parameter_hints" = true;
+          inlay_hints = {
+            enabled = true;
+            show_type_hints = true;
+            show_parameter_hints = true;
             # Corresponds to null/None LSP hint type value.
-            "show_other_hints" = true;
+            show_other_hints = true;
             # If `true`, the current theme's `hint.background` color is applied.
-            "show_background" = false;
+            show_background = false;
             # Time to wait before requesting the hints. 0 disables debouncing.
-            "edit_debounce_ms" = 700; # After editing the buffer.
-            "scroll_debounce_ms" = 50; # After scrolling the buffer.
+            edit_debounce_ms = 700; # After editing the buffer.
+            scroll_debounce_ms = 50; # After scrolling the buffer.
           };
 
           # Project Panel
-          "project_panel" = {
-            "button" = true;
-            "default_width" = 240;
-            "dock" = "left";
-            "auto_fold_dirs" = false;
-            "folder_icons" = true;
-            "file_icons" = true;
-            "git_status" = true;
-            "auto_reveal_entries" = true;
-            "scrollbar" = {
-              "show" = "auto"; # "auto", "system", "always", "never"
+          project_panel = {
+            button = true;
+            default_width = 240;
+            dock = "left";
+            auto_fold_dirs = false;
+            folder_icons = true;
+            file_icons = true;
+            git_status = true;
+            auto_reveal_entries = true;
+            scrollbar = {
+              show = "auto"; # auto, system, always, never
             };
-            "indent_size" = 20;
-            "indent_guides" = {
-              "show" = "always";
+            indent_size = 20;
+            indent_guides = {
+              show = "always";
             };
           };
 
           # Outline Panel
-          "outline_panel" = {
-            "button" = true;
-            "default_width" = 300;
-            "dock" = "left";
-            "auto_fold_dirs" = true;
-            "folder_icons" = true;
-            "file_icons" = true;
-            "git_status" = true;
-            "auto_reveal_entries" = true;
-            "indent_size" = 20;
-            "indent_guides" = {
-              "show" = "always";
+          outline_panel = {
+            button = true;
+            default_width = 300;
+            dock = "left";
+            auto_fold_dirs = true;
+            folder_icons = true;
+            file_icons = true;
+            git_status = true;
+            auto_reveal_entries = true;
+            indent_size = 20;
+            indent_guides = {
+              show = "always";
             };
           };
 
           # Collaboration Panel
-          "collaboration_panel" = {
-            "button" = true;
-            "dock" = "left";
-            "default_width" = 240;
+          collaboration_panel = {
+            button = false;
+            dock = "left";
+            default_width = 240;
           };
 
           # Chat Panel
-          "chat_panel" = {
-            "button" = true;
-            "dock" = "right";
-            "default_width" = 240;
+          chat_panel = {
+            button = false;
+            dock = "right";
+            default_width = 240;
           };
 
           # Message Editor
-          "message_editor" = {
-            "auto_replace_emoji_shortcode" = true;
+          message_editor = {
+            auto_replace_emoji_shortcode = true;
           };
 
           # Notification Panel
-          "notification_panel" = {
-            "button" = true;
-            "dock" = "right";
-            "default_width" = 380;
-          };
-
-          "assistant" = {
-            "version" = "2";
-            "enabled" = true;
-            "button" = true;
-            "dock" = "right";
-            "default_width" = 640;
-            "default_height" = 320;
-            "default_model" = {
-              "provider" = "zed.dev";
-              "model" = "claude-3-5-sonnet-latest";
-            };
+          notification_panel = {
+            button = true;
+            dock = "right";
+            default_width = 380;
           };
 
           # Slash Commands
