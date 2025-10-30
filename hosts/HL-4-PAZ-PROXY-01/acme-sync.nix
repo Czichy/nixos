@@ -21,6 +21,7 @@
   users.users.acme-sync.openssh.authorizedKeys.keys = [
     # Füge hier den gesamten INHALT der Datei ~/.ssh/id_sync_vps.pub ein (beginnt mit ssh-ed25519 ...)
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEclKRsUKJ9W0ARWNt5E6iu6tsX/jImzF3MvCdngS2dz acme-sync@intern-caddy"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID3aLi/SYuUHoYhFcuEobpUBat5gr5geSog1Wpnl+3/z root@HL-3-DMZ-PROXY-01"
   ];
 
   # 3. Berechtigungen für den Zertifikatspfad setzen
