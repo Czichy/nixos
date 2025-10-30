@@ -2,7 +2,7 @@
   config.tensorfiles.services = {
     ntfy-sh.enable = true;
     monitoring = {
-      uptime-kuma.enable = true;
+      # uptime-kuma.enable = true;
       healthchecks.enable = true;
     };
     networking = {
