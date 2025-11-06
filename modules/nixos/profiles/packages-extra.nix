@@ -108,6 +108,7 @@ in {
           disko # Declarative disk partitioning and formatting using nix
           cachix # Command-line client for Nix binary cache hosting https://cachix.org
           devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
+          repomix # AI tooling
         ]
         ++ [
           inputs.nix-alien.packages.${system}.nix-alien # Run unpatched binaries on Nix/NixOS

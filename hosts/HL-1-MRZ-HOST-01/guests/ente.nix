@@ -345,6 +345,48 @@ in {
         OnCalendar = "*-*-* 02:30:00";
       };
     };
+    ente-minio-backup = {
+      # Initialize the repository if it doesn't exist.
+      initialize = true;
+
+      # backup to a rclone remote
+      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-minio";
+
+      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+      paths = ["${config.services.minio.dataDir}/ente"];
+
+      # Patterns to exclude when backing up. See
+      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+      # for details on syntax.
+      exclude = [];
+
+      passwordFile = config.age.secrets.restic-postgres.path;
+      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+
+      # A script that must run before starting the backup process.
+      backupPrepareCommand = ''
+      '';
+
+      # A script that must run after finishing the backup process.
+      backupCleanupCommand = ''
+      '';
+
+      # A list of options (--keep-* et al.) for 'restic forget --prune',
+      # to automatically prune old snapshots.
+      # The 'forget' command is run *after* the 'backup' command, so
+      # keep that in mind when constructing the --keep-* options.
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+
+      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+      timerConfig = {
+        OnCalendar = "*-*-* 02:45:00";
+      };
+    };
   };
 
   # NOTE: services.ente.web is configured separately on both proxy servers!
