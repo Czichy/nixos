@@ -5,12 +5,12 @@
   hostName,
   pkgs,
   ...
-}:
-# let
-# |----------------------------------------------------------------------| #
-# |----------------------------------------------------------------------| #
-# in
-{
+}: let
+  # |----------------------------------------------------------------------| #
+  domain = "home.czichy.com";
+  certloc = "/var/lib/acme-sync/czichy.com";
+  # |----------------------------------------------------------------------| #
+in {
   microvm.mem = 512;
   microvm.vcpu = 1;
   # |----------------------------------------------------------------------| #
@@ -40,6 +40,22 @@
     mode = "440";
   };
 
+  # |----------------------------------------------------------------------| #
+  # Der innere Caddy (HL-1-MRZ-HOST-02-caddy) muss nun ein eigenes TLS-Zertifikat bereitstellen,
+  # damit der äußere Caddy eine sichere Verbindung aufbauen kann.
+  # Der innere Caddy muss auch seine eigene reverse_proxy-Verbindung zum
+  # Vaultwarden-Server über HTTPS herstellen.
+  nodes.HL-1-MRZ-HOST-02-caddy = {
+    services.caddy = {
+      virtualHosts."${domain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-NODE-RED-01".ipv4}:1880
+        tls ${certloc}/fullchain.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+  };
   # |----------------------------------------------------------------------| #
 
   services.node-red = {

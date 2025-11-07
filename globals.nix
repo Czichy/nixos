@@ -80,8 +80,10 @@ in {
         hosts.HL-3-RZ-POWER-02.id = 34;
         # node-red
         hosts.HL-3-RZ-RED-01.id = 35;
-        # node-red
+        # Home Assistant
         hosts.HL-3-RZ-HASS-01.id = 36;
+        # Homepage
+        hosts.HL-3-RZ-HOME-01.id = 37;
       };
 
       #IoT
