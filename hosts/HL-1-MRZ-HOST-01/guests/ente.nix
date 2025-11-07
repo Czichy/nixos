@@ -180,18 +180,21 @@ in {
   age.secrets."rclone.conf" = {
     file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
     mode = "440";
-    group = "vaultwarden";
+    group = "ente";
   };
   age.secrets.restic-postgres = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/restic-postgres.age";
     mode = "440";
-    group = "vaultwarden";
+    group = "ente";
+  };
+  age.secrets.restic-minio = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/restic-minio.age";
+    mode = "440";
   };
 
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
-    group = "vaultwarden";
   };
 
   age.secrets.postgres-hc-ping = {
