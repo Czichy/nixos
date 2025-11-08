@@ -161,7 +161,7 @@ in {
       # for details on syntax.
       exclude = [];
 
-      passwordFile = config.age.secrets.restic-postgres.path;
+      passwordFile = config.age.secrets.restic-minio.path;
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
       # A script that must run before starting the backup process.
