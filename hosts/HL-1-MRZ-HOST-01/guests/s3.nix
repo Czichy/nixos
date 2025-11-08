@@ -103,7 +103,7 @@ in {
     mode = "440";
   };
 
-  age.secrets.postgres-hc-ping = {
+  age.secrets.minio-hc-ping = {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
@@ -134,7 +134,7 @@ in {
     slug = "https://health.czichy.com/ping/";
 
     script-post = host: site: ''
-      pingKey="$(cat ${config.age.secrets.postgres-hc-ping.path})"
+      pingKey="$(cat ${config.age.secrets.minio-hc-ping.path})"
       if [ $EXIT_STATUS -ne 0 ]; then
         ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
         -H 'Title: Backup (${site}) on ${host} failed!' \
