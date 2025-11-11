@@ -48,7 +48,7 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${domain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-NODE-RED-01".ipv4}:1880
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-RED-01".ipv4}:1880
         tls ${certloc}/fullchain.pem ${certloc}/key.pem {
            protocols tls1.3
         }

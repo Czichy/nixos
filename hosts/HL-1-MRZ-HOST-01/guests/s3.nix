@@ -83,8 +83,8 @@ in {
       }
       import czichy_headers
     '';
-  };
-  nodes.HL-1-MRZ-HOST-02-caddy = {
+    # };
+    # nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."s3-web.czichy.com".extraConfig = ''
       reverse_proxy http://s3-web.czichy.com:${webPort}{
       }
