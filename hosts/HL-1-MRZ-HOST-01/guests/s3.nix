@@ -169,10 +169,10 @@ in {
   };
   # |----------------------------------------------------------------------| #
   #  # Add garage CLI and Web UI to system packages for management
-  # environment.systemPackages = with pkgs; [
-  #   garage_2
-  #   garage-webui
-  # ];
+  environment.systemPackages = with pkgs; [
+    garage_2
+    garage-webui
+  ];
 
   services.garage = {
     enable = true;
