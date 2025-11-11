@@ -85,7 +85,7 @@ in {
     '';
   };
   nodes.HL-1-MRZ-HOST-02-caddy = {
-    services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
+    services.caddy.virtualHosts."s3-web.czichy.com".extraConfig = ''
       reverse_proxy http://s3-web.czichy.com:${webPort}{
       }
       tls ${certloc}/fullchain.pem ${certloc}/key.pem {
