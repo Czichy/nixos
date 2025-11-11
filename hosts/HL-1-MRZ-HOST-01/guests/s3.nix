@@ -238,26 +238,26 @@ in {
   # Provides a web-based management UI for the Garage service.
   # This creates a simple systemd service that runs the `garage-webui` binary
   # from the `garage-webui` package and serves on TCP/3909 by default.
-  # systemd.services.garage-webui = {
-  #   # disabled until this works properly with garage2
-  #   enable = false;
-  #   description = "Garage Web UI";
-  #   after = [
-  #     "network.target"
-  #     "garage.service"
-  #   ];
-  #   wantedBy = ["multi-user.target"];
-  #   serviceConfig = {
-  #     User = "garage";
-  #     Group = "garage";
-  #     Environment = [
-  #       "CONFIG_PATH=/etc/garage.toml"
-  #     ];
-  #     ExecStart = "${pkgs.garage-webui}/bin/garage-webui";
-  #     Restart = "on-failure";
-  #   };
-  #   path = with pkgs; [coreutils];
-  # };
+  systemd.services.garage-webui = {
+    # disabled until this works properly with garage2
+    enable = false;
+    description = "Garage Web UI";
+    after = [
+      "network.target"
+      "garage.service"
+    ];
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      User = "garage";
+      Group = "garage";
+      Environment = [
+        "CONFIG_PATH=/etc/garage.toml"
+      ];
+      ExecStart = "${pkgs.garage-webui}/bin/garage-webui";
+      Restart = "on-failure";
+    };
+    path = with pkgs; [coreutils];
+  };
 
   # Use systemd.tmpfiles for directory management
   systemd.tmpfiles.rules = [
