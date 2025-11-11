@@ -182,7 +182,7 @@ in {
       rpc_secret_file = config.age.secrets.rpc_secret.path;
 
       # node identity (must be unique per node)
-      node_name = config.networking.hostname;
+      node_name = config.networking.hostName;
 
       db_engine = "sqlite";
       replication_factor = 1;
