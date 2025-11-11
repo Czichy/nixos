@@ -56,6 +56,7 @@ in {
   # |----------------------------------------------------------------------| #
   # open firewall ports
   networking.firewall = {
+    enable = true;
     allowedTCPPorts = [9000 3901 3902 3903];
     # allowedUDPPorts = [9000 9001];
   };
