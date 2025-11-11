@@ -177,7 +177,7 @@ in {
     enable = true;
     package = pkgs.garage_2;
     #environmentFile = /etc/garage.toml;
-    logLevel = "warn";
+    logLevel = "debug";
     settings = {
       metadata_dir = "/var/lib/garage/meta";
       data_dir = "/var/lib/garage/data";
