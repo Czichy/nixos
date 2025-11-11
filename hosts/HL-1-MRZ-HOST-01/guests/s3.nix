@@ -56,7 +56,7 @@ in {
   # |----------------------------------------------------------------------| #
   # open firewall ports
   networking.firewall = {
-    allowedTCPPorts = [9000 3901];
+    allowedTCPPorts = [apiPort webPort];
     # allowedUDPPorts = [9000 9001];
   };
   # |----------------------------------------------------------------------| #
@@ -177,9 +177,9 @@ in {
       metadata_dir = "/var/lib/garage/meta";
       data_dir = "/var/lib/garage/data";
 
-      rpc_bind_addr = "[::]:${rpcPort}";
+      rpc_bind_addr = "127.0.0.1:${toString rpcPort}";
       # rpc_public_addr = "http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:${rpcPort}";
-      rpc_secret_file = config.age.secrets.rpc_secret.path;
+      rpc_secret_file = config.age.secrets.rpc-secret.path;
 
       # node identity (must be unique per node)
       node_name = config.networking.hostName;
@@ -192,13 +192,13 @@ in {
 
       # Optional: S3 interface
       s3_api = {
-        api_bind_addr = "[::]:${apiPort}";
+        api_bind_addr = "127.0.0.1:${toString apiPort}";
         root_domain = s3Domain;
         s3_region = "garage";
       };
 
       s3_web = {
-        bind_addr = "[::]:${webPort}";
+        bind_addr = "127.0.0.1:${toString webPort}";
         index = "index.html";
         root_domain = "s3-web.czichy.com";
       };
@@ -208,7 +208,7 @@ in {
       # };
 
       admin = {
-        api_bind_addr = "[::]:${adminPort}";
+        api_bind_addr = "127.0.0.1:${adminPort}";
         admin_token_file = config.age.secrets.admin_token.path;
         metrics_token = config.age.secrets.metrics_token.path;
       };
