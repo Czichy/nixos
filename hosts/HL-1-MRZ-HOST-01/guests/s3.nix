@@ -200,14 +200,14 @@ in {
       # Optional: S3 interface
       s3_api = {
         api_bind_addr = "127.0.0.1:${toString apiPort}";
-        root_domain = s3Domain;
+        # root_domain = s3Domain;
         s3_region = "garage";
       };
 
       s3_web = {
         bind_addr = "127.0.0.1:${toString webPort}";
         index = "index.html";
-        root_domain = "s3-web.czichy.com";
+        # root_domain = "s3-web.czichy.com";
       };
 
       # k2v_api = {
