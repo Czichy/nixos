@@ -217,7 +217,7 @@ in {
 
   systemd.services.garage.serviceConfig = {
     User = "garage";
-    ReadWriteDirectories = [config.services.garage.settings.dataRoot];
+    ReadWriteDirectories = [config.services.garage.settings.data_dir];
     TimeoutSec = 300;
   };
 
