@@ -110,7 +110,6 @@ in {
       # isSystemUser = true;
       group = "garage";
     };
-    users.nix.extraGroups = ["garage"];
     groups.garage = {};
   };
 
