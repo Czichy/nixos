@@ -208,7 +208,7 @@ in {
       # };
 
       admin = {
-        api_bind_addr = "127.0.0.1:${adminPort}";
+        api_bind_addr = "127.0.0.1:${toString adminPort}";
         admin_token_file = config.age.secrets.admin_token.path;
         metrics_token = config.age.secrets.metrics_token.path;
       };
