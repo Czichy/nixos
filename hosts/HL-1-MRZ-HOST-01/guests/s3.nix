@@ -185,7 +185,8 @@ in {
       data_dir = "/var/lib/garage/data";
 
       rpc_bind_addr = "0.0.0.0:${toString rpcPort}";
-      rpc_public_addr = "http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:${toString rpcPort}";
+      rpc_public_addr = "127.0.0.1:${toString rpcPort}";
+      # rpc_public_addr = "http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:${toString rpcPort}";
       rpc_secret_file = config.age.secrets.rpc-secret.path;
 
       # node identity (must be unique per node)
