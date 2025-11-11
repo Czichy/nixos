@@ -127,34 +127,37 @@ in {
   # good practice.
   age.secrets.rpc-secret = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/rpc-secret.age";
-    mode = "440";
+    mode = "600";
+    owner = "garage";
     group = "garage";
   };
   age.secrets.admin_token = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/admin_token.age";
-    mode = "440";
+    mode = "600";
+    owner = "garage";
     group = "garage";
   };
   age.secrets.metrics_token = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/metrics_token.age";
-    mode = "440";
+    mode = "600";
+    owner = "garage";
     group = "garage";
   };
 
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
-    mode = "440";
+    mode = "600";
     group = "garage";
   };
   # |----------------------------------------------------------------------| #
   age.secrets."rclone.conf" = {
     file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
-    mode = "440";
+    mode = "600";
     group = "garage";
   };
   age.secrets.restic-minio = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/restic-minio.age";
-    mode = "440";
+    mode = "600";
   };
 
   age.secrets.minio-hc-ping = {

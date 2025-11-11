@@ -65,6 +65,7 @@ in {
         userSettings = {
           helix_mode = true;
           restore_on_startup = "last_workspace";
+          show_onboarding_banner = false;
           # vim = {
           #   default_mode = "helix_normal";
           # };
