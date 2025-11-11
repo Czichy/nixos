@@ -95,7 +95,8 @@ in {
     '';
   };
   # |----------------------------------------------------------------------| #
-  globals.services.s3.domain = s3Domain;
+
+  # globals.services.s3.domain = s3Domain;
   # FIXME: also monitor from internal network
   # globals.monitoring.http.ente = {
   #   url = "https://${entePhotosDomain}";
