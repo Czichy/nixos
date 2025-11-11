@@ -107,7 +107,7 @@ in {
   # Add nix user to garage group for CLI access to secrets
   users = {
     users.garage = {
-      isSystemUser = true;
+      # isSystemUser = true;
       group = "garage";
     };
     users.nix.extraGroups = ["garage"];
