@@ -134,13 +134,13 @@ in {
     group = "garage";
   };
   age.secrets.admin_token = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/admin_token.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/admin-token.age";
     mode = "600";
     owner = "garage";
     group = "garage";
   };
   age.secrets.metrics_token = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/metrics_token.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/metrics-token.age";
     mode = "600";
     owner = "garage";
     group = "garage";
