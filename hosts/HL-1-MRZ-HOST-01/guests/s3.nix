@@ -254,7 +254,7 @@ in {
   # |----------------------------------------------------------------------| #
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
   services.restic.backups = let
-    minio_backup_dir = lib.map (dir: "${dir}/ente") config.services.minio.dataDir;
+    ente_backup_dir = lib.map (dir: "${dir}/ente") config.services.garage.settings.data_dir;
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
     slug = "https://health.czichy.com/ping/";
@@ -280,7 +280,7 @@ in {
       # repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-minio";
       repository = "rclone:onedrive_nas:/backup/HL-3-RZ-ENTE-01-ente-minio";
       # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = config.services.garage.settings.data_dir;
+      paths = ente_backup_dir;
 
       # Patterns to exclude when backing up. See
       #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
