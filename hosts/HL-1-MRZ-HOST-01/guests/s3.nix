@@ -6,22 +6,58 @@
   secretsPath,
   ...
 }:
-# NOTE: To increase storage for all users:
-#  $ runuser -u ente -- psql
-#  ente => UPDATE subscriptions SET storage = 6597069766656;
-# get One Time Password for user registration
-# journalctl -au ente | grep SendEmailOTT | tail -n 1
+# Garage S3-compatible object storage
+# Documentation: https://garagehq.deuxfleurs.fr/
+#
+# To enable this service:
+# 1. Generate RPC secret: openssl rand -hex 32
+# 2. Add to 1password for use via opnix
+# 3. Enable this module in hosts/nas/default.nix
+# 4. Run: sudo nixos-rebuild switch --flake .#nas
+# 5. Initialize cluster:
+#    garage status
+#    garage layout assign <node-id> -c 500G -z default
+#    garage layout apply --version 1
+# 6. Create buckets and keys:
+#    garage bucket create my-bucket
+#    garage key create my-key
+#    garage bucket allow --read --write my-bucket --key my-key
+# Data Migration from MinIO
+# # Configure both endpoints
+# mc alias set minio http://10.0.7.7:9000 <minio-access-key> <minio-secret-key>
+# mc alias set garage http://10.0.7.7:3900 <garage-access-key> <garage-secret-key>
+# # Migrate data
+# mc mirror minio/bucket-name garage/bucket-name
+# Set an expiration policy (using the aws CLI):
+# aws s3api put-bucket-lifecycle-configuration \
+#         --endpoint-url http://127.0.0.1:3900 \
+#         --bucket talos-backup \
+#         --lifecycle-configuration '{
+#       "Rules": [
+#         {
+#           "ID": "30-day-expiration",
+#           "Status": "Enabled",
+#           "Expiration": {
+#             "Days": 30
+#           }
+#         }
+#       ]
+#     }'
 let
   s3Domain = "s3.${globals.domains.me}";
+  apiPort = 9000;
+  rpcPort = 3901;
+  webPort = 3902;
+  adminPort = 3903;
 
   certloc = "/var/lib/acme-sync/czichy.com";
 in {
   networking.hostName = "HL-3-RZ-S3-01";
-
   # |----------------------------------------------------------------------| #
+  # open firewall ports
   networking.firewall = {
-    allowedTCPPorts = [9000 9001];
-    allowedUDPPorts = [9000 9001];
+    allowedTCPPorts = [9000 3901];
+    # allowedUDPPorts = [9000 9001];
   };
   # |----------------------------------------------------------------------| #
   #
@@ -40,7 +76,17 @@ in {
   # reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:${toString influxdbPort}
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
-      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:9000 {
+      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:${apiPort} {
+      }
+      tls ${certloc}/fullchain.pem ${certloc}/key.pem {
+         protocols tls1.3
+      }
+      import czichy_headers
+    '';
+  };
+  nodes.HL-1-MRZ-HOST-02-caddy = {
+    services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
+      reverse_proxy http://s3-web.czichy.com:${webPort}{
       }
       tls ${certloc}/fullchain.pem ${certloc}/key.pem {
          protocols tls1.3
@@ -57,12 +103,20 @@ in {
   #   network = "internet";
   # };
 
+  users.users.garage = {
+    isSystemUser = true;
+    group = "garage";
+    home = "/var/lib/garage";
+  };
+
+  users.groups.garage = {};
+
   fileSystems."/storage".neededForBoot = true;
   environment.persistence."/storage".directories = [
     {
-      directory = "/var/lib/minio";
-      user = "minio";
-      group = "minio";
+      directory = "/var/lib/garage";
+      user = "garage";
+      group = "garage";
       mode = "0750";
     }
   ];
@@ -71,32 +125,32 @@ in {
   # NOTE: don't use the root user for access. In this case it doesn't matter
   # since the whole minio server is only for ente anyway, but it would be a
   # good practice.
-  age.secrets.minio-access-key = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/minio-access-key.age";
+  age.secrets.rpc-secret = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/rpc-secret.age";
     mode = "440";
-    group = "parseable";
+    group = "garage";
   };
-  age.secrets.minio-secret-key = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/minio-secret-key.age";
+  age.secrets.admin_token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/admin_token.age";
     mode = "440";
-    group = "parseable";
+    group = "garage";
   };
-  age.secrets.minio-root-credentials = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/minio-root-credentials.age";
+  age.secrets.metrics_token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/metrics_token.age";
     mode = "440";
-    group = "minio";
+    group = "garage";
   };
 
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
-    group = "minio";
+    group = "garage";
   };
   # |----------------------------------------------------------------------| #
   age.secrets."rclone.conf" = {
     file = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
     mode = "440";
-    group = "ente";
+    group = "garage";
   };
   age.secrets.restic-minio = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/restic-minio.age";
@@ -108,24 +162,96 @@ in {
     mode = "440";
   };
   # |----------------------------------------------------------------------| #
-  services.minio = {
+  #  # Add garage CLI and Web UI to system packages for management
+  environment.systemPackages = with pkgs; [
+    garage_2
+    garage-webui
+  ];
+
+  services.garage = {
     enable = true;
-    rootCredentialsFile = config.age.secrets.minio-root-credentials.path;
-    region = "germany-frankfurt-1";
-  };
-  systemd.services.minio = {
-    environment.MINIO_SERVER_URL = "http://10.15.40.19:9000";
-    # environment.MINIO_SERVER_URL = "https://${s3Domain}";
-    postStart = ''
-      # Wait until minio is up
-      ${lib.getExe pkgs.curl} --retry 5 --retry-connrefused --fail --no-progress-meter -o /dev/null "http://localhost:9000/minio/health/live"
+    package = pkgs.garage;
+    #environmentFile = /etc/garage.toml;
+    logLevel = "warn";
+    settings = {
+      metadata_dir = "/var/lib/garage/meta";
+      data_dir = "/var/lib/garage/data";
 
-      # Make sure bucket exists
-      mkdir -p ${lib.escapeShellArg config.services.minio.dataDir}/parseable
-      mkdir -p ${lib.escapeShellArg config.services.minio.dataDir}/ente
-    '';
+      rpc_bind_addr = "[::]:${rpcPort}";
+      # rpc_public_addr = "http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:${rpcPort}";
+      rpc_secret_file = config.age.secrets.rpc_secret.path;
+
+      # node identity (must be unique per node)
+      node_name = config.networking.hostname;
+
+      db_engine = "sqlite";
+      replication_factor = 1;
+
+      # cluster bootstrap
+      #bootstrap_peers = []; # list other nodes' RPC URLs
+
+      # Optional: S3 interface
+      s3_api = {
+        api_bind_addr = "[::]:${apiPort}";
+        root_domain = s3Domain;
+        s3_region = "garage";
+      };
+
+      s3_web = {
+        bind_addr = "[::]:${webPort}";
+        index = "index.html";
+        root_domain = "s3-web.czichy.com";
+      };
+
+      # k2v_api = {
+      #   api_bind_addr = "[::]:3904";
+      # };
+
+      admin = {
+        api_bind_addr = "[::]:${adminPort}";
+        admin_token_file = config.age.secrets.admin_token.path;
+        metrics_token = config.age.secrets.metrics_token.path;
+      };
+    };
   };
 
+  systemd.services.garage.serviceConfig = {
+    User = "garage";
+    ReadWriteDirectories = [config.services.garage.settings.dataRoot];
+    TimeoutSec = 300;
+  };
+
+  # Optional Garage Web UI
+  # Provides a web-based management UI for the Garage service.
+  # This creates a simple systemd service that runs the `garage-webui` binary
+  # from the `garage-webui` package and serves on TCP/3909 by default.
+  systemd.services.garage-webui = {
+    # disabled until this works properly with garage2
+    enable = false;
+    description = "Garage Web UI";
+    after = [
+      "network.target"
+      "garage.service"
+    ];
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      User = "garage";
+      Group = "garage";
+      Environment = [
+        "CONFIG_PATH=/etc/garage.toml"
+      ];
+      ExecStart = "${pkgs.garage-webui}/bin/garage-webui";
+      Restart = "on-failure";
+    };
+    path = with pkgs; [coreutils];
+  };
+
+  systemd.tmpfiles.rules = [
+    "d ${config.services.garage.settings.data_dir} 0770 garage garage - -"
+    "d ${config.services.garage.settings.metadata_dir} 0770 garage garage - -"
+  ];
+
+  # |----------------------------------------------------------------------| #
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
   services.restic.backups = let
     minio_backup_dir = lib.map (dir: "${dir}/ente") config.services.minio.dataDir;
@@ -154,7 +280,7 @@ in {
       # repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-minio";
       repository = "rclone:onedrive_nas:/backup/HL-3-RZ-ENTE-01-ente-minio";
       # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = minio_backup_dir;
+      paths = config.services.garage.settings.data_dir;
 
       # Patterns to exclude when backing up. See
       #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files

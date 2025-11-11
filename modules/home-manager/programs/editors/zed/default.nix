@@ -64,6 +64,7 @@ in {
         ];
         userSettings = {
           helix_mode = true;
+          restore_on_startup = "last_workspace";
           # vim = {
           #   default_mode = "helix_normal";
           # };
@@ -74,7 +75,7 @@ in {
           # Language Models.
           language_models = {
             openai = {
-              version = 1;
+              # version = 1;
               available_models = [
                 {
                   name = "gpt-5";

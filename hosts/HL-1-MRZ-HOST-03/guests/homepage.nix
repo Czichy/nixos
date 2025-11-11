@@ -80,19 +80,19 @@ in {
       {
         openmeteo = {
           label = "Idstein";
-          latitude = 43.625;
-          longitude = 3.862038;
+          latitude = 50.248329;
+          longitude = 8.256039;
           units = "metric";
           cache = 5;
         };
       }
-      # {
-      #   resources = {
-      #     cpu = true;
-      #     disk = "/";
-      #     memory = true;
-      #   };
-      # }
+      {
+        resources = {
+          cpu = true;
+          disk = "/";
+          memory = true;
+        };
+      }
 
       {
         search = {
