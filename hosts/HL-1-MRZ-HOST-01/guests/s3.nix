@@ -76,7 +76,7 @@ in {
   # reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-ENTE-01".ipv4}:${toString influxdbPort}
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."${s3Domain}".extraConfig = ''
-      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:${apiPort} {
+      reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-S3-01".ipv4}:${toString apiPort} {
       }
       tls ${certloc}/fullchain.pem ${certloc}/key.pem {
          protocols tls1.3
@@ -86,7 +86,7 @@ in {
     # };
     # nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy.virtualHosts."s3-web.czichy.com".extraConfig = ''
-      reverse_proxy http://s3-web.czichy.com:${webPort}{
+      reverse_proxy http://s3-web.czichy.com:${toString webPort}{
       }
       tls ${certloc}/fullchain.pem ${certloc}/key.pem {
          protocols tls1.3
