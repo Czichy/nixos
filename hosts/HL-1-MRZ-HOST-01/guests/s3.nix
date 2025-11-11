@@ -103,13 +103,16 @@ in {
   #   network = "internet";
   # };
 
-  users.users.garage = {
-    isSystemUser = true;
-    group = "garage";
-    home = "/var/lib/garage";
+  # Create explicit garage user and group (not DynamicUser)
+  # Add nix user to garage group for CLI access to secrets
+  users = {
+    users.garage = {
+      isSystemUser = true;
+      group = "garage";
+    };
+    users.nix.extraGroups = ["garage"];
+    groups.garage = {};
   };
-
-  users.groups.garage = {};
 
   fileSystems."/storage".neededForBoot = true;
   environment.persistence."/storage".directories = [
@@ -173,7 +176,7 @@ in {
 
   services.garage = {
     enable = true;
-    package = pkgs.garage;
+    package = pkgs.garage_2;
     #environmentFile = /etc/garage.toml;
     logLevel = "warn";
     settings = {
@@ -219,9 +222,13 @@ in {
   };
 
   systemd.services.garage.serviceConfig = {
+    DynamicUser = false;
     User = "garage";
+    Group = "garage";
     ReadWriteDirectories = [config.services.garage.settings.data_dir];
     TimeoutSec = 300;
+    # Allow group-readable secrets so nix user can access them for CLI
+    Environment = ["GARAGE_ALLOW_WORLD_READABLE_SECRETS=true"];
   };
 
   # Optional Garage Web UI
@@ -249,7 +256,9 @@ in {
   #   path = with pkgs; [coreutils];
   # };
 
+  # Use systemd.tmpfiles for directory management
   systemd.tmpfiles.rules = [
+    # Create garage subdirectories with proper ownership and permissions
     "d ${config.services.garage.settings.data_dir} 0770 garage garage - -"
     "d ${config.services.garage.settings.metadata_dir} 0770 garage garage - -"
   ];
