@@ -227,7 +227,10 @@ in {
     ReadWriteDirectories = [config.services.garage.settings.data_dir];
     TimeoutSec = 300;
     # Allow group-readable secrets so nix user can access them for CLI
-    Environment = ["GARAGE_ALLOW_WORLD_READABLE_SECRETS=true"];
+    Environment = [
+      "CONFIG_PATH=/etc/garage.toml"
+      "GARAGE_ALLOW_WORLD_READABLE_SECRETS=true"
+    ];
   };
 
   # Optional Garage Web UI
