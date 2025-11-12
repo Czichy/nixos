@@ -23,7 +23,7 @@ in {
   #
   imports = [
     ./hass/mqtt-sensors.nix
-    # ./hass-modbus/mennekes-amtron-xtra.nix
+    # ./hass/modbus/mennekes-amtron-xtra.nix
   ];
 
   # |----------------------------------------------------------------------| #
@@ -111,7 +111,7 @@ in {
     ];
 
     customComponents = with pkgs.home-assistant-custom-components; [
-      # (pkgs.home-assistant.python.pkgs.callPackage ./hass-components/ha-bambulab.nix {})
+      # (pkgs.home-assistant.python.pkgs.callPackage ./hass/components/ha-bambulab.nix {})
       dwd
       solax_modbus
       waste_collection_schedule
