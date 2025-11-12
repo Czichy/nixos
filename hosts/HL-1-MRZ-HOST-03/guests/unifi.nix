@@ -42,10 +42,6 @@ in {
             	tls_server_name ${unifiDomain}
             }
         }
-
-        # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-        #   protocols tls1.3
-        # }
         import czichy_headers
       '';
     };
@@ -80,10 +76,12 @@ in {
   services.unifi = {
     enable = true;
     unifiPackage = pkgs.unifi;
-    mongodbPackage = pkgs.mongodb-ce;
-    openFirewall = false;
+    # mongodbPackage = pkgs.mongodb-ce;
+    openFirewall = true;
     maximumJavaHeapSize = 1024;
   };
+
+  # nixpkgs.config.permittedInsecurePackages = ["unifi-controller-7.5.187"];
 
   # |----------------------------------------------------------------------| #
   # topology.self.services.unifi = {
