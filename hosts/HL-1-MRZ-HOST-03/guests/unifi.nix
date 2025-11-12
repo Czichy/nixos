@@ -75,8 +75,8 @@ in {
 
   services.unifi = {
     enable = true;
-    unifiPackage = pkgs.unifi;
-    mongodbPackage = pkgs.mongodb-6_0;
+    unifiPackage = pkgs.unifi8;
+    mongodbPackage = pkgs.mongodb-ce;
     openFirewall = true;
     maximumJavaHeapSize = 1024;
   };
