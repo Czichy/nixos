@@ -260,8 +260,8 @@ in {
           endpoint = "http://10.15.40.19:9000";
           region = "garage";
           bucket = "ente";
-          key._secret = config.age.secrets.s3-ente-access-key.path;
-          secret._secret = config.age.secrets.s3-ente-secret-key.path;
+          key._secret = config.age.secrets.s3-ente-secret-key.path;
+          secret._secret = config.age.secrets.s3-ente-access-key.path;
         };
         # b2-eu-cen = {
         #   endpoint = "https://${s3Domain}";
