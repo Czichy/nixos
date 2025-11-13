@@ -26,7 +26,7 @@
   # devices = lib.attrsets.filterAttrs (h: _: h != hostName) {
   devices = {
     "Inas-Yoga" = {
-      id = "QBEVQY4-KBNMIBW-MTY7SEC-DNBDN7J-OL7HHJ7-K7S5EXD-MF3FAHZ-RRFBHAR";
+      id = "RSLE67U-3GOO2XT-OHMG7YK-TDMUY2R-U45Q7XI-DEBAORG-EVX4WAD-2KXM4QF";
       # This option would be nice but we can't use it because there's no way to
       # declaratively configure shared folders we recieve. This just auto
       # accepts the folders with some default settings. Also, it forces shared
@@ -124,7 +124,7 @@ in {
         "lhqxb-zc6qj" = {
           # Name of folder in Syncthing, also the folder ID
           path = "${cfg.dataDir}/schule"; # Which folder to add to Syncthing
-          devices = ["Inas-YOGA" "HL-3-RZ-SYNC-02"]; # Which devices to share the folder with
+          devices = ["Inas-Yoga" "HL-3-RZ-SYNC-02"]; # Which devices to share the folder with
         };
       };
       options.globalAnnounceEnabled = false; # Only sync on LAN
