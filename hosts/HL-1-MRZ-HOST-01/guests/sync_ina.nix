@@ -36,7 +36,7 @@
     };
 
     "HL-3-RZ-SYNC-02" = {
-      id = "UFTAS4W-V5CJBPI-CRH2T4I-47SX34E-7OQKHH5-RXD5SAN-NAZ2ADX-W7TNPAK";
+      id = "N6RXHRN-SIR52PO-XT5DM2E-VMDEIM5-UO2VSPJ-SH5E4MC-V2HEWWN-S332DQQ";
     };
   };
   # |----------------------------------------------------------------------| #
