@@ -1,3 +1,4 @@
+# Vor jedem Update folder /var/lib/unifi löschen!!!
 {
   globals,
   pkgs,

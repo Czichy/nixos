@@ -133,6 +133,17 @@ in {
   # NOTE: don't use the root user for access. In this case it doesn't matter
   # since the whole minio server is only for ente anyway, but it would be a
   # good practice.
+  age.secrets.s3-ente-access-key = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/ente-access-key.age";
+    mode = "440";
+    group = "ente";
+  };
+  age.secrets.s3-ente-secret-key = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/s3/ente-secret-key.age";
+    mode = "440";
+    group = "ente";
+  };
+  # |----------------------------------------------------------------------| #
   age.secrets.minio-access-key = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-access-key.age";
     mode = "440";
@@ -246,12 +257,19 @@ in {
       s3 = {
         use_path_style_urls = true;
         b2-eu-cen = {
-          endpoint = "https://${s3Domain}";
-          region = "germany-frankfurt-1";
+          endpoint = "http://10.15.40.19:9000";
+          region = "garage";
           bucket = "ente";
-          key._secret = config.age.secrets.minio-access-key.path;
-          secret._secret = config.age.secrets.minio-secret-key.path;
+          key._secret = config.age.secrets.s3-ente-access-key.path;
+          secret._secret = config.age.secrets.s3-ente-secret-key.path;
         };
+        # b2-eu-cen = {
+        #   endpoint = "https://${s3Domain}";
+        #   region = "germany-frankfurt-1";
+        #   bucket = "ente";
+        #   key._secret = config.age.secrets.minio-access-key.path;
+        #   secret._secret = config.age.secrets.minio-secret-key.path;
+        # };
       };
 
       jwt.secret._secret = config.age.secrets.ente-jwt.path;
