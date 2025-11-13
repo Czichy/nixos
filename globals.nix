@@ -47,6 +47,8 @@ in {
         hosts.HL-3-RZ-INFLUX-01.id = 12;
         # Syncthing
         hosts.HL-3-RZ-SYNC-01.id = 13;
+        # Syncthing Ina
+        hosts.HL-3-RZ-SYNC-02.id = 113;
         # Forgejo
         hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader

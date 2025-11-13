@@ -95,11 +95,10 @@
       // mkMicrovm "ente" "HL-3-RZ-ENTE-01" "enp38s0" "02:01:27:ee:9e:16" "vlan40"
       {
         enableStorageDataset = true;
-        # extraModules = [
-        #   ../../modules/ente.nix
-        # ];
       }
       // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp38s0" "02:01:27:6b:d9:d4" "vlan40" {
+      }
+      // mkMicrovm "sync_ina" "HL-3-RZ-SYNC-02" "enp38s0" "02:02:27:6b:d9:d4" "vlan40" {
       }
       // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp38s0" "02:01:27:dc:85:68" "vlan40" {
         enableStorageDataset = true;
@@ -136,6 +135,11 @@
         mode = "0777";
       };
       "/storage/shares/dokumente".d = {
+        user = "root";
+        group = "root";
+        mode = "0777";
+      };
+      "/storage/shares/schule".d = {
         user = "root";
         group = "root";
         mode = "0777";
