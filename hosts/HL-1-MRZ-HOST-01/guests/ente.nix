@@ -104,16 +104,6 @@ in {
     network = "internet";
   };
 
-  fileSystems."/storage".neededForBoot = true;
-  environment.persistence."/storage".directories = [
-    {
-      directory = "/var/lib/minio";
-      user = "minio";
-      group = "minio";
-      mode = "0750";
-    }
-  ];
-
   environment.persistence."/persist".directories = [
     {
       directory = "/var/lib/ente";
@@ -144,22 +134,6 @@ in {
     group = "ente";
   };
   # |----------------------------------------------------------------------| #
-  age.secrets.minio-access-key = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-access-key.age";
-    mode = "440";
-    group = "ente";
-  };
-  age.secrets.minio-secret-key = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-secret-key.age";
-    mode = "440";
-    group = "ente";
-  };
-  age.secrets.minio-root-credentials = {
-    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/minio-root-credentials.age";
-    mode = "440";
-    group = "minio";
-  };
-
   # base64 (url)
   age.secrets.ente-jwt = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/ente-jwt.age";
@@ -365,48 +339,6 @@ in {
       # When to run the backup. See {manpage}`systemd.timer(5)` for details.
       timerConfig = {
         OnCalendar = "*-*-* 02:30:00";
-      };
-    };
-    ente-minio-backup = {
-      # Initialize the repository if it doesn't exist.
-      initialize = true;
-
-      # backup to a rclone remote
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-minio";
-
-      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = minio_backup_dir;
-
-      # Patterns to exclude when backing up. See
-      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-      # for details on syntax.
-      exclude = [];
-
-      passwordFile = config.age.secrets.restic-postgres.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
-
-      # A script that must run before starting the backup process.
-      backupPrepareCommand = ''
-      '';
-
-      # A script that must run after finishing the backup process.
-      backupCleanupCommand = ''
-      '';
-
-      # A list of options (--keep-* et al.) for 'restic forget --prune',
-      # to automatically prune old snapshots.
-      # The 'forget' command is run *after* the 'backup' command, so
-      # keep that in mind when constructing the --keep-* options.
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
-
-      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
-      timerConfig = {
-        OnCalendar = "*-*-* 02:45:00";
       };
     };
   };
