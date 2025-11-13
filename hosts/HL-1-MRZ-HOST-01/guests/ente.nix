@@ -187,23 +187,23 @@ in {
     mode = "440";
   };
   # |----------------------------------------------------------------------| #
-  services.minio = {
-    enable = true;
-    rootCredentialsFile = config.age.secrets.minio-root-credentials.path;
-    region = "germany-frankfurt-1";
-  };
-  systemd.services.minio = {
-    environment.MINIO_SERVER_URL = "https://${s3Domain}";
-    postStart = ''
-      # Wait until minio is up
-      ${lib.getExe pkgs.curl} --retry 5 --retry-connrefused --fail --no-progress-meter -o /dev/null "http://localhost:9000/minio/health/live"
+  # services.minio = {
+  #   enable = true;
+  #   rootCredentialsFile = config.age.secrets.minio-root-credentials.path;
+  #   region = "germany-frankfurt-1";
+  # };
+  # systemd.services.minio = {
+  #   environment.MINIO_SERVER_URL = "https://${s3Domain}";
+  #   postStart = ''
+  #     # Wait until minio is up
+  #     ${lib.getExe pkgs.curl} --retry 5 --retry-connrefused --fail --no-progress-meter -o /dev/null "http://localhost:9000/minio/health/live"
 
-      # Make sure bucket exists
-      mkdir -p ${lib.escapeShellArg config.services.minio.dataDir}/ente
-    '';
-  };
+  #     # Make sure bucket exists
+  #     mkdir -p ${lib.escapeShellArg config.services.minio.dataDir}/ente
+  #   '';
+  # };
 
-  systemd.services.ente.after = ["minio.service"];
+  # systemd.services.ente.after = ["minio.service"];
   services.ente.api = {
     enable = true;
     enableLocalDB = true;
