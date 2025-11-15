@@ -58,7 +58,7 @@ in {
   microvm.shares = [
     {
       # On the host
-      source = "/shared/shares/schule";
+      source = "/shared/shares/users/ina/schule";
       # In the MicroVM
       mountPoint = "${cfg.dataDir}/schule";
       tag = "sync-schule";

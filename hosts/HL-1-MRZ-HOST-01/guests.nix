@@ -139,11 +139,6 @@
         group = "root";
         mode = "0777";
       };
-      "/storage/shares/schule".d = {
-        user = "root";
-        group = "root";
-        mode = "0777";
-      };
       "/storage/shares/dokumente/scanned_documents".d = {
         user = "root";
         group = "root";
