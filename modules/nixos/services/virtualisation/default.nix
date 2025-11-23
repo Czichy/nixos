@@ -57,7 +57,7 @@ in {
         spice
         spice-gtk
         spice-protocol
-        win-virtio
+        virtio-win
         win-spice
         looking-glass-client
         adwaita-icon-theme # default gnome cursors

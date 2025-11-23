@@ -44,7 +44,7 @@ in {
 
         # -- UTILS NEEDED FOR INFO-CENTER --
         clinfo # Print all known information about all available OpenCL platforms and devices in the system
-        glxinfo # Test utilities for OpenGL
+        mesa-demos # Test utilities for OpenGL
         vulkan-tools # Khronos official Vulkan Tools and Utilities
         wayland-utils # Wayland utilities (wayland-info)
         #aha # ANSI HTML Adapter
@@ -69,8 +69,6 @@ in {
         unifont_upper # upper unicode ranges of unifont
         vollkorn # weighty serif
         noto-fonts # noto fonts: great for fallbacks
-        noto-fonts-extra
-        noto-fonts-cjk-sans
       ];
 
       services.xserver.enable = _ true;

@@ -84,8 +84,6 @@ in {
         unifont_upper # upper unicode ranges of unifont
         vollkorn # weighty serif
         noto-fonts # noto fonts: great for fallbacks
-        noto-fonts-extra
-        noto-fonts-cjk-sans
 
         # NOTE: the packages below are typically part of a NixOS base installation
         # under root, hardware related utils should probably be installed manually

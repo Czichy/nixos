@@ -25,9 +25,9 @@
   gdk-pixbuf,
 }:
 with pkgs; let
-  jdkWithJavaFX = pkgs.jdk23.override {
+  jdkWithJavaFX = pkgs.jdk25_headless.override {
     enableJavaFX = true;
-    openjfx23 = openjfx.override {withWebKit = true;};
+    openjfx25 = openjfx.override {withWebKit = true;};
   };
   ibDerivation = stdenv.mkDerivation rec {
     version = "10.37.1g";
