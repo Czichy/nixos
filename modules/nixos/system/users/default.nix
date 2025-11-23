@@ -194,7 +194,8 @@ in {
         mutableUsers = _ false;
         allowNoPasswordLogin = _ false;
         enforceIdUniqueness = _ true;
-        defaultUserShell = pkgs.fish;
+        # defaultUserShell = pkgs.fish;
+        defaultUserShell = pkgs.nushell;
       };
     }
     # |----------------------------------------------------------------------| #
@@ -218,7 +219,8 @@ in {
             else "/home/${_user}"
           );
 
-          shell = pkgs.fish;
+          # shell = pkgs.fish;
+          shell = pkgs.nushell;
 
           hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
             _ config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path

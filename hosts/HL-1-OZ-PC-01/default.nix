@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }: {
   # -----------------
@@ -45,8 +46,9 @@
   # ----------------------------
   # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
-  users.defaultUserShell = pkgs.fish;
-  # users.defaultUserShell = pkgs.nushell;
+  # users.defaultUserShell = pkgs.fish;
+  users.defaultUserShell = lib.mkForce pkgs.nushell;
+  users.users."czichy".shell = lib.mkForce pkgs.nushell;
 
   services = {
     pipewire = {

@@ -80,6 +80,7 @@ in {
         allowOther = true;
         directories = [
           ".local/share/Steam"
+          ".local/share/Paradox Interactive"
           # Minecraft Bedrock Launcher
           # https://mcpelauncher.readthedocs.io/en/latest/index.html
           ".config/Minecraft Linux Launcher"

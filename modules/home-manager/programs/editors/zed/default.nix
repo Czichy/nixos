@@ -14,16 +14,28 @@ with lib; let
     (localFlake.lib)
     mkOverrideAtHmModuleLevel
     mkPywalEnableOption
+    isModuleLoadedAndEnabled
+    mkImpermanenceEnableOption
     ;
 
   cfg = config.tensorfiles.hm.programs.editors.zed;
   _ = mkOverrideAtHmModuleLevel;
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
 in {
   # TODO modularize config, cant be bothered to do it now
   options.tensorfiles.hm.programs.editors.zed = with types; {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the Zed Editor program.
     '';
+
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
 
     pywal = {
       enable = mkPywalEnableOption;
@@ -387,6 +399,15 @@ in {
         userKeymaps = import ./keymaps.nix;
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf impermanenceCheck {
+      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+        directories = [
+          ".config/zed"
+          ".local/share/zed"
+        ];
+      };
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

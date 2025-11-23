@@ -139,7 +139,6 @@ in {
           gu = "git reset --soft HEAD~1";
           grh = "git reset --hard";
           # misc
-          ll = "ls -la";
           e = "yazi";
           z = "zellij";
         };
@@ -272,7 +271,7 @@ in {
       programs.zoxide = {
         enable = true;
         enableNushellIntegration = true;
-        options = ["--cmd j"];
+        # options = ["--cmd j"];
       };
     })
     # |----------------------------------------------------------------------| #
