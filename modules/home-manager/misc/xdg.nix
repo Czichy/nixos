@@ -128,7 +128,6 @@ in {
           # Niri
           xdg-desktop-portal-gnome
         ];
-        environment.pathsToLink = ["/share/applications" "/share/xdg-desktop-portal"];
       };
     }
     # |----------------------------------------------------------------------| #
