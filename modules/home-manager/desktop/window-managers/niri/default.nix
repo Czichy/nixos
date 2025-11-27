@@ -46,6 +46,7 @@ in {
           jaq
           xorg.xprop
           xdg-desktop-portal-gnome
+          # xdg-desktop-portal-hyprland
         ];
       };
 

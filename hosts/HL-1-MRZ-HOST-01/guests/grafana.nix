@@ -1,138 +1,105 @@
 {
   config,
   globals,
+  secretsPath,
   nodes,
   pkgs,
   ...
 }: let
   grafanaDomain = "grafana.${globals.domains.me}";
+  certloc = "/var/lib/acme-sync/czichy.com";
 in {
-  globals.wireguard.proxy-sentinel.hosts.${config.node.name}.firewallRuleForNode.sentinel.allowedTCPPorts = [
-    config.services.grafana.settings.server.http_port
-  ];
+  networking.hostName = "HL-3-RZ-GRAFANA-01";
 
-  globals.wireguard.proxy-home.hosts.${config.node.name}.firewallRuleForNode.ward-web-proxy.allowedTCPPorts = [
-    config.services.grafana.settings.server.http_port
-  ];
+  networking.firewall = {
+    allowedTCPPorts = [config.services.grafana.settings.server.http_port];
+  };
+
+  nodes.HL-4-PAZ-PROXY-01 = {
+    # SSL config and forwarding to local reverse proxy
+    services.caddy = {
+      virtualHosts."${grafanaDomain}".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+            transport http {
+                # Da der innere Caddy ein eigenes Zertifikat ausstellt,
+                # muss die Überprüfung auf dem äußeren Caddy übersprungen werden.
+                # Dies ist ein Workaround, wenn die Zertifikatskette nicht vertrauenswürdig ist.
+                tls_insecure_skip_verify
+                # tls_server_name stellt sicher, dass der Hostname für die TLS-Handshake übermittelt wird.
+            	tls_server_name ${grafanaDomain}
+            }
+        }
+
+        # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
+        #   protocols tls1.3
+        # }
+        import czichy_headers
+      '';
+    };
+  };
+  nodes.HL-1-MRZ-HOST-02-caddy = {
+    services.caddy = {
+      virtualHosts."${grafanaDomain}".extraConfig = ''
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-INFLUX-01".ipv4}:${toString config.services.grafana.settings.server.http_port}
+        tls ${certloc}/fullchain.pem ${certloc}/key.pem {
+           protocols tls1.3
+        }
+        import czichy_headers
+      '';
+    };
+  };
+  # |----------------------------------------------------------------------| #
+  age.secrets.grafana-admin-password = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/grafana/grafana-secret-key.age";
+    mode = "440";
+    group = "grafana";
+  };
 
   age.secrets.grafana-secret-key = {
-    rekeyFile = config.node.secretsDir + "/grafana-secret-key.age";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/grafana/grafana-secret-key.age";
     mode = "440";
     group = "grafana";
   };
 
-  age.secrets.grafana-loki-basic-auth-password = {
-    generator.script = "alnum";
-    mode = "440";
-    group = "grafana";
-  };
+  # age.secrets.grafana-loki-basic-auth-password = {
+  #   generator.script = "alnum";
+  #   mode = "440";
+  #   group = "grafana";
+  # };
 
   age.secrets.grafana-influxdb-token-machines = {
-    generator.script = "alnum";
-    generator.tags = ["influxdb"];
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/smart-home-token.age";
     mode = "440";
     group = "grafana";
   };
 
   age.secrets.grafana-influxdb-token-home = {
-    generator.script = "alnum";
-    generator.tags = ["influxdb"];
-    mode = "440";
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/home_assistant-token.age";
     group = "grafana";
   };
 
-  # Mirror the original oauth2 secret
-  age.secrets.grafana-oauth2-client-secret = {
-    inherit (nodes.ward-kanidm.config.age.secrets.kanidm-oauth2-grafana) rekeyFile;
-    mode = "440";
-    group = "grafana";
-  };
+  # HL-3-RZ-INFLUX-01
+  #   nodes.sire-influxdb = {
+  #     # Mirror the original secret on the influx host
+  #     age.secrets."grafana-influxdb-token-machines-${config.node.name}" = {
+  #       inherit (config.age.secrets.grafana-influxdb-token-machines) rekeyFile;
+  #       mode = "440";
+  #       group = "influxdb2";
+  #     };
 
-  nodes.sire-influxdb = {
-    # Mirror the original secret on the influx host
-    age.secrets."grafana-influxdb-token-machines-${config.node.name}" = {
-      inherit (config.age.secrets.grafana-influxdb-token-machines) rekeyFile;
-      mode = "440";
-      group = "influxdb2";
-    };
-
-    services.influxdb2.provision.organizations.machines.auths."grafana machines:telegraf (${config.node.name})" = {
-      readBuckets = ["telegraf"];
-      writeBuckets = ["telegraf"];
-      tokenFile =
-        nodes.sire-influxdb.config.age.secrets."grafana-influxdb-token-machines-${config.node.name}".path;
-    };
-  };
+  #     services.influxdb2.provision.organizations.machines.auths."grafana machines:telegraf (${config.node.name})" = {
+  #       readBuckets = ["telegraf"];
+  #       writeBuckets = ["telegraf"];
+  #       tokenFile =
+  #         nodes.sire-influxdb.config.age.secrets."grafana-influxdb-token-machines-${config.node.name}".path;
+  #     };
+  #   };
 
   globals.services.grafana.domain = grafanaDomain;
   globals.monitoring.http.grafana = {
     url = "https://${grafanaDomain}";
     expectedBodyRegex = "Grafana";
     network = "internet";
-  };
-
-  nodes.sentinel = {
-    age.secrets.loki-basic-auth-hashes.generator.dependencies = [
-      config.age.secrets.grafana-loki-basic-auth-password
-    ];
-
-    services.nginx = {
-      upstreams.grafana = {
-        servers."${
-          globals.wireguard.proxy-sentinel.hosts.${config.node.name}.ipv4
-        }:${toString config.services.grafana.settings.server.http_port}" = {};
-        extraConfig = ''
-          zone grafana 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "Grafana";
-        };
-      };
-      virtualHosts.${grafanaDomain} = {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        locations."/" = {
-          proxyPass = "http://grafana";
-          proxyWebsockets = true;
-        };
-      };
-    };
-  };
-
-  nodes.ward-web-proxy = {
-    services.nginx = {
-      upstreams.grafana = {
-        servers."${
-          globals.wireguard.proxy-home.hosts.${config.node.name}.ipv4
-        }:${toString config.services.grafana.settings.server.http_port}" = {};
-        extraConfig = ''
-          zone grafana 64k;
-          keepalive 2;
-        '';
-        monitoring = {
-          enable = true;
-          expectedBodyRegex = "Grafana";
-        };
-      };
-      virtualHosts.${grafanaDomain} = {
-        forceSSL = true;
-        useACMEWildcardHost = true;
-        locations."/" = {
-          proxyPass = "http://grafana";
-          proxyWebsockets = true;
-        };
-        extraConfig = ''
-          allow ${globals.net.home-lan.vlans.home.cidrv4};
-          allow ${globals.net.home-lan.vlans.home.cidrv6};
-          # Firezone traffic
-          allow ${globals.net.home-lan.vlans.services.hosts.ward.ipv4};
-          allow ${globals.net.home-lan.vlans.services.hosts.ward.ipv6};
-          deny all;
-        '';
-      };
-    };
   };
 
   environment.persistence."/persist".directories = [
@@ -166,38 +133,51 @@ in {
 
       security = {
         disable_initial_admin_creation = true;
+        admin_user = "czichy";
+        admin_password = "$toString ${config.age.secrets.grafana-admin-password.path}";
         secret_key = "$__file{${config.age.secrets.grafana-secret-key.path}}";
         cookie_secure = true;
         disable_gravatar = true;
         hide_version = true;
       };
 
-      auth.disable_login_form = true;
-      "auth.generic_oauth" = {
-        enabled = true;
-        name = "Kanidm";
-        icon = "signin";
-        allow_sign_up = true;
-        #auto_login = true;
-        client_id = "grafana";
-        client_secret = "$__file{${config.age.secrets.grafana-oauth2-client-secret.path}}";
-        scopes = "openid email profile";
-        login_attribute_path = "preferred_username";
-        auth_url = "https://${globals.services.kanidm.domain}/ui/oauth2";
-        token_url = "https://${globals.services.kanidm.domain}/oauth2/token";
-        api_url = "https://${globals.services.kanidm.domain}/oauth2/openid/grafana/userinfo";
-        use_pkce = true;
-        # Allow mapping oauth2 roles to server admin
-        allow_assign_grafana_admin = true;
-        role_attribute_path = "contains(groups[*], 'server_admin') && 'GrafanaAdmin' || contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'";
-      };
-    };
+    #   auth.disable_login_form = true;
+    #   "auth.generic_oauth" = {
+    #     enabled = true;
+    #     name = "Kanidm";
+    #     icon = "signin";
+    #     allow_sign_up = true;
+    #     #auto_login = true;
+    #     client_id = "grafana";
+    #     client_secret = "$__file{${config.age.secrets.grafana-oauth2-client-secret.path}}";
+    #     scopes = "openid email profile";
+    #     login_attribute_path = "preferred_username";
+    #     auth_url = "https://${globals.services.kanidm.domain}/ui/oauth2";
+    #     token_url = "https://${globals.services.kanidm.domain}/oauth2/token";
+    #     api_url = "https://${globals.services.kanidm.domain}/oauth2/openid/grafana/userinfo";
+    #     use_pkce = true;
+    #     # Allow mapping oauth2 roles to server admin
+    #     allow_assign_grafana_admin = true;
+    #     role_attribute_path = "contains(groups[*], 'server_admin') && 'GrafanaAdmin' || contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'";
+    #   };
+    # };
 
     provision = {
       enable = true;
       datasources.settings.datasources = [
+        # {
+        #   name = "InfluxDB (machines)";
+        #   type = "influxdb";
+        #   access = "proxy";
+        #   url = "https://${globals.services.influxdb.domain}";
+        #   orgId = 1;
+        #   secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
+        #   jsonData.version = "Flux";
+        #   jsonData.organization = "machines";
+        #   jsonData.defaultBucket = "telegraf";
+        # }
         {
-          name = "InfluxDB (machines)";
+          name = "InfluxDB (smart_home)";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";

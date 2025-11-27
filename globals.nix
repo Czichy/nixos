@@ -65,6 +65,8 @@ in {
         hosts.HL-3-RZ-S3-01.id = 19;
         # Affine
         hosts.HL-3-RZ-AFFINE-01.id = 110;
+        # Grafana
+        hosts.HL-3-RZ-GRAFANA-01.id = 111;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome

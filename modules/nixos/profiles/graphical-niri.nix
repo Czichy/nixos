@@ -34,7 +34,7 @@ in {
       };
 
       environment.systemPackages = with pkgs; [
-        # xdg-desktop-portal-gnome
+        xdg-desktop-portal-gnome
         # |----------------------------------------------------------------------| #
         nautilus
         # -- GENERAL PACKAGES --
