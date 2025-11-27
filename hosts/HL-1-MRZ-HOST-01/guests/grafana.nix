@@ -111,11 +111,6 @@ in {
     }
   ];
 
-  networking.hosts.${globals.wireguard.proxy-home.hosts.ward-web-proxy.ipv4} = [
-    globals.services.influxdb.domain # technically a duplicate (see ./common.nix)...
-    # globals.services.loki.domain
-  ];
-
   services.grafana = {
     enable = true;
     settings = {
