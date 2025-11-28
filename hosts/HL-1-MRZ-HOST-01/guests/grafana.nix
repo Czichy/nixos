@@ -174,7 +174,7 @@ in {
           {
             name = "InfluxDB (smart_home)";
             type = "influxdb";
-            access = "proxy";
+            # access = "proxy";
             url = "https://${globals.services.influxdb.domain}";
             orgId = 1;
             secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
@@ -185,7 +185,7 @@ in {
           {
             name = "InfluxDB (home_assistant)";
             type = "influxdb";
-            access = "proxy";
+            # access = "proxy";
             url = "https://${globals.services.influxdb.domain}";
             orgId = 1;
             secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-home.path}}";
