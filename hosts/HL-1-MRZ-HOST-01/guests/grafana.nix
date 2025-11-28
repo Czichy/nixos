@@ -193,16 +193,16 @@ in {
             jsonData.organization = "home";
             jsonData.defaultBucket = "home_assistant";
           }
-          {
-            name = "Loki";
-            type = "loki";
-            access = "proxy";
-            url = "https://${globals.services.loki.domain}";
-            orgId = 1;
-            basicAuth = true;
-            basicAuthUser = "${config.node.name}+grafana-loki-basic-auth-password";
-            secureJsonData.basicAuthPassword = "$__file{${config.age.secrets.grafana-loki-basic-auth-password.path}}";
-          }
+          # {
+          #   name = "Loki";
+          #   type = "loki";
+          #   access = "proxy";
+          #   url = "https://${globals.services.loki.domain}";
+          #   orgId = 1;
+          #   basicAuth = true;
+          #   basicAuthUser = "${config.node.name}+grafana-loki-basic-auth-password";
+          #   secureJsonData.basicAuthPassword = "$__file{${config.age.secrets.grafana-loki-basic-auth-password.path}}";
+          # }
         ];
         # dashboards.settings.providers = [
         #   {
