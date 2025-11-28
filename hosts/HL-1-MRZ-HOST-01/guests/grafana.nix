@@ -174,7 +174,7 @@ in {
           {
             name = "InfluxDB (smart_home)";
             type = "influxdb";
-            # access = "proxy";
+            access = "proxy";
             url = "https://${globals.services.influxdb.domain}";
             orgId = 1;
             secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
@@ -185,7 +185,7 @@ in {
           {
             name = "InfluxDB (home_assistant)";
             type = "influxdb";
-            # access = "proxy";
+            access = "proxy";
             url = "https://${globals.services.influxdb.domain}";
             orgId = 1;
             secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-home.path}}";
@@ -204,19 +204,19 @@ in {
           #   secureJsonData.basicAuthPassword = "$__file{${config.age.secrets.grafana-loki-basic-auth-password.path}}";
           # }
         ];
-        # dashboards.settings.providers = [
-        #   {
-        #     name = "default";
-        #     options.path = pkgs.stdenv.mkDerivation {
-        #       name = "grafana-dashboards";
-        #       src = ./grafana-dashboards;
-        #       installPhase = ''
-        #         mkdir -p $out/
-        #         install -D -m755 $src/*.json $out/
-        #       '';
-        #     };
-        #   }
-        # ];
+        dashboards.settings.providers = [
+          {
+            name = "default";
+            options.path = pkgs.stdenv.mkDerivation {
+              name = "grafana-dashboards";
+              src = ./grafana-dashboards;
+              installPhase = ''
+                mkdir -p $out/
+                install -D -m755 $src/*.json $out/
+              '';
+            };
+          }
+        ];
       };
     };
   };
