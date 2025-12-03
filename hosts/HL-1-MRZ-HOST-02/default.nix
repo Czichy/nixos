@@ -52,4 +52,5 @@
   security.pam.services = {
     swaylock = {};
   };
+  environment.pathsToLink = ["/share/applications" "/share/xdg-desktop-portal"];
 }
