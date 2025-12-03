@@ -37,8 +37,8 @@
   # ----------------------------
   # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
-  # users.defaultUserShell = pkgs.nushell;
-  users.defaultUserShell = pkgs.fish;
+  users.defaultUserShell = pkgs.nushell;
+  # users.defaultUserShell = pkgs.fish;
 
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because
