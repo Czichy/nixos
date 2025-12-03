@@ -14,31 +14,40 @@
         place-within-backdrop = true;
       }
     ];
+
     window-rules = [
-      {
-        matches = [
-          {app-id = "zen-beta";}
-        ];
-        open-on-workspace = "browser-main";
-      }
+      # 1. TWS Simulated Trading (HÖCHSTE PRIORITÄT: Matcht den spezifischen Titel)
+      # Fenster: "DUK181965 Interactive Brokers (Simulated Trading)"
+      # Ziel: tws-simu
       {
         matches = [
           {
-            # title = "^(.*Interactive Brokers)$";
-            app-id = "install4j-jclient-LoginFrame";
+            app-id = "jclient-LoginFrame";
+            # Regulärer Ausdruck, der "(Simulated Trading)" im Titel sucht.
+            title = ".*(Simulated Trading).*";
           }
         ];
         open-on-workspace = "tws-simu";
       }
+
+      # 2. TWS Production Overview (Hohe Priorität: Matcht Titelende mit "Overview")
+      # Fenster: "U11213636 Overview"
+      # Ziel: tws-prod-overview
       {
         matches = [
           {
+            # Der vorhandene Regex war korrekt für Overview am Ende des Titels.
             title = "^(.*Overview)$";
             app-id = "jclient-LoginFrame";
           }
         ];
         open-on-workspace = "tws-prod-overview";
       }
+
+      # 3. TWS Production Main (Niedrigste Priorität/Fallback: Matcht nur die App ID)
+      # Fenster: "U11213636 Interactive Brokers"
+      # Ziel: tws-prod
+      # Diese Regel greift nur, wenn die beiden spezifischeren TWS-Regeln zuvor NICHT gegriffen haben.
       {
         matches = [
           {
@@ -47,20 +56,16 @@
         ];
         open-on-workspace = "tws-prod";
       }
-      # {
-      #   matches = [
-      #     {
-      #       # title = "^(.*Interactive Brokers)$";
-      #       app-id = "install4j-jclient-LoginFrame";
-      #     }
-      #   ];
-      #   open-floating = true;
-      #   default-floating-position = {
-      #     x = 32;
-      #     y = 32;
-      #     relative-to = "bottom-right";
-      #   };
-      # }
+
+      # Regel für Zen-Beta (aus der alten Config übernommen)
+      {
+        matches = [
+          {app-id = "zen-beta";}
+        ];
+        open-on-workspace = "browser-main";
+      }
+
+      # Alle anderen Regeln wurden beibehalten und kommen nach den spezifischen TWS-Regeln:
 
       # Default rule for all other windows with rounded corners
       {

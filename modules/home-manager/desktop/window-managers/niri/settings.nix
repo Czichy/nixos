@@ -5,16 +5,16 @@
 }: {
   programs.niri.settings = {
     workspaces = {
-      "browser-main" = {
-        open-on-output = "DP-3";
-      };
       "tws-simu" = {
         open-on-output = "DP-3";
       };
-      "tws-prod-overview" = {
+      "tws-prod" = {
         open-on-output = "DP-3";
       };
-      "tws-prod" = {
+      "browser-main" = {
+        open-on-output = "DP-3";
+      };
+      "tws-prod-overview" = {
         open-on-output = "DP-2";
       };
     };

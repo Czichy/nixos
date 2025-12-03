@@ -96,6 +96,7 @@ in {
         directories = [
           ".ib-tws-native"
           ".tws-latest"
+          ".ib-gw"
           # ".ib-tws-native_latest"
         ];
       };

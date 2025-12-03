@@ -76,6 +76,7 @@
 
     graphics = {
       enable = true;
+      enable32Bit = true; ## THIS IS CRITICAL
       extraPackages = with pkgs; [
         libva-vdpau-driver
         libvdpau-va-gl
