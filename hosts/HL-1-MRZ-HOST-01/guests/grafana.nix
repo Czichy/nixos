@@ -40,7 +40,7 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${grafanaDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-INFLUX-01".ipv4}:${toString config.services.grafana.settings.server.http_port}
+        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-GRAFANA-01".ipv4}:${toString config.services.grafana.settings.server.http_port}
         tls ${certloc}/fullchain.pem ${certloc}/key.pem {
            protocols tls1.3
         }

@@ -69,7 +69,13 @@ in {
           domain = "@czichy";
           item = "stack";
           type = "-";
-          value = "unlimited";
+          value = "8192";
+        }
+        {
+          domain = "*";
+          item = "stack";
+          type = "soft";
+          value = "8192";
         }
         {
           domain = "*";
