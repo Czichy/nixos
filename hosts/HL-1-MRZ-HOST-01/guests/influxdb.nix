@@ -116,6 +116,7 @@ in {
             tokenFile =
               config.age.secrets."influxdb-user-telegraf-token".path;
           };
+        };
       };
       organizations.home = {
         buckets = {
