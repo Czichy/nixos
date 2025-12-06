@@ -155,71 +155,71 @@ in {
       #     allow_assign_grafana_admin = true;
       #     role_attribute_path = "contains(groups[*], 'server_admin') && 'GrafanaAdmin' || contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'";
       #   };
-      # };
+    };
 
-      provision = {
-        enable = true;
-        datasources.settings.datasources = [
-          #     # {
-          #     #   name = "InfluxDB (machines)";
-          #     #   type = "influxdb";
-          #     #   access = "proxy";
-          #     #   url = "https://${globals.services.influxdb.domain}";
-          #     #   orgId = 1;
-          #     #   secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
-          #     #   jsonData.version = "Flux";
-          #     #   jsonData.organization = "machines";
-          #     #   jsonData.defaultBucket = "telegraf";
-          #     # }
-          {
-            name = "InfluxDB (smart_home)";
-            type = "influxdb";
-            access = "proxy";
-            url = "https://${globals.services.influxdb.domain}";
-            orgId = 1;
-            secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
-            jsonData.version = "Flux";
-            jsonData.organization = "machines";
-            jsonData.defaultBucket = "telegraf";
-          }
-          {
-            name = "InfluxDB (home_assistant)";
-            type = "influxdb";
-            access = "proxy";
-            url = "https://${globals.services.influxdb.domain}";
-            orgId = 1;
-            secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-home.path}}";
-            jsonData.version = "Flux";
-            jsonData.organization = "home";
-            jsonData.defaultBucket = "home_assistant";
-          }
-          #     # {
-          #     #   name = "Loki";
-          #     #   type = "loki";
-          #     #   access = "proxy";
-          #     #   url = "https://${globals.services.loki.domain}";
-          #     #   orgId = 1;
-          #     #   basicAuth = true;
-          #     #   basicAuthUser = "${config.node.name}+grafana-loki-basic-auth-password";
-          #     #   secureJsonData.basicAuthPassword = "$__file{${config.age.secrets.grafana-loki-basic-auth-password.path}}";
-          #     # }
-        ];
-        #   dashboards.settings.providers = [
-        #     {
-        #       name = "default";
-        #       options.path = pkgs.stdenv.mkDerivation {
-        #         name = "grafana-dashboards";
-        #         src = ./grafana-dashboards;
-        #         installPhase = ''
-        #           mkdir -p $out/
-        #           install -D -m755 $src/*.json $out/
-        #         '';
-        #       };
-        #     }
-        # ];
-      };
+    provision = {
+      enable = true;
+      datasources.settings.datasources = [
+        #     # {
+        #     #   name = "InfluxDB (machines)";
+        #     #   type = "influxdb";
+        #     #   access = "proxy";
+        #     #   url = "https://${globals.services.influxdb.domain}";
+        #     #   orgId = 1;
+        #     #   secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
+        #     #   jsonData.version = "Flux";
+        #     #   jsonData.organization = "machines";
+        #     #   jsonData.defaultBucket = "telegraf";
+        #     # }
+        {
+          name = "InfluxDB (smart_home)";
+          type = "influxdb";
+          access = "proxy";
+          url = "https://${globals.services.influxdb.domain}";
+          orgId = 1;
+          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
+          jsonData.version = "Flux";
+          jsonData.organization = "machines";
+          jsonData.defaultBucket = "telegraf";
+        }
+        {
+          name = "InfluxDB (home_assistant)";
+          type = "influxdb";
+          access = "proxy";
+          url = "https://${globals.services.influxdb.domain}";
+          orgId = 1;
+          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-home.path}}";
+          jsonData.version = "Flux";
+          jsonData.organization = "home";
+          jsonData.defaultBucket = "home_assistant";
+        }
+        #     # {
+        #     #   name = "Loki";
+        #     #   type = "loki";
+        #     #   access = "proxy";
+        #     #   url = "https://${globals.services.loki.domain}";
+        #     #   orgId = 1;
+        #     #   basicAuth = true;
+        #     #   basicAuthUser = "${config.node.name}+grafana-loki-basic-auth-password";
+        #     #   secureJsonData.basicAuthPassword = "$__file{${config.age.secrets.grafana-loki-basic-auth-password.path}}";
+        #     # }
+      ];
+      #   dashboards.settings.providers = [
+      #     {
+      #       name = "default";
+      #       options.path = pkgs.stdenv.mkDerivation {
+      #         name = "grafana-dashboards";
+      #         src = ./grafana-dashboards;
+      #         installPhase = ''
+      #           mkdir -p $out/
+      #           install -D -m755 $src/*.json $out/
+      #         '';
+      #       };
+      #     }
+      # ];
     };
   };
+  # };
 
   systemd.services.grafana.serviceConfig.RestartSec = "60"; # Retry every minute
 }
