@@ -109,6 +109,13 @@ in {
       };
       organizations.machines = {
         buckets.telegraf = {};
+        auths = {
+          telegraf = {
+            readBuckets = ["telegraf"];
+            writeBuckets = ["telegraf"];
+            tokenFile =
+              config.age.secrets."influxdb-user-telegraf-token".path;
+          };
       };
       organizations.home = {
         buckets = {

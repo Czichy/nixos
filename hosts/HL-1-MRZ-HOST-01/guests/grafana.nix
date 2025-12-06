@@ -78,6 +78,23 @@ in {
     group = "grafana";
   };
 
+  age.secrets.grafana-influxdb-user-telegraf-token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/telegraf-token.age";
+    mode = "440";
+    group = "grafana";
+  };
+
+  age.secrets.grafana-influxdb-user-smart-home-token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/smart-home-token.age";
+    mode = "440";
+    group = "grafana";
+  };
+
+  age.secrets.grafana-influxdb-user-home_assistant-token = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/influxdb/home_assistant-token.age";
+    mode = "440";
+    group = "grafana";
+  };
   # HL-3-RZ-INFLUX-01
   #   nodes.sire-influxdb = {
   #     # Mirror the original secret on the influx host
@@ -160,27 +177,27 @@ in {
     provision = {
       enable = true;
       datasources.settings.datasources = [
-        #     # {
-        #     #   name = "InfluxDB (machines)";
-        #     #   type = "influxdb";
-        #     #   access = "proxy";
-        #     #   url = "https://${globals.services.influxdb.domain}";
-        #     #   orgId = 1;
-        #     #   secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
-        #     #   jsonData.version = "Flux";
-        #     #   jsonData.organization = "machines";
-        #     #   jsonData.defaultBucket = "telegraf";
-        #     # }
+        {
+          name = "InfluxDB (machines)";
+          type = "influxdb";
+          access = "proxy";
+          url = "https://${globals.services.influxdb.domain}";
+          orgId = 1;
+          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-user-telegraf-token.path}}";
+          jsonData.version = "Flux";
+          jsonData.organization = "machines";
+          jsonData.defaultBucket = "telegraf";
+        }
         {
           name = "InfluxDB (smart_home)";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
           orgId = 1;
-          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-machines.path}}";
+          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-home-token.path}}";
           jsonData.version = "Flux";
-          jsonData.organization = "machines";
-          jsonData.defaultBucket = "telegraf";
+          jsonData.organization = "home";
+          jsonData.defaultBucket = "smart-home";
         }
         {
           name = "InfluxDB (home_assistant)";
@@ -188,7 +205,7 @@ in {
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
           orgId = 1;
-          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-token-home.path}}";
+          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-home_assistant-token.path}}";
           jsonData.version = "Flux";
           jsonData.organization = "home";
           jsonData.defaultBucket = "home_assistant";
