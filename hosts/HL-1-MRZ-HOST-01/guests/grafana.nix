@@ -194,7 +194,7 @@ in {
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
           orgId = 1;
-          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-home-token.path}}";
+          secureJsonData.token = "$__file{${config.age.secrets.grafana-influxdb-user-smart-home-token.path}}";
           jsonData.version = "Flux";
           jsonData.organization = "home";
           jsonData.defaultBucket = "smart-home";
