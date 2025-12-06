@@ -35,6 +35,7 @@ in {
     networkmanagerapplet # need this to configure L2TP ipsec
     wireguard-tools
   ];
+  environment.pathsToLink = ["/share/applications" "/share/xdg-desktop-portal"];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
