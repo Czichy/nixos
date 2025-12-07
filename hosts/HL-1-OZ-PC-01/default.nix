@@ -51,6 +51,7 @@
   users.users."czichy".shell = lib.mkForce pkgs.nushell;
 
   services = {
+    blueman.enable = true;
     pipewire = {
       enable = true;
       alsa.enable = true;
