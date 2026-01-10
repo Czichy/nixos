@@ -35,6 +35,7 @@ in {
     ./rules.nix
     ./autostart.nix
     ./xwayland-satellite.nix
+    ./qalculate.nix
   ];
 
   config = mkIf cfg.enable (mkMerge [
