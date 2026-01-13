@@ -424,8 +424,8 @@ in {
             conflicts = ["resolve" "--list"];
             d = ["diff"];
             d- = ["diff" "-r" "@-"];
-            dg = ["diff" "--tool" "idea"];
-            dg- = ["diff" "--tool" "idea" "-r" "@-"];
+            dg = ["diff" "--tool" "meld"];
+            dg- = ["diff" "--tool" "meld" "-r" "@-"];
             dd = ["diff" "--git" "--config=ui.pager='delta'"];
             dd- = ["diff" "--git" "--config=ui.pager='delta'" "-r" "@-"];
             ddl = ["diff" "--git" "--config=ui.pager='delta --line-numbers'"];
@@ -435,11 +435,11 @@ in {
             desc- = ["describe" "@-"];
             descd = ["describe" "--config=templates.draft_commit_description=draft_commit_description"];
             descd- = ["describe" "--config=templates.draft_commit_description=draft_commit_description" "@-"];
-            diffg = ["diff" "--tool" "idea"];
-            diffg- = ["diff" "--tool" "idea" "-r" "@-"];
+            diffg = ["diff" "--tool" "meld"];
+            diffg- = ["diff" "--tool" "meld" "-r" "@-"];
             diffedit- = ["diffedit" "-r" "@-"];
-            diffeditg = ["diffedit" "--tool" "idea"];
-            diffeditg- = ["diffedit" "--tool" "idea" "-r" "@-"];
+            diffeditg = ["diffedit" "--tool" "meld"];
+            diffeditg- = ["diffedit" "--tool" "meld" "-r" "@-"];
             duplicateb = ["duplicate" "-B" "@"];
             duplicatet = ["duplicate" "-d" "trunk()"];
             duplicatem = ["duplicate" "-A" "trunk()" "-B" "megamerge()"];
@@ -464,12 +464,12 @@ in {
             n = ["new"];
             newt = ["new" "trunk()"];
             s = ["show"];
-            sg = ["show" "--tool" "idea"];
-            sg- = ["show" "--tool" "idea" "@-"];
+            sg = ["show" "--tool" "meld"];
+            sg- = ["show" "--tool" "meld" "@-"];
             sp = ["show" "@-"];
             s- = ["show" "@-"];
-            showg = ["show" "--tool" "idea"];
-            showg- = ["show" "--tool" "idea" "@-"];
+            showg = ["show" "--tool" "meld"];
+            showg- = ["show" "--tool" "meld" "@-"];
             summary = ["show" "--summary"];
             summary- = ["show" "--summary" "@-"];
             sq = ["squash"];
@@ -485,16 +485,21 @@ in {
             revertt = ["revert" "-d" "trunk()"];
           };
           merge-tools = {
-            idea = {
-              program =
-                if pkgs.stdenv.hostPlatform.isDarwin
-                then "${pkgs.writeShellScriptBin "idea-wrapper" ''
-                  ${pkgs.jetbrains.idea-community}/Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS/idea $@ 2> /dev/null
-                ''}/bin/idea-wrapper"
-                else "${pkgs.jetbrains.idea-community}/bin/idea-community";
-              diff-args = ["diff" "$left" "$right"];
-              edit-args = ["diff" "$left" "$right"];
-              merge-args = ["merge" "$left" "$right" "$base" "$output"];
+            meld = {
+              program = "${pkgs.meld}/bin/meld";
+              diff-args = ["$left" "$right"];
+              edit-args = ["$left" "$right"];
+              merge-args = ["$left" "$base" "$right" "--output" "$output" "--auto-merge"];
+            };
+            vimdiff = {
+              program = "${pkgs.vim}/bin/vimdiff";
+              diff-args = ["-d" "$left" "$right"];
+              edit-args = ["-d" "$left" "$right"];
+              merge-args = ["-d" "$left" "$base" "$right" "-c" "wincmd J" "-c" "set modifiable write"];
+            };
+            difftastic = {
+              program = "${pkgs.difftastic}/bin/difft";
+              diff-args = ["$left" "$right"];
             };
           };
           fix.tools = {
