@@ -84,9 +84,10 @@ in {
       enable = true;
       name = "Docspell";
       icon = "sh-docspell";
-      description = "Document Organizer & Archive";
+      description = "Personal document organizer with AI-powered tagging & full-text search";
       category = "Documents & Notes";
       priority = 10;
+      abbr = "DS";
     };
   };
   # |----------------------------------------------------------------------| #

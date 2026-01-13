@@ -17,9 +17,10 @@ in {
       enable = true;
       name = "InfluxDB";
       icon = "sh-influxdb";
-      description = "Time-Series Database";
+      description = "High-performance time-series database for metrics & events";
       category = "Monitoring & Observability";
       priority = 20;
+      abbr = "DB";
     };
   };
   networking.hostName = "HL-3-RZ-INFLUX-01";

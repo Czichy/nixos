@@ -47,9 +47,10 @@ in {
       enable = true;
       name = "Node-RED";
       icon = "sh-node-red";
-      description = "Flow-based Automation";
+      description = "Visual flow-based programming for IoT & automation workflows";
       category = "Home Automation";
       priority = 10;
+      abbr = "NR";
     };
   };
   # |----------------------------------------------------------------------| #

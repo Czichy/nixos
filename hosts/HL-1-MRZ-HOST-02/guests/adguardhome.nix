@@ -15,9 +15,10 @@ in {
       enable = true;
       name = "AdGuard Home";
       icon = "sh-adguardhome";
-      description = "Network-wide Ad Blocking & DNS";
+      description = "Network-wide ad & tracker blocking DNS server with parental control";
       category = "Infrastructure";
       priority = 5;
+      abbr = "AG";
     };
   };
   globals.monitoring.dns.adguardhome = {

@@ -60,9 +60,10 @@ in {
       enable = true;
       name = "Affine";
       icon = "sh-affine";
-      description = "Knowledge Base & Collaboration";
+      description = "Privacy-focused knowledge base with docs, whiteboards & databases";
       category = "Development & Collaboration";
       priority = 10;
+      abbr = "AF";
     };
   };
   # |----------------------------------------------------------------------| #

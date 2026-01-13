@@ -66,9 +66,10 @@ in {
       enable = true;
       name = "Forgejo";
       icon = "sh-forgejo";
-      description = "Self-hosted Git Service";
+      description = "Lightweight self-hosted Git service with code review & CI/CD";
       category = "Development & Collaboration";
       priority = 5;
+      abbr = "FJ";
     };
   };
   # globals.monitoring.http.forgejo = {

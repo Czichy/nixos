@@ -103,9 +103,10 @@ in {
       enable = true;
       name = "S3 Storage (Garage)";
       icon = "sh-minio";
-      description = "Object Storage (S3-Compatible)";
+      description = "Lightweight S3-compatible object storage for backups & data";
       category = "Storage & Files";
       priority = 20;
+      abbr = "S3";
     };
   };
   # FIXME: also monitor from internal network

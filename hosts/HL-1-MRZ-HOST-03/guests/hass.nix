@@ -20,9 +20,10 @@ in {
       enable = true;
       name = "Home Assistant";
       icon = "sh-home-assistant";
-      description = "Smart Home Hub";
+      description = "Open source smart home automation platform with local control";
       category = "Home Automation";
       priority = 5;
+      abbr = "HA";
     };
   };
   # globals.monitoring.http.homeassistant = {

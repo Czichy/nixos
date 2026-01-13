@@ -68,10 +68,11 @@ in {
       enable = true;
       name = "Vaultwarden";
       icon = "sh-bitwarden";
-      description = "Password Manager (Bitwarden)";
+      description = "Self-hosted password manager - Bitwarden compatible server";
       category = "Infrastructure";
       requiresAuth = true;
       priority = 1;
+      abbr = "VW";
     };
   };
   globals.monitoring.http.vaultwarden = {

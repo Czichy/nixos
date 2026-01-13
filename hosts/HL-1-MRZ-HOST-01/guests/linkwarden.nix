@@ -15,9 +15,10 @@ in {
       enable = true;
       name = "Linkwarden";
       icon = "sh-linkwarden";
-      description = "Bookmark Manager & Archiver";
+      description = "Collaborative bookmark manager with full-page archiving & screenshots";
       category = "Documents & Notes";
       priority = 15;
+      abbr = "LW";
     };
   };
   globals.monitoring.http.linkwarden = {

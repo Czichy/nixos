@@ -182,9 +182,10 @@ in {
       enable = true;
       name = "Immich";
       icon = "sh-immich";
-      description = "Photo & Video Management";
+      description = "High-performance photo & video backup solution with ML-powered features";
       category = "Storage & Files";
       priority = 5;
+      abbr = "IM";
     };
   };
   globals.monitoring.http.immich = {

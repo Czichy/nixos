@@ -19,9 +19,10 @@ in {
       enable = true;
       name = "Unifi Controller";
       icon = "sh-unifi";
-      description = "Network Management";
+      description = "Unified network management for Ubiquiti devices & access points";
       category = "Network & Management";
       priority = 10;
+      abbr = "UF";
     };
   };
   globals.monitoring.dns.unifi = {

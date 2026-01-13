@@ -118,9 +118,10 @@ in {
       enable = true;
       name = "Grafana";
       icon = "sh-grafana";
-      description = "Metrics Visualization & Dashboards";
+      description = "Interactive metrics visualization, dashboards & alerting platform";
       category = "Monitoring & Observability";
       priority = 10;
+      abbr = "GF";
     };
   };
   globals.monitoring.http.grafana = {

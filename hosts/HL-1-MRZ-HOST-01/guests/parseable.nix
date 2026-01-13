@@ -68,9 +68,10 @@ in {
       enable = true;
       name = "Parseable";
       icon = "sh-parseable";
-      description = "Log Aggregation & Analytics";
+      description = "Cloud-native log analytics & observability platform with S3 storage";
       category = "Monitoring & Observability";
       priority = 30;
+      abbr = "PS";
     };
   };
   # FIXME: also monitor from internal network

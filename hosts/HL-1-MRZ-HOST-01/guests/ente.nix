@@ -102,9 +102,10 @@ in {
       enable = true;
       name = "Ente Photos";
       icon = "sh-ente";
-      description = "Encrypted Photo Backup";
+      description = "End-to-end encrypted photo & video backup with privacy focus";
       category = "Storage & Files";
       priority = 10;
+      abbr = "EP";
     };
   };
   # FIXME: also monitor from internal network

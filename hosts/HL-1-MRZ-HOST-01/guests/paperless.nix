@@ -32,9 +32,10 @@ in
       enable = true;
       name = "Paperless-ngx";
       icon = "sh-paperless";
-      description = "Document Management & OCR";
+      description = "Document management system with OCR, tagging & full-text search";
       category = "Documents & Notes";
       priority = 5;
+      abbr = "PL";
     };
   };
   # FIXME: also monitor from internal network

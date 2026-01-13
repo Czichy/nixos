@@ -112,9 +112,10 @@ in {
       enable = true;
       name = "Syncthing";
       icon = "sh-syncthing";
-      description = "File Synchronization";
+      description = "Continuous peer-to-peer file synchronization across devices";
       category = "Storage & Files";
       priority = 15;
+      abbr = "ST";
     };
   };
   # |----------------------------------------------------------------------| #
