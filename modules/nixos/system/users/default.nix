@@ -195,7 +195,7 @@ in {
         allowNoPasswordLogin = _ false;
         enforceIdUniqueness = _ true;
         # defaultUserShell = pkgs.fish;
-        defaultUserShell = pkgs.nushell;
+        defaultUserShell = mkDefault pkgs.nushell;
       };
     }
     # |----------------------------------------------------------------------| #
