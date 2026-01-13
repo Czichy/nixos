@@ -34,6 +34,7 @@
     minicom # Modem control and terminal emulation program
     inputs.power-meter.packages.${pkgs.system}.power-meter
   ];
+  environment.pathsToLink = ["/share/applications" "/share/xdg-desktop-portal"];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
