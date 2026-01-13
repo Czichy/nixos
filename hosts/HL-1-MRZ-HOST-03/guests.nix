@@ -92,7 +92,7 @@
       // mkMicrovm "hass" "HL-3-RZ-HASS-01" "enp4s0" "02:05:27:14:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
-      // mkMicrovm "homepage" "HL-3-RZ-HOME-01" "enp4s0" "03:05:27:14:8f:17" "vlan40" {
+      // mkMicrovm "homepage" "HL-3-RZ-HOME-01" "enp4s0" "02:07:07:14:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
     );
