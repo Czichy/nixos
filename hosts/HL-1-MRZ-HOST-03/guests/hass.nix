@@ -14,7 +14,17 @@ in {
   microvm.vcpu = 4;
 
   networking.hostName = "HL-3-RZ-HASS-01";
-  globals.services.home-assistant.domain = homeassistantDomain;
+  globals.services.home-assistant = {
+    domain = homeassistantDomain;
+    homepage = {
+      enable = true;
+      name = "Home Assistant";
+      icon = "sh-home-assistant";
+      description = "Smart Home Hub";
+      category = "Home Automation";
+      priority = 5;
+    };
+  };
   # globals.monitoring.http.homeassistant = {
   #   url = "https://${homeasisstantDomain}";
   #   expectedBodyRegex = "homeassistant";

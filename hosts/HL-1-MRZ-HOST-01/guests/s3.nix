@@ -97,7 +97,17 @@ in {
   };
   # |----------------------------------------------------------------------| #
 
-  # globals.services.s3.domain = s3Domain;
+  globals.services.s3 = {
+    domain = s3Domain;
+    homepage = {
+      enable = true;
+      name = "S3 Storage (Garage)";
+      icon = "sh-minio";
+      description = "Object Storage (S3-Compatible)";
+      category = "Storage & Files";
+      priority = 20;
+    };
+  };
   # FIXME: also monitor from internal network
   # globals.monitoring.http.ente = {
   #   url = "https://${entePhotosDomain}";

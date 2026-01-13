@@ -9,7 +9,17 @@
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
   networking.hostName = "HL-3-RZ-DNS-01";
-  globals.services.adguardhome.domain = adguardhomeDomain;
+  globals.services.adguardhome = {
+    domain = adguardhomeDomain;
+    homepage = {
+      enable = true;
+      name = "AdGuard Home";
+      icon = "sh-adguardhome";
+      description = "Network-wide Ad Blocking & DNS";
+      category = "Infrastructure";
+      priority = 5;
+    };
+  };
   globals.monitoring.dns.adguardhome = {
     server = globals.net.vlan40.hosts.HL-3-RZ-DNS-01.ipv4;
     domain = ".";

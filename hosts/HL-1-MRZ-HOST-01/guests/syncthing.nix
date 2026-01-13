@@ -106,6 +106,18 @@ in {
     };
   };
   # |----------------------------------------------------------------------| #
+  globals.services.syncthing = {
+    domain = "sync.${config.networking.hostName}.local";  # No public domain
+    homepage = {
+      enable = true;
+      name = "Syncthing";
+      icon = "sh-syncthing";
+      description = "File Synchronization";
+      category = "Storage & Files";
+      priority = 15;
+    };
+  };
+  # |----------------------------------------------------------------------| #
 
   networking.firewall = {
     allowedTCPPorts = [

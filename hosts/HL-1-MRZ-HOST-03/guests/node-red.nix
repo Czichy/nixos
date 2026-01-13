@@ -41,6 +41,18 @@ in {
   };
 
   # |----------------------------------------------------------------------| #
+  globals.services.node-red = {
+    domain = domain;
+    homepage = {
+      enable = true;
+      name = "Node-RED";
+      icon = "sh-node-red";
+      description = "Flow-based Automation";
+      category = "Home Automation";
+      priority = 10;
+    };
+  };
+  # |----------------------------------------------------------------------| #
   # Der innere Caddy (HL-1-MRZ-HOST-02-caddy) muss nun ein eigenes TLS-Zertifikat bereitstellen,
   # damit der äußere Caddy eine sichere Verbindung aufbauen kann.
   # Der innere Caddy muss auch seine eigene reverse_proxy-Verbindung zum

@@ -13,7 +13,17 @@ in {
   microvm.vcpu = 4;
   # |----------------------------------------------------------------------| #
   networking.hostName = hostName;
-  globals.services.unifi.domain = unifiDomain;
+  globals.services.unifi = {
+    domain = unifiDomain;
+    homepage = {
+      enable = true;
+      name = "Unifi Controller";
+      icon = "sh-unifi";
+      description = "Network Management";
+      category = "Network & Management";
+      priority = 10;
+    };
+  };
   globals.monitoring.dns.unifi = {
     server = globals.net.vlan40.hosts.HL-3-RZ-DNS-01.ipv4;
     domain = ".";

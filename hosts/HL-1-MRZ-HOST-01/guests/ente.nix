@@ -96,7 +96,17 @@ in {
     '';
   };
   # |----------------------------------------------------------------------| #
-  globals.services.ente.domain = entePhotosDomain;
+  globals.services.ente = {
+    domain = entePhotosDomain;
+    homepage = {
+      enable = true;
+      name = "Ente Photos";
+      icon = "sh-ente";
+      description = "Encrypted Photo Backup";
+      category = "Storage & Files";
+      priority = 10;
+    };
+  };
   # FIXME: also monitor from internal network
   globals.monitoring.http.ente = {
     url = "https://${entePhotosDomain}";

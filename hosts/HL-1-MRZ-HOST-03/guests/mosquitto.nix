@@ -13,6 +13,18 @@
     allowedTCPPorts = [1883];
   };
   # |----------------------------------------------------------------------| #
+  globals.services.mosquitto = {
+    domain = "mqtt.${hostName}.local";  # No public domain
+    homepage = {
+      enable = false;  # MQTT broker has no web UI
+      name = "Mosquitto";
+      icon = "mdi-message-processing";
+      description = "MQTT Broker";
+      category = "Home Automation";
+      priority = 20;
+    };
+  };
+  # |----------------------------------------------------------------------| #
   services.mosquitto = {
     enable = true;
     listeners = [

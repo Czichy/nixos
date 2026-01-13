@@ -112,7 +112,17 @@ in {
   #     };
   #   };
 
-  globals.services.grafana.domain = grafanaDomain;
+  globals.services.grafana = {
+    domain = grafanaDomain;
+    homepage = {
+      enable = true;
+      name = "Grafana";
+      icon = "sh-grafana";
+      description = "Metrics Visualization & Dashboards";
+      category = "Monitoring & Observability";
+      priority = 10;
+    };
+  };
   globals.monitoring.http.grafana = {
     url = "https://${grafanaDomain}";
     expectedBodyRegex = "Grafana";

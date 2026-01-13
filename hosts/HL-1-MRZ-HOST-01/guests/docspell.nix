@@ -78,7 +78,17 @@ in {
     mode = "440";
   };
   # |----------------------------------------------------------------------| #
-  globals.services.docspell.domain = docspellDomain;
+  globals.services.docspell = {
+    domain = docspellDomain;
+    homepage = {
+      enable = true;
+      name = "Docspell";
+      icon = "sh-docspell";
+      description = "Document Organizer & Archive";
+      category = "Documents & Notes";
+      priority = 10;
+    };
+  };
   # |----------------------------------------------------------------------| #
   networking.firewall = {
     allowedTCPPorts = [

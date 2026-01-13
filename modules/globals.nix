@@ -98,6 +98,70 @@ in {
                   type = types.str;
                   description = "The domain under which this service can be reached";
                 };
+
+                # Homepage-specific metadata
+                homepage = mkOption {
+                  default = {};
+                  type = types.submodule {
+                    options = {
+                      enable = mkOption {
+                        type = types.bool;
+                        default = false;
+                        description = "Whether to show this service on the homepage";
+                      };
+
+                      name = mkOption {
+                        type = types.nullOr types.str;
+                        default = null;
+                        description = "Display name on homepage (defaults to service name)";
+                      };
+
+                      icon = mkOption {
+                        type = types.nullOr types.str;
+                        default = null;
+                        description = "Icon identifier (sh-xxx, si-xxx, mdi-xxx)";
+                        example = "sh-grafana";
+                      };
+
+                      description = mkOption {
+                        type = types.nullOr types.str;
+                        default = null;
+                        description = "Service description shown on homepage";
+                      };
+
+                      category = mkOption {
+                        type = types.str;
+                        default = "Services";
+                        description = "Service category for grouping";
+                        example = "Monitoring & Observability";
+                      };
+
+                      requiresAuth = mkOption {
+                        type = types.bool;
+                        default = false;
+                        description = "Whether service requires authentication";
+                      };
+
+                      priority = mkOption {
+                        type = types.int;
+                        default = 100;
+                        description = "Sort priority within category (lower = higher on page)";
+                      };
+
+                      abbr = mkOption {
+                        type = types.nullOr types.str;
+                        default = null;
+                        description = "Abbreviation shown on service card";
+                      };
+
+                      ping = mkOption {
+                        type = types.nullOr types.str;
+                        default = null;
+                        description = "URL for health check ping";
+                      };
+                    };
+                  };
+                };
               };
             });
           };

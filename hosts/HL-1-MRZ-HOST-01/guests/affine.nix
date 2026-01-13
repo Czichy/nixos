@@ -54,6 +54,18 @@ in {
     '';
   };
   # |----------------------------------------------------------------------| #
+  globals.services.affine = {
+    domain = affineDomain;
+    homepage = {
+      enable = true;
+      name = "Affine";
+      icon = "sh-affine";
+      description = "Knowledge Base & Collaboration";
+      category = "Development & Collaboration";
+      priority = 10;
+    };
+  };
+  # |----------------------------------------------------------------------| #
 
   environment.persistence."/persist".directories = [
     {

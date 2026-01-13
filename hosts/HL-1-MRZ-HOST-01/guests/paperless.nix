@@ -26,7 +26,17 @@ in
     firewallRuleForNode.ward-web-proxy.allowedTCPPorts = [ config.services.paperless.port ];
   };
 
-  globals.services.paperless.domain = paperlessDomain;
+  globals.services.paperless = {
+    domain = paperlessDomain;
+    homepage = {
+      enable = true;
+      name = "Paperless-ngx";
+      icon = "sh-paperless";
+      description = "Document Management & OCR";
+      category = "Documents & Notes";
+      priority = 5;
+    };
+  };
   # FIXME: also monitor from internal network
   globals.monitoring.http.paperless = {
     url = "https://${paperlessDomain}";

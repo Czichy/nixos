@@ -60,7 +60,17 @@ in {
     mode = "440";
   };
   # |----------------------------------------------------------------------| #
-  # globals.services.forgejo.domain = forgejoDomain;
+  globals.services.forgejo = {
+    domain = forgejoDomain;
+    homepage = {
+      enable = true;
+      name = "Forgejo";
+      icon = "sh-forgejo";
+      description = "Self-hosted Git Service";
+      category = "Development & Collaboration";
+      priority = 5;
+    };
+  };
   # globals.monitoring.http.forgejo = {
   #   url = "https://${forgejoDomain}/user/login";
   #   expectedBodyRegex = "Redlew Git";

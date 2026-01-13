@@ -62,7 +62,18 @@ in {
   ];
 
   # |----------------------------------------------------------------------| #
-  globals.services.vaultwarden.domain = vaultwardenDomain;
+  globals.services.vaultwarden = {
+    domain = vaultwardenDomain;
+    homepage = {
+      enable = true;
+      name = "Vaultwarden";
+      icon = "sh-bitwarden";
+      description = "Password Manager (Bitwarden)";
+      category = "Infrastructure";
+      requiresAuth = true;
+      priority = 1;
+    };
+  };
   globals.monitoring.http.vaultwarden = {
     url = "https://${vaultwardenDomain}";
     expectedBodyRegex = "Vaultwarden Web";

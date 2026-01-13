@@ -176,7 +176,17 @@ in {
     ];
   };
 
-  globals.services.immich.domain = immichDomain;
+  globals.services.immich = {
+    domain = immichDomain;
+    homepage = {
+      enable = true;
+      name = "Immich";
+      icon = "sh-immich";
+      description = "Photo & Video Management";
+      category = "Storage & Files";
+      priority = 5;
+    };
+  };
   globals.monitoring.http.immich = {
     url = "https://${immichDomain}";
     expectedBodyRegex = "immutable.entry.app";

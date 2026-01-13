@@ -11,7 +11,17 @@
   certloc = "/var/lib/acme-sync/czichy.com";
 in {
   # |----------------------------------------------------------------------| #
-  globals.services.influxdb.domain = influxdbDomain;
+  globals.services.influxdb = {
+    domain = influxdbDomain;
+    homepage = {
+      enable = true;
+      name = "InfluxDB";
+      icon = "sh-influxdb";
+      description = "Time-Series Database";
+      category = "Monitoring & Observability";
+      priority = 20;
+    };
+  };
   networking.hostName = "HL-3-RZ-INFLUX-01";
 
   networking.firewall = {

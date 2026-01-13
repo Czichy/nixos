@@ -62,7 +62,17 @@ in {
     '';
   };
   # |----------------------------------------------------------------------| #
-  globals.services.parseable.domain = parseableDomain;
+  globals.services.parseable = {
+    domain = parseableDomain;
+    homepage = {
+      enable = true;
+      name = "Parseable";
+      icon = "sh-parseable";
+      description = "Log Aggregation & Analytics";
+      category = "Monitoring & Observability";
+      priority = 30;
+    };
+  };
   # FIXME: also monitor from internal network
   # globals.monitoring.http.ente = {
   #   url = "https://${entePhotosDomain}";

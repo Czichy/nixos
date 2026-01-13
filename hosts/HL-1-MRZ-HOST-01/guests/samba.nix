@@ -217,7 +217,17 @@ in {
   };
 
   # |----------------------------------------------------------------------| #
-  globals.services.samba.domain = sambaDomain;
+  globals.services.samba = {
+    domain = sambaDomain;
+    homepage = {
+      enable = false;  # Samba hat kein Web-UI
+      name = "Samba";
+      icon = "mdi-folder-network";
+      description = "File Sharing (SMB/CIFS)";
+      category = "Storage & Files";
+      priority = 30;
+    };
+  };
   globals.monitoring.tcp.samba = {
     host = globals.net.vlan40.hosts.HL-3-RZ-SMB-01.id;
     port = 445;
