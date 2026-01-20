@@ -557,7 +557,7 @@ in {
 
   # Inject environment secrets for widgets (HOMEPAGE_VAR_*)
   # The homepage service reads these from environment variables
-  systemd.services.homepage-dashboard.serviceConfig.EnvironmentFile = config.age.secrets.homepage-env.path;
+  systemd.services.homepage-dashboard.serviceConfig.EnvironmentFile = lib.mkForce config.age.secrets.homepage-env.path;
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
     files = [
