@@ -159,6 +159,24 @@ in {
                         default = null;
                         description = "URL for health check ping";
                       };
+
+                      siteMonitor = mkOption {
+                        type = types.bool;
+                        default = true;
+                        description = "Whether to enable site monitoring for availability";
+                      };
+
+                      widget = mkOption {
+                        type = types.nullOr (types.attrsOf types.anything);
+                        default = null;
+                        description = "Homepage widget configuration for service status display";
+                        example = {
+                          type = "grafana";
+                          url = "https://grafana.example.com";
+                          username = "admin";
+                          password = "{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}";
+                        };
+                      };
                     };
                   };
                 };

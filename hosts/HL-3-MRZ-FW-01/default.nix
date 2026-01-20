@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   config,
+  globals,
   ...
 }: let
   inherit
