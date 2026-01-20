@@ -186,6 +186,11 @@ in {
       category = "Storage & Files";
       priority = 5;
       abbr = "IM";
+      widget = {
+        type = "immich";
+        url = "https://${immichDomain}";
+        key = "{{HOMEPAGE_VAR_IMMICH_API_KEY}}";
+      };
     };
   };
   globals.monitoring.http.immich = {

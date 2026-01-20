@@ -24,6 +24,15 @@ in {
       category = "Home Automation";
       priority = 5;
       abbr = "HA";
+      widget = {
+        type = "homeassistant";
+        url = "https://${homeassistantDomain}";
+        key = "{{HOMEPAGE_VAR_HOMEASSISTANT_TOKEN}}";
+        custom = [
+          { state = "sensor.people_home"; label = "Zuhause"; }
+          { state = "light.all_lights"; label = "Lichter"; }
+        ];
+      };
     };
   };
   # globals.monitoring.http.homeassistant = {

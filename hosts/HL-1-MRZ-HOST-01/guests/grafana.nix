@@ -122,6 +122,12 @@ in {
       category = "Monitoring & Observability";
       priority = 10;
       abbr = "GF";
+      widget = {
+        type = "grafana";
+        url = "https://${grafanaDomain}";
+        username = "czichy";
+        password = "{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}";
+      };
     };
   };
   globals.monitoring.http.grafana = {

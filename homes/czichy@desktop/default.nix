@@ -4,7 +4,10 @@ in {
   tensorfiles.hm = {
     profiles.graphical-hyprland.enable = true;
     profiles.graphical-niri.enable = true;
-    security.agenix.enable = true;
+    security = {
+      agenix.enable = true;
+      credentials.enable = true;
+    };
 
     system.impermanence = {
       enable = true;

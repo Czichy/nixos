@@ -23,6 +23,12 @@ in {
       category = "Network & Management";
       priority = 10;
       abbr = "UF";
+      widget = {
+        type = "unifi";
+        url = "https://${unifiDomain}";
+        username = "{{HOMEPAGE_VAR_UNIFI_USERNAME}}";
+        password = "{{HOMEPAGE_VAR_UNIFI_PASSWORD}}";
+      };
     };
   };
   globals.monitoring.dns.unifi = {

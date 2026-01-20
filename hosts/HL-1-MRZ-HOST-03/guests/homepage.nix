@@ -39,8 +39,16 @@ let
       withPing = if (svc.homepage.ping or null) != null
         then withAbbr // { ping = svc.homepage.ping; }
         else withAbbr;
+      # Add siteMonitor for availability checking (uses the service URL)
+      withSiteMonitor = if (svc.homepage.siteMonitor or true)
+        then withPing // { siteMonitor = serviceUrl; }
+        else withPing;
+      # Add widget configuration if defined
+      withWidget = if (svc.homepage.widget or null) != null
+        then withSiteMonitor // { widget = svc.homepage.widget; }
+        else withSiteMonitor;
     in {
-      ${displayName} = [ withPing ];
+      ${displayName} = [ withWidget ];
     };
 
   # Group by category
@@ -472,6 +480,12 @@ in {
     mode = "440";
   };
 
+  # Homepage Widget Secrets
+  age.secrets.homepage-env = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-03/guests/homepage/homepage-env.age";
+    mode = "440";
+  };
+
   # |----------------------------------------------------------------------| #
   # Der innere Caddy (HL-1-MRZ-HOST-02-caddy) muss nun ein eigenes TLS-Zertifikat bereitstellen,
   # damit der äußere Caddy eine sichere Verbindung aufbauen kann.
@@ -540,6 +554,10 @@ in {
     # Static bookmarks
     bookmarks = staticBookmarks;
   };
+
+  # Inject environment secrets for widgets (HOMEPAGE_VAR_*)
+  # The homepage service reads these from environment variables
+  systemd.services.homepage-dashboard.serviceConfig.EnvironmentFile = config.age.secrets.homepage-env.path;
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
     files = [

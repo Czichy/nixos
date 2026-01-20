@@ -36,6 +36,11 @@ in
       category = "Documents & Notes";
       priority = 5;
       abbr = "PL";
+      widget = {
+        type = "paperlessngx";
+        url = "https://${paperlessDomain}";
+        key = "{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}";
+      };
     };
   };
   # FIXME: also monitor from internal network

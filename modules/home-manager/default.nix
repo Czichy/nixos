@@ -95,6 +95,10 @@ in {
     programs_minecraft = importApply ./programs/games/minecraft.nix {inherit localFlake;};
     programs_wine = importApply ./programs/wine.nix {inherit localFlake;};
     # -- security --
+    security_credentials = importApply ./security/credentials.nix {
+      inherit secretsPath;
+      inherit localFlake;
+    };
 
     # -- services --
     # services_dunst = importApply ./services/dunst.nix {inherit localFlake;};

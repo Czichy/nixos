@@ -19,6 +19,12 @@ in {
       category = "Infrastructure";
       priority = 5;
       abbr = "AG";
+      widget = {
+        type = "adguard";
+        url = "https://${adguardhomeDomain}";
+        username = "{{HOMEPAGE_VAR_ADGUARD_USERNAME}}";
+        password = "{{HOMEPAGE_VAR_ADGUARD_PASSWORD}}";
+      };
     };
   };
   globals.monitoring.dns.adguardhome = {
