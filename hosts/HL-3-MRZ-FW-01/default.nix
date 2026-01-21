@@ -10,7 +10,33 @@
     # mkDevice
     mkConnection
     ;
+  opnsenseDomain = "opnsense.czichy.com";
+  opnsenseIP = "10.15.100.99";
 in {
+  # OPNsense Firewall - Homepage Integration
+  globals.services.opnsense = {
+    domain = opnsenseDomain;
+    homepage = {
+      enable = true;
+      name = "OPNsense";
+      icon = "sh-opnsense";
+      description = "Open source firewall and routing platform";
+      category = "Infrastructure";
+      priority = 1;
+      abbr = "FW";
+      # Use IP for siteMonitor since internal only
+      siteMonitor = false;
+      ping = "https://${opnsenseIP}";
+      widget = {
+        type = "opnsense";
+        url = "https://${opnsenseIP}";
+        username = "{{HOMEPAGE_VAR_OPNSENSE_USERNAME}}";
+        password = "{{HOMEPAGE_VAR_OPNSENSE_PASSWORD}}";
+        # Disable SSL verification for self-signed cert
+        insecure = true;
+      };
+    };
+  };
   # -----------------
   # | SPECIFICATION |
   # -----------------
