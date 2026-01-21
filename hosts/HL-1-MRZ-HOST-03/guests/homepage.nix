@@ -48,7 +48,7 @@ let
         then withSiteMonitor // { widget = svc.homepage.widget; }
         else withSiteMonitor;
     in {
-      ${displayName} = [ withWidget ];
+      ${displayName} = withWidget;
     };
 
   # Group by category
