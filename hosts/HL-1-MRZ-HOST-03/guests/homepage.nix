@@ -9,7 +9,7 @@
 }:
 # |----------------------------------------------------------------------| #
 let
-  domain = "home.czichy.com";
+  domain = "homeassistant.czichy.com";
   certloc = "/var/lib/acme-sync/czichy.com";
   listenPort = 10001;
 
@@ -18,59 +18,64 @@ let
   # =====================================================================
 
   # Filter enabled services from globals
-  enabledServices = lib.filterAttrs
+  enabledServices =
+    lib.filterAttrs
     (_: svc: (svc.homepage.enable or false) && (svc ? domain))
     globals.services;
 
   # Convert service to homepage format
-  mkHomepageService = serviceName: svc:
-    let
-      displayName = svc.homepage.name or serviceName;
-      serviceUrl = "https://${svc.domain}";
-      baseEntry = {
-        icon = svc.homepage.icon or "mdi-web";
-        href = serviceUrl;
-        description = svc.homepage.description or "${displayName} Service";
-      };
-      withAbbr = if (svc.homepage.abbr or null) != null
-        then baseEntry // { abbr = svc.homepage.abbr; }
-        else baseEntry;
-      withPing = if (svc.homepage.ping or null) != null
-        then withAbbr // { ping = svc.homepage.ping; }
-        else withAbbr;
-      # Add siteMonitor for availability checking (uses the service URL)
-      withSiteMonitor = if (svc.homepage.siteMonitor or true)
-        then withPing // { siteMonitor = serviceUrl; }
-        else withPing;
-      # Add widget configuration if defined
-      withWidget = if (svc.homepage.widget or null) != null
-        then withSiteMonitor // { widget = svc.homepage.widget; }
-        else withSiteMonitor;
-    in {
-      ${displayName} = withWidget;
+  mkHomepageService = serviceName: svc: let
+    displayName = svc.homepage.name or serviceName;
+    serviceUrl = "https://${svc.domain}";
+    baseEntry = {
+      icon = svc.homepage.icon or "mdi-web";
+      href = serviceUrl;
+      description = svc.homepage.description or "${displayName} Service";
     };
+    withAbbr =
+      if (svc.homepage.abbr or null) != null
+      then baseEntry // {abbr = svc.homepage.abbr;}
+      else baseEntry;
+    withPing =
+      if (svc.homepage.ping or null) != null
+      then withAbbr // {ping = svc.homepage.ping;}
+      else withAbbr;
+    # Add siteMonitor for availability checking (uses the service URL)
+    withSiteMonitor =
+      if (svc.homepage.siteMonitor or true)
+      then withPing // {siteMonitor = serviceUrl;}
+      else withPing;
+    # Add widget configuration if defined
+    withWidget =
+      if (svc.homepage.widget or null) != null
+      then withSiteMonitor // {widget = svc.homepage.widget;}
+      else withSiteMonitor;
+  in {
+    ${displayName} = withWidget;
+  };
 
   # Group by category
-  servicesByCategory = lib.groupBy
+  servicesByCategory =
+    lib.groupBy
     (svc: svc.homepage.category or "Services")
-    (lib.mapAttrsToList (name: svc: svc // { _name = name; }) enabledServices);
+    (lib.mapAttrsToList (name: svc: svc // {_name = name;}) enabledServices);
 
   # Convert category to homepage format
-  mkCategory = categoryName: services:
-    let
-      # Sort by priority (lower priority = higher on page)
-      sortedServices = lib.sort
-        (a: b: (a.homepage.priority or 100) < (b.homepage.priority or 100))
-        services;
-    in {
-      ${categoryName} = map
-        (svc: mkHomepageService svc._name svc)
-        sortedServices;
-    };
+  mkCategory = categoryName: services: let
+    # Sort by priority (lower priority = higher on page)
+    sortedServices =
+      lib.sort
+      (a: b: (a.homepage.priority or 100) < (b.homepage.priority or 100))
+      services;
+  in {
+    ${categoryName} =
+      map
+      (svc: mkHomepageService svc._name svc)
+      sortedServices;
+  };
 
   # Generated services from globals
   generatedServices = lib.mapAttrsToList mkCategory servicesByCategory;
-
   # |----------------------------------------------------------------------| #
 in {
   microvm.mem = 512;
