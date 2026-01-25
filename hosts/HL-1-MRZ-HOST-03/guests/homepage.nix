@@ -9,7 +9,7 @@
 }:
 # |----------------------------------------------------------------------| #
 let
-  domain = "homeassistant.czichy.com";
+  domain = "home.czichy.com";
   certloc = "/var/lib/acme-sync/czichy.com";
   listenPort = 10001;
 

@@ -7,7 +7,7 @@
   secretsPath,
   ...
 }: let
-  homeassistantDomain = "home.${globals.domains.me}";
+  homeassistantDomain = "home-assitant.${globals.domains.me}";
   certloc = "/var/lib/acme-sync/czichy.com";
 in {
   microvm.mem = 4196;
@@ -29,8 +29,14 @@ in {
         url = "https://${homeassistantDomain}";
         key = "{{HOMEPAGE_VAR_HOMEASSISTANT_TOKEN}}";
         custom = [
-          { state = "sensor.people_home"; label = "Zuhause"; }
-          { state = "light.all_lights"; label = "Lichter"; }
+          {
+            state = "sensor.people_home";
+            label = "Zuhause";
+          }
+          {
+            state = "light.all_lights";
+            label = "Lichter";
+          }
         ];
       };
     };
