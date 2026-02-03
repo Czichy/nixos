@@ -44,12 +44,12 @@ in {
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKAL9mtLn2ASGNkOsS38GXrLDNmLLedb0XNJzhOxtAB christian@czichy.com"
   ];
 
-  services.resolved = {
-    # Disable local DNS stub listener on 127.0.0.53
-    settings = ''
-      DNSStubListener=no
-    '';
-  };
+  # services.resolved = {
+  #   # Disable local DNS stub listener on 127.0.0.53
+  #   settings = ''
+  #     DNSStubListener=no
+  #   '';
+  # };
 
   nix = {
     settings.auto-optimise-store = mkForce false;
