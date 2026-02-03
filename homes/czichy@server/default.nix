@@ -5,7 +5,6 @@
 
     system.impermanence = {
       enable = true;
-      allowOther = true;
     };
     programs = {
       ssh = {
@@ -15,7 +14,6 @@
       ragenix.enable = true;
     };
   };
-  home.persistence."/persist/home/czichy".allowOther = true;
   home.username = "czichy";
   home.homeDirectory = "/home/czichy";
   home.sessionVariables = {

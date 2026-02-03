@@ -57,7 +57,7 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [
           ".config/vivaldi"
           ".local/lib/vivaldi"

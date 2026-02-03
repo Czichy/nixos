@@ -111,10 +111,9 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [
           #".gnupg"
-          ".ssh"
           #(pathToRelative config.home.sessionVariables.DOWNLOADS_DIR)
           #(pathToRelative config.home.sessionVariables.ORG_DIR)
           (pathToRelative config.home.sessionVariables.PROJECTS_DIR)

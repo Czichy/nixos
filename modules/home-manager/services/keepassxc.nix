@@ -66,7 +66,7 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [
           ".cache/keepassxc"
           ".config/keepassxc"

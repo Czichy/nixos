@@ -263,6 +263,7 @@ in {
           directories = [
             #"/etc/tensorfiles" # TODO probably not needed anymore ? not sure
             "/var/lib/bluetooth" # TODO move bluetooth to hardware
+            "/var/lib/nixos" # contains user/group id map
             "/var/lib/systemd/coredump"
             # Add this globally to prevent permission issues
             {

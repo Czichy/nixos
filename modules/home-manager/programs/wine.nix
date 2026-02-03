@@ -46,8 +46,7 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        allowOther = true;
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [
           ".wine"
           ".cache/wine"

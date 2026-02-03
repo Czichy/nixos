@@ -67,17 +67,10 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        allowOther = true;
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [
           ".local/share/Steam"
           ".local/share/Paradox Interactive"
-          # Minecraft Bedrock Launcher
-          # https://mcpelauncher.readthedocs.io/en/latest/index.html
-          ".config/Minecraft Linux Launcher"
-          ".local/share/mcpelauncher"
-          ".local/share/mcpelauncher-webview"
-          ".local/share/Minecraft Linux Launcher"
         ];
       };
     })

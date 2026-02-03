@@ -90,6 +90,7 @@ in {
     {
       programs.ssh = {
         enable = _ true;
+        enableDefaultConfig = _ false;
       };
 
       programs.keychain = {
@@ -139,7 +140,7 @@ in {
     })
     # |----------------------------------------------------------------------| #
     {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [".ssh"];
       };
     }

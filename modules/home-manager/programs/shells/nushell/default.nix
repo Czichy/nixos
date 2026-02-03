@@ -276,12 +276,7 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        directories = [
-          ".local/share/atuin"
-          ".local/share/zoxide"
-        ];
-
+      home.persistence."${impermanence.persistentRoot}" = {
         files = [".config/nushell/history.txt"];
       };
     })

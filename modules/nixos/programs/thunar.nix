@@ -19,7 +19,7 @@ in {
     {
       programs.thunar = {
         enable = true;
-        plugins = with pkgs.xfce;
+        plugins = with pkgs;
           mkDefault [
             thunar-volman
             thunar-dropbox-plugin

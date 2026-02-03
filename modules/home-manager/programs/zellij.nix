@@ -23,7 +23,7 @@ in {
         enableFishIntegration = false;
         settings = {
           theme =
-            if pkgs.system == "aarch64-darwin"
+            if pkgs.stdenv.hostPlatform.system == "aarch64-darwin"
             then "dracula"
             else "default";
           # https://github.com/nix-community/home-manager/issues/3854

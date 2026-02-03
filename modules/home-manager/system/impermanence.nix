@@ -30,16 +30,10 @@ in
         '';
       };
 
-      allowOther = mkOption {
-        type = bool;
-        default = true;
-        description = ''
-          TODO
-        '';
-      };
+
     };
 
-    imports = with inputs; [impermanence.nixosModules.home-manager.impermanence];
+
 
     config = mkIf cfg.enable (mkMerge [
       # |----------------------------------------------------------------------| #
@@ -53,10 +47,7 @@ in
       }
       # |----------------------------------------------------------------------| #
       {
-        home.persistence."${cfg.persistentRoot}".allowOther = true;
-        # home.persistence."${cfg.persistentRoot}" = {
-        #   inherit (cfg) allowOther;
-        # };
+
       }
       # |----------------------------------------------------------------------| #
     ]);

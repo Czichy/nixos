@@ -11,7 +11,6 @@ in {
 
     system.impermanence = {
       enable = true;
-      allowOther = true;
     };
     programs = {
       bitwarden.enable = true;

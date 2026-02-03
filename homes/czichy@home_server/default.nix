@@ -5,7 +5,6 @@
 
     system.impermanence = {
       enable = true;
-      allowOther = true;
     };
     programs = {
       ssh = {

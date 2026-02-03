@@ -72,7 +72,7 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [
           ".zen/czichy"
           # (pathToRelative "${config.xdg.cacheHome}/.mozilla/firefox")

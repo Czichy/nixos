@@ -240,7 +240,7 @@ in {
     (mkIf impermanenceCheck {
       home.file."${config.xdg.cacheHome}/oh-my-zsh/.keep".enable = false;
 
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+      home.persistence."${impermanence.persistentRoot}" = {
         files =
           [".zsh_history"]
           ++ (optional cfg.oh-my-zsh.enable (pathToRelative "${config.xdg.cacheHome}/oh-my-zsh"))
