@@ -117,6 +117,9 @@
       // mkMicrovm "grafana" "HL-3-RZ-GRAFANA-01" "enp38s0" "02:04:27:ee:9e:16" "vlan40" {
         enableStorageDataset = true;
       }
+      // mkMicrovm "victoria" "HL-3-RZ-METRICS-01" "enp38s0" "02:05:27:ee:9e:16" "vlan40" {
+        enableStorageDataset = true;
+      }
       # // mkMicrovm "affine" "HL-3-RZ-AFFINE-01" "enp38s0" "02:04:27:ee:9e:16" "vlan40" {
       #   enableStorageDataset = true;
       # }
