@@ -106,7 +106,6 @@ in {
     prometheusConfig = {
       global = {
         scrape_interval = "15s";
-        evaluation_interval = "15s";
       };
 
       scrape_configs = [
