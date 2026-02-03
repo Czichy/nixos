@@ -195,6 +195,18 @@ in {
       enable = true;
       datasources.settings.datasources = [
         {
+          name = "VictoriaMetrics";
+          type = "prometheus";
+          access = "proxy";
+          url = "http://${globals.net.vlan40.hosts."HL-3-RZ-METRICS-01".ipv4}:8428";
+          isDefault = true;
+          editable = true;
+          jsonData = {
+            timeInterval = "10s";
+            httpMethod = "POST";
+          };
+        }
+        {
           name = "InfluxDB (machines)";
           type = "influxdb";
           access = "proxy";

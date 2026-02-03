@@ -67,6 +67,8 @@ in {
         hosts.HL-3-RZ-AFFINE-01.id = 110;
         # Grafana
         hosts.HL-3-RZ-GRAFANA-01.id = 111;
+        # Victoria Metrics
+        hosts.HL-3-RZ-METRICS-01.id = 112;
         # |------------------------------------| #
         hosts.HL-1-MRZ-HOST-02.id = 20;
         # AdguardHome
