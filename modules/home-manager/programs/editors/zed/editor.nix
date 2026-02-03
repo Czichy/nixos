@@ -137,7 +137,7 @@
           theme = {
             mode = "dark";
             light = "One Light";
-            dark = "One Dark";
+            dark = "Snazzy Theme";
           };
           # ssh_connections = [
           #   {
