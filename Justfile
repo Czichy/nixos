@@ -38,6 +38,84 @@ upgrade flake="github:johnae/world":
 build flake="github:johnae/world":
   @nixos-rebuild build --flake '{{flake}}' --use-remote-sudo -L
 
+# =====================================================================
+# | REMOTE DEPLOYMENT (build local, deploy remote)                    |
+# | All builds happen on HL-1-OZ-PC-01, deployed via SSH              |
+# | Strategy: build first, switch only on success                     |
+# =====================================================================
+
+# host -> target IP mapping (used internally)
+[private]
+target host:
+  @let targets = ({"HL-1-MRZ-HOST-01": "10.15.40.10", "HL-1-MRZ-HOST-02": "10.15.40.20", "HL-1-MRZ-HOST-03": "10.15.40.30", "HL-3-MRZ-FW-01": "10.15.100.99", "HL-4-PAZ-PROXY-01": "37.120.178.230"} | from json); if ($targets | get -i "{{host}}" | is-empty) { error make {msg: $"Unknown host '{{host}}'. Available: ($targets | columns | str join ', ')"} } else { $targets | get "{{host}}" }
+
+# deploy to a specific host (build locally first, then switch remotely)
+deploy host:
+  #!/usr/bin/env nu
+  let targets = {"HL-1-MRZ-HOST-01": "10.15.40.10", "HL-1-MRZ-HOST-02": "10.15.40.20", "HL-1-MRZ-HOST-03": "10.15.40.30", "HL-3-MRZ-FW-01": "10.15.100.99", "HL-4-PAZ-PROXY-01": "37.120.178.230"}
+  let host = "{{host}}"
+  let target = ($targets | get -i $host)
+  if ($target | is-empty) {
+    error make {msg: $"Unknown host '($host)'. Available: ($targets | columns | str join ', ')"}
+  }
+  print $"(ansi green_bold)Building ($host)...(ansi reset)"
+  nixos-rebuild build --flake $".#($host)" --verbose
+  print $"(ansi green_bold)Build successful. Switching ($host) -> ($target)...(ansi reset)"
+  sudo nixos-rebuild switch --flake $".#($host)" --target-host $"czichy@($target)" --verbose
+  print $"(ansi green_bold)Deploy ($host) complete.(ansi reset)"
+
+# deploy to a host with boot (for kernel updates, requires reboot)
+deploy-boot host:
+  #!/usr/bin/env nu
+  let targets = {"HL-1-MRZ-HOST-01": "10.15.40.10", "HL-1-MRZ-HOST-02": "10.15.40.20", "HL-1-MRZ-HOST-03": "10.15.40.30", "HL-3-MRZ-FW-01": "10.15.100.99", "HL-4-PAZ-PROXY-01": "37.120.178.230"}
+  let host = "{{host}}"
+  let target = ($targets | get -i $host)
+  if ($target | is-empty) {
+    error make {msg: $"Unknown host '($host)'. Available: ($targets | columns | str join ', ')"}
+  }
+  print $"(ansi green_bold)Building ($host)...(ansi reset)"
+  nixos-rebuild build --flake $".#($host)" --verbose
+  print $"(ansi green_bold)Build successful. Setting boot on ($host) -> ($target)...(ansi reset)"
+  sudo nixos-rebuild boot --flake $".#($host)" --target-host $"czichy@($target)" --verbose
+  print $"(ansi green_bold)Boot set for ($host). Reboot required.(ansi reset)"
+
+# build a host configuration without deploying
+build-host host:
+  @print $"(ansi green_bold)Building {{host}}...(ansi reset)"
+  @nixos-rebuild build --flake $".#{{host}}" --verbose
+
+# deploy to all remote hosts sequentially (build first, then switch each)
+deploy-all:
+  #!/usr/bin/env nu
+  let hosts = ["HL-1-MRZ-HOST-01", "HL-1-MRZ-HOST-02", "HL-1-MRZ-HOST-03", "HL-3-MRZ-FW-01", "HL-4-PAZ-PROXY-01"]
+  for host in $hosts {
+    print $"(ansi cyan_bold)--- ($host) ---(ansi reset)"
+    just deploy $host
+  }
+
+# switch the local machine (build first, then switch)
+local:
+  #!/usr/bin/env nu
+  print $"(ansi green_bold)Building HL-1-OZ-PC-01...(ansi reset)"
+  nixos-rebuild build --flake ".#HL-1-OZ-PC-01" --verbose
+  print $"(ansi green_bold)Build successful. Switching...(ansi reset)"
+  sudo nixos-rebuild switch --flake ".#HL-1-OZ-PC-01" --verbose
+
+# build and set boot on local machine (for kernel updates)
+local-boot:
+  #!/usr/bin/env nu
+  print $"(ansi green_bold)Building HL-1-OZ-PC-01...(ansi reset)"
+  nixos-rebuild build --flake ".#HL-1-OZ-PC-01" --verbose
+  print $"(ansi green_bold)Build successful. Setting boot...(ansi reset)"
+  sudo nixos-rebuild boot --flake ".#HL-1-OZ-PC-01" --verbose
+  print $"(ansi yellow_bold)Reboot required.(ansi reset)"
+
+# list all available hosts
+hosts:
+  @[["Host", "Target", "Type"]; ["HL-1-OZ-PC-01", "local", "Desktop"], ["HL-1-MRZ-HOST-01", "10.15.40.10", "Hypervisor"], ["HL-1-MRZ-HOST-02", "10.15.40.20", "Hypervisor"], ["HL-1-MRZ-HOST-03", "10.15.40.30", "Hypervisor"], ["HL-3-MRZ-FW-01", "10.15.100.99", "Firewall"], ["HL-4-PAZ-PROXY-01", "37.120.178.230", "VPS"]] | table
+
+# =====================================================================
+
 [private]
 echo +args:
   @echo '{{args}}'

@@ -37,6 +37,8 @@
     treefmt # one CLI to format the code tree
 
     # -- (YOUR) EXTRA PKGS --
+    just # Command runner for project-specific tasks
+    nushell # Modern shell (required by Justfile: set shell := ["nu", "-c"])
     nh # Yet another nix cli helper
     disko # Declarative disk partitioning and formatting using nix
     cachix # Command-line client for Nix binary cache hosting https://cachix.org

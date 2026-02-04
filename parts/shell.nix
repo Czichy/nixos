@@ -32,6 +32,8 @@
         # Packages from nixpkgs, for Nix, Flakes or local tools.
         pkgs.git # flakes require Git to be installed, since this repo is version controlled
         pkgs.nodejs # building ags and configuring eslint_d will require nodejs
+        pkgs.just # Command runner for project-specific tasks
+        pkgs.nushell # Modern shell (required by Justfile)
       ];
     };
   };

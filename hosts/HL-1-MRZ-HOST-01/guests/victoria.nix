@@ -104,15 +104,6 @@ in {
   ];
 
   # |----------------------------------------------------------------------| #
-  # | SYSTEMD OVERRIDE (disable DynamicUser for MicroVM compatibility)     |
-  # |----------------------------------------------------------------------| #
-  systemd.services.victoriametrics.serviceConfig = {
-    DynamicUser = lib.mkForce false;
-    User = "victoriametrics";
-    Group = "victoriametrics";
-  };
-
-  # |----------------------------------------------------------------------| #
   # | VICTORIAMETRICS                                                      |
   # |----------------------------------------------------------------------| #
   services.victoriametrics = {

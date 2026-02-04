@@ -37,6 +37,8 @@ in {
   ];
   environment.pathsToLink = ["/share/applications" "/share/xdg-desktop-portal"];
 
+  users.defaultUserShell = pkgs.nushell;
+
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
