@@ -82,6 +82,16 @@ in {
   ];
 
   # |----------------------------------------------------------------------| #
+  # | USER & GROUP (static, not DynamicUser - required for MicroVM)        |
+  # |----------------------------------------------------------------------| #
+  users.users.victoriametrics = {
+    isSystemUser = true;
+    group = "victoriametrics";
+    home = "/var/lib/victoriametrics";
+  };
+  users.groups.victoriametrics = {};
+
+  # |----------------------------------------------------------------------| #
   # | PERSISTENCE (impermanence)                                           |
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist".directories = [
@@ -92,6 +102,15 @@ in {
       mode = "0700";
     }
   ];
+
+  # |----------------------------------------------------------------------| #
+  # | SYSTEMD OVERRIDE (disable DynamicUser for MicroVM compatibility)     |
+  # |----------------------------------------------------------------------| #
+  systemd.services.victoriametrics.serviceConfig = {
+    DynamicUser = lib.mkForce false;
+    User = "victoriametrics";
+    Group = "victoriametrics";
+  };
 
   # |----------------------------------------------------------------------| #
   # | VICTORIAMETRICS                                                      |
