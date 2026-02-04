@@ -61,7 +61,7 @@ deploy host:
   print $"(ansi green_bold)Building ($host)...(ansi reset)"
   nixos-rebuild build --flake $".#($host)" --verbose
   print $"(ansi green_bold)Build successful. Switching ($host) -> ($target)...(ansi reset)"
-  sudo nixos-rebuild switch --flake $".#($host)" --target-host $"czichy@($target)" --verbose
+  nixos-rebuild switch --flake $".#($host)" --target-host $"root@($target)" --verbose
   print $"(ansi green_bold)Deploy ($host) complete.(ansi reset)"
 
 # deploy to a host with boot (for kernel updates, requires reboot)
@@ -76,7 +76,7 @@ deploy-boot host:
   print $"(ansi green_bold)Building ($host)...(ansi reset)"
   nixos-rebuild build --flake $".#($host)" --verbose
   print $"(ansi green_bold)Build successful. Setting boot on ($host) -> ($target)...(ansi reset)"
-  sudo nixos-rebuild boot --flake $".#($host)" --target-host $"czichy@($target)" --verbose
+  nixos-rebuild boot --flake $".#($host)" --target-host $"root@($target)" --verbose
   print $"(ansi green_bold)Boot set for ($host). Reboot required.(ansi reset)"
 
 # build a host configuration without deploying

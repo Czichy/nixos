@@ -21,6 +21,7 @@
     ./fmt.nix # Formatter configurations via Treefmt
     ./iso-images.nix # Build recipes for local installation media
     ./shell.nix # devShells exposed by the flake
+    ./shells # devenv-based devShells (e.g. .#dev)
 
     ./globals.nix # Global parameters
     ./secrets.nix # Global secrets
