@@ -13,18 +13,18 @@
       model_parameters = [];
     };
     #| AI & Assistant Features
-    assistant = {
-      version = "2";
-      enabled = true;
-      button = true;
-      dock = "bottom";
-      default_width = 640;
-      default_height = 320;
-      default_model = {
-        provider = "ollama";
-        model = "qwen2.5-coder:latest";
-      };
-    };
+    # assistant = {
+    #   version = "2";
+    #   enabled = true;
+    #   button = true;
+    #   dock = "bottom";
+    #   default_width = 640;
+    #   default_height = 320;
+    #   default_model = {
+    #     provider = "ollama";
+    #     model = "qwen2.5-coder:latest";
+    #   };
+    # };
     language_models = {
       anthropic.version = "1";
       anthropic.api_url = "https://api.anthropic.com";

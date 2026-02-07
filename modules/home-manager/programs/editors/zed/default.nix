@@ -55,9 +55,6 @@ in {
       home.shellAliases = {
         "zed" = _ "zeditor";
       };
-      home.sessionVariables = {
-        GEMINI_API_KEY = "AIzaSyDhnUgG4pmseeru80h8ryBKI7isou9Q6e0";
-      };
 
       xdg.configFile."zed/tasks.json" = {source = ./tasks.json;};
       programs.zed-editor = let
