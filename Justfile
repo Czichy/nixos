@@ -44,20 +44,22 @@ build flake="github:johnae/world":
 # | Strategy: build first, switch only on success                     |
 # =====================================================================
 
+# central host -> target IP mapping (single source of truth)
+remote_targets := '{"HL-1-MRZ-HOST-01": "10.15.100.10", "HL-1-MRZ-HOST-02": "10.15.100.20", "HL-1-MRZ-HOST-03": "10.15.100.30", "HL-3-MRZ-FW-01": "10.15.100.99", "HL-4-PAZ-PROXY-01": "37.120.178.230"}'
+
 # host -> target IP mapping (used internally)
 [private]
 target host:
-  @let targets = ({"HL-1-MRZ-HOST-01": "10.15.40.10", "HL-1-MRZ-HOST-02": "10.15.40.20", "HL-1-MRZ-HOST-03": "10.15.40.30", "HL-3-MRZ-FW-01": "10.15.100.99", "HL-4-PAZ-PROXY-01": "37.120.178.230"} | from json); if ($targets | get -i "{{host}}" | is-empty) { error make {msg: $"Unknown host '{{host}}'. Available: ($targets | columns | str join ', ')"} } else { $targets | get "{{host}}" }
+  @let targets = ('{{remote_targets}}' | from json); if ($targets | get -o "{{host}}" | is-empty) { error make {msg: $"Unknown host '{{host}}'. Available: ($targets | columns | str join ', ')"} } else { $targets | get "{{host}}" }
 
 # deploy to a specific host (build locally first, then switch remotely)
 deploy host:
   #!/usr/bin/env nu
-  let targets = {"HL-1-MRZ-HOST-01": "10.15.40.10", "HL-1-MRZ-HOST-02": "10.15.40.20", "HL-1-MRZ-HOST-03": "10.15.40.30", "HL-3-MRZ-FW-01": "10.15.100.99", "HL-4-PAZ-PROXY-01": "37.120.178.230"}
   let host = "{{host}}"
-  let target = ($targets | get -i $host)
-  if ($target | is-empty) {
-    error make {msg: $"Unknown host '($host)'. Available: ($targets | columns | str join ', ')"}
-  }
+  let target = (just target $host | str trim)
+  print $"(ansi yellow_bold)Host: ($host) -> IP: ($target)(ansi reset)"
+  let confirm = (input $"(ansi cyan)Deploy to ($target)? [y/N] (ansi reset)" | str trim | str downcase)
+  if $confirm != "y" { print $"(ansi red_bold)Aborted.(ansi reset)"; exit 1 }
   print $"(ansi green_bold)Building ($host)...(ansi reset)"
   nixos-rebuild build --flake $".#($host)" --verbose
   print $"(ansi green_bold)Build successful. Switching ($host) -> ($target)...(ansi reset)"
@@ -67,12 +69,11 @@ deploy host:
 # deploy to a host with boot (for kernel updates, requires reboot)
 deploy-boot host:
   #!/usr/bin/env nu
-  let targets = {"HL-1-MRZ-HOST-01": "10.15.40.10", "HL-1-MRZ-HOST-02": "10.15.40.20", "HL-1-MRZ-HOST-03": "10.15.40.30", "HL-3-MRZ-FW-01": "10.15.100.99", "HL-4-PAZ-PROXY-01": "37.120.178.230"}
   let host = "{{host}}"
-  let target = ($targets | get -i $host)
-  if ($target | is-empty) {
-    error make {msg: $"Unknown host '($host)'. Available: ($targets | columns | str join ', ')"}
-  }
+  let target = (just target $host | str trim)
+  print $"(ansi yellow_bold)Host: ($host) -> IP: ($target)(ansi reset)"
+  let confirm = (input $"(ansi cyan)Deploy boot to ($target)? [y/N] (ansi reset)" | str trim | str downcase)
+  if $confirm != "y" { print $"(ansi red_bold)Aborted.(ansi reset)"; exit 1 }
   print $"(ansi green_bold)Building ($host)...(ansi reset)"
   nixos-rebuild build --flake $".#($host)" --verbose
   print $"(ansi green_bold)Build successful. Setting boot on ($host) -> ($target)...(ansi reset)"
@@ -87,7 +88,7 @@ build-host host:
 # deploy to all remote hosts sequentially (build first, then switch each)
 deploy-all:
   #!/usr/bin/env nu
-  let hosts = ["HL-1-MRZ-HOST-01", "HL-1-MRZ-HOST-02", "HL-1-MRZ-HOST-03", "HL-3-MRZ-FW-01", "HL-4-PAZ-PROXY-01"]
+  let hosts = ('{{remote_targets}}' | from json | columns)
   for host in $hosts {
     print $"(ansi cyan_bold)--- ($host) ---(ansi reset)"
     just deploy $host
@@ -112,7 +113,7 @@ local-boot:
 
 # list all available hosts
 hosts:
-  @[["Host", "Target", "Type"]; ["HL-1-OZ-PC-01", "local", "Desktop"], ["HL-1-MRZ-HOST-01", "10.15.40.10", "Hypervisor"], ["HL-1-MRZ-HOST-02", "10.15.40.20", "Hypervisor"], ["HL-1-MRZ-HOST-03", "10.15.40.30", "Hypervisor"], ["HL-3-MRZ-FW-01", "10.15.100.99", "Firewall"], ["HL-4-PAZ-PROXY-01", "37.120.178.230", "VPS"]] | table
+  @let remote = ('{{remote_targets}}' | from json | transpose Host Target); [["Host", "Target"]; ["HL-1-OZ-PC-01", "local"]] | append $remote | table
 
 # =====================================================================
 

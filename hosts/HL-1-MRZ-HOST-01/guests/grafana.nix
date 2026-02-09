@@ -55,6 +55,12 @@ in {
     group = "grafana";
   };
 
+  age.secrets.grafana-ntfy-alert-pass = {
+    file = secretsPath + "/ntfy-sh/alert-pass.age";
+    mode = "440";
+    group = "grafana";
+  };
+
   age.secrets.grafana-secret-key = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/grafana/grafana-secret-key.age";
     mode = "440";
@@ -151,6 +157,10 @@ in {
       analytics.reporting_enabled = false;
       users.allow_sign_up = false;
 
+      # Unified Alerting
+      "unified_alerting".enabled = true;
+      alerting.enabled = false;
+
       server = {
         domain = grafanaDomain;
         root_url = "https://${grafanaDomain}";
@@ -170,25 +180,6 @@ in {
         hide_version = true;
       };
 
-      #   auth.disable_login_form = true;
-      #   "auth.generic_oauth" = {
-      #     enabled = true;
-      #     name = "Kanidm";
-      #     icon = "signin";
-      #     allow_sign_up = true;
-      #     #auto_login = true;
-      #     client_id = "grafana";
-      #     client_secret = "$__file{${config.age.secrets.grafana-oauth2-client-secret.path}}";
-      #     scopes = "openid email profile";
-      #     login_attribute_path = "preferred_username";
-      #     auth_url = "https://${globals.services.kanidm.domain}/ui/oauth2";
-      #     token_url = "https://${globals.services.kanidm.domain}/oauth2/token";
-      #     api_url = "https://${globals.services.kanidm.domain}/oauth2/openid/grafana/userinfo";
-      #     use_pkce = true;
-      #     # Allow mapping oauth2 roles to server admin
-      #     allow_assign_grafana_admin = true;
-      #     role_attribute_path = "contains(groups[*], 'server_admin') && 'GrafanaAdmin' || contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'";
-      #   };
     };
 
     provision = {
@@ -196,6 +187,7 @@ in {
       datasources.settings.datasources = [
         {
           name = "VictoriaMetrics";
+          # uid = "victoria-metrics";
           type = "prometheus";
           access = "proxy";
           url = "http://${globals.net.vlan40.hosts."HL-3-RZ-METRICS-01".ipv4}:8428";
@@ -208,6 +200,7 @@ in {
         }
         {
           name = "InfluxDB (machines)";
+          # uid = "influxdb-machines";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
@@ -219,6 +212,7 @@ in {
         }
         {
           name = "InfluxDB (smart_home)";
+          # uid = "influxdb-smart-home";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
@@ -230,6 +224,7 @@ in {
         }
         {
           name = "InfluxDB (home_assistant)";
+          # uid = "influxdb-home-assistant";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
@@ -239,30 +234,258 @@ in {
           jsonData.organization = "home";
           jsonData.defaultBucket = "home_assistant";
         }
-        #     # {
-        #     #   name = "Loki";
-        #     #   type = "loki";
-        #     #   access = "proxy";
-        #     #   url = "https://${globals.services.loki.domain}";
-        #     #   orgId = 1;
-        #     #   basicAuth = true;
-        #     #   basicAuthUser = "${config.node.name}+grafana-loki-basic-auth-password";
-        #     #   secureJsonData.basicAuthPassword = "$__file{${config.age.secrets.grafana-loki-basic-auth-password.path}}";
-        #     # }
       ];
-      #   dashboards.settings.providers = [
-      #     {
-      #       name = "default";
-      #       options.path = pkgs.stdenv.mkDerivation {
-      #         name = "grafana-dashboards";
-      #         src = ./grafana-dashboards;
-      #         installPhase = ''
-      #           mkdir -p $out/
-      #           install -D -m755 $src/*.json $out/
-      #         '';
-      #       };
-      #     }
-      # ];
+      dashboards.settings.providers = [
+        {
+          name = "SeekingEdge";
+          options.path = pkgs.stdenv.mkDerivation {
+            name = "grafana-dashboards";
+            src = ./grafana-dashboards;
+            installPhase = ''
+              mkdir -p $out/
+              install -D -m644 $src/*.json $out/
+            '';
+          };
+        }
+      ];
+
+      # --- SeekingEdge Alerting ---
+      alerting.contactPoints.settings = {
+        apiVersion = 1;
+        contactPoints = [
+          {
+            orgId = 1;
+            name = "ntfy-phone";
+            receivers = [
+              {
+                uid = "ntfy-seeking-edge";
+                type = "webhook";
+                disableResolveMessage = false;
+                settings = {
+                  url = "https://push.czichy.com/seeking-edge";
+                  httpMethod = "POST";
+                  maxAlerts = "5";
+                  authorization_scheme = "Basic";
+                  authorization_credentials = "";
+                };
+              }
+            ];
+          }
+        ];
+      };
+
+      alerting.policies.settings = {
+        apiVersion = 1;
+        policies = [
+          {
+            orgId = 1;
+            receiver = "ntfy-phone";
+            group_by = ["alertname"];
+            group_wait = "30s";
+            group_interval = "5m";
+            repeat_interval = "4h";
+            routes = [
+              {
+                receiver = "ntfy-phone";
+                group_wait = "10s";
+                repeat_interval = "1h";
+                object_matchers = [
+                  ["severity" "=" "critical"]
+                ];
+              }
+              {
+                receiver = "ntfy-phone";
+                group_wait = "30s";
+                repeat_interval = "4h";
+                mute_time_intervals = ["outside-market-hours"];
+                object_matchers = [
+                  ["severity" "=" "warning"]
+                ];
+              }
+            ];
+          }
+        ];
+      };
+
+      alerting.muteTimings.settings = {
+        apiVersion = 1;
+        muteTimes = [
+          {
+            orgId = 1;
+            name = "outside-market-hours";
+            intervals = [
+              {
+                weekdays = ["saturday" "sunday"];
+              }
+              {
+                weekdays = ["monday" "tuesday" "wednesday" "thursday" "friday"];
+                times = [{ start = "00:00"; end = "14:30"; }];
+              }
+              {
+                weekdays = ["monday" "tuesday" "wednesday" "thursday" "friday"];
+                times = [{ start = "21:00"; end = "24:00"; }];
+              }
+            ];
+          }
+        ];
+      };
+
+      alerting.rules.settings = {
+        apiVersion = 1;
+        groups = [
+          {
+            orgId = 1;
+            name = "trading-health";
+            folder = "SeekingEdge Alerts";
+            interval = "60s";
+            rules = [
+              {
+                uid = "se-system-errors";
+                title = "System Errors Detected";
+                condition = "C";
+                for = "1m";
+                noDataState = "OK";
+                execErrState = "Alerting";
+                labels = { severity = "critical"; };
+                annotations = { summary = "System errors detected"; };
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = { from = 300; to = 0; };
+                    datasourceUid = "victoria-metrics";
+                    model = {
+                      refId = "A";
+                      expr = "sum(rate(system_errors_total[5m]))";
+                    };
+                  }
+                  {
+                    refId = "B";
+                    datasourceUid = "__expr__";
+                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                  }
+                  {
+                    refId = "C";
+                    datasourceUid = "__expr__";
+                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "gt"; params = [0]; }; }]; };
+                  }
+                ];
+              }
+              {
+                uid = "se-trading-stopped";
+                title = "Trading Stopped - No Orders";
+                condition = "C";
+                for = "10m";
+                noDataState = "Alerting";
+                execErrState = "Alerting";
+                labels = { severity = "warning"; };
+                annotations = { summary = "No orders created in the last 10 minutes"; };
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = { from = 600; to = 0; };
+                    datasourceUid = "victoria-metrics";
+                    model = { refId = "A"; expr = "sum(rate(orders_created_total[10m]))"; };
+                  }
+                  {
+                    refId = "B";
+                    datasourceUid = "__expr__";
+                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                  }
+                  {
+                    refId = "C";
+                    datasourceUid = "__expr__";
+                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "lt"; params = [0.001]; }; }]; };
+                  }
+                ];
+              }
+              {
+                uid = "se-latency-spike";
+                title = "Signal-to-Order Latency Spike";
+                condition = "C";
+                for = "2m";
+                noDataState = "OK";
+                execErrState = "Alerting";
+                labels = { severity = "warning"; };
+                annotations = { summary = "Signal-to-order latency p95 exceeded 200ms"; };
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = { from = 300; to = 0; };
+                    datasourceUid = "victoria-metrics";
+                    model = { refId = "A"; expr = "histogram_quantile(0.95, rate(latency_signal_to_order_ms_bucket[5m]))"; };
+                  }
+                  {
+                    refId = "B";
+                    datasourceUid = "__expr__";
+                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                  }
+                  {
+                    refId = "C";
+                    datasourceUid = "__expr__";
+                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "gt"; params = [200]; }; }]; };
+                  }
+                ];
+              }
+              {
+                uid = "se-risk-failures";
+                title = "Risk Check Failures";
+                condition = "C";
+                for = "0s";
+                noDataState = "OK";
+                execErrState = "Alerting";
+                labels = { severity = "critical"; };
+                annotations = { summary = "Risk check failures detected"; };
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = { from = 300; to = 0; };
+                    datasourceUid = "victoria-metrics";
+                    model = { refId = "A"; expr = "sum(increase(risk_checks_failed_total[5m]))"; };
+                  }
+                  {
+                    refId = "B";
+                    datasourceUid = "__expr__";
+                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                  }
+                  {
+                    refId = "C";
+                    datasourceUid = "__expr__";
+                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "gt"; params = [0]; }; }]; };
+                  }
+                ];
+              }
+              {
+                uid = "se-service-down";
+                title = "SeekingEdge Service Down";
+                condition = "C";
+                for = "1m";
+                noDataState = "Alerting";
+                execErrState = "Alerting";
+                labels = { severity = "critical"; };
+                annotations = { summary = "SeekingEdge application metrics endpoint is unreachable"; };
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = { from = 300; to = 0; };
+                    datasourceUid = "victoria-metrics";
+                    model = { refId = "A"; expr = "up{job=\"seeking-edge\"}"; };
+                  }
+                  {
+                    refId = "B";
+                    datasourceUid = "__expr__";
+                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                  }
+                  {
+                    refId = "C";
+                    datasourceUid = "__expr__";
+                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "lt"; params = [1]; }; }]; };
+                  }
+                ];
+              }
+            ];
+          }
+        ];
+      };
     };
   };
   # };
