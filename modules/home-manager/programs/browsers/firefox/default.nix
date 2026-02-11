@@ -83,7 +83,7 @@ in {
           bookmarks = {};
           extensions =
             # with addons;
-            with inputs.firefox-addons.packages.${pkgs.system};
+            with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system};
             # with pkgs.nur.repos.rycee.firefox-addons;
               [
                 # Rycee NUR: https://nur.nix-community.org/repos/rycee/
@@ -222,7 +222,7 @@ in {
           bookmarks = {};
           extensions =
             # with addons;
-            with inputs.firefox-addons.packages.${pkgs.system};
+            with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system};
             #  with pkgs.nur.repos.rycee.firefox-addons;
               [
                 # Rycee NUR: https://nur.nix-community.org/repos/rycee/

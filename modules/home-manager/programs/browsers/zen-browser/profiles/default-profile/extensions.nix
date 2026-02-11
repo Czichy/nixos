@@ -59,7 +59,7 @@
 #   );
 # in
 {
-  packages = with inputs.firefox-addons.packages.${pkgs.system};
+  packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system};
   #with pkgs.nur.repos.rycee.firefox-addons;
     [
       bitwarden

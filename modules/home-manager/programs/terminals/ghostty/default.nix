@@ -10,7 +10,7 @@
 with builtins;
 with lib; let
   cfg = config.tensorfiles.hm.programs.terminals.ghostty;
-  ghostty = inputs.ghostty.packages.${pkgs.system}.default;
+  ghostty = inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in {
   options.tensorfiles.hm.programs.terminals.ghostty = with types; {
     enable = mkEnableOption "Enables Ghostty configuration management through home-manager";

@@ -81,7 +81,7 @@ in {
     openssl.dev
     openssl
 
-    inputs.ibkr-rust.packages.${pkgs.system}.flex
+    inputs.ibkr-rust.packages.${pkgs.stdenv.hostPlatform.system}.flex
   ];
   environment.variables = {
     LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];

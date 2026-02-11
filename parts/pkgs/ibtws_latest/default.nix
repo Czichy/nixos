@@ -98,29 +98,29 @@ in
       ibDerivation
 
       # Chromium dependencies. This might be incomplete.
-      xorg.libXfixes
+      libxfixes
       alsa-lib
-      xorg.libXcomposite
+      libxcomposite
       cairo
-      xorg.libxcb
+      libxcb
       pango
       glib
       atk
       at-spi2-core
       at-spi2-atk
-      xorg.libXext
+      libxext
       libdrm
       nspr
-      #xorg.libxkbcommon
+      #libxkbcommon
       nss
       cups
       mesa
       expat
       dbus
-      xorg.libXdamage
-      xorg.libXrandr
-      xorg.libX11
-      xorg.libxshmfence
+      libxdamage
+      libxrandr
+      libx11
+      libxshmfence
       libxkbcommon
       systemd # for libudev.so.1
       stdenv.cc
@@ -477,4 +477,3 @@ in
 #       platforms = ["x86_64-linux"];
 #     };
 #   }
-

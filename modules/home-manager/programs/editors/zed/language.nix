@@ -2,12 +2,12 @@
   programs.zed-editor.userSettings = {
     agent = {
       default_model = {
-        model = "claude-opus-4-5-20251101";
+        model = "claude-opus-4-6";
         provider = "anthropic";
       };
       dock = "right";
-      inline_assistant_model = {
-        model = "claude-opus-4-5-20251101";
+          inline_assistant_model = {
+        model = "claude-opus-4-6";
         provider = "anthropic";
       };
       model_parameters = [];
@@ -26,8 +26,15 @@
     #   };
     # };
     language_models = {
-      anthropic.version = "1";
-      anthropic.api_url = "https://api.anthropic.com";
+      anthropic = {
+            available_models = [
+              {
+                name = "claude-opus-4-6";
+                max_tokens = 2000000;
+              }
+            ];
+      api_url = "https://api.anthropic.com";
+    };
       google = {
         available_models = [
           {

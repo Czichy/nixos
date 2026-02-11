@@ -36,7 +36,7 @@ in {
           hyprland-qtutils
           hyprpicker
           jaq
-          xorg.xprop
+          xprop
           wdisplays
         ];
       };

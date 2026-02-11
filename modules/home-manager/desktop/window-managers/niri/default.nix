@@ -45,7 +45,7 @@ in {
         packages = with pkgs; [
           labwc
           jaq
-          xorg.xprop
+          xprop
           xdg-desktop-portal-gnome
           # xdg-desktop-portal-hyprland
         ];

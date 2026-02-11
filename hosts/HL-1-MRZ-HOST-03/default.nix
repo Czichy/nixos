@@ -32,7 +32,7 @@
     pciutils # A collection of programs for inspecting and manipulating configuration of PCI devices
     usbutils # Tools for working with USB devices, such as lsusb
     minicom # Modem control and terminal emulation program
-    inputs.power-meter.packages.${pkgs.system}.power-meter
+    inputs.power-meter.packages.${pkgs.stdenv.hostPlatform.system}.power-meter
   ];
   environment.pathsToLink = ["/share/applications" "/share/xdg-desktop-portal"];
 

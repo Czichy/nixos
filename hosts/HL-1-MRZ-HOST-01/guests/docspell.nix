@@ -56,7 +56,7 @@ in {
   # Add dsc to the environment
   # # Add dsc to the environment
   environment.systemPackages = [
-    inputs.dsc.packages.${pkgs.system}.default
+    inputs.dsc.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
   imports = [
     inputs.docspell.nixosModules.default
@@ -177,7 +177,7 @@ in {
   services.docspell-joex = {
     enable = true;
     app-id = "joexina";
-    package = inputs.docspell.packages.${pkgs.system}.docspell-joex;
+    package = inputs.docspell.packages.${pkgs.stdenv.hostPlatform.system}.docspell-joex;
     base-url = "http://10.15.40.18:7878";
     bind = {
       address = "10.15.40.18";
@@ -191,7 +191,7 @@ in {
   # |----------------------------------------------------------------------| #
   services.docspell-restserver = {
     enable = true;
-    package = inputs.docspell.packages.${pkgs.system}.docspell-restserver;
+    package = inputs.docspell.packages.${pkgs.stdenv.hostPlatform.system}.docspell-restserver;
     app-id = "ina";
     base-url = "http://10.15.40.18:7880";
     bind = {
@@ -284,7 +284,7 @@ in {
     docspell-url = "http://10.15.40.18:7880";
   in {
     enable = true;
-    package = inputs.dsc.packages.${pkgs.system}.default;
+    package = inputs.dsc.packages.${pkgs.stdenv.hostPlatform.system}.default;
     inherit docspell-url;
     # docspell-url = "http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}";
     exclude-filter = null;

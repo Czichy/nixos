@@ -237,7 +237,7 @@ in {
     };
 
     environment.systemPackages = with pkgs; [
-      xorg.xauth
+      xauth
       qemu
       libvirt
 

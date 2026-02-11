@@ -6,31 +6,31 @@
           show_onboarding_banner = false;
 
           # Indent Guides
-          "indent_guides" = {
-            "enabled" = true;
-            "line_width" = 2; # Pixels, between 1 and 10.
-            "active_line_width" = 3; # Pixels, between 1 and 10.
-            "coloring" = "indent_aware"; # "disabled", "fixed", "indent_aware"
-            "background_coloring" = "disabled"; # "disabled", "indent_aware"
+          indent_guides = {
+            enabled = true;
+            line_width = 2; # Pixels, between 1 and 10.
+            active_line_width = 3; # Pixels, between 1 and 10.
+            coloring = "indent_aware"; # "disabled", "fixed", "indent_aware"
+            background_coloring = "disabled"; # "disabled", "indent_aware"
           };
 
           # Whether the editor will scroll beyond the last line.
-          "scroll_beyond_last_line" = "one_page";
+          scroll_beyond_last_line = "one_page";
           # The number of lines to keep above/below the cursor when scrolling.
-          "vertical_scroll_margin" = 3;
+          vertical_scroll_margin = 3;
           # Scroll sensitivity multiplier. This multiplier is applied
           # to both the horizontal and vertical delta values while scrolling.
-          "scroll_sensitivity" = 1.0;
+          scroll_sensitivity = 1.0;
 
           # Search
-          "search" = {
-            "whole_word" = false;
-            "case_sensitive" = false;
-            "include_ignored" = false;
-            "regex" = false;
+          search = {
+            whole_word = false;
+            case_sensitive = false;
+            include_ignored = false;
+            regex = false;
           };
           # If 'search_wrap' is disabled, search result do not wrap around the end of the file.
-          "search_wrap" = true;
+          search_wrap = true;
           # When to populate a new search's query based on the text under the cursor.
           # This setting can take the following three values:
           #
@@ -40,8 +40,8 @@
           #    "selection"
           # 3. Never populate the search query
           #    "never"
-          "seed_search_query_from_cursor" = "always";
-          "use_smartcase_search" = false;
+          seed_search_query_from_cursor = "always";
+          use_smartcase_search = false;
 
           # Inlay Hints
           inlay_hints = {
@@ -97,13 +97,6 @@
           collaboration_panel = {
             button = false;
             dock = "left";
-            default_width = 240;
-          };
-
-          # Chat Panel
-          chat_panel = {
-            button = false;
-            dock = "right";
             default_width = 240;
           };
 

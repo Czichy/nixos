@@ -19,9 +19,8 @@
     statix # Lints and suggestions for the nix programming language
     deadnix # Find and remove unused code in .nix source files
     nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
-    nixfmt-rfc-style # An opinionated formatter for Nix
+    nixfmt # An opinionated formatter for Nix (formerly nixfmt-rfc-style)
     # NOTE Choose a different formatter if you'd like to
-    # nixfmt # An opinionated formatter for Nix
     # alejandra # The Uncompromising Nix Code Formatter
 
     # -- GIT RELATED UTILS --
@@ -83,8 +82,8 @@
   # --- PRE-COMMIT HOOKS ---
   # ------------------------
   # NOTE All available hooks options are listed at
-  # https://devenv.sh/reference/options/#pre-commithooks
-  pre-commit = {
+  # https://devenv.sh/reference/options/#git-hookshooks
+  git-hooks = {
     hooks = {
       # treefmt.enable = true;
       # treefmt.package = treefmt;

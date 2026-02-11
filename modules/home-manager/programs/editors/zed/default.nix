@@ -60,7 +60,7 @@ in {
       programs.zed-editor = let
         bins = with pkgs; [
           nixd
-          nixfmt-rfc-style
+          nixfmt
           prettierd
           nodejs
           nodePackages.prettier
