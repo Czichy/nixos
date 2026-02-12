@@ -91,6 +91,15 @@ in {
   };
   users.groups.victoriametrics = {};
 
+  # Override DynamicUser from upstream module - incompatible with
+  # impermanence bind-mounts (causes "Device or resource busy")
+  systemd.services.victoriametrics.serviceConfig = {
+    DynamicUser = lib.mkForce false;
+    User = "victoriametrics";
+    Group = "victoriametrics";
+    StateDirectory = lib.mkForce "";
+  };
+
   # |----------------------------------------------------------------------| #
   # | PERSISTENCE (impermanence)                                           |
   # |----------------------------------------------------------------------| #
