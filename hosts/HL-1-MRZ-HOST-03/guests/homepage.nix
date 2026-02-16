@@ -18,73 +18,75 @@ let
   # =====================================================================
 
   # Filter enabled services from globals
-  enabledServices =
-    lib.filterAttrs
-    (_: svc: (svc.homepage.enable or false) && (svc ? domain))
-    globals.services;
+  enabledServices = lib.filterAttrs (
+    _: svc: (svc.homepage.enable or false) && (svc ? domain)
+  ) globals.services;
 
   # Convert service to homepage format
-  mkHomepageService = serviceName: svc: let
-    displayName = svc.homepage.name or serviceName;
-    serviceUrl = "https://${svc.domain}";
-    baseEntry = {
-      icon = svc.homepage.icon or "mdi-web";
-      href = serviceUrl;
-      description = svc.homepage.description or "${displayName} Service";
+  mkHomepageService =
+    serviceName: svc:
+    let
+      displayName = svc.homepage.name or serviceName;
+      serviceUrl = "https://${svc.domain}";
+      baseEntry = {
+        icon = svc.homepage.icon or "mdi-web";
+        href = serviceUrl;
+        description = svc.homepage.description or "${displayName} Service";
+      };
+      withAbbr =
+        if (svc.homepage.abbr or null) != null then
+          baseEntry // { abbr = svc.homepage.abbr; }
+        else
+          baseEntry;
+      withPing =
+        if (svc.homepage.ping or null) != null then withAbbr // { ping = svc.homepage.ping; } else withAbbr;
+      # Add siteMonitor for availability checking (uses the service URL)
+      withSiteMonitor =
+        if (svc.homepage.siteMonitor or true) then withPing // { siteMonitor = serviceUrl; } else withPing;
+      # Add widget configuration if defined
+      withWidget =
+        if (svc.homepage.widget or null) != null then
+          withSiteMonitor // { widget = svc.homepage.widget; }
+        else
+          withSiteMonitor;
+    in
+    {
+      ${displayName} = withWidget;
     };
-    withAbbr =
-      if (svc.homepage.abbr or null) != null
-      then baseEntry // {abbr = svc.homepage.abbr;}
-      else baseEntry;
-    withPing =
-      if (svc.homepage.ping or null) != null
-      then withAbbr // {ping = svc.homepage.ping;}
-      else withAbbr;
-    # Add siteMonitor for availability checking (uses the service URL)
-    withSiteMonitor =
-      if (svc.homepage.siteMonitor or true)
-      then withPing // {siteMonitor = serviceUrl;}
-      else withPing;
-    # Add widget configuration if defined
-    withWidget =
-      if (svc.homepage.widget or null) != null
-      then withSiteMonitor // {widget = svc.homepage.widget;}
-      else withSiteMonitor;
-  in {
-    ${displayName} = withWidget;
-  };
 
   # Group by category
-  servicesByCategory =
-    lib.groupBy
-    (svc: svc.homepage.category or "Services")
-    (lib.mapAttrsToList (name: svc: svc // {_name = name;}) enabledServices);
+  servicesByCategory = lib.groupBy (svc: svc.homepage.category or "Services") (
+    lib.mapAttrsToList (name: svc: svc // { _name = name; }) enabledServices
+  );
 
   # Convert category to homepage format
-  mkCategory = categoryName: services: let
-    # Sort by priority (lower priority = higher on page)
-    sortedServices =
-      lib.sort
-      (a: b: (a.homepage.priority or 100) < (b.homepage.priority or 100))
-      services;
-  in {
-    ${categoryName} =
-      map
-      (svc: mkHomepageService svc._name svc)
-      sortedServices;
-  };
+  mkCategory =
+    categoryName: services:
+    let
+      # Sort by priority (lower priority = higher on page)
+      sortedServices = lib.sort (
+        a: b: (a.homepage.priority or 100) < (b.homepage.priority or 100)
+      ) services;
+    in
+    {
+      ${categoryName} = map (svc: mkHomepageService svc._name svc) sortedServices;
+    };
 
   # Generated services from globals
   generatedServices = lib.mapAttrsToList mkCategory servicesByCategory;
   # |----------------------------------------------------------------------| #
-in {
+in
+{
   microvm.mem = 512;
   microvm.vcpu = 1;
   # |----------------------------------------------------------------------| #
   networking.hostName = hostName;
 
   networking.firewall = {
-    allowedTCPPorts = [443 10001];
+    allowedTCPPorts = [
+      443
+      10001
+    ];
   };
   # |----------------------------------------------------------------------| #
   age.secrets.restic-node-red = {
@@ -139,7 +141,7 @@ in {
   services.homepage-dashboard = {
     enable = true;
     listenPort = listenPort;
-    allowedHosts = "${domain}";
+    allowedHosts = "${domain},10.15.40.37:10001";
 
     settings = {
       title = "Czichy Homelab";
@@ -180,12 +182,13 @@ in {
     services = generatedServices;
 
     # Bookmarks section (empty - all services come from globals.services)
-    bookmarks = [];
+    bookmarks = [ ];
   };
 
   # Inject environment secrets for widgets (HOMEPAGE_VAR_*)
   # The homepage service reads these from environment variables
-  systemd.services.homepage-dashboard.serviceConfig.EnvironmentFile = lib.mkForce config.age.secrets.homepage-env.path;
+  systemd.services.homepage-dashboard.serviceConfig.EnvironmentFile =
+    lib.mkForce config.age.secrets.homepage-env.path;
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
     files = [

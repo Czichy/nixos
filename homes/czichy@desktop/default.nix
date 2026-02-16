@@ -27,7 +27,7 @@ in {
       };
       terminals.foot.makeDefault = true;
       editors.zed.enable = true;
-      # thunderbird.enable = true;
+      thunderbird.enable = true;
     };
     hardware.monitors = {
       enable = true;

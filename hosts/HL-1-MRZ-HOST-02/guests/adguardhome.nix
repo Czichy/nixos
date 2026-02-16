@@ -105,6 +105,22 @@ in {
             domain = "vault.czichy.com";
             answer = "10.15.40.22";
           }
+          {
+            domain = "home.czichy.com";
+            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
+          }
+          {
+            domain = "red.czichy.com";
+            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
+          }
+          {
+            domain = "influxdb.czichy.com";
+            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
+          }
+          {
+            domain = "metrics.czichy.com";
+            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
+          }
         ];
       };
       filtering.rewrites =

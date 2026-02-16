@@ -41,17 +41,18 @@ in {
     # |----------------------------------------------------------------------| #
     {
       accounts.email.accounts = {
-      default = {
+      "christian@czichy.com" = {
               primary = true;
               realName = "Christian Czichy";
               address = "christian@czichy.com";
               imap = {
                         host = "imap.ionos.de";
+                        port = 993;
                         tls.enable = true;
                       };
                       smtp = {
                         host = "smtp.ionos.de";
-                        port = 587;
+                        port = 465;
                       };
               signature = {
                         text = ''
@@ -65,7 +66,7 @@ in {
               folders.inbox = "virtual.all";
           thunderbird = {
             enable = true;
-            profiles = ["default"];
+            profiles = ["christian@czichy.com"];
           };
             };
       };
@@ -74,11 +75,16 @@ in {
     {
       programs.thunderbird = {
         enable = _ true;
-        profiles.default = {
+        profiles."christian@czichy.com"= {
           isDefault = _ true;
           withExternalGnupg = true;
 
                 settings = {
+                  # === General UI and behavior settings ===
+                  "intl.locale.requested" = "de-DE";                # UI language
+                  "spellchecker.dictionary" = "de-DE";              # Spellcheck language
+                  "intl.regional_prefs.use_os_locales" = true;     # Don't use OS locale
+                  "intl.regional_prefs.locales" = "de-DE";          # Use metric etc.
                   "mail.identity.default.archive_enabled" = true;
                   "mail.identity.default.archive_keep_folder_structure" = true;
                   "mail.identity.default.compose_html" = false;
@@ -127,6 +133,25 @@ in {
 
                 "app.update.auto" = false;
                 "privacy.donottrackheader.enabled" = true;
+
+                "datareporting.healthreport.uploadEnabled" = false;
+                "toolkit.telemetry.enabled" = false;
+                "toolkit.telemetry.unified" = false;
+                "toolkit.telemetry.archive.enabled" = false;
+                "toolkit.telemetry.newProfilePing.enabled" = false;
+                "toolkit.telemetry.shutdownPingSender.enabled" = false;
+                "toolkit.telemetry.updatePing.enabled" = false;
+                "toolkit.telemetry.bhrPing.enabled" = false;
+                "toolkit.telemetry.firstShutdownPing.enabled" = false;
+                "browser.ping-centre.telemetry" = false;
+
+                "browser.search.defaultenginename" = "DuckDuckGo";
+                "browser.search.selectedEngine" = "DuckDuckGo";
+
+                "mail.biff.play_sound" = false;
+                "mail.chat.play_sound" = false;
+
+                "thunderbird.policies.runOncePerModification.extensionsInstall" = "https://addons.thunderbird.net/thunderbird/downloads/latest/grammar-and-spell-checker/latest/latest.xpi,https://addons.thunderbird.net/thunderbird/downloads/latest/german-dictionary-de_de-for-sp/latest/latest.xpi,https://addons.thunderbird.net/thunderbird/downloads/latest/filelink-nextcloud-owncloud/latest/latest.xpi,https://addons.thunderbird.net/thunderbird/downloads/latest/cardbook/latest/latest.xpi";
         };
       };
     }
