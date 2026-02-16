@@ -49,11 +49,11 @@ in {
           mode = _ "700";
         };
         massive_file_access_key = {
-          file = _ (secretsPath + "/massive/file-access-key.age");
+          file = _ (secretsPath + "/massive/files-access-key.age");
           mode = _ "700";
         };
         massive_file_secret_key = {
-          file = _ (secretsPath + "/massive/file-secret-key.age");
+          file = _ (secretsPath + "/massive/files-secret-key.age");
           mode = _ "700";
         };
       };
