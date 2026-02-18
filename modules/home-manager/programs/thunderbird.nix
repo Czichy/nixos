@@ -1,6 +1,7 @@
 {localFlake,secretsPath}: {
   config,
   lib,
+  pkgs,
   ...
 }:
 with builtins;
@@ -81,6 +82,7 @@ in {
 
                 settings = {
                   # === General UI and behavior settings ===
+                  "layout.css.devPixelsPerPx" = "0.7";
                   "intl.locale.requested" = "de-DE";                # UI language
                   "spellchecker.dictionary" = "de-DE";              # Spellcheck language
                   "intl.regional_prefs.use_os_locales" = true;     # Don't use OS locale

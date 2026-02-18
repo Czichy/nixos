@@ -188,6 +188,19 @@ in {
     mode = "440";
   };
 
+  # TODO: Uncomment when S3 backup provider is configured
+  # age.secrets.restic-postgres-s3 = {
+  #   file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/restic-postgres-s3.age";
+  #   mode = "440";
+  #   group = "ente";
+  # };
+  # age.secrets.s3-backup-env = {
+  #   # Should contain: AWS_ACCESS_KEY_ID=... and AWS_SECRET_ACCESS_KEY=...
+  #   file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/s3-backup-env.age";
+  #   mode = "440";
+  #   group = "ente";
+  # };
+
   age.secrets.ntfy-alert-pass = {
     file = secretsPath + "/ntfy-sh/alert-pass.age";
     mode = "440";
@@ -272,7 +285,6 @@ in {
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
   services.restic.backups = let
-    minio_backup_dir = lib.map (dir: "${dir}/ente") config.services.minio.dataDir;
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
     slug = "https://health.czichy.com/ping/";
@@ -325,7 +337,8 @@ in {
         sh
         */
         ''
-          rm /tmp/postgresql-dump.sql.gz
+          rm -f /tmp/postgresql-dump.sql.gz
+          ${script-post config.networking.hostName "ente-postgres"}
         '';
 
       # Extra extended options to be passed to the restic --option flag.
@@ -352,6 +365,45 @@ in {
         OnCalendar = "*-*-* 02:30:00";
       };
     };
+
+    # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
+    # ente-postgres-backup-s3 = {
+    #   initialize = true;
+    #
+    #   # Example endpoints:
+    #   #   Backblaze B2:         "s3:https://s3.eu-central-003.backblazeb2.com/<bucket-name>"
+    #   #   Wasabi:               "s3:https://s3.eu-central-1.wasabisys.com/<bucket-name>"
+    #   #   Hetzner Storage Box:  "s3:https://nbg1.your-objectstorage.com/<bucket-name>"
+    #   repository = "s3:https://<S3_ENDPOINT>/<BUCKET_NAME>/ente-postgres";
+    #
+    #   paths = ["/tmp/postgresql-dump-s3.sql.gz"];
+    #   exclude = [];
+    #
+    #   passwordFile = config.age.secrets.restic-postgres-s3.path;
+    #   environmentFile = config.age.secrets.s3-backup-env.path;
+    #
+    #   backupPrepareCommand = ''
+    #     ${config.services.postgresql.package}/bin/pg_dumpall --clean \
+    #     | ${lib.getExe pkgs.gzip} --rsyncable \
+    #     > /tmp/postgresql-dump-s3.sql.gz
+    #   '';
+    #
+    #   backupCleanupCommand = ''
+    #     rm -f /tmp/postgresql-dump-s3.sql.gz
+    #     ${script-post config.networking.hostName "ente-postgres-s3"}
+    #   '';
+    #
+    #   pruneOpts = [
+    #     "--keep-daily 3"
+    #     "--keep-weekly 3"
+    #     "--keep-monthly 3"
+    #     "--keep-yearly 3"
+    #   ];
+    #
+    #   timerConfig = {
+    #     OnCalendar = "*-*-* 03:00:00";
+    #   };
+    # };
   };
 
   # NOTE: services.ente.web is configured separately on both proxy servers!

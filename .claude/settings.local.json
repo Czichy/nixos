@@ -6,7 +6,8 @@
       "mcp__acp__Write",
       "WebFetch(domain:)",
       "WebFetch(domain:home-manager-options.extrato.io)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:ente.io)"
     ]
   }
 }

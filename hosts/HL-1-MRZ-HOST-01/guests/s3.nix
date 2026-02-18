@@ -175,6 +175,17 @@ in {
     mode = "600";
   };
 
+  # TODO: Uncomment when S3 backup provider is configured
+  # age.secrets.restic-minio-s3 = {
+  #   file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/restic-minio-s3.age";
+  #   mode = "600";
+  # };
+  # age.secrets.s3-backup-env = {
+  #   # Should contain: AWS_ACCESS_KEY_ID=... and AWS_SECRET_ACCESS_KEY=...
+  #   file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/ente/s3-backup-env.age";
+  #   mode = "600";
+  # };
+
   age.secrets.minio-hc-ping = {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
@@ -318,13 +329,8 @@ in {
       passwordFile = config.age.secrets.restic-minio.path;
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-      # A script that must run before starting the backup process.
-      backupPrepareCommand = ''
-      '';
-
       # A script that must run after finishing the backup process.
-      backupCleanupCommand = ''
-      '';
+      backupCleanupCommand = script-post config.networking.hostName "ente-minio";
 
       # A list of options (--keep-* et al.) for 'restic forget --prune',
       # to automatically prune old snapshots.
@@ -342,5 +348,36 @@ in {
         OnCalendar = "*-*-* 02:45:00";
       };
     };
+
+    # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
+    # ente-minio-backup-s3 = {
+    #   initialize = true;
+    #
+    #   # Example endpoints:
+    #   #   Backblaze B2:         "s3:https://s3.eu-central-003.backblazeb2.com/<bucket-name>"
+    #   #   Wasabi:               "s3:https://s3.eu-central-1.wasabisys.com/<bucket-name>"
+    #   #   Hetzner Storage Box:  "s3:https://nbg1.your-objectstorage.com/<bucket-name>"
+    #   repository = "s3:https://<S3_ENDPOINT>/<BUCKET_NAME>/ente-minio";
+    #
+    #   paths = ["${config.services.garage.settings.data_dir}/ente"];
+    #   exclude = [];
+    #
+    #   passwordFile = config.age.secrets.restic-minio-s3.path;
+    #   environmentFile = config.age.secrets.s3-backup-env.path;
+    #
+    #   backupCleanupCommand = script-post config.networking.hostName "ente-minio-s3";
+    #
+    #   pruneOpts = [
+    #     "--keep-daily 3"
+    #     "--keep-weekly 3"
+    #     "--keep-monthly 3"
+    #     "--keep-yearly 3"
+    #   ];
+    #
+    #   timerConfig = {
+    #     # 15 min versetzt zum OneDrive-Backup
+    #     OnCalendar = "*-*-* 03:15:00";
+    #   };
+    # };
   };
 }
