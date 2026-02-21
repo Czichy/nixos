@@ -25,17 +25,15 @@
   gdk-pixbuf,
 }:
 with pkgs; let
-  jdkWithJavaFX = pkgs.jdk25_headless.override {
-    enableJavaFX = true;
-    openjfx25 = openjfx.override {withWebKit = true;};
-  };
+  # TWS uses Swing/AWT, not JavaFX. No need for JavaFX overlay.
+  twsJdk = pkgs.jdk17;
   ibDerivation = stdenv.mkDerivation rec {
-    version = "10.37.1g";
+    version = "10.44";
     pname = "ib-tws-latest";
 
     src = fetchurl {
       url = "https://download2.interactivebrokers.com/installers/tws/latest-standalone/tws-latest-standalone-linux-x64.sh";
-      sha256 = "jJ5MjOZRTv+wOJf0Esjb4v88X4PNFYORtCLS553de5A=";
+      sha256 = "yKc4k9pj3R6a3ZHzNlHbYLdZf/z5rwYt7c5Mw+8HhQ0=";
       executable = true;
     };
 
@@ -72,7 +70,7 @@ with pkgs; let
       # -Dsun.java2d.opengl=False not applied. Why would I disable that?
       # -Dswing.aatext=true applied
       mkdir $out/bin
-      sed -e s#__OUT__#$out# -e s#__JAVAHOME__#${jdkWithJavaFX.home}# -e s#__GTK__#${pkgs.gtk3}# -e s#__CCLIBS__#${pkgs.stdenv.cc.cc.lib}# ${./tws-wrap.sh} > $out/bin/ib-tws-latest
+      sed -e s#__OUT__#$out# -e s#__JAVAHOME__#${twsJdk.home}# -e s#__GTK__#${pkgs.gtk3}# -e s#__CCLIBS__#${pkgs.stdenv.cc.cc.lib}# ${./tws-wrap.sh} > $out/bin/ib-tws-latest
 
       chmod a+rx $out/bin/ib-tws-latest
 
@@ -145,7 +143,7 @@ in
       libXi
       libXrender
     ];
-    runScript = "env GDK_BACKEND=x11 DISPLAY=:0 /usr/bin/ib-tws-latest";
+    runScript = "env GDK_BACKEND=x11 /usr/bin/ib-tws-latest";
   }
 # {
 #   stdenv,

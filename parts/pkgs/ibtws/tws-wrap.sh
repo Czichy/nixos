@@ -4,15 +4,8 @@ export GDK_BACKEND=x11
 # Use existing DISPLAY if set (e.g. XWayland), fall back to :0
 export DISPLAY="${DISPLAY:-:0}"
 
-# JAVA_GC="-Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:ParallelGCThreads=20 -XX:ConcGCThreads=5 -XX:InitiatingHeapOccupancyPercent=70 "
-JAVA_UI_FLAGS="-J-Dsun.java2d.uiScale=1.0 -J-Dswing.aatext=TRUE -J-Dawt.useSystemAAFontSettings=on -J-Dsun.awt.nopixfmt=true -J-Dsun.java2d.noddraw=true -J-Dswing.boldMetal=false -J-Dsun.locale.formatasdefault=true"
-JAVA_LOCALE_FLAGS="-J-Dsun.locale.formatasdefault=true"
-JAVA_FLAGS="\$JAVA_UI_FLAGS \$JAVA_LOCALE_FLAGS \$JAVA_EXTRA_FLAGS"
-# JAVA_FLAGS="\$JAVA_GC \$JAVA_UI_FLAGS \$JAVA_LOCALE_FLAGS \$JAVA_EXTRA_FLAGS"
-
-
 # Use IBKR_CONFIG_DIR if set (from ib-start), otherwise default
-CONFIG_DIR="${IBKR_CONFIG_DIR:-$HOME/.tws-latest}"
+CONFIG_DIR="${IBKR_CONFIG_DIR:-$HOME/.ib-tws-native}"
 mkdir -p "$CONFIG_DIR"
 VMOPTIONS=$CONFIG_DIR/tws.vmoptions
 if [ ! -e "$VMOPTIONS" ]; then
@@ -22,6 +15,3 @@ fi
 sed -i -e 's#-DvmOptionsPath=.*#-DvmOptionsPath=$VMOPTIONS#' $VMOPTIONS
 export LD_LIBRARY_PATH=__GTK__/lib:__CCLIBS__/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 exec "__OUT__/libexec/tws" -J-Dsun.java2d.uiScale=1.0 -J-DjtsConfigDir="$CONFIG_DIR" -J-Dawt.useSystemAAFontSettings=lcd -J-Dswing.aatext=true -J-Dawt.useSystemAAFontSettings=on -J-Dsun.awt.nopixfmt=true -J-Dsun.java2d.noddraw=true -J-Dswing.boldMetal=false -Dsun.locale.formatasdefault=true ${IBKR_USER:+username="$IBKR_USER"} ${IBKR_PASSWORD:+password="$IBKR_PASSWORD"} "$@"
-
-# cd "$out/share/${pname}/jars"
-# "$out/share/${pname}/jre/bin/java" -cp \* \$JAVA_FLAGS \$CLASS \$IB_CONFIG_DIR username="\$username" password="\$password"

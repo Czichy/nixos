@@ -1,4 +1,5 @@
 {
+  pkgs ? import <nixpkgs>,
   stdenv,
   lib,
   fetchurl,
@@ -22,141 +23,89 @@
   alsa-lib,
   atk,
   gdk-pixbuf,
-}: let
-  rSubPaths = [
-    "lib/amd64/jli"
-    "lib/amd64/server"
-    "lib/amd64"
-  ];
-in
-  stdenv.mkDerivation rec {
-    pname = "ib-tws-native";
-    version = "10.30.1u";
-    etagHash = "sha256-l8532dQIgUlN9L++3Y8qLeRu9/vof2/aMLySXZlq4hw=";
+}:
+with pkgs; let
+  twsJdk = pkgs.jdk17;
+  ibDerivation = stdenv.mkDerivation rec {
+    version = "10.44";
+    pname = "ib-tws-stable";
 
     src = fetchurl {
-      # url = "https://download2.interactivebrokers.com/installers/tws/latest-standalone/tws-latest-standalone-linux-x64.sh";
-      # sha256 = "sha256-bpFKD1l8PwAV2g7MjApg3QC0TAO76VPHLiI5rGcfcSs=";
       url = "https://download2.interactivebrokers.com/installers/tws/stable-standalone/tws-stable-standalone-linux-x64.sh";
-      hash = "sha256-8HvQFOOJBrQmRBlxISdokoCbZlO1sPauHdr1QKlwYfA=";
+      hash = "sha256-sewvJJKyfvSI0tFYKPQGtmSFHGxqETRxcuaZ0DWa+J4=";
+      executable = true;
     };
-    phases = [
-      "unpackPhase"
-      "installPhase"
-      "fixupPhase"
-    ];
 
-    nativeBuildInputs = [copyDesktopItems];
+    preferLocalBuild = true;
 
-    desktopItems = [
-      (makeDesktopItem {
-        name = pname;
-        desktopName = "IB Trader Workstation";
-        exec = pname;
-        icon = pname;
-        categories = [
-          "Office"
-          "Finance"
-        ];
-        startupWMClass = "jclient-LoginFrame";
-      })
-      (makeDesktopItem {
-        name = "ib-gw";
-        desktopName = "IB Gateway";
-        exec = "ib-gw";
-        icon = pname;
-        categories = [
-          "Office"
-          "Finance"
-        ];
-        startupWMClass = "ibgateway-GWClient";
-      })
-    ];
+    phases = ["installPhase"];
 
-    unpackPhase = ''
-      echo "Unpacking I4J sfx sh to $PWD..."
-      INSTALL4J_TEMP="$PWD" sh "$src" __i4j_extract_and_exit
-      # JRE
-      jrePath="$out/share/${pname}/jre"
-      echo "Unpacking JRE to $jrePath..."
-      mkdir -p "$jrePath"
-      tar -xf "$PWD/"*.dir/jre.tar.gz -C "$jrePath/"
-      echo "Patching JRE executables..."
-      patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-        "$jrePath/bin/java" "$jrePath/bin/unpack200"
-      echo "Unpacking JRE pack files..."
-      for f in "$jrePath/lib/"*.jar.pack "$jrePath/lib/ext/"*.jar.pack; do
-        jar_file=`echo "$f" | awk '{ print substr($0,1,length($0)-5) }'`
-        "$jrePath/bin/unpack200" -r "$f" "$jar_file"
-        [ $? -ne 0 ] && echo "Error unpacking $f" && exit 1
-      done
-      echo "Unpacking TWS payload..."
-      INSTALL4J_JAVA_HOME_OVERRIDE="$jrePath" sh "$src" -q -dir "$PWD/"
-    '';
+    nativeBuildInputs = [makeWrapper];
 
     installPhase = ''
-      runHook preInstall
-      # create main startup script
-      mkdir -p "$out/bin"
-      cat<<EOF > "$out/bin/${pname}"
-      #!$SHELL
-      # get script name
-      PROG=\$(basename "\$0")
-      # Initialize our own variables
+      # Use an FHS environment because the installer unpacks and immediately
+      # calls a binary. Patching ld-linux in between is not feasible.
+      ${buildFHSEnvChroot {
+        name = "fhs";
+        targetPkgs = pkgs1: [
+          libz
+        ];
+      }}/bin/fhs ${src} -q -dir $out/libexec
 
-      while getopts "h?vu:p:" opt; do
-          case "\$opt" in
-          h|\?)
-              echo "Usage: \$0 [-v] [-u username] [-p password]"
-              exit 0
-              ;;
-          v)  verbose=1
-              ;;
-          u)  username=\$OPTARG
-              ;;
-          p)  password=\$OPTARG
-              ;;
-          esac
-      done
+      # Disable the JRE compatibility check so we can use our own JDK
+      sed -i 's#test_jvm "$INSTALL4J_JAVA_HOME_OVERRIDE"#app_java_home="$INSTALL4J_JAVA_HOME_OVERRIDE"#' $out/libexec/tws
 
-      # Load system-wide settings and per-user overrides
-      IB_CONFIG_DIR="\$HOME/.\$PROG"
-      export GDK_BACKEND=x11
-      JAVA_GC="-Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:ParallelGCThreads=20 -XX:ConcGCThreads=5 -XX:InitiatingHeapOccupancyPercent=70 "
-      JAVA_UI_FLAGS="-Dswing.aatext=TRUE -Dawt.useSystemAAFontSettings=on -Dsun.awt.nopixfmt=true -Dsun.java2d.noddraw=true -Dswing.boldMetal=false -Dsun.locale.formatasdefault=true"
-      JAVA_LOCALE_FLAGS="-Dsun.locale.formatasdefault=true"
-      JAVA_FLAGS="\$JAVA_GC \$JAVA_UI_FLAGS \$JAVA_LOCALE_FLAGS \$JAVA_EXTRA_FLAGS"
-      [ -f "\$HOME/.config/\$PROG.conf" ] && . "\$HOME/.config/\$PROG.conf"
-      CLASS="jclient.LoginFrame"
-      [ "\$PROG" = "ib-gw" ] && CLASS="ibgateway.GWClient"
-      cd "$out/share/${pname}/jars"
-      "$out/share/${pname}/jre/bin/java" -cp \* \$JAVA_FLAGS \$CLASS \$IB_CONFIG_DIR username="\$username" password="\$password"
-      EOF
-      chmod u+x $out/bin/${pname}
-      # create symlink for the gateway
-      ln -s "${pname}" "$out/bin/ib-gw"
-      # copy files
-      mkdir -p $out/share/${pname}
-      cp -R jars $out/share/${pname}
-      install -Dm644 .install4j/tws.png $out/share/pixmaps/${pname}.png
-      runHook postInstall
+      # Make the tws launcher script read $HOME/.tws/tws.vmoptions
+      sed -i -e 's#read_vmoptions "$prg_dir/$progname.vmoptions"#read_vmoptions "$HOME/.tws/$progname.vmoptions"#' $out/libexec/tws
+
+      mkdir $out/bin
+      sed -e s#__OUT__#$out# -e s#__JAVAHOME__#${twsJdk.home}# -e s#__GTK__#${pkgs.gtk3}# -e s#__CCLIBS__#${pkgs.stdenv.cc.cc.lib}# ${./tws-wrap.sh} > $out/bin/ib-tws-native
+
+      chmod a+rx $out/bin/ib-tws-native
+
+      # Gateway symlink
+      ln -s ib-tws-native $out/bin/ib-gw
     '';
 
-    dontPatchELF = true;
-    dontStrip = true;
+    meta = with lib; {
+      description = "Trader Work Station of Interactive Brokers (Stable)";
+      homepage = "https://www.interactivebrokers.com";
+      license = licenses.unfree;
+      maintainers = [maintainers.clefru];
+      platforms = platforms.linux;
+    };
+  };
+in
+  buildFHSEnv {
+    name = "ib-tws-native";
+    targetPkgs = pkgs1: [
+      ibDerivation
 
-    postFixup = ''
-      rpath+="''${rpath:+:}${lib.concatStringsSep ":" (map (a: "$jrePath/${a}") rSubPaths)}"
-      # set all the dynamic linkers
-      find $out -type f -perm -0100 \
-        -exec patchelf --interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
-        --set-rpath "$rpath" {} \;
-      find $out -name "*.so" -exec patchelf --set-rpath "$rpath" {} \;
-    '';
-
-    rpath = lib.strings.makeLibraryPath libraries;
-
-    libraries = [
+      # Chromium / JxBrowser dependencies
+      libxfixes
+      alsa-lib
+      libxcomposite
+      cairo
+      libxcb
+      pango
+      glib
+      atk
+      at-spi2-core
+      at-spi2-atk
+      libxext
+      libdrm
+      nspr
+      nss
+      cups
+      mesa
+      expat
+      dbus
+      libxdamage
+      libxrandr
+      libx11
+      libxshmfence
+      libxkbcommon
+      systemd
       stdenv.cc
       stdenv.cc.libc
       glib
@@ -164,6 +113,7 @@ in
       ffmpeg
       libGL
       libXxf86vm
+      libGL
       alsa-lib
       fontconfig
       freetype
@@ -178,15 +128,5 @@ in
       libXi
       libXrender
     ];
-    # possibly missing libgdk-x11-2.0.so.0, from gtk2? never caused any trouble though
-
-    passthru.updateScript = ./update.sh;
-
-    meta = with lib; {
-      description = "Trader Work Station of Interactive Brokers";
-      homepage = "https://www.interactivebrokers.com";
-      license = licenses.mit;
-      maintainers = lib.optionals (maintainers ? k3a) [maintainers.k3a];
-      platforms = ["x86_64-linux"];
-    };
+    runScript = "env GDK_BACKEND=x11 /usr/bin/ib-tws-native";
   }
