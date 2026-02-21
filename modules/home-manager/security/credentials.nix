@@ -44,6 +44,7 @@ in {
           file = _ (secretsPath + "/ibkr/paper-password.age");
           mode = _ "700";
         };
+
         massive_api_key = {
           file = _ (secretsPath + "/massive/api-key.age");
           mode = _ "700";

@@ -102,7 +102,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "up{job=\"seeking-edge\"}",
+          "expr": "up{job=~\"$job\"}",
           "legendFormat": "",
           "refId": "A"
         }
@@ -840,7 +840,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "sum(system_errors_total)",
+          "expr": "sum(system_errors_total{job=~\"$job\"})",
           "legendFormat": "",
           "refId": "A"
         }
@@ -1426,7 +1426,927 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 28
+      },
+      "id": 400,
+      "title": "Executions & Positions",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 29
+      },
+      "id": 401,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "title": "Positions Opened",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(positions_opened_total{job=~\"$job\", strategy_id=~\"$strategy\", instrument_id=~\"$instrument\"})",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 29
+      },
+      "id": 402,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "title": "Positions Closed",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(positions_closed_total{job=~\"$job\", strategy_id=~\"$strategy\", instrument_id=~\"$instrument\"})",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "short",
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 29
+      },
+      "id": 403,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "title": "Active Positions",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(positions_opened_total{job=~\"$job\", strategy_id=~\"$strategy\"}) - sum(positions_closed_total{job=~\"$job\", strategy_id=~\"$strategy\"})",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "currencyUSD",
+          "noValue": "N/A"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 29
+      },
+      "id": 404,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "title": "Avg Trade PnL",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(trades_realized_pnl_sum{job=~\"$job\", strategy_id=~\"$strategy\"}) / clamp_min(sum(trades_executed_total{job=~\"$job\", strategy_id=~\"$strategy\"}), 1)",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          },
+          "unit": "currencyUSD",
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 29
+      },
+      "id": 405,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "title": "Total Commission",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(trades_commission_total{job=~\"$job\", strategy_id=~\"$strategy\"})",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 29
+      },
+      "id": 406,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "title": "Orders Cancelled",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(orders_cancelled_total{job=~\"$job\", strategy_id=~\"$strategy\"})",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false,
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "realized_pnl"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 0
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "realized_return"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "entry_price"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "exit_price"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "commission"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "slippage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "job"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "__name__"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "side"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "LONG": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "LONG"
+                      },
+                      "SHORT": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "SHORT"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ts_opened"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 85
+              },
+              {
+                "id": "displayName",
+                "value": "Opened"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "position_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 40
+              },
+              {
+                "id": "displayName",
+                "value": "#"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "instrument_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              },
+              {
+                "id": "displayName",
+                "value": "Symbol"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "strategy_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              },
+              {
+                "id": "displayName",
+                "value": "Strategy"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "quantity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 85
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "entry"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 407,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": [
+            "realized_pnl",
+            "commission"
+          ],
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "#"
+          }
+        ]
+      },
+      "title": "Trade Log",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "position_id": 0,
+              "ts_opened": 1,
+              "instrument_id": 2,
+              "strategy_id": 3,
+              "side": 4,
+              "quantity": 5,
+              "entry_price": 6,
+              "exit_price": 7,
+              "realized_pnl": 8,
+              "realized_return": 9,
+              "duration": 10,
+              "commission": 11,
+              "slippage": 12
+            }
+          }
+        }
+      ],
+      "targets": [
+        {
+          "expr": "trade_info{job=~\"$job\", strategy_id=~\"$strategy\", instrument_id=~\"$instrument\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "format": "table",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": true,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineWidth": 1
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 46
+      },
+      "id": 408,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.85,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "orientation": "vertical",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0
+      },
+      "title": "PnL per Trade",
+      "type": "barchart",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "job": true,
+              "entry": true,
+              "entry_price": true,
+              "exit_price": true,
+              "commission": true,
+              "slippage": true,
+              "duration": true,
+              "quantity": true,
+              "realized_return": true,
+              "strategy_id": true,
+              "ts_opened": true
+            },
+            "renameByName": {
+              "realized_pnl": "PnL",
+              "position_id": "Trade",
+              "instrument_id": "Symbol",
+              "side": "Side"
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "fields": {},
+            "conversions": [
+              {
+                "targetField": "PnL",
+                "destinationType": "number"
+              },
+              {
+                "targetField": "Trade",
+                "destinationType": "string"
+              }
+            ]
+          }
+        }
+      ],
+      "targets": [
+        {
+          "expr": "trade_info{job=~\"$job\", strategy_id=~\"$strategy\", instrument_id=~\"$instrument\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "format": "table",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
       },
       "id": 101,
       "title": "Order Flow",
@@ -1523,7 +2443,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 33
+        "y": 55
       },
       "id": 10,
       "options": {
@@ -1625,7 +2545,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 55
       },
       "id": 11,
       "options": {
@@ -1657,7 +2577,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 63
       },
       "id": 102,
       "title": "PnL & Performance",
@@ -1731,7 +2651,7 @@
         "h": 9,
         "w": 16,
         "x": 0,
-        "y": 42
+        "y": 64
       },
       "id": 12,
       "options": {
@@ -1786,7 +2706,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 42
+        "y": 64
       },
       "id": 13,
       "options": {
@@ -1880,7 +2800,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 51
+        "y": 73
       },
       "id": 14,
       "options": {
@@ -1967,7 +2887,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 51
+        "y": 73
       },
       "id": 15,
       "options": {
@@ -1999,7 +2919,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 81
       },
       "id": 103,
       "title": "Risk Management",
@@ -2096,7 +3016,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 60
+        "y": 82
       },
       "id": 16,
       "options": {
@@ -2187,7 +3107,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 60
+        "y": 82
       },
       "id": 17,
       "options": {
@@ -2274,7 +3194,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 68
+        "y": 90
       },
       "id": 18,
       "options": {
@@ -2365,7 +3285,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 68
+        "y": 90
       },
       "id": 19,
       "options": {
@@ -2397,7 +3317,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 76
+        "y": 98
       },
       "id": 104,
       "title": "Latency (Live Trading)",
@@ -2467,7 +3387,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 77
+        "y": 99
       },
       "id": 20,
       "options": {
@@ -2569,7 +3489,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 77
+        "y": 99
       },
       "id": 21,
       "options": {
@@ -2675,7 +3595,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 77
+        "y": 99
       },
       "id": 22,
       "options": {
@@ -2759,7 +3679,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 85
+        "y": 107
       },
       "id": 23,
       "options": {
@@ -2798,7 +3718,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 93
+        "y": 115
       },
       "id": 105,
       "title": "Detailed System Diagnostics",
@@ -2864,7 +3784,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 94
+        "y": 116
       },
       "id": 24,
       "options": {
@@ -2885,7 +3805,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "expr": "sum by (error_type) (increase(system_errors_total[$__rate_interval]))",
+          "expr": "sum by (error_type) (increase(system_errors_total{job=~\"$job\"}[$__rate_interval]))",
           "legendFormat": "{{error_type}}",
           "refId": "A"
         }
@@ -2951,7 +3871,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 94
+        "y": 116
       },
       "id": 25,
       "options": {

@@ -79,16 +79,15 @@ in {
   services.n8n = {
     enable = true;
     openFirewall = true;
-    settings = {
-      port = n8nPort;
-      listen_address = "0.0.0.0";
-      generic = {
-        timezone = "Europe/Berlin";
-      };
-      protocol = "http";
-      host = n8nDomain;
-      webhook_url = "https://${n8nDomain}/";
-      editor_base_url = "https://${n8nDomain}/";
+    environment = {
+      N8N_PORT = toString n8nPort;
+      N8N_LISTEN_ADDRESS = "0.0.0.0";
+      GENERIC_TIMEZONE = "Europe/Berlin";
+      N8N_PROTOCOL = "http";
+      N8N_HOST = n8nDomain;
+      WEBHOOK_URL = "https://${n8nDomain}/";
+      N8N_EDITOR_BASE_URL = "https://${n8nDomain}/";
+      N8N_ENCRYPTION_KEY_FILE = config.age.secrets.n8n-encryption-key.path;
     };
   };
 
@@ -100,7 +99,6 @@ in {
       EnvironmentFile = [];
     };
     environment = {
-      N8N_ENCRYPTION_KEY_FILE = config.age.secrets.n8n-encryption-key.path;
       HOME = "/var/lib/n8n";
     };
   };
