@@ -53,6 +53,10 @@ in {
         hosts.HL-3-RZ-GIT-01.id = 14;
         # IBKR Flex Downloader
         hosts.HL-3-RZ-IBKR-01.id = 15;
+        # IB Gateway (API)
+        hosts.HL-3-RZ-IBGW-01.id = 38;
+        # n8n Workflow Automation
+        hosts.HL-3-RZ-N8N-01.id = 39;
         # Paperless
         hosts.HL-3-RZ-PAPERLESS-01.id = 16;
         # Docspell

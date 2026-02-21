@@ -108,6 +108,8 @@
       }
       // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp38s0" "02:01:27:ff:ed:77" "vlan40" {
       }
+      // mkMicrovm "ib-gateway" "HL-3-RZ-IBGW-01" "enp38s0" "02:06:27:ee:9e:16" "vlan40" {
+      }
       // mkMicrovm "parseable" "HL-3-RZ-LOG-01" "enp38s0" "02:02:27:ee:9e:16" "vlan40" {
         enableStorageDataset = true;
       }
@@ -119,6 +121,8 @@
       }
       // mkMicrovm "victoria" "HL-3-RZ-METRICS-01" "enp38s0" "02:05:27:ee:9e:16" "vlan40" {
         enableStorageDataset = true;
+      }
+      // mkMicrovm "n8n" "HL-3-RZ-N8N-01" "enp38s0" "02:07:27:ee:9e:16" "vlan40" {
       }
       # // mkMicrovm "affine" "HL-3-RZ-AFFINE-01" "enp38s0" "02:04:27:ee:9e:16" "vlan40" {
       #   enableStorageDataset = true;
