@@ -86,9 +86,8 @@ in {
       # ];
       TimeoutStartSec = "5m";
     };
-    # 2. Ensure Sync runs before Caddy
-    # This section MUST be added to your internal Caddy host config to ensure the sync runs first.
-    requires = ["acme-cert-sync.service"];
+    # 2. Ensure Sync runs before Caddy (wants = Caddy starts even if sync fails)
+    wants = ["acme-cert-sync.service"];
     after = ["acme-cert-sync.service"];
   };
   # |----------------------------------------------------------------------| #
@@ -118,6 +117,13 @@ in {
 
   # 3. Synchronisations-Service anpassen
   systemd.services.acme-cert-sync = {
+    description = "Sync ACME certs from VPS for internal Caddy";
+    wantedBy = ["multi-user.target"];
+    wants = ["network-online.target"];
+    after = ["network-online.target"];
+    before = ["caddy.service"];
+    serviceConfig.Type = "oneshot";
+    serviceConfig.RemainAfterExit = true;
     preStart = ''
       # 1. Stelle sicher, dass der Root-Ordner existiert und root/caddy gehört
       mkdir -p ${localSyncRoot}
@@ -132,11 +138,25 @@ in {
     serviceConfig = {
       # Füge die private Schlüsseldatei als Identität hinzu
       # # WICHTIG: Verwende &&, um chown nur bei erfolgreichem rsync auszuführen
-      ExecStart = ''        ${pkgs.bash}/bin/bash -c '\
-                ${pkgs.rsync}/bin/rsync -az --include='\*/' --include='fullchain.pem' --include='key.pem' --exclude='*' -e \"${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes\" ${vpsUserHost}:${vpsCertPath} ${localCertDir} && \
-                ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir} && \
-                ${pkgs.coreutils}/bin/chmod -R 640 ${localCertDir}/\* \
-              ' '';
+      ExecStart = pkgs.writeShellScript "acme-cert-sync-exec" ''
+        set -euo pipefail
+        # Sync certs from VPS
+        if ${pkgs.rsync}/bin/rsync -az \
+          --include='*/' \
+          --include='fullchain.pem' \
+          --include='key.pem' \
+          --exclude='*' \
+          -e "${pkgs.openssh}/bin/ssh -i ${config.age.secrets.${syncKeyName}.path} -o StrictHostKeyChecking=yes -o ConnectTimeout=10" \
+          ${vpsUserHost}:${vpsCertPath} ${localCertDir}; then
+          echo "rsync succeeded, fixing permissions..."
+          ${pkgs.coreutils}/bin/chown -R caddy:caddy ${localCertDir}
+          ${pkgs.findutils}/bin/find ${localCertDir} -type f -exec chmod 640 {} +
+          ${pkgs.findutils}/bin/find ${localCertDir} -type d -exec chmod 750 {} +
+          echo "acme-cert-sync completed successfully"
+        else
+          echo "WARN: rsync failed (exit $?), using existing certs if available"
+        fi
+      '';
       # ExecStart = ''
       #   ${pkgs.rsync}/bin/rsync -az \
       #     --include='*/' \

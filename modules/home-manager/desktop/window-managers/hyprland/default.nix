@@ -9,6 +9,15 @@ with lib; let
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkAgenixEnableOption;
   inherit (config.home.sessionVariables) TERMINAL BROWSER EXPLORER; # EDITOR
 
+  hasAnthropicSecret = config.age.secrets ? anthropic_api_key;
+
+  load-secrets-env = pkgs.writeShellScript "load-secrets-env" ''
+    ANTHROPIC_API_KEY="$(cat ${config.age.secrets.anthropic_api_key.path} 2>/dev/null)"
+    if [ -n "$ANTHROPIC_API_KEY" ]; then
+      ${pkgs.systemd}/bin/systemctl --user set-environment ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
+    fi
+  '';
+
   ibkr = {
     user = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.userSecretsPath}".path;
     password = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.passwordSecretsPath}".path;
@@ -58,7 +67,9 @@ in {
 
         settings = mkMerge [
           {
-            exec-once = [
+            exec-once =
+              (lib.optional hasAnthropicSecret "${load-secrets-env}")
+              ++ [
               # Startup
               "${pkgs.swaynotificationcenter}/bin/swaync"
               # "[workspace 7] firefox -P 'tradingview1' --class=tradingview"

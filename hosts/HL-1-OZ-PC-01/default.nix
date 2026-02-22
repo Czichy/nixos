@@ -66,6 +66,28 @@
 
   programs.nix-ld.enable = true;
 
+  # Steam needs system-level integration for sandbox setuid wrappers,
+  # firewall rules, and proper FHS environment (fixes launch from Walker/desktop)
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    extraPackages = with pkgs; [
+      libxcursor
+      libxi
+      libxinerama
+      libxscrnsaver
+      libpng
+      libpulseaudio
+      libvorbis
+      stdenv.cc.cc.lib
+      libkrb5
+      keyutils
+      gamescope
+      mangohud
+    ];
+  };
+
   home-manager.users."czichy" = import (../../homes + "/czichy@desktop");
 
   # users.users.qemu-libvirtd.group = "qemu-libvirtd";

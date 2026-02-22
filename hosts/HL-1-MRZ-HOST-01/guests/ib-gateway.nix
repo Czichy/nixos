@@ -107,7 +107,7 @@
       "--on2fatimeout=''${TWOFA_TIMEOUT_ACTION}"
   '';
 in {
-  microvm.mem = 2048;
+  microvm.mem = 2049;
   microvm.vcpu = 2;
 
   networking.hostName = hostName;
@@ -156,7 +156,7 @@ in {
     ibcPkg
     ibTwsPkg
     xvfb-run
-    xorg.xdpyinfo
+    xdpyinfo
     socat
     x11vnc
     xterm

@@ -164,6 +164,12 @@ in {
     };
   };
 
+  systemd.services.adguardhome = {
+    wants = ["network-online.target"];
+    after = ["network-online.target" "systemd-networkd.service"];
+  };
+
   systemd.network.enable = true;
+  systemd.network.wait-online.enable = true;
   system.stateVersion = "24.05";
 }

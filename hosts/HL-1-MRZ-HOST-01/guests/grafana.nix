@@ -173,7 +173,7 @@ in {
       security = {
         disable_initial_admin_creation = true;
         admin_user = "czichy";
-        admin_password = "$toString ${config.age.secrets.grafana-admin-password.path}";
+        admin_password = "$__file{${config.age.secrets.grafana-admin-password.path}}";
         secret_key = "$__file{${config.age.secrets.grafana-secret-key.path}}";
         cookie_secure = true;
         disable_gravatar = true;

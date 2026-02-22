@@ -91,6 +91,8 @@ in {
     programs_terminals_foot = importApply ./programs/terminals/foot.nix {inherit localFlake;};
     programs_thunderbird = importApply ./programs/thunderbird.nix {inherit secretsPath; inherit localFlake;};
 
+    programs_claude-code = importApply ./programs/claude-code.nix {inherit localFlake;};
+
     programs_steam = importApply ./programs/games/steam.nix {inherit localFlake inputs;};
     programs_minecraft = importApply ./programs/games/minecraft.nix {inherit localFlake;};
     programs_wine = importApply ./programs/wine.nix {inherit localFlake;};

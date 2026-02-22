@@ -15,24 +15,6 @@ with lib; let
     mkImpermanenceEnableOption
     mkAgenixEnableOption
     ;
-  steam-with-pkgs = pkgs.steam.override {
-    extraPkgs = pkgs:
-      with pkgs; [
-        libxcursor
-        libxi
-        libxinerama
-        libxscrnsaver
-        libpng
-        libpulseaudio
-        libvorbis
-        stdenv.cc.cc.lib
-        libkrb5
-        keyutils
-        gamescope
-        mangohud
-      ];
-  };
-
   cfg = config.tensorfiles.hm.programs.games.steam;
 
   impermanenceCheck =
@@ -60,7 +42,7 @@ in {
     # |----------------------------------------------------------------------| #
     {
       home.packages = with pkgs; [
-        steam-with-pkgs
+        # Steam itself is managed at system level via programs.steam.enable
         mangohud
         protontricks
       ];

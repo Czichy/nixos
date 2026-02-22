@@ -7,7 +7,9 @@
       "WebFetch(domain:)",
       "WebFetch(domain:home-manager-options.extrato.io)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:ente.io)"
+      "WebFetch(domain:ente.io)",
+      "WebFetch(domain:www.interactivebrokers.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

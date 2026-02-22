@@ -57,6 +57,16 @@ in {
           file = _ (secretsPath + "/massive/files-secret-key.age");
           mode = _ "700";
         };
+
+        anthropic_api_key = {
+          file = _ (secretsPath + "/claude/anthropic-api-key.age");
+          mode = _ "400";
+        };
+
+        n8n_mcp_api_key = {
+          file = _ (secretsPath + "/n8n/mcp-api-key.age");
+          mode = _ "400";
+        };
       };
     }
     # |----------------------------------------------------------------------| #

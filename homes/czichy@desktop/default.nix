@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{pkgs, config, ...}: let
   homeDir = "/home/czichy";
 in {
   tensorfiles.hm = {
@@ -28,6 +28,15 @@ in {
       terminals.foot.makeDefault = true;
       editors.zed.enable = true;
       thunderbird.enable = true;
+      claude-code = {
+        enable = true;
+        mcpServers = {
+          n8n = {
+            url = "https://n8n.czichy.com/mcp";
+            headers.Authorization = "Bearer @SECRET{n8n_mcp_api_key}";
+          };
+        };
+      };
     };
     hardware.monitors = {
       enable = true;
@@ -81,6 +90,10 @@ in {
     EDITOR = "hx";
     LAUNCHER = "walker";
   };
+
+  programs.nushell.extraEnv = ''
+    $env.ANTHROPIC_API_KEY = (open ($env.XDG_RUNTIME_DIR | path join "agenix" "anthropic_api_key") | str trim)
+  '';
 
   home.packages = with pkgs; [
   ];

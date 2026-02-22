@@ -56,6 +56,21 @@ in {
         "zed" = _ "zeditor";
       };
 
+      xdg.desktopEntries.zed = {
+        name = "Zed";
+        comment = "A high-performance, multiplayer code editor";
+        exec = "zeditor --foreground %F";
+        icon = "zed";
+        terminal = false;
+        type = "Application";
+        categories = ["TextEditor" "Development" "IDE"];
+        mimeType = ["text/plain" "inode/directory"];
+        startupNotify = true;
+        settings = {
+          Keywords = "zed;editor;code;";
+        };
+      };
+
       xdg.configFile."zed/tasks.json" = {source = ./tasks.json;};
       programs.zed-editor = let
         bins = with pkgs; [
