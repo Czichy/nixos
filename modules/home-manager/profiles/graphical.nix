@@ -75,7 +75,6 @@ in {
         eb-garamond # free garamond port
         ibm-plex # Striking Fonts from IBM
         iosevka
-        jetbrains-mono # monospace
         lmodern # TeX font
         nerd-fonts.iosevka
         noto-fonts-color-emoji # emoji primary

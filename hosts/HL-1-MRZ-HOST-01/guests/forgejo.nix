@@ -1,6 +1,7 @@
 {
   config,
-  # globals,
+  globals,
+  nodes,
   secretsPath,
   hostName,
   lib,
@@ -12,6 +13,14 @@
   # forgejoDomain = "git.${globals.domains.me}";
 
   certloc = "/var/lib/acme-sync/czichy.com";
+
+  # ---------------------------------------------------------------------------
+  # Secret-Existenz-Prüfungen (Build schlägt nicht fehl wenn Secrets fehlen)
+  # ---------------------------------------------------------------------------
+  # Gleiches Secret wie in kanidm.nix (basicSecretFile für den OAuth2-Client "forgejo").
+  # Kanidm und Forgejo müssen denselben client_secret kennen.
+  oauth2SecretFile = secretsPath + "/hosts/HL-1-MRZ-HOST-02/guests/kanidm/oauth2-forgejo.age";
+  hasOAuth2Secret = builtins.pathExists oauth2SecretFile;
   # |----------------------------------------------------------------------| #
 in {
   networking.hostName = hostName;
@@ -58,6 +67,14 @@ in {
   age.secrets.forgejo-hc-ping = {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
+  };
+
+  # OAuth2 Client-Secret für Kanidm SSO (nur wenn .age-Datei vorhanden)
+  age.secrets.forgejo-oauth2-client-secret = lib.mkIf hasOAuth2Secret {
+    file = oauth2SecretFile;
+    mode = "440";
+    owner = config.services.forgejo.user;
+    group = config.services.forgejo.group;
   };
   # |----------------------------------------------------------------------| #
   globals.services.forgejo = {
@@ -246,46 +263,48 @@ in {
   };
 
   # |----------------------------------------------------------------------| #
-  # systemd.services.forgejo = {
-  #   serviceConfig.RestartSec = "60"; # Retry every minute
-  #   preStart = let
-  #     exe = lib.getExe config.services.forgejo.package;
-  #     providerName = "kanidm";
-  #     clientId = "forgejo";
-  #     args = lib.escapeShellArgs (lib.concatLists [
-  #       ["--name" providerName]
-  #       ["--provider" "openidConnect"]
-  #       ["--key" clientId]
-  #       ["--auto-discover-url" "https://${globals.services.kanidm.domain}/oauth2/openid/${clientId}/.well-known/openid-configuration"]
-  #       ["--scopes" "email"]
-  #       ["--scopes" "profile"]
-  #       ["--group-claim-name" "groups"]
-  #       ["--admin-group" "admin"]
-  #       ["--skip-local-2fa"]
-  #     ]);
-  #   in
-  #     lib.mkAfter ''
-  #       provider_id=$(${exe} admin auth list | ${pkgs.gnugrep}/bin/grep -w '${providerName}' | cut -f1)
-  #       SECRET="$(< ${config.age.secrets.forgejo-oauth2-client-secret.path})"
-  #       if [[ -z "$provider_id" ]]; then
-  #         ${exe} admin auth add-oauth ${args} --secret "$SECRET"
-  #       else
-  #         ${exe} admin auth update-oauth --id "$provider_id" ${args} --secret "$SECRET"
-  #       fi
-  #     '';
-  # };
-  # |----------------------------------------------------------------------| #
+  systemd.services.forgejo.serviceConfig.RestartSec = "60"; # Bei Fehler 60s warten
+
   systemd.services.forgejo.preStart = let
     adminCmd = "${lib.getExe config.services.forgejo.package} admin user";
     admin-pwd = config.age.secrets.admin-password.path;
     admin = "administrator"; # Note, Forgejo doesn't allow creation of an account named "admin"
     user-pwd = config.age.secrets.user-password.path;
     user = "czichy";
+
+    # --- Kanidm OAuth2 Provider Registration ---
+    exe = lib.getExe config.services.forgejo.package;
+    providerName = "kanidm";
+    clientId = "forgejo";
+    oauthArgs = lib.escapeShellArgs (lib.concatLists [
+      ["--name" providerName]
+      ["--provider" "openidConnect"]
+      ["--key" clientId]
+      ["--auto-discover-url" "https://${globals.services.kanidm.domain}/oauth2/openid/${clientId}/.well-known/openid-configuration"]
+      ["--scopes" "email"]
+      ["--scopes" "profile"]
+      ["--group-claim-name" "groups"]
+      ["--admin-group" "admin"]
+      ["--skip-local-2fa"]
+    ]);
   in ''
     ${adminCmd} create --admin --email "root@localhost" --username ${admin} --password "$(tr -d '\n' < ${admin-pwd})" || true
     ${adminCmd} create --email "christian@czichy.com" --username ${user} --password "$(tr -d '\n' < ${user-pwd})" || true
     ## uncomment this line to change an admin user which was already created
     # ${adminCmd} change-password --username ${user} --password "$(tr -d '\n' < ${user-pwd})" || true
+
+    # --- Kanidm OAuth2 Provider anlegen/aktualisieren ---
+    if [[ -f "${config.age.secrets.forgejo-oauth2-client-secret.path}" ]]; then
+      provider_id=$(${exe} admin auth list | ${pkgs.gnugrep}/bin/grep -w '${providerName}' | cut -f1)
+      SECRET="$(< ${config.age.secrets.forgejo-oauth2-client-secret.path})"
+      if [[ -z "$provider_id" ]]; then
+        ${exe} admin auth add-oauth ${oauthArgs} --secret "$SECRET" || echo "Warning: failed to add OAuth2 provider"
+      else
+        ${exe} admin auth update-oauth --id "$provider_id" ${oauthArgs} --secret "$SECRET" || echo "Warning: failed to update OAuth2 provider"
+      fi
+    else
+      echo "Warning: OAuth2 client secret not found at ${config.age.secrets.forgejo-oauth2-client-secret.path}, skipping Kanidm SSO setup"
+    fi
   '';
 
   # |----------------------------------------------------------------------| #

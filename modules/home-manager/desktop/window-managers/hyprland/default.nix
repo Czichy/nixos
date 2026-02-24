@@ -14,14 +14,13 @@ with lib; let
   load-secrets-env = pkgs.writeShellScript "load-secrets-env" ''
     ANTHROPIC_API_KEY="$(cat ${config.age.secrets.anthropic_api_key.path} 2>/dev/null)"
     if [ -n "$ANTHROPIC_API_KEY" ]; then
-      ${pkgs.systemd}/bin/systemctl --user set-environment ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
+      export ANTHROPIC_API_KEY
+      # Propagate to both D-Bus activation environment AND systemd user manager
+      ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd ANTHROPIC_API_KEY
+      # Also set in Hyprland's own environment so exec'd processes inherit it
+      ${pkgs.hyprland}/bin/hyprctl keyword env "ANTHROPIC_API_KEY,$ANTHROPIC_API_KEY"
     fi
   '';
-
-  ibkr = {
-    user = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.userSecretsPath}".path;
-    password = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.passwordSecretsPath}".path;
-  };
 
   cfg = config.tensorfiles.hm.desktop.window-managers.hyprland;
   agenixCheck =
@@ -80,9 +79,7 @@ in {
               "swayosd-server"
               "xprop -root -f _XWAYLAND_GLOBAL_OUTPUT_SCALE 32c -set _XWAYLAND_GLOBAL_OUTPUT_SCALE 1"
 
-              "ib-tws-latest"
-              # (mkIf agenixCheck "ib-tws-latest -u $(< ${ibkr.user}) -p $(< ${ibkr.password})")
-              # (mkIf (!agenixCheck) "ib-tws-latest")
+              "ib-start --app tws --mode paper --channel latest"
             ];
 
             ecosystem = {

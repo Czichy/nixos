@@ -26,6 +26,21 @@ with lib; let
     if impermanenceCheck
     then config.tensorfiles.hm.system.impermanence
     else {};
+
+  hasAnthropicSecret = config.age.secrets ? anthropic_api_key;
+
+  # Wrapper script that ensures ANTHROPIC_API_KEY is set before launching Zed
+  zeditor-wrapped = pkgs.writeShellScriptBin "zeditor-wrapped" ''
+    if [ -z "$ANTHROPIC_API_KEY" ]; then
+      ANTHROPIC_API_KEY="$(cat ${
+        if hasAnthropicSecret
+        then config.age.secrets.anthropic_api_key.path
+        else "/dev/null"
+      } 2>/dev/null | tr -d '[:space:]')"
+      export ANTHROPIC_API_KEY
+    fi
+    exec ${pkgs.zed-editor}/bin/zeditor "$@"
+  '';
 in {
   # TODO modularize config, cant be bothered to do it now
   options.tensorfiles.hm.programs.editors.zed = with types; {
@@ -52,14 +67,23 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      home.packages = lib.optional hasAnthropicSecret zeditor-wrapped;
+
       home.shellAliases = {
-        "zed" = _ "zeditor";
+        "zed" = _ (
+          if hasAnthropicSecret
+          then "zeditor-wrapped"
+          else "zeditor"
+        );
       };
 
       xdg.desktopEntries.zed = {
         name = "Zed";
         comment = "A high-performance, multiplayer code editor";
-        exec = "zeditor --foreground %F";
+        exec =
+          if hasAnthropicSecret
+          then "zeditor-wrapped --foreground %F"
+          else "zeditor --foreground %F";
         icon = "zed";
         terminal = false;
         type = "Application";

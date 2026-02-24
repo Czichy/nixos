@@ -10,6 +10,26 @@
   n8nPort = 5678;
 
   certloc = "/var/lib/acme-sync/czichy.com";
+
+  # ---------------------------------------------------------------------------
+  # Ollama-Anbindung (nativ auf HOST-01, GPU-beschleunigt)
+  # ---------------------------------------------------------------------------
+  # n8n hat native Ollama-Nodes (Chat, Embeddings, AI Agent).
+  # Credential in n8n-UI anlegen: Type "Ollama", URL = ollamaUrl
+  ollamaUrl = "http://${globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.ipv4}:11434";
+
+  # ---------------------------------------------------------------------------
+  # Edu-Search PostgreSQL (Read-Only-Zugriff für Workflows)
+  # ---------------------------------------------------------------------------
+  # n8n greift lesend auf die edu-search DB zu für:
+  # - Benachrichtigungen über neu indexierte Materialien
+  # - Wöchentliche Status-Reports
+  # - Fehler-Eskalation bei Pipeline-Problemen
+  # - KI-generierte Quizfragen aus indexiertem Material
+  # Credential in n8n-UI anlegen: Type "Postgres",
+  #   Host = eduSearchDbHost, Port = 5432, DB = edu_search,
+  #   User = n8n_reader, Password = edu_n8n_readonly
+  eduSearchDbHost = globals.net.vlan40.hosts."HL-3-RZ-EDU-01".ipv4;
 in {
   # |----------------------------------------------------------------------| #
   globals.services.n8n = {
@@ -104,6 +124,11 @@ in {
     enable = true;
     openFirewall = true;
     environment = {
+      # Workaround: nixpkgs n8n module partitions env vars with _FILE suffix
+      # into LoadCredential entries, but N8N_RUNNERS_AUTH_TOKEN_FILE defaults
+      # to null → "cannot coerce null to a string". Set to /dev/null since
+      # task runners are not enabled.
+      N8N_RUNNERS_AUTH_TOKEN_FILE = lib.mkForce "/dev/null";
       N8N_PORT = toString n8nPort;
       N8N_LISTEN_ADDRESS = "0.0.0.0";
       GENERIC_TIMEZONE = "Europe/Berlin";
@@ -112,6 +137,19 @@ in {
       WEBHOOK_URL = "https://${n8nDomain}/";
       N8N_EDITOR_BASE_URL = "https://${n8nDomain}/";
       N8N_ENCRYPTION_KEY_FILE = config.age.secrets.n8n-encryption-key.path;
+
+      # ----- KI-Backends (für n8n Ollama/Claude Nodes) -----
+      # Ollama-URL wird via CREDENTIALS_OVERWRITE_DATA injiziert (siehe n8n-setup-env).
+      # Anthropic API-Key wird ebenfalls automatisch injiziert.
+      # In der n8n-UI müssen Credentials vom Typ "Ollama" und "Anthropic"
+      # angelegt werden – die Werte werden automatisch überschrieben.
+      OLLAMA_BASE_URL = ollamaUrl;
+
+      # ----- Edu-Search DB-Verbindung (Read-Only) -----
+      EDU_SEARCH_DB_HOST = eduSearchDbHost;
+      EDU_SEARCH_DB_PORT = "5432";
+      EDU_SEARCH_DB_NAME = "edu_search";
+      EDU_SEARCH_DB_USER = "n8n_reader";
     };
   };
 
@@ -125,7 +163,11 @@ in {
       RuntimeDirectory = "n8n";
       RuntimeDirectoryPreserve = "yes";
       ExecStart = pkgs.writeShellScript "n8n-setup-env" ''
-        echo "ANTHROPIC_API_KEY=$(cat ${config.age.secrets.n8n-anthropic-api-key.path})" > /run/n8n/env
+        ANTHROPIC_KEY="$(cat ${config.age.secrets.n8n-anthropic-api-key.path} | tr -d '\n')"
+        {
+          echo "ANTHROPIC_API_KEY=$ANTHROPIC_KEY"
+          echo 'CREDENTIALS_OVERWRITE_DATA={"anthropicApi":{"apiKey":"'"$ANTHROPIC_KEY"'"},"ollamaApi":{"baseUrl":"${ollamaUrl}"}}'
+        } > /run/n8n/env
         chown n8n:n8n /run/n8n/env
         chmod 400 /run/n8n/env
       '';

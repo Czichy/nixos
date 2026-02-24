@@ -66,7 +66,13 @@ with lib; let
     done
 
     # Read credentials from agenix secrets (defined in credentials.nix)
-    AGENIX_DIR="''${XDG_RUNTIME_DIR}/agenix.d/1"
+    # Find the latest agenix generation dynamically (generation number changes on each rebuild)
+    AGENIX_BASE="''${XDG_RUNTIME_DIR}/agenix.d"
+    AGENIX_GEN="$(ls -1 "$AGENIX_BASE" 2>/dev/null | sort -n | tail -1)"
+    if [[ -z "$AGENIX_GEN" ]]; then
+      echo "Warning: No agenix generation found in $AGENIX_BASE"
+    fi
+    AGENIX_DIR="$AGENIX_BASE/$AGENIX_GEN"
     if [[ "$MODE" == "paper" ]]; then
       USER_SECRET="$AGENIX_DIR/ibkr_paper_user"
       PASS_SECRET="$AGENIX_DIR/ibkr_paper_password"
@@ -86,6 +92,9 @@ with lib; let
     # Set per-constellation config directory to keep settings separate
     export IBKR_CONFIG_DIR="$HOME/.ib-''${APP}-''${MODE}-''${CHANNEL}"
     mkdir -p "$IBKR_CONFIG_DIR"
+
+    # Export trading mode so tws-wrap.sh can pass tradingMode= to TWS
+    export IBKR_MODE="$MODE"
 
     # Select the right binary
     if [[ "$CHANNEL" == "latest" ]]; then

@@ -1,0 +1,560 @@
+/* ==========================================================================
+   Edu-Search – Unterrichtsmaterial-Suche
+   Einfaches, übersichtliches Design für nicht-technische Nutzer
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Reset & Base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --color-bg: #f5f7fa;
+    --color-surface: #ffffff;
+    --color-border: #e0e4e8;
+    --color-border-hover: #3498db;
+    --color-text: #2c3e50;
+    --color-text-secondary: #6b7c8d;
+    --color-text-muted: #a0aec0;
+    --color-primary: #3498db;
+    --color-primary-light: #ebf5fb;
+    --color-accent-en: #27ae60;
+    --color-accent-en-bg: #d5f5e3;
+    --color-accent-es: #e67e22;
+    --color-accent-es-bg: #fdebd0;
+    --color-tag-bg: #ecf0f1;
+    --color-tag-text: #555;
+    --color-shadow: rgba(0, 0, 0, 0.06);
+    --color-shadow-hover: rgba(0, 0, 0, 0.12);
+    --color-error: #e74c3c;
+    --color-success: #2ecc71;
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    --font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+        Arial, sans-serif;
+    --font-size-base: 16px;
+    --font-size-sm: 0.875rem;
+    --font-size-xs: 0.8rem;
+    --font-size-lg: 1.1rem;
+
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s ease;
+}
+
+html {
+    font-size: var(--font-size-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--color-bg);
+    color: var(--color-text);
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px 20px 40px;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 12px 0;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+}
+
+header .subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   Search Bar
+   -------------------------------------------------------------------------- */
+.search-bar {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.search-bar .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 1;
+    line-height: 1;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 14px 48px 14px 48px;
+    font-size: var(--font-size-lg);
+    font-family: var(--font-family);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    outline: none;
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.search-bar input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.search-bar input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.search-bar .clear-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition:
+        color var(--transition-fast),
+        background var(--transition-fast);
+    line-height: 1;
+}
+
+.search-bar .clear-btn:hover {
+    color: var(--color-text);
+    background: var(--color-tag-bg);
+}
+
+/* --------------------------------------------------------------------------
+   Filters
+   -------------------------------------------------------------------------- */
+.filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 130px;
+}
+
+.filter-group label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.filter-group select {
+    padding: 10px 32px 10px 12px;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    outline: none;
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+
+    /* Custom dropdown arrow */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7c8d' d='M6 8.825L1.175 4l.825-.825L6 7.175 10 3.175l.825.825z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.filter-group select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-light);
+}
+
+.filter-group select:hover {
+    border-color: var(--color-text-muted);
+}
+
+.reset-btn {
+    padding: 10px 16px;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    background: var(--color-tag-bg);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+    align-self: flex-end;
+}
+
+.reset-btn:hover {
+    background: var(--color-border);
+    color: var(--color-text);
+}
+
+/* --------------------------------------------------------------------------
+   Stats Bar
+   -------------------------------------------------------------------------- */
+.stats {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
+    padding: 0 4px;
+    min-height: 1.4em;
+}
+
+/* --------------------------------------------------------------------------
+   Results
+   -------------------------------------------------------------------------- */
+.results {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Placeholder / empty state */
+.placeholder {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-text-muted);
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.6;
+}
+
+.placeholder p {
+    font-size: var(--font-size-lg);
+    line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   Result Card
+   -------------------------------------------------------------------------- */
+.result-card {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition:
+        box-shadow var(--transition-normal),
+        border-color var(--transition-normal),
+        transform var(--transition-fast);
+}
+
+.result-card:hover {
+    box-shadow: 0 4px 12px var(--color-shadow-hover);
+    border-color: var(--color-border-hover);
+    transform: translateY(-1px);
+}
+
+.result-card:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px var(--color-shadow);
+}
+
+/* Card: Filename row */
+.result-card .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.result-card .file-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.result-card .filename {
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: var(--color-text);
+    word-break: break-word;
+    line-height: 1.3;
+}
+
+.result-card .filename mark {
+    background: #ffeaa7;
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Card: Metadata tags row */
+.result-card .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.result-card .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--color-tag-bg);
+    color: var(--color-tag-text);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+/* Fach-spezifische Tag-Farben */
+.result-card .tag.fach-englisch {
+    background: var(--color-accent-en-bg);
+    color: var(--color-accent-en);
+}
+
+.result-card .tag.fach-spanisch {
+    background: var(--color-accent-es-bg);
+    color: var(--color-accent-es);
+}
+
+/* Card: Thema description */
+.result-card .thema {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.result-card .thema mark {
+    background: #ffeaa7;
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Card: Path / UNC info (small, subtle) */
+.result-card .path-info {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-top: 6px;
+    word-break: break-all;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.result-card:hover .path-info {
+    opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Load More Button
+   -------------------------------------------------------------------------- */
+.load-more-container {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.load-more-btn {
+    padding: 12px 32px;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    font-weight: 600;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.load-more-btn:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+/* --------------------------------------------------------------------------
+   Loading spinner
+   -------------------------------------------------------------------------- */
+.loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--color-text-muted);
+}
+
+.loading::after {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Error state
+   -------------------------------------------------------------------------- */
+.error-message {
+    text-align: center;
+    padding: 30px;
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 16px 0;
+    border-top: 1px solid var(--color-border);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+footer strong {
+    color: var(--color-text-secondary);
+    font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive: Small screens (phones, small tablets)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+    body {
+        padding: 12px 12px 30px;
+    }
+
+    header h1 {
+        font-size: 1.4rem;
+    }
+
+    .search-bar input {
+        font-size: 1rem;
+        padding: 12px 44px 12px 44px;
+    }
+
+    .filters {
+        gap: 8px;
+    }
+
+    .filter-group {
+        min-width: 100%;
+    }
+
+    .filter-group select {
+        width: 100%;
+    }
+
+    .reset-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .result-card {
+        padding: 12px 14px;
+    }
+
+    .result-card .meta {
+        gap: 6px;
+    }
+
+    .result-card .tag {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+    }
+
+    .result-card .path-info {
+        opacity: 1;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Print styles (falls Ina Ergebnisse ausdrucken möchte)
+   -------------------------------------------------------------------------- */
+@media print {
+    body {
+        background: white;
+        max-width: 100%;
+    }
+
+    .search-bar,
+    .filters,
+    .reset-btn,
+    .load-more-container,
+    footer {
+        display: none !important;
+    }
+
+    .result-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin-bottom: 8px;
+    }
+
+    .result-card .path-info {
+        opacity: 1;
+    }
+}

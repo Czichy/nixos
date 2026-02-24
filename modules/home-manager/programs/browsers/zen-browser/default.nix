@@ -46,6 +46,7 @@ in {
     {
       programs.zen-browser = {
         enable = _ true;
+        suppressXdgMigrationWarning = true;
         policies = {
           DefaultDownloadDirectory = "~/Downloads";
           DisableAccounts = true;

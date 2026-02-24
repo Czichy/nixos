@@ -32,17 +32,17 @@
         (globalsSystem.config.globals)
         domains
         # hetzner
-        
-        # kanidm
-        
+
+        kanidm
+
         macs
         mail
         monitoring
         # myuser
-        
+
         net
         # root
-        
+
         services
         ;
     };

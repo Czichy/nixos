@@ -4,6 +4,7 @@
 in {
   globals = {
     domains.me = "czichy.com";
+    domains.personal = "czichy.com";
     domains.local = "czichy.com";
     net = {
       #TRUST
@@ -94,6 +95,10 @@ in {
         hosts.HL-3-RZ-HASS-01.id = 36;
         # Homepage
         hosts.HL-3-RZ-HOME-01.id = 37;
+        # Edu-Search (Unterrichtsmaterial-Suche)
+        hosts.HL-3-RZ-EDU-01.id = 114;
+        # Kanidm Identity Provider (SSO/OAuth2)
+        hosts.HL-3-RZ-AUTH-01.id = 115;
       };
 
       #IoT
@@ -157,6 +162,57 @@ in {
           hostv6 = "2001:4860:4860::8888";
           network = "internet";
         };
+      };
+    };
+
+    # =========================================================================
+    # Kanidm: Benutzer-Definitionen (zentral für alle Services)
+    # =========================================================================
+    # Diese Personen werden von kanidm.nix via `inherit (globals.kanidm) persons`
+    # in Kanidm provisioniert. Gruppenmitgliedschaften steuern den Zugriff
+    # auf die einzelnen Services.
+    kanidm.persons = {
+      christian = {
+        displayName = "Christian Zichy";
+        legalName = "Christian Zichy";
+        mailAddresses = ["christian@czichy.com"];
+        groups = [
+          # --- Voller Zugriff auf alle Services ---
+          "edu-search.access"
+          "grafana.access"
+          "grafana.admins"
+          "grafana.server-admins"
+          "forgejo.access"
+          "forgejo.admins"
+          # Deaktiviert: keine aktiven MicroVMs
+          # "paperless.access"
+          # "immich.access"
+          # "linkwarden.access"
+          # "linkwarden.admins"
+          # "open-webui.access"
+          # --- Web-Sentinel (oauth2-proxy) ---
+          "web-sentinel.access"
+          "web-sentinel.edu-search"
+          "web-sentinel.adguardhome"
+          # Deaktiviert: open-webui hat keine aktive MicroVM
+          # "web-sentinel.open-webui"
+        ];
+      };
+
+      ina = {
+        displayName = "Ina";
+        mailAddresses = ["ina@czichy.com"];
+        groups = [
+          # --- Zugriff auf relevante Services ---
+          "edu-search.access"
+          # Deaktiviert: keine aktiven MicroVMs
+          # "paperless.access"
+          # "immich.access"
+          # "linkwarden.access"
+          # --- Web-Sentinel (oauth2-proxy) ---
+          "web-sentinel.access"
+          "web-sentinel.edu-search"
+        ];
       };
     };
   };

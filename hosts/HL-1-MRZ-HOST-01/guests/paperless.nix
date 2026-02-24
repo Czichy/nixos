@@ -4,6 +4,7 @@
   lib,
   nodes,
   pkgs,
+  secretsPath,
   ...
 }:
 let
@@ -118,9 +119,9 @@ in
     group = "paperless";
   };
 
-  # Mirror the original oauth2 secret
+  # OAuth2 Client-Secret fuer Kanidm SSO
   age.secrets.paperless-oauth2-client-secret = {
-    inherit (nodes.ward-kanidm.config.age.secrets.kanidm-oauth2-paperless) rekeyFile;
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/paperless/oauth2-client-secret.age";
     mode = "440";
     group = "paperless";
   };

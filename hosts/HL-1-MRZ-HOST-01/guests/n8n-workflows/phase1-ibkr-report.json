@@ -1,0 +1,148 @@
+{
+  "name": "Phase 1.2 – IBKR Tages-Report mit KI-Analyse",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 22,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000001",
+      "name": "Täglich 22:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.SendRequest",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "t",
+              "value": "={{ $env.IBKR_FLEX_TOKEN || 'MISSING_TOKEN' }}"
+            },
+            {
+              "name": "q",
+              "value": "639991"
+            },
+            {
+              "name": "v",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000002",
+      "name": "IBKR – Flex Report anfordern",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// IBKR Flex API gibt eine ReferenceCode zurück\n// Format: <FlexStatementResponse timestamp='...'><Status>Success</Status><ReferenceCode>123456</ReferenceCode><Url>https://...</Url></FlexStatementResponse>\nconst response = $input.first().json;\nlet body = '';\n\nif (typeof response === 'string') {\n  body = response;\n} else if (response.data) {\n  body = typeof response.data === 'string' ? response.data : JSON.stringify(response.data);\n} else {\n  body = JSON.stringify(response);\n}\n\n// ReferenceCode extrahieren\nconst refMatch = body.match(/<ReferenceCode>(\\d+)<\\/ReferenceCode>/);\nconst urlMatch = body.match(/<Url>([^<]+)<\\/Url>/);\n\nif (!refMatch) {\n  // Wenn kein XML, vielleicht ist die Antwort schon der Report\n  return [{ json: { status: 'direct', body, referenceCode: null, downloadUrl: null } }];\n}\n\nconst referenceCode = refMatch[1];\nconst downloadUrl = urlMatch ? urlMatch[1] : `https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.GetStatement`;\n\nreturn [{ json: { status: 'pending', referenceCode, downloadUrl, body } }];"
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000003",
+      "name": "ReferenceCode extrahieren",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000004",
+      "name": "Warte 5s (IBKR Report-Generierung)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [760, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('ReferenceCode extrahieren').first().json.downloadUrl }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "t",
+              "value": "={{ $env.IBKR_FLEX_TOKEN || 'MISSING_TOKEN' }}"
+            },
+            {
+              "name": "q",
+              "value": "={{ $('ReferenceCode extrahieren').first().json.referenceCode }}"
+            },
+            {
+              "name": "v",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000005",
+      "name": "IBKR – Flex Report herunterladen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// IBKR Flex XML Report parsen und in strukturierte Daten umwandeln\nconst input = $input.first().json;\nconst xml = typeof input === 'string' ? input : (input.data || input.body || JSON.stringify(input));\n\n// Hilfsfunktion: XML-Tag-Werte extrahieren\nfunction extractTag(text, tag) {\n  const regex = new RegExp(`<${tag}[^>]*>([^<]*)</${tag}>`, 'gi');\n  const matches = [];\n  let match;\n  while ((match = regex.exec(text)) !== null) {\n    matches.push(match[1].trim());\n  }\n  return matches;\n}\n\n// Hilfsfunktion: XML-Attribute extrahieren\nfunction extractAttributes(text, tag) {\n  const regex = new RegExp(`<${tag}\\\\s+([^>]+)\\\\s*/?>`, 'gi');\n  const results = [];\n  let match;\n  while ((match = regex.exec(text)) !== null) {\n    const attrs = {};\n    const attrRegex = /(\\w+)=[\"']([^\"']*)[\"']/g;\n    let attrMatch;\n    while ((attrMatch = attrRegex.exec(match[1])) !== null) {\n      attrs[attrMatch[1]] = attrMatch[2];\n    }\n    results.push(attrs);\n  }\n  return results;\n}\n\n// Positionen (OpenPositions)\nconst positions = extractAttributes(xml, 'OpenPosition');\nconst positionSummary = positions.map(p => ({\n  symbol: p.symbol || 'N/A',\n  quantity: parseFloat(p.position || p.quantity || 0),\n  marketValue: parseFloat(p.markPrice || p.marketValue || 0),\n  costBasis: parseFloat(p.costBasisMoney || p.costBasis || 0),\n  unrealizedPL: parseFloat(p.fifoPnlUnrealized || p.unrealizedPL || 0),\n  currency: p.currency || 'USD'\n}));\n\n// Trades\nconst trades = extractAttributes(xml, 'Trade');\nconst tradeSummary = trades.slice(0, 20).map(t => ({\n  symbol: t.symbol || 'N/A',\n  side: t.buySell || t.side || 'N/A',\n  quantity: parseFloat(t.quantity || 0),\n  price: parseFloat(t.tradePrice || t.price || 0),\n  proceeds: parseFloat(t.proceeds || 0),\n  commission: parseFloat(t.ibCommission || t.commission || 0),\n  realizedPL: parseFloat(t.fifoPnlRealized || t.realizedPL || 0),\n  dateTime: t.dateTime || t.tradeDate || ''\n}));\n\n// Cash-Bericht\nconst cashReports = extractAttributes(xml, 'CashReport');\nconst cashSummary = cashReports.length > 0 ? {\n  endingCash: parseFloat(cashReports[0].endingCash || 0),\n  endingSettledCash: parseFloat(cashReports[0].endingSettledCash || 0)\n} : { endingCash: 0, endingSettledCash: 0 };\n\n// Dividenden\nconst dividends = extractAttributes(xml, 'ChangeInDividendAccrual');\nconst dividendSummary = dividends.map(d => ({\n  symbol: d.symbol || 'N/A',\n  amount: parseFloat(d.grossAmount || d.amount || 0),\n  exDate: d.exDate || '',\n  payDate: d.payDate || ''\n})).filter(d => d.amount !== 0);\n\n// NAV (Net Asset Value)\nconst equitySummary = extractAttributes(xml, 'EquitySummaryInBase');\nconst nav = equitySummary.length > 0 ? parseFloat(equitySummary[0].total || 0) : 0;\n\n// Gesamt-P&L berechnen\nconst totalUnrealizedPL = positionSummary.reduce((sum, p) => sum + p.unrealizedPL, 0);\nconst totalRealizedPL = tradeSummary.reduce((sum, t) => sum + t.realizedPL, 0);\nconst totalDividends = dividendSummary.reduce((sum, d) => sum + d.amount, 0);\n\n// Top Gewinner und Verlierer\nconst sorted = [...positionSummary].sort((a, b) => b.unrealizedPL - a.unrealizedPL);\nconst topWinners = sorted.slice(0, 3);\nconst topLosers = sorted.slice(-3).reverse();\n\n// Kontextstring für Ollama\nconst today = new Date().toISOString().split('T')[0];\nconst context = [\n  `=== IBKR Portfolio-Report ${today} ===`,\n  '',\n  `NAV (Net Asset Value): $${nav.toFixed(2)}`,\n  `Cash: $${cashSummary.endingCash.toFixed(2)}`,\n  `Unrealisierter P&L: $${totalUnrealizedPL.toFixed(2)}`,\n  `Realisierter P&L (heute): $${totalRealizedPL.toFixed(2)}`,\n  `Dividenden: $${totalDividends.toFixed(2)}`,\n  '',\n  `--- Positionen (${positionSummary.length}) ---`,\n  ...positionSummary.slice(0, 15).map(p =>\n    `  ${p.symbol}: ${p.quantity} Stk, MV $${p.marketValue.toFixed(2)}, P&L $${p.unrealizedPL.toFixed(2)}`\n  ),\n  '',\n  `--- Top 3 Gewinner ---`,\n  ...topWinners.map(p => `  ${p.symbol}: +$${p.unrealizedPL.toFixed(2)}`),\n  '',\n  `--- Top 3 Verlierer ---`,\n  ...topLosers.map(p => `  ${p.symbol}: $${p.unrealizedPL.toFixed(2)}`),\n  '',\n  `--- Heutige Trades (${tradeSummary.length}) ---`,\n  ...tradeSummary.slice(0, 10).map(t =>\n    `  ${t.side} ${t.quantity}x ${t.symbol} @ $${t.price.toFixed(2)} (P&L: $${t.realizedPL.toFixed(2)})`\n  ),\n  '',\n  `--- Dividenden (${dividendSummary.length}) ---`,\n  ...dividendSummary.map(d =>\n    `  ${d.symbol}: $${d.amount.toFixed(2)} (Ex: ${d.exDate})`\n  )\n].join('\\n');\n\n// Prüfe auf besondere Ereignisse (für Hybrid: Ollama vs Claude)\nconst hasSignificantDividend = dividendSummary.some(d => Math.abs(d.amount) > 100);\nconst hasLargeLoss = totalUnrealizedPL < -nav * 0.02; // > 2% Verlust\nconst hasLargeTrade = tradeSummary.some(t => Math.abs(t.proceeds) > 10000);\nconst needsDeepAnalysis = hasSignificantDividend || hasLargeLoss || hasLargeTrade;\n\nreturn [{\n  json: {\n    context,\n    nav,\n    cash: cashSummary.endingCash,\n    totalUnrealizedPL,\n    totalRealizedPL,\n    totalDividends,\n    positionCount: positionSummary.length,\n    tradeCount: tradeSummary.length,\n    dividendCount: dividendSummary.length,\n    topWinners,\n    topLosers,\n    needsDeepAnalysis,\n    today,\n    xmlLength: xml.length\n  }\n}];"
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000006",
+      "name": "XML → Strukturierte Daten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://10.15.40.112:8428/api/v1/import/prometheus",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "text/plain"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "=ibkr_nav{account=\"main\"} {{ $json.nav }}\nibkr_cash{account=\"main\"} {{ $json.cash }}\nibkr_unrealized_pl{account=\"main\"} {{ $json.totalUnrealizedPL }}\nibkr_realized_pl{account=\"main\"} {{ $json.totalRealizedPL }}\nibkr_dividends{account=\"main\"} {{ $json.totalDividends }}\nibkr_position_count{account=\"main\"} {{ $json.positionCount }}\nibkr_trade_count{account=\"main\"} {{ $json.tradeCount }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000007",
+      "name": "VictoriaMetrics – Metriken schreiben",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 100]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Fasse den folgenden IBK

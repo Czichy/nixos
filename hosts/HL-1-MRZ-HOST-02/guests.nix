@@ -60,6 +60,7 @@
       // mkMicrovm "vaultwarden" "HL-3-RZ-VAULT-01" "servers" "02:01:27:0d:dc:b1" "vlan40" {enableStorageDataset = true;}
       # // mkMicrovm "nginx" "dmz" "vlan70" {enableStorageDataset = true;}
       // mkMicrovm "caddy" "HL-3-DMZ-PROXY-01" "dmz" "02:01:27:53:4a:97" "vlan70" {enableStorageDataset = true;}
+      // mkMicrovm "kanidm" "HL-3-RZ-AUTH-01" "servers" "02:02:27:b8:35:04" "vlan40" {}
     );
   };
 }

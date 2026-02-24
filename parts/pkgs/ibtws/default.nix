@@ -25,7 +25,8 @@
   gdk-pixbuf,
 }:
 with pkgs; let
-  twsJdk = pkgs.jdk17;
+  # TWS 10.44+ requires JavaFX (javafx.embed.swing.JFXPanel) for the login panel.
+  twsJdk = pkgs.jdk17.override { enableJavaFX = true; };
   ibDerivation = stdenv.mkDerivation rec {
     version = "10.44";
     pname = "ib-tws-stable";

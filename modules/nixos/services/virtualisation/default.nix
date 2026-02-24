@@ -36,7 +36,9 @@ in {
           onBoot = "ignore";
 
           qemu = {
-            package = pkgs.qemu_full;
+            # qemu_full enables cephSupport which pulls in ceph → arrow-cpp → broken boost_system.
+            # Use qemu without ceph since we don't use Ceph storage.
+            package = pkgs.qemu;
             # ovmf.enable = true;
             # ovmf.packages =
             #   if pkgs.stdenv.isx86_64

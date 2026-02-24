@@ -52,6 +52,7 @@ in {
       home.persistence."${impermanence.persistentRoot}" = {
         directories = [
           ".local/share/Steam"
+          ".steam"
           ".local/share/Paradox Interactive"
         ];
       };

@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   inputs,
   ...
 }: {
@@ -23,7 +24,7 @@
   ];
 
   # topology.self.hardware.image = ../../topology/images/Topton.webp;
-  topology.self.hardware.info = "Intel N100, 16GB RAM";
+  topology.self.hardware.info = "AMD Ryzen (Matisse), 64GB RAM, GTX 1660 SUPER";
   # |----------------------------------------------------------------------| #
   # | ADDITIONAL SYSTEM PACKAGES |
   # |----------------------------------------------------------------------| #
@@ -53,6 +54,47 @@
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
   users.users.qemu-libvirtd.group = "qemu-libvirtd";
   users.groups.qemu-libvirtd = {};
+
+  # Workaround: microvm.nix supervisord event buffer overflow.
+  # edu-search has 10+ virtiofs shares → 11 supervisord processes.
+  # The default event buffer_size (10) overflows, the notify handler
+  # misses RUNNING events and never sends sd_notify(READY=1) → timeout.
+  # Fix: wrap ExecStart with a script that starts supervisord in the
+  # background, polls for all virtiofs sockets, sends sd_notify(READY=1),
+  # then waits for supervisord to exit.
+  systemd.services."microvm-virtiofsd@edu-search".serviceConfig.ExecStart = let
+    stateDir = "/var/lib/microvms";
+    originalRun = "${stateDir}/edu-search/current/bin/virtiofsd-run";
+    wrapper = pkgs.writeShellScript "virtiofsd-run-wrapper" ''
+      # Clean up stale sockets from previous runs
+      rm -f ${stateDir}/edu-search/*.sock
+
+      # Start the original virtiofsd-run (supervisord) in background
+      ${originalRun} &
+      SUPERVISORD_PID=$!
+
+      # Wait for supervisord to create all 10 sockets
+      # (9x HL-3-RZ-EDU-01-virtiofs-*.sock + journal.sock)
+      EXPECTED=10
+      for i in $(seq 1 120); do
+        COUNT=0
+        for sock in ${stateDir}/edu-search/*.sock; do
+          [ -S "$sock" ] && COUNT=$((COUNT + 1))
+        done
+        if [ "$COUNT" -ge "$EXPECTED" ]; then
+          ${pkgs.systemd}/bin/systemd-notify --ready
+          # Wait for supervisord to exit (keeps service alive)
+          wait $SUPERVISORD_PID
+          exit $?
+        fi
+        sleep 0.5
+      done
+      echo "Timeout waiting for virtiofsd sockets (got $COUNT, expected $EXPECTED)" >&2
+      kill $SUPERVISORD_PID 2>/dev/null
+      exit 1
+    '';
+  in
+    lib.mkForce ["" "${wrapper}"];
 
   # |----------------------------------------------------------------------| #
   systemd.tmpfiles.settings = {

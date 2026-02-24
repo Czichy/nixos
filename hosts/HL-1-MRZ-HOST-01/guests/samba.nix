@@ -252,10 +252,13 @@ in {
   services.samba = {
     enable = true;
     openFirewall = true;
-    # `samba4Full` is compiled with avahi, ldap, AD etc support (compared to the default package, `samba`
+    # `samba4Full` is compiled with avahi, ldap, AD etc support (compared to the default package, `samba`)
     # Required for samba to register mDNS records for auto discovery
     # See https://github.com/NixOS/nixpkgs/blob/592047fc9e4f7b74a4dc85d1b9f5243dfe4899e3/pkgs/top-level/all-packages.nix#L27268
-    package = pkgs.samba4Full;
+    # Workaround: samba4Full pulls in sphinx via python3.11 which fails
+    # (sphinx 9.1.0 requires python ≥ 3.12). Use base samba with only
+    # the features we actually need (mDNS for avahi auto-discovery).
+    package = pkgs.samba.override { enableMDNS = true; };
     # Disable Samba's nmbd, because we don't want to reply to NetBIOS over IP
     # requests, since all of our clients hardcode the server shares.
     nmbd.enable = false;

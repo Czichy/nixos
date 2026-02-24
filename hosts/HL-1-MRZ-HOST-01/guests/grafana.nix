@@ -1,6 +1,7 @@
 {
   config,
   globals,
+  lib,
   secretsPath,
   nodes,
   pkgs,
@@ -8,6 +9,14 @@
 }: let
   grafanaDomain = "grafana.${globals.domains.me}";
   certloc = "/var/lib/acme-sync/czichy.com";
+
+  # ---------------------------------------------------------------------------
+  # Secret-Existenz-Prüfungen (Build schlägt nicht fehl wenn Secrets fehlen)
+  # ---------------------------------------------------------------------------
+  # Gleiches Secret wie in kanidm.nix (basicSecretFile für den OAuth2-Client "grafana").
+  # Kanidm und Grafana müssen denselben client_secret kennen.
+  oauth2SecretFile = secretsPath + "/hosts/HL-1-MRZ-HOST-02/guests/kanidm/oauth2-grafana.age";
+  hasOAuth2Secret = builtins.pathExists oauth2SecretFile;
 in {
   networking.hostName = "HL-3-RZ-GRAFANA-01";
 
@@ -63,6 +72,13 @@ in {
 
   age.secrets.grafana-secret-key = {
     file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/grafana/grafana-secret-key.age";
+    mode = "440";
+    group = "grafana";
+  };
+
+  # OAuth2 Client-Secret für Kanidm SSO (nur wenn .age-Datei vorhanden)
+  age.secrets.grafana-oauth2-client-secret = lib.mkIf hasOAuth2Secret {
+    file = oauth2SecretFile;
     mode = "440";
     group = "grafana";
   };
@@ -178,6 +194,36 @@ in {
         cookie_secure = true;
         disable_gravatar = true;
         hide_version = true;
+      };
+
+      # ---------------------------------------------------------------
+      # Kanidm OAuth2/OIDC SSO Integration
+      # ---------------------------------------------------------------
+      # Kanidm stellt OAuth2/OIDC bereit, Grafana nutzt generic_oauth.
+      # Gruppen-Mapping (aus kanidm.nix claimMaps):
+      #   grafana.editors   → "editor"
+      #   grafana.admins    → "admin"
+      #   grafana.server-admins → "server_admin"
+      # Kanidm OAuth2/OIDC – nur aktiviert wenn das Client-Secret existiert.
+      # Ohne Secret startet Grafana trotzdem (nur lokale Auth, kein SSO).
+      "auth.generic_oauth" = if hasOAuth2Secret then {
+        enabled = true;
+        name = "Kanidm";
+        icon = "signin";
+        allow_sign_up = true;
+        auto_login = false;
+        client_id = "grafana";
+        client_secret = "$__file{${config.age.secrets.grafana-oauth2-client-secret.path}}";
+        scopes = "openid email profile";
+        auth_url = "https://${globals.services.kanidm.domain}/ui/oauth2";
+        token_url = "https://${globals.services.kanidm.domain}/oauth2/token";
+        api_url = "https://${globals.services.kanidm.domain}/oauth2/openid/grafana/userinfo";
+        use_pkce = true;
+        # Rollen-Mapping via Kanidm-Gruppen
+        role_attribute_path = "contains(groups[*], 'server_admin') && 'GrafanaAdmin' || contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'";
+        allow_assign_grafana_admin = true;
+      } else {
+        enabled = false;
       };
 
     };
@@ -491,4 +537,11 @@ in {
   # };
 
   systemd.services.grafana.serviceConfig.RestartSec = "60"; # Retry every minute
+
+  # ---------------------------------------------------------------------------
+  # Warnung wenn OAuth2-Secret fehlt
+  # ---------------------------------------------------------------------------
+  warnings =
+    lib.optional (!hasOAuth2Secret)
+      "Grafana: OAuth2/SSO ist DEAKTIVIERT (fehlendes Secret: hosts/HL-1-MRZ-HOST-02/guests/kanidm/oauth2-grafana.age). Nur lokale Authentifizierung verfügbar.";
 }

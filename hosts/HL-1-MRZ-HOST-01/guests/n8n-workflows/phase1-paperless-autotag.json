@@ -1,0 +1,207 @@
+{
+  "name": "Phase 1.3 – Paperless KI-Auto-Tagging (Ollama)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "paperless-document",
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000001",
+      "name": "Webhook – Paperless Dokument",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "paperless-document"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000002",
+      "name": "Polling alle 15min (Fallback)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 600],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://paperless.czichy.com/api/documents/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "ordering",
+              "value": "-added"
+            },
+            {
+              "name": "page_size",
+              "value": "5"
+            },
+            {
+              "name": "tags__isnull",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000003",
+      "name": "Paperless – Ungetaggte Dokumente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, 600],
+      "disabled": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PAPERLESS_CREDENTIAL_ID",
+          "name": "Paperless API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Dokument-ID aus Webhook-Payload oder Polling extrahieren\nconst input = $input.first().json;\n\n// Webhook-Payload von Paperless post_consume_script:\n// { \"document_id\": 123, \"task_id\": \"...\" }\n// Oder direkt die ID als Zahl\nlet documentId = null;\n\nif (input.document_id) {\n  documentId = input.document_id;\n} else if (input.body?.document_id) {\n  documentId = input.body.document_id;\n} else if (typeof input === 'number') {\n  documentId = input;\n}\n\nif (!documentId) {\n  throw new Error('Keine Dokument-ID im Webhook-Payload gefunden: ' + JSON.stringify(input));\n}\n\nreturn [{ json: { documentId: parseInt(documentId) } }];"
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000004",
+      "name": "Dokument-ID extrahieren",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://paperless.czichy.com/api/documents/{{ $json.documentId }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000005",
+      "name": "Paperless – Dokument laden",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PAPERLESS_CREDENTIAL_ID",
+          "name": "Paperless API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Dokument-Daten für die KI-Klassifikation aufbereiten\nconst doc = $input.first().json;\n\n// Volltext (content) kürzen auf max. 4000 Zeichen für Ollama\nconst content = (doc.content || '').substring(0, 4000);\nconst title = doc.title || 'Unbekannt';\nconst correspondent = doc.correspondent_name || doc.correspondent || 'Unbekannt';\nconst docType = doc.document_type_name || doc.document_type || 'Unbekannt';\nconst created = doc.created || '';\nconst originalFilename = doc.original_file_name || doc.archive_serial_number || '';\nconst existingTags = (doc.tags || []).join(', ') || 'Keine';\n\nreturn [{\n  json: {\n    documentId: doc.id,\n    title,\n    correspondent,\n    docType,\n    created,\n    originalFilename,\n    existingTags,\n    content,\n    // Gesamter Kontext für Ollama\n    ollamaContext: [\n      `Titel: ${title}`,\n      `Dateiname: ${originalFilename}`,\n      `Korrespondent: ${correspondent}`,\n      `Dokumenttyp: ${docType}`,\n      `Erstellt: ${created}`,\n      `Bestehende Tags: ${existingTags}`,\n      '',\n      'Inhalt (OCR-Text):',\n      content\n    ].join('\\n')\n  }\n}];"
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000006",
+      "name": "Dokument aufbereiten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [760, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.ollamaContext }}",
+        "hasOutputParser": false,
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000007",
+      "name": "Ollama – Dokument klassifizieren",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "model": "mistral:latest",
+        "options": {}
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000008",
+      "name": "Ollama Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [1040, 520],
+      "credentials": {
+        "ollamaApi": {
+          "id": "OLLAMA_CREDENTIAL_ID",
+          "name": "Ollama HOST-01"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Du bist ein Dokumenten-Klassifikations-Assistent für ein privates Dokumenten-Management-System (Paperless-ngx). Analysiere das folgende Dokument und extrahiere strukturierte Metadaten.\n\nAntworte AUSSCHLIESSLICH mit validem JSON. Keine Erklärungen, kein Markdown, nur JSON.\n\nDas JSON muss exakt dieses Format haben:\n{\n  \"kategorie\": \"Rechnung\" | \"Vertrag\" | \"Brief\" | \"Behörde\" | \"Versicherung\" | \"Steuer\" | \"Bank\" | \"Gesundheit\" | \"Bildung\" | \"Technik\" | \"Sonstiges\",\n  \"korrespondent\": \"Name des Absenders/Unternehmens (z.B. 'Stadtwerke München', 'Deutsche Bank')\",\n  \"tags\": [\"tag1\", \"tag2\", \"tag3\"],\n  \"zusammenfassung\": \"Ein Satz der das Dokument beschreibt (max 100 Zeichen)\",\n  \"betrag_eur\": null oder Zahl (nur bei Rechnungen/Kontoauszügen, als Float z.B. 123.45),\n  \"faelligkeitsdatum\": null oder \"YYYY-MM-DD\" (nur bei Rechnungen mit erkennbarem Fälligkeitsdatum),\n  \"sprache\": \"de\" | \"en\" | \"es\" | \"fr\" | \"andere\",\n  \"wichtigkeit\": \"hoch\" | \"mittel\" | \"niedrig\"\n}\n\nRegeln für Tags:\n- 3-6 Tags pro Dokument\n- Tags in Kleinbuchstaben, deutsch\n- Beispiele: rechnung, vertrag, miete, strom, versicherung, steuer, arzt, schule, gehalt, kontoauszug\n- Jahreszahl als Tag wenn erkennbar (z.B. \"2024\")\n- Monatsname wenn relevant (z.B. \"januar\")\n\nRegeln für Korrespondent:\n- Offizieller Firmenname (z.B. \"Allianz Versicherung\", nicht \"allianz\")\n- Bei Privatpersonen: \"Vorname Nachname\"\n- Bei Behörden: Vollständiger Name (z.B. \"Finanzamt München\")\n- \"Unbekannt\" nur wenn wirklich nicht erkennbar"
+      },
+      "id": "c3d4e5f6-0001-4000-8000-000000000009",
+      "name": "System-Prompt Klassifikation",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1,
+      "position": [1040, 720],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ollama-Antwort als JSON parsen und validieren\nconst input = $input.first().json;\nconst raw = input.text || input.output || input.response || JSON.stringify(input);\nconst documentId = $('Dokument aufbereiten').first().json.documentId;\nconst title = $('Dokument aufbereiten').first().json.title;\n\nlet parsed = null;\ntry {\n  // Versuche JSON aus der Antwort zu extrahieren\n  // Ollama antwortet manchmal mit Text drumherum\n  const jsonMatch = raw.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    parsed = JSON.parse(jsonMatch[0]);\n  } else {\n    throw new Error('Kein JSON-Block in Ollama-Antwort gefunden');\n  }\n} catch (e) {\n  // Fallback: Minimale Klassifikation\n  parsed = {\n    kategorie: 'Sonstiges',\n    korrespondent: 'Unbekannt',\n    tags: ['unkategorisiert', 'ki-fehler'],\n    zusammenfassung: 'Automatische Klassifikation fehlgeschlagen',\n    betrag_eur: null,\n    faelligkeitsdatum: null,\n    sprache: 'de',\n    wichtigkeit: 'niedrig'\n  };\n}\n\n// Validierung und Bereinigung\nconst validKategorien = ['Rechnung', 'Vertrag', 'Brief', 'Behörde', 'Versicherung', 'Steuer', 'Bank', 'Gesundheit', 'Bildung', 'Technik', 'Sonstiges'];\nif (!validKategorien.includes(parsed.kategorie)) {\n  parsed.kategorie = 'Sonstiges';\n}\n\n// Tags bereinigen: nur Strings, lowercase, max 6\nif (!Array.isArray(parsed.tags)) parsed.tags = [];\nparsed.tags = parsed.tags\n  .filter(t => typeof t === 'string')\n  .map(t => t.toLowerCase().trim())\n  .filter(t => t.length > 0 && t.length < 50)\n  .slice(0, 6);\n\n// Kategorie als Tag hinzufügen\nconst katTag = parsed.kategorie.toLowerCase();\nif (!parsed.tags.includes(katTag)) {\n  parsed.tags.unshift(katTag);\n}\n\n// KI-Tag hinzufügen um automatisch getaggte Dokumente zu erkennen\nif (!parsed.tags.includes('ki-klassifiziert')) {\n  parsed.tags.push('ki-klassifiziert');\n}\n\n// Betrag validieren\nif (parsed.betrag_eur !== null) {\n  parsed.betrag_eur = parseFloat(parsed.betrag_eur);\n  if (isNaN(parsed.betrag_eur)) parsed.betrag_eur = null;\n}\n\nreturn [{\n  json: {\n    documentId,\n    title,\n    ...parsed,\n    ollamaRaw: raw\n  }\n}];"
+      },
+      "id": "c3d4e5f6-0001-4000-8000-00000000000a",
+      "name": "KI-Antwort parsen & validieren",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://paperless.czichy.com/api/tags/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "page_size",
+              "value": "500"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "c3d4e5f6-0001-4000-8000-00000000000b",
+      "name": "Paperless – Alle Tags laden",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PAPERLESS_CREDENTIAL_ID",
+          "name": "Paperless API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://paperless.czichy.com/api/correspondents/",
+        "authentication

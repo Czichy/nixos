@@ -1,0 +1,207 @@
+{
+  "name": "Phase 2.1 – Edu-Search: Tägliche neue Materialien für Ina",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "d4e5f6a7-0201-4000-8000-000000000001",
+      "name": "Täglich 18:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  filename,\n  fach,\n  klasse,\n  thema,\n  typ,\n  niveau,\n  file_extension,\n  smb_url,\n  indexed_at\nFROM documents\nWHERE indexed_at > NOW() - INTERVAL '24 hours'\n  AND classification_status = 'success'\nORDER BY fach, klasse, filename\nLIMIT 50;",
+        "options": {}
+      },
+      "id": "d4e5f6a7-0201-4000-8000-000000000002",
+      "name": "PostgreSQL – Neue Materialien (24h)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 300],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-count-check",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d4e5f6a7-0201-4000-8000-000000000003",
+      "name": "Neue Materialien vorhanden?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Alle neuen Materialien aus der DB-Abfrage\nconst items = $input.all().map(i => i.json);\nconst count = items.length;\n\n// Nach Fach gruppieren\nconst byFach = {};\nfor (const item of items) {\n  const fach = item.fach || 'Sonstige';\n  if (!byFach[fach]) byFach[fach] = [];\n  byFach[fach].push(item);\n}\n\n// Markdown-Nachricht formatieren\nconst lines = [];\nlines.push(`📚 **${count} neue Materialien** in den letzten 24 Stunden indexiert:\\n`);\n\nfor (const [fach, docs] of Object.entries(byFach).sort()) {\n  lines.push(`**${fach}** (${docs.length}):`);\n  for (const doc of docs) {\n    const klasse = doc.klasse && doc.klasse !== 'unbekannt' ? ` Kl. ${doc.klasse}` : '';\n    const niveau = doc.niveau && doc.niveau !== 'unbekannt' ? ` (${doc.niveau})` : '';\n    const typ = doc.typ && doc.typ !== 'Sonstiges' ? ` [${doc.typ}]` : '';\n    const thema = doc.thema ? ` – ${doc.thema}` : '';\n    const ext = doc.file_extension ? doc.file_extension.toUpperCase().replace('.', '') : '';\n    lines.push(`  • ${doc.filename}${klasse}${niveau}${typ}${thema}`);\n  }\n  lines.push('');\n}\n\n// Statistik-Zeile\nconst fachCounts = Object.entries(byFach)\n  .map(([f, d]) => `${d.length}× ${f}`)\n  .join(', ');\nlines.push(`---`);\nlines.push(`Gesamt: ${count} Dateien (${fachCounts})`);\nlines.push(`Suche: https://edu.czichy.com`);\n\nconst message = lines.join('\\n');\nconst title = `📚 ${count} neue Materialien indexiert`;\n\nreturn [{\n  json: {\n    message,\n    title,\n    count,\n    fachCounts\n  }\n}];"
+      },
+      "id": "d4e5f6a7-0201-4000-8000-000000000004",
+      "name": "Nachricht formatieren",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ntfy.czichy.com/edu-search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "Priority",
+              "value": "3"
+            },
+            {
+              "name": "Tags",
+              "value": "books,sparkles"
+            },
+            {
+              "name": "Markdown",
+              "value": "yes"
+            },
+            {
+              "name": "Actions",
+              "value": "view, Edu-Search öffnen, https://edu.czichy.com, clear=true"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.message }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "d4e5f6a7-0201-4000-8000-000000000005",
+      "name": "ntfy – Benachrichtigung an Ina",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1060, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keine neuen Materialien – nichts tun, nur loggen\nconst now = new Date().toISOString();\nreturn [{\n  json: {\n    status: 'skipped',\n    reason: 'Keine neuen Materialien in den letzten 24 Stunden',\n    checkedAt: now\n  }\n}];"
+      },
+      "id": "d4e5f6a7-0201-4000-8000-000000000006",
+      "name": "Keine neuen Materialien (Skip)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 500]
+    }
+  ],
+  "connections": {
+    "Täglich 18:00": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL – Neue Materialien (24h)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL – Neue Materialien (24h)": {
+      "main": [
+        [
+          {
+            "node": "Neue Materialien vorhanden?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Neue Materialien vorhanden?": {
+      "main": [
+        [
+          {
+            "node": "Nachricht formatieren",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Keine neuen Materialien (Skip)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nachricht formatieren": {
+      "main": [
+        [
+          {
+            "node": "ntfy – Benachrichtigung an Ina",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "phase2"
+    },
+    {
+      "name": "edu-search"
+    },
+    {
+      "name": "notification"
+    }
+  ],
+  "pinData": {},
+  "meta": {
+    "instanceId": "",
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "name": "Phase 2.2 – Edu-Search: Wöchentlicher Status-Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 20,
+              "triggerAtMinute": 0,
+              "triggerAtDay": 7
+            }
+          ]
+        }
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000001",
+      "name": "Sonntag 20:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COALESCE(fach, 'unbekannt') AS fach,\n  COUNT(*) AS anzahl\nFROM documents\nWHERE classification_status = 'success'\nGROUP BY fach\nORDER BY anzahl DESC;",
+        "options": {}
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000002",
+      "name": "Q1 – Dokumente nach Fach",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 100],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  classification_status AS status,\n  COUNT(*) AS anzahl\nFROM documents\nGROUP BY classification_status\nORDER BY anzahl DESC;",
+        "options": {}
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000003",
+      "name": "Q2 – Status-Verteilung",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 300],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COUNT(*) AS neue_diese_woche,\n  COUNT(*) FILTER (WHERE classification_status = 'success') AS davon_erfolgreich,\n  COUNT(*) FILTER (WHERE classification_status = 'failed') AS davon_fehlgeschlagen\nFROM documents\nWHERE indexed_at > NOW() - INTERVAL '7 days';",
+        "options": {}
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000004",
+      "name": "Q3 – Neue Dokumente diese Woche",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 500],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COALESCE(typ, 'unbekannt') AS typ,\n  COUNT(*) AS anzahl\nFROM documents\nWHERE classification_status = 'success'\nGROUP BY typ\nORDER BY anzahl DESC\nLIMIT 10;",
+        "options": {}
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000005",
+      "name": "Q4 – Dokumente nach Typ",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 700],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COUNT(*) AS total,\n  pg_size_pretty(pg_database_size('edu_search')) AS db_size,\n  MIN(indexed_at) AS aeltester_eintrag,\n  MAX(indexed_at) AS neuester_eintrag\nFROM documents;",
+        "options": {}
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000006",
+      "name": "Q5 – Gesamtstatistik",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 900],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Daten aus allen 5 Queries zusammenführen\nconst fachData = $('Q1 – Dokumente nach Fach').all().map(i => i.json);\nconst statusData = $('Q2 – Status-Verteilung').all().map(i => i.json);\nconst weekData = $('Q3 – Neue Dokumente diese Woche').first().json;\nconst typData = $('Q4 – Dokumente nach Typ').all().map(i => i.json);\nconst statsData = $('Q5 – Gesamtstatistik').first().json;\n\n// Kalenderwoche berechnen\nconst now = new Date();\nconst onejan = new Date(now.getFullYear(), 0, 1);\nconst kw = Math.ceil(((now - onejan) / 86400000 + onejan.getDay() + 1) / 7);\nconst today = now.toISOString().split('T')[0];\n\n// === Nachricht zusammenbauen ===\nconst lines = [];\nlines.push(`📊 **Edu-Search Wochenreport KW ${kw}**`);\nlines.push(`Stand: ${today}`);\nlines.push('');\n\n// Gesamtstatistik\nconst total = parseInt(statsData.total || 0);\nconst dbSize = statsData.db_size || 'unbekannt';\nlines.push(`📁 **Gesamt:** ${total} Dokumente (DB: ${dbSize})`);\nlines.push('');\n\n// Neue diese Woche\nconst neueWoche = parseInt(weekData.neue_diese_woche || 0);\nconst erfolgreich = parseInt(weekData.davon_erfolgreich || 0);\nconst fehlgeschlagen = parseInt(weekData.davon_fehlgeschlagen || 0);\nconst wocheEmoji = fehlgeschlagen > 5 ? '⚠️' : '✅';\nlines.push(`${wocheEmoji} **Diese Woche:** +${neueWoche} neue Dateien`);\nif (neueWoche > 0) {\n  lines.push(`  ✅ ${erfolgreich} erfolgreich klassifiziert`);\n  if (fehlgeschlagen > 0) {\n    lines.push(`  ❌ ${fehlgeschlagen} fehlgeschlagen`);\n  }\n}\nlines.push('');\n\n// Nach Fach\nlines.push('**Nach Fach:**');\nfor (const row of fachData) {\n  const emoji = row.fach === 'Englisch' ? '🇬🇧' : row.fach === 'Spanisch' ? '🇪🇸' : '📄';\n  lines.push(`  ${emoji} ${row.fach}: ${row.anzahl}`);\n}\nlines.push('');\n\n// Nach Typ\nlines.push('**Nach Typ:**');\nfor (const row of typData.slice(0, 6)) {\n  lines.push(`  • ${row.typ}: ${row.anzahl}`);\n}\nlines.push('');\n\n// Status-Verteilung\nlines.push('**Pipeline-Status:**');\nfor (const row of statusData) {\n  const emoji = row.status === 'success' ? '✅' : row.status === 'failed' ? '❌' : row.status === 'pending' ? '⏳' : '⏭️';\n  lines.push(`  ${emoji} ${row.status}: ${row.anzahl}`);\n}\nlines.push('');\n\n// Footer\nlines.push('---');\nlines.push('🔗 [Edu-Search öffnen](https://edu.czichy.com)');\n\nconst message = lines.join('\\n');\nconst title = `📊 Edu-Search KW ${kw}: ${total} Dokumente (+${neueWoche})`;\n\n// Priorität basierend auf Fehlerrate\nlet priority = '3'; // normal\nif (fehlgeschlagen > 10) priority = '4'; // high\nif (fehlgeschlagen > 25) priority = '5'; // urgent\n\nreturn [{\n  json: {\n    message,\n    title,\n    priority,\n    kw,\n    today,\n    total,\n    neueWoche,\n    erfolgreich,\n    fehlgeschlagen\n  }\n}];"
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000007",
+      "name": "Report zusammenbauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [620, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ntfy.czichy.com/edu-search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "Priority",
+              "value": "={{ $json.priority }}"
+            },
+            {
+              "name": "Tags",
+              "value": "bar_chart,books"
+            },
+            {
+              "name": "Markdown",
+              "value": "yes"
+            },
+            {
+              "name": "Actions",
+              "value": "view, Edu-Search öffnen, https://edu.czichy.com, clear=true"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.message }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "e5f6a7b8-0202-4000-8000-000000000008",
+      "name": "ntfy – Wochenreport senden",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 500]
+    }
+  ],
+  "connections": {
+    "Sonntag 20:00": {
+      "main": [
+        [
+          {
+            "node": "Q1 – Dokumente nach Fach",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Q2 – Status-Verteilung",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Q3 – Neue Dokumente diese Woche",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Q4 – Dokumente nach Typ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Q5 – Gesamtstatistik",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Q1 – Dokumente nach Fach": {
+      "main": [
+        [
+          {
+            "node": "Report zusammenbauen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Q2 – Status-Verteilung": {
+      "main": [
+        [
+          {
+            "node": "Report zusammenbauen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Q3 – Neue Dokumente diese Woche": {
+      "main": [
+        [
+          {
+            "node": "Report zusammenbauen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Q4 – Dokumente nach Typ": {
+      "main": [
+        [
+          {
+            "node": "Report zusammenbauen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Q5 – Gesamtstatistik": {
+      "main": [
+        [
+          {
+            "node": "Report zusammenbauen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report zusammenbauen": {
+      "main": [
+        [
+          {
+            "node": "ntfy – Wochenreport senden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "phase2"
+    },
+    {
+      "name": "edu-search"
+    },
+    {
+      "name": "report"
+    }
+  ],
+  "pinData": {},
+  "meta": {
+    "instanceId": "",
+    "templateCredsSetupCompleted": true
+  }
+}

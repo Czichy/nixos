@@ -3,6 +3,7 @@
   globals,
   nodes,
   pkgs,
+  secretsPath,
   ...
 }: let
   immichDomain = "immich.${globals.domains.me}";
@@ -144,9 +145,9 @@ in {
     }
   ];
 
-  # Mirror the original oauth2 secret
+  # OAuth2 Client-Secret fuer Kanidm SSO
   age.secrets.immich-oauth2-client-secret = {
-    inherit (nodes.ward-kanidm.config.age.secrets.kanidm-oauth2-immich) rekeyFile;
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/immich/oauth2-client-secret.age";
     mode = "440";
     group = "root";
   };

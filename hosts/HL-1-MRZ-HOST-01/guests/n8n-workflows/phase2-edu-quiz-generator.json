@@ -1,0 +1,142 @@
+{
+  "name": "Phase 2.4 – Edu-Search: KI-generierte Quizfragen für Ina",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "edu-quiz",
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000001",
+      "name": "Webhook – Quiz anfordern",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "edu-quiz"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18,
+              "triggerAtMinute": 0,
+              "triggerAtDay": 7
+            }
+          ]
+        }
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000002",
+      "name": "Sonntag 18:00 (Wochenvorbereitung)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 600],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parameter aus Webhook oder Defaults für Cron-Trigger\nconst input = $input.first().json;\n\n// Webhook-Body kann spezifische Wünsche enthalten:\n// { \"fach\": \"Englisch\", \"klasse\": \"10\", \"thema\": \"Macbeth\", \"anzahl\": 5, \"niveau\": \"B2\" }\n// Bei Cron-Trigger: zufälliges Fach + Klasse aus der DB\nconst fach = input.fach || input.body?.fach || null;\nconst klasse = input.klasse || input.body?.klasse || null;\nconst thema = input.thema || input.body?.thema || null;\nconst anzahl = parseInt(input.anzahl || input.body?.anzahl || 5);\nconst niveau = input.niveau || input.body?.niveau || null;\nconst quizType = input.typ || input.body?.typ || 'multiple_choice';\n\n// SQL-WHERE-Klausel dynamisch aufbauen\nconst conditions = [\"classification_status = 'success'\"];\nconst params = [];\n\nif (fach) {\n  conditions.push(`fach = '${fach.replace(/'/g, \"''\")}' `);\n}\nif (klasse) {\n  conditions.push(`klasse = '${klasse.replace(/'/g, \"''\")}' `);\n}\nif (thema) {\n  conditions.push(`(thema ILIKE '%${thema.replace(/'/g, \"''\")}%' OR filename ILIKE '%${thema.replace(/'/g, \"''\")}%')`);\n}\nif (niveau) {\n  conditions.push(`niveau = '${niveau.replace(/'/g, \"''\")}' `);\n}\n\n// Nur Dokumente mit echtem Textinhalt\nconditions.push(\"extracted_text IS NOT NULL\");\nconditions.push(\"LENGTH(extracted_text) > 200\");\n\nconst whereClause = conditions.join(' AND ');\n\nconst query = `SELECT\n  id,\n  filename,\n  fach,\n  klasse,\n  thema,\n  typ,\n  niveau,\n  LEFT(extracted_text, 5000) AS text_excerpt\nFROM documents\nWHERE ${whereClause}\nORDER BY RANDOM()\nLIMIT 3;`;\n\nreturn [{\n  json: {\n    query,\n    requestedFach: fach,\n    requestedKlasse: klasse,\n    requestedThema: thema,\n    requestedNiveau: niveau,\n    anzahl: Math.min(Math.max(anzahl, 1), 10),\n    quizType\n  }\n}];"
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000003",
+      "name": "Parameter aufbereiten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.query }}",
+        "options": {}
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000004",
+      "name": "PostgreSQL – Materialien laden",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [520, 300],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-has-materials",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000005",
+      "name": "Materialien gefunden?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [760, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Materialien für den Ollama-Prompt zusammenbauen\nconst materials = $input.all().map(i => i.json);\nconst params = $('Parameter aufbereiten').first().json;\n\n// Alle Texte zusammenführen (max. 6000 Zeichen gesamt)\nlet combinedText = '';\nconst usedMaterials = [];\n\nfor (const mat of materials) {\n  const excerpt = (mat.text_excerpt || '').trim();\n  if (!excerpt) continue;\n\n  if (combinedText.length + excerpt.length > 6000) {\n    // Text kürzen, damit der Prompt nicht zu lang wird\n    const remaining = 6000 - combinedText.length;\n    if (remaining > 500) {\n      combinedText += '\\n\\n--- ' + mat.filename + ' ---\\n' + excerpt.substring(0, remaining);\n      usedMaterials.push(mat);\n    }\n    break;\n  }\n\n  combinedText += '\\n\\n--- ' + mat.filename + ' ---\\n' + excerpt;\n  usedMaterials.push(mat);\n}\n\n// Fach und Niveau aus den tatsächlichen Materialien bestimmen\nconst actualFach = params.requestedFach || usedMaterials[0]?.fach || 'unbekannt';\nconst actualKlasse = params.requestedKlasse || usedMaterials[0]?.klasse || 'unbekannt';\nconst actualNiveau = params.requestedNiveau || usedMaterials[0]?.niveau || 'B1';\nconst actualThema = params.requestedThema || usedMaterials[0]?.thema || 'Allgemein';\nconst anzahl = params.anzahl;\n\n// Sprache des Quiz basierend auf Fach\nlet quizSprache = 'auf Deutsch';\nlet frageSprache = 'Deutsch';\nif (actualFach === 'Englisch') {\n  quizSprache = 'auf Englisch (Fragen und Antworten in Englisch!)';\n  frageSprache = 'Englisch';\n} else if (actualFach === 'Spanisch') {\n  quizSprache = 'auf Spanisch (Fragen und Antworten in Spanisch!)';\n  frageSprache = 'Spanisch';\n}\n\n// Quiz-Typ-spezifische Anweisungen\nlet typAnweisung = '';\nlet jsonFormat = '';\n\nswitch (params.quizType) {\n  case 'lueckentext':\n    typAnweisung = 'Erstelle Lückentexte. Ersetze wichtige Wörter durch Lücken (_____). Gib die Lösung separat an.';\n    jsonFormat = `{\n      \"fragen\": [\n        {\n          \"lueckentext\": \"Satz mit _____ als Lücke\",\n          \"loesung\": \"das fehlende Wort\",\n          \"hinweis\": \"kurzer Hinweis für Schüler\"\n        }\n      ]\n    }`;\n    break;\n  case 'zuordnung':\n    typAnweisung = 'Erstelle Zuordnungsaufgaben. Gib zwei Listen an, die einander zugeordnet werden müssen.';\n    jsonFormat = `{\n      \"fragen\": [\n        {\n          \"anweisung\": \"Ordne die Begriffe den Definitionen zu\",\n          \"links\": [\"Begriff 1\", \"Begriff 2\", \"Begriff 3\"],\n          \"rechts\": [\"Definition 1\", \"Definition 2\", \"Definition 3\"],\n          \"loesung\": {\"Begriff 1\": \"Definition 2\", \"Begriff 2\": \"Definition 1\", \"Begriff 3\": \"Definition 3\"}\n        }\n      ]\n    }`;\n    break;\n  case 'vokabeltest':\n    typAnweisung = `Erstelle einen Vokabeltest. Gib Wörter in ${frageSprache} vor, die ins Deutsche übersetzt werden müssen (oder umgekehrt).`;\n    jsonFormat = `{\n      \"fragen\": [\n        {\n          \"wort\": \"Fremdsprachiges Wort oder Phrase\",\n          \"uebersetzung\": \"Deutsche Übersetzung\",\n          \"beispielsatz\": \"Ein Beispielsatz mit dem Wort\"\n        }\n      ]\n    }`;\n    break;\n  default: // multiple_choice\n    typAnweisung = 'Erstelle Multiple-Choice-Fragen mit jeweils 4 Antwortmöglichkeiten (a, b, c, d). Genau eine Antwort ist korrekt.';\n    jsonFormat = `{\n      \"fragen\": [\n        {\n          \"frage\": \"Die Frage\",\n          \"optionen\": {\n            \"a\": \"Antwort A\",\n            \"b\": \"Antwort B\",\n            \"c\": \"Antwort C\",\n            \"d\": \"Antwort D\"\n          },\n          \"richtig\": \"b\",\n          \"erklaerung\": \"Kurze Erklärung warum b richtig ist\"\n        }\n      ]\n    }`;\n    break;\n}\n\n// Ollama-Prompt zusammenbauen\nconst prompt = `Du bist eine erfahrene ${actualFach}-Lehrerin an einem deutschen Gymnasium.\nErstelle genau ${anzahl} Übungsaufgaben ${quizSprache} basierend auf dem folgenden Unterrichtsmaterial.\n\nFach: ${actualFach}\nKlassenstufe: ${actualKlasse}\nNiveau: ${actualNiveau} (GER/CEFR)\nThema: ${actualThema}\n\n${typAnweisung}\n\nRegeln:\n- Die Fragen müssen direkt aus dem gegebenen Textmaterial ableitbar sein\n- Schwierigkeit passend zum Niveau ${actualNiveau}\n- Fragen ${quizSprache}\n- Abwechslungsreiche Fragetypen (Fakten, Verständnis, Anwendung)\n- Bei ${frageSprache}-Fragen: grammatisch korrekt, natürlich klingend\n- Antworte AUSSCHLIESSLICH mit validem JSON, keine Erklärungen drumherum\n\nJSON-Format:\n${jsonFormat}\n\n=== UNTERRICHTSMATERIAL ===\n${combinedText}\n=== ENDE MATERIAL ===`;\n\nreturn [{\n  json: {\n    prompt,\n    actualFach,\n    actualKlasse,\n    actualNiveau,\n    actualThema,\n    anzahl,\n    quizType: params.quizType,\n    materialCount: usedMaterials.length,\n    materialNames: usedMaterials.map(m => m.filename),\n    textLength: combinedText.length\n  }\n}];"
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000006",
+      "name": "Ollama-Prompt bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1020, 200]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "hasOutputParser": false,
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000007",
+      "name": "Ollama – Quizfragen generieren",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "model": "mistral:latest",
+        "options": {
+          "temperature": 0.7,
+          "numCtx": 8192
+        }
+      },
+      "id": "a7b8c9d0-0204-4000-8000-000000000008",
+      "name": "Ollama Model (mistral)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [1300, 440],
+      "credentials": {
+        "ollamaApi": {
+          "id": "OLLAMA_CREDENTIAL_ID",
+          "name": "Ollama HOST-01"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ollama-Antwort parsen und in druckbares Format umwandeln\nconst ollamaOutput = $input.first().json;\nconst raw = ollamaOutput.text || ollamaOutput.output || ollamaOutput.response || JSON.stringify(ollamaOutput);\nconst meta = $('Ollama-Prompt bauen').first().json;\n\nlet parsed = null;\ntry {\n  // JSON aus der Antwort extrahieren (Ollama gibt

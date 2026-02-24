@@ -2,6 +2,7 @@
   config,
   globals,
   nodes,
+  secretsPath,
   ...
 }: let
   linkwardenDomain = "links.${globals.domains.me}";
@@ -35,6 +36,13 @@ in {
       mode = "0750";
     }
   ];
+
+  # OAuth2 Client-Secret für Kanidm SSO (Linkwarden nutzt den AUTHENTIK-Provider)
+  age.secrets.linkwarden-oauth2-client-secret = {
+    file = secretsPath + "/hosts/HL-1-MRZ-HOST-01/guests/linkwarden/oauth2-client-secret.age";
+    mode = "440";
+    group = "linkwarden";
+  };
 
   services.linkwarden = {
     enable = true;

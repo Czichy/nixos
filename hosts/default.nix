@@ -55,7 +55,7 @@
         modules =
           [
             {
-              nixpkgs.overlays = defaultOverlays; # ++ extraOverlays;
+              nixpkgs.overlays = defaultOverlays ++ extraOverlays;
               nixpkgs.config.allowUnfree = true;
               networking.hostName = hostName;
               node.name = hostName;
@@ -118,6 +118,18 @@
                   # affine-server = prev.callPackage ../pkgs/affine-server.nix {};
                 }
               )
+              # Workaround: sphinx 9.1.0 requires python ≥ 3.12 but samba/libvirtd
+              # pull it in via python3.11. Remove the version gate so sphinx can still
+              # be used as a build tool (man page generation) with python3.11.
+              (_final: prev: {
+                pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+                  (_pfinal: pprev: {
+                    sphinx = pprev.sphinx.overridePythonAttrs (_old: {
+                      disabled = false;
+                    });
+                  })
+                ];
+              })
             ];
             extraModules = with inputs; [
               nix-topology.nixosModules.default

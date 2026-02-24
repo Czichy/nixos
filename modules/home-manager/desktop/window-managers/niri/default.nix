@@ -9,11 +9,6 @@ with builtins;
 with lib; let
   inherit (localFlake.lib) isModuleLoadedAndEnabled mkAgenixEnableOption;
 
-  ibkr = {
-    user = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.userSecretsPath}".path;
-    password = config.age.secrets."${config.tensorfiles.hm.programs.ib-tws.passwordSecretsPath}".path;
-  };
-
   cfg = config.tensorfiles.hm.desktop.window-managers.niri;
   agenixCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.agenix.enable;

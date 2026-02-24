@@ -124,6 +124,10 @@
       }
       // mkMicrovm "n8n" "HL-3-RZ-N8N-01" "enp38s0" "02:07:27:ee:9e:16" "vlan40" {
       }
+      // mkMicrovm "edu-search" "HL-3-RZ-EDU-01" "enp38s0" "02:08:27:ee:9e:16" "vlan40" {
+        enableSharedDataset = true;    # /shared → Inas Syncthing-Dateien (/shared/shares/users/ina)
+        enableStorageDataset = true;   # /storage → Bibliothek, Dokumente, Media
+      }
       # // mkMicrovm "affine" "HL-3-RZ-AFFINE-01" "enp38s0" "02:04:27:ee:9e:16" "vlan40" {
       #   enableStorageDataset = true;
       # }

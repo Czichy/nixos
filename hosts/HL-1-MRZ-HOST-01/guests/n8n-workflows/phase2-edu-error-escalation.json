@@ -1,0 +1,217 @@
+{
+  "name": "Phase 2.3 – Edu-Search: Fehler-Eskalation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "f6a7b8c9-0203-4000-8000-000000000001",
+      "name": "Alle 6 Stunden",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  COUNT(*) FILTER (WHERE classification_status = 'failed'\n    AND indexed_at > NOW() - INTERVAL '24 hours') AS failed_24h,\n  COUNT(*) FILTER (WHERE classification_status = 'failed'\n    AND indexed_at > NOW() - INTERVAL '6 hours') AS failed_6h,\n  COUNT(*) FILTER (WHERE classification_status = 'pending'\n    AND indexed_at < NOW() - INTERVAL '2 hours') AS stale_pending,\n  COUNT(*) FILTER (WHERE classification_status = 'success') AS total_success,\n  COUNT(*) FILTER (WHERE classification_status = 'failed') AS total_failed,\n  COUNT(*) AS total_documents\nFROM documents;",
+        "options": {}
+      },
+      "id": "f6a7b8c9-0203-4000-8000-000000000002",
+      "name": "PostgreSQL – Fehler-Statistik",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 300],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  filename,\n  filepath,\n  error_message,\n  indexed_at,\n  file_extension\nFROM documents\nWHERE classification_status = 'failed'\n  AND indexed_at > NOW() - INTERVAL '24 hours'\nORDER BY indexed_at DESC\nLIMIT 10;",
+        "options": {}
+      },
+      "id": "f6a7b8c9-0203-4000-8000-000000000003",
+      "name": "PostgreSQL – Letzte Fehler (Detail)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [280, 550],
+      "credentials": {
+        "postgres": {
+          "id": "EDU_SEARCH_DB_CREDENTIAL_ID",
+          "name": "Edu-Search DB (readonly)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fehlerstatistik auswerten und Eskalationslevel bestimmen\nconst stats = $('PostgreSQL – Fehler-Statistik').first().json;\nconst errorDetails = $('PostgreSQL – Letzte Fehler (Detail)').all().map(i => i.json);\n\nconst failed24h = parseInt(stats.failed_24h || 0);\nconst failed6h = parseInt(stats.failed_6h || 0);\nconst stalePending = parseInt(stats.stale_pending || 0);\nconst totalSuccess = parseInt(stats.total_success || 0);\nconst totalFailed = parseInt(stats.total_failed || 0);\nconst totalDocuments = parseInt(stats.total_documents || 0);\n\n// Fehlerrate berechnen\nconst errorRate24h = totalDocuments > 0\n  ? ((failed24h / Math.max(failed24h + totalSuccess, 1)) * 100).toFixed(1)\n  : '0.0';\n\n// Eskalationslevel bestimmen\nlet level = 'ok';\nlet priority = '2'; // low\nlet emoji = '🟢';\nlet shouldNotify = false;\n\nif (stalePending > 20) {\n  level = 'warning';\n  priority = '4'; // high\n  emoji = '🟠';\n  shouldNotify = true;\n}\n\nif (failed6h > 5) {\n  level = 'warning';\n  priority = '4';\n  emoji = '🟡';\n  shouldNotify = true;\n}\n\nif (failed24h > 10) {\n  level = 'critical';\n  priority = '4';\n  emoji = '🔴';\n  shouldNotify = true;\n}\n\nif (failed24h > 25) {\n  level = 'critical';\n  priority = '5'; // urgent\n  emoji = '🚨';\n  shouldNotify = true;\n}\n\n// Fehler-Muster analysieren\nconst errorPatterns = {};\nfor (const err of errorDetails) {\n  const msg = (err.error_message || 'Unbekannter Fehler').substring(0, 80);\n  errorPatterns[msg] = (errorPatterns[msg] || 0) + 1;\n}\nconst topErrors = Object.entries(errorPatterns)\n  .sort((a, b) => b[1] - a[1])\n  .slice(0, 5);\n\n// Dateiendungs-Verteilung der Fehler\nconst extPatterns = {};\nfor (const err of errorDetails) {\n  const ext = err.file_extension || 'unbekannt';\n  extPatterns[ext] = (extPatterns[ext] || 0) + 1;\n}\n\n// Nachricht zusammenbauen (nur bei shouldNotify)\nconst now = new Date().toISOString().replace('T', ' ').substring(0, 19);\nconst lines = [];\n\nlines.push(`${emoji} **Edu-Search Fehler-Eskalation**`);\nlines.push(`Level: **${level.toUpperCase()}** | Stand: ${now}`);\nlines.push('');\n\nlines.push('**Statistik:**');\nlines.push(`  • Fehler (letzte 24h): **${failed24h}**`);\nlines.push(`  • Fehler (letzte 6h): **${failed6h}**`);\nlines.push(`  • Stuck/Pending (>2h): **${stalePending}**`);\nlines.push(`  • Fehlerrate (24h): ${errorRate24h}%`);\nlines.push(`  • Gesamt: ${totalDocuments} Dokumente (${totalSuccess} OK, ${totalFailed} Fehler)`);\nlines.push('');\n\nif (topErrors.length > 0) {\n  lines.push('**Häufigste Fehler:**');\n  for (const [msg, count] of topErrors) {\n    lines.push(`  ❌ ${count}×: ${msg}`);\n  }\n  lines.push('');\n}\n\nif (Object.keys(extPatterns).length > 0) {\n  lines.push('**Betroffene Dateitypen:**');\n  for (const [ext, count] of Object.entries(extPatterns).sort((a, b) => b[1] - a[1])) {\n    lines.push(`  • ${ext}: ${count}×`);\n  }\n  lines.push('');\n}\n\n// Empfehlung basierend auf Fehler-Muster\nconst errMsgs = topErrors.map(e => e[0].toLowerCase()).join(' ');\nlet recommendation = '💡 Bitte Logs prüfen: `journalctl -u edu-indexer -n 100`';\nif (errMsgs.includes('ollama') || errMsgs.includes('timeout') || errMsgs.includes('connection refused')) {\n  recommendation = '💡 **Ollama vermutlich nicht erreichbar!** Prüfe: `systemctl status ollama` auf HOST-01';\n} else if (errMsgs.includes('tika') || errMsgs.includes('java') || errMsgs.includes('9998')) {\n  recommendation = '💡 **Tika-Server Problem!** Prüfe: `systemctl status tika-server` auf HL-3-RZ-EDU-01';\n} else if (errMsgs.includes('postgres') || errMsgs.includes('database') || errMsgs.includes('5432')) {\n  recommendation = '💡 **PostgreSQL Problem!** Prüfe: `systemctl status postgresql` auf HL-3-RZ-EDU-01';\n} else if (errMsgs.includes('meilisearch') || errMsgs.includes('7700')) {\n  recommendation = '💡 **MeiliSearch Problem!** Prüfe: `systemctl status meilisearch` auf HL-3-RZ-EDU-01';\n} else if (errMsgs.includes('permission') || errMsgs.includes('denied') || errMsgs.includes('readonly')) {\n  recommendation = '💡 **Berechtigungsproblem!** Prüfe virtiofs-Mounts und Dateiberechtigungen.';\n}\nlines.push(recommendation);\n\nif (failed24h > 10) {\n  lines.push('');\n  lines.push('Letzte fehlgeschlagene Dateien:');\n  for (const err of errorDetails.slice(0, 5)) {\n    lines.push(`  • ${err.filename}`);\n  }\n}\n\nconst message = lines.join('\\n');\nconst title = `${emoji} Edu-Search: ${failed24h} Fehler in 24h (${level})`;\n\nreturn [{\n  json: {\n    shouldNotify,\n    level,\n    priority,\n    title,\n    message,\n    failed24h,\n    failed6h,\n    stalePending,\n    totalDocuments,\n    errorRate24h,\n    recommendation,\n    checkedAt: now\n  }\n}];"
+      },
+      "id": "f6a7b8c9-0203-4000-8000-000000000004",
+      "name": "Eskalationslevel bestimmen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [580, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-should-notify",
+              "leftValue": "={{ $json.shouldNotify }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f6a7b8c9-0203-4000-8000-000000000005",
+      "name": "Eskalation nötig?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [840, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ntfy.czichy.com/edu-search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "Priority",
+              "value": "={{ $json.priority }}"
+            },
+            {
+              "name": "Tags",
+              "value": "={{ $json.level === 'critical' ? 'rotating_light,x' : 'warning,exclamation' }}"
+            },
+            {
+              "name": "Markdown",
+              "value": "yes"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.message }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "f6a7b8c9-0203-4000-8000-000000000006",
+      "name": "ntfy – Fehler-Alert senden",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Alles OK – nichts tun, nur loggen\nconst stats = $('Eskalationslevel bestimmen').first().json;\nreturn [{\n  json: {\n    status: 'ok',\n    reason: `Keine Eskalation nötig (${stats.failed24h} Fehler in 24h, Schwelle: >10)`,\n    checkedAt: stats.checkedAt,\n    failed24h: stats.failed24h,\n    failed6h: stats.failed6h,\n    totalDocuments: stats.totalDocuments\n  }\n}];"
+      },
+      "id": "f6a7b8c9-0203-4000-8000-000000000007",
+      "name": "Alles OK (Skip)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 550]
+    }
+  ],
+  "connections": {
+    "Alle 6 Stunden": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL – Fehler-Statistik",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PostgreSQL – Letzte Fehler (Detail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL – Fehler-Statistik": {
+      "main": [
+        [
+          {
+            "node": "Eskalationslevel bestimmen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL – Letzte Fehler (Detail)": {
+      "main": [
+        [
+          {
+            "node": "Eskalationslevel bestimmen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eskalationslevel bestimmen": {
+      "main": [
+        [
+          {
+            "node": "Eskalation nötig?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eskalation nötig?": {
+      "main": [
+        [
+          {
+            "node": "ntfy – Fehler-Alert senden",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alles OK (Skip)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSame
