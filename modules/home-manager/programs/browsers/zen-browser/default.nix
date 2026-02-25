@@ -47,35 +47,14 @@ in {
       programs.zen-browser = {
         enable = _ true;
         suppressXdgMigrationWarning = true;
-        policies = {
-          DefaultDownloadDirectory = "~/Downloads";
-          DisableAccounts = true;
-          DisableFirefoxAccounts = true;
-          DisableFirefoxScreenshots = true;
-          DisableFirefoxStudies = true;
-          DisablePocket = true;
-          DisableProfileImport = true;
-          DisableTelemetry = true;
-          DisplayBookmarksToolbar = "never";
-          DisplayMenuBar = "default-off";
-          DontCheckDefaultBrowser = true;
-          EnableTrackingProtection = {
-            Value = true;
-            Locked = true;
-            Cryptomining = true;
-            Fingerprinting = true;
-          };
-          OverrideFirstRunPage = "";
-          OverridePostUpdatePage = "";
-          SearchBar = "unified";
-        };
+        policies = import ./policies.nix;
       };
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}" = {
         directories = [
-          ".zen/czichy"
+          ".config/zen/czichy"
           # (pathToRelative "${config.xdg.cacheHome}/.mozilla/firefox")
         ];
       };

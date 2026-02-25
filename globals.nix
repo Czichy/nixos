@@ -193,7 +193,7 @@ in {
           # --- Web-Sentinel (oauth2-proxy) ---
           "web-sentinel.access"
           "web-sentinel.edu-search"
-          "web-sentinel.adguardhome"
+          # "web-sentinel.adguardhome"  # AdGuard deactivated, DNS moved to OPNsense Unbound
           # Deaktiviert: open-webui hat keine aktive MicroVM
           # "web-sentinel.open-webui"
         ];

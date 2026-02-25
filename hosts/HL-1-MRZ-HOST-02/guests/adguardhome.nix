@@ -9,58 +9,15 @@
   filter-dir = "https://adguardteam.github.io/HostlistsRegistry/assets";
 in {
   networking.hostName = "HL-3-RZ-DNS-01";
-  globals.services.adguardhome = {
-    domain = adguardhomeDomain;
-    homepage = {
-      enable = true;
-      name = "AdGuard Home";
-      icon = "sh-adguardhome";
-      description = "Network-wide ad & tracker blocking DNS server with parental control";
-      category = "Infrastructure";
-      priority = 5;
-      abbr = "AG";
-      widget = {
-        type = "adguard";
-        url = "https://${adguardhomeDomain}";
-        username = "{{HOMEPAGE_VAR_ADGUARD_USERNAME}}";
-        password = "{{HOMEPAGE_VAR_ADGUARD_PASSWORD}}";
-      };
-    };
-  };
-  globals.monitoring.dns.adguardhome = {
-    server = globals.net.vlan40.hosts.HL-3-RZ-DNS-01.ipv4;
-    domain = ".";
-    network = "vlan40";
-  };
-  # do not expose to the public
-  # nodes.HL-4-PAZ-PROXY-01 = {
-  #   # SSL config and forwarding to local reverse proxy
-  #   services.caddy = {
-  #     virtualHosts."${adguardhomeDomain}".extraConfig = ''
-  #       reverse_proxy https://10.15.70.1:443 {
-  #           transport http {
-  #           	tls_server_name ${adguardhomeDomain}
-  #           }
-  #       }
 
-  #       tls ${certloc}/cert.pem ${certloc}/key.pem {
-  #         protocols tls1.3
-  #       }
-  #       import czichy_headers
-  #     '';
-  #   };
-  # };
-  nodes.HL-1-MRZ-HOST-02-caddy = {
-    services.caddy = {
-      virtualHosts."${adguardhomeDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-DNS-01".ipv4}:${toString config.services.adguardhome.port}
-        tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-           protocols tls1.3
-        }
-        import czichy_headers
-      '';
-    };
-  };
+  # AdGuard Home deactivated. DNS rewrites migrated to OPNsense Unbound.
+  # See hosts/HL-1-MRZ-HOST-02/guests.nix for migration notes.
+  #
+  # globals.services.adguardhome = { ... };
+  # globals.monitoring.dns.adguardhome = { ... };
+
+  # Caddy vHost removed — no longer needed without AdGuard service.
+  # nodes.HL-1-MRZ-HOST-02-caddy = { ... };
 
   environment.persistence."/persist".directories = [
     {
@@ -74,18 +31,13 @@ in {
     allowedUDPPorts = [53];
   };
 
-  topology.self.services.adguardhome.info = "https://" + adguardhomeDomain;
   services.adguardhome = {
-    enable = true;
+    enable = false;
     mutableSettings = false;
     host = "0.0.0.0";
     port = 3000;
     settings = {
       dns = {
-        # port = 53;
-        # allowed_clients = [
-        # ];
-        #trusted_proxies = [];
         ratelimit = 300;
         bind_hosts = ["::"];
         upstream_dns = [
@@ -95,78 +47,26 @@ in {
         ];
         bootstrap_dns = [
           "1.1.1.1"
-          # FIXME: enable ipv6 "2606:4700:4700::1111"
           "8.8.8.8"
-          # FIXME: enable ipv6 "2001:4860:4860::8844"
         ];
         dhcp.enabled = false;
         rewrites = [
-          {
-            domain = "vault.czichy.com";
-            answer = "10.15.40.22";
-          }
-          {
-            domain = "home.czichy.com";
-            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
-          }
-          {
-            domain = "red.czichy.com";
-            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
-          }
-          {
-            domain = "influxdb.czichy.com";
-            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
-          }
-          {
-            domain = "metrics.czichy.com";
-            answer = globals.net.vlan70.hosts."HL-3-DMZ-PROXY-01".ipv4;
-          }
+          # Migrated to OPNsense: Services → Unbound DNS → Overrides → Host Overrides
+          # vault.czichy.com    → 10.15.40.22
+          # home.czichy.com     → 10.15.70.1
+          # red.czichy.com      → 10.15.70.1
+          # influxdb.czichy.com → 10.15.70.1
+          # metrics.czichy.com  → 10.15.70.1
         ];
       };
-      filtering.rewrites =
-        [
-          # Undo the /etc/hosts entry so we don't answer with the internal
-          # wireguard address for influxdb
-          {
-            # inherit (globals.services.influxdb) domain;
-            # answer = config.repo.secrets.global.domains.me;
-          }
-        ]
-        # Use the local mirror-proxy for some services (not necessary, just for speed)
-        ++ map (domain: {
-          inherit domain;
-          answer = globals.net.home-lan.hosts.ward-web-proxy.ipv4;
-        }) [
-          # FIXME: dont hardcode, filter global service domains by internal state
-          # globals.services.grafana.domain
-          # globals.services.immich.domain
-          # globals.services.influxdb.domain
-          # "home.${config.repo.secrets.global.domains.me}"
-          # "fritzbox.${config.repo.secrets.global.domains.me}"
-        ];
+      filtering.rewrites = [];
       filters = [
-        {
-          name = "AdGuard DNS filter";
-          url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt";
-          enabled = true;
-        }
-        {
-          name = "AdAway Default Blocklist";
-          url = "https://adaway.org/hosts.txt";
-          enabled = true;
-        }
-        {
-          name = "OISD (Big)";
-          url = "https://big.oisd.nl";
-          enabled = true;
-        }
+        # Migrated to OPNsense: Services → Unbound DNS → Blocklist
+        # - AdGuard DNS filter:  https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
+        # - AdAway:              https://adaway.org/hosts.txt
+        # - OISD Big:            https://big.oisd.nl
       ];
     };
-  };
-
-  systemd.services.adguardhome = {
-    wants = ["network-online.target"];
-    after = ["network-online.target" "systemd-networkd.service"];
   };
 
   systemd.network.enable = true;

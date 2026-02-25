@@ -339,7 +339,7 @@ in {
       # (z.B. edu-search, adguardhome). Zugang wird über Untergruppen gesteuert.
       groups."web-sentinel.access" = {};
       groups."web-sentinel.edu-search" = {};
-      groups."web-sentinel.adguardhome" = {};
+      # groups."web-sentinel.adguardhome" = {};  # AdGuard deactivated
       # Deaktiviert: open-webui hat keine aktive MicroVM
       # groups."web-sentinel.open-webui" = {};
 
@@ -440,7 +440,7 @@ in {
           joinType = "array";
           valuesByGroup = {
             "web-sentinel.edu-search" = ["access_edu_search"];
-            "web-sentinel.adguardhome" = ["access_adguardhome"];
+            # "web-sentinel.adguardhome" = ["access_adguardhome"];  # AdGuard deactivated
             # Deaktiviert: open-webui hat keine aktive MicroVM
             # "web-sentinel.open-webui" = ["access_openwebui"];
           };

@@ -58,11 +58,30 @@
       alsa.enable = true;
       pulse.enable = true;
       jack.enable = true;
+      # Fix HECATE G1000 II: broken PCM dB range causes audio dropouts.
+      # WirePlumber rule to use linear volume control instead of dB.
+      wireplumber.extraConfig."51-hecate-g1000" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [{"node.name" = "alsa_output.usb-_HECATE_G1000_II-00.analog-stereo";}];
+            actions.update-props = {
+              "api.alsa.soft-mixer" = true;
+              "node.pause-on-idle" = false;
+            };
+          }
+        ];
+      };
     };
     # udev.extraRules = "KERNEL==\"i2c-[0-9]*\", GROUP+=\"users\"";
     # Needed for gpg pinetry
     # pcscd.enable = true;
   };
+
+  # HECATE G1000 II (USB VID:35bb PID:b0c8): disable USB autosuspend to
+  # prevent audio dropouts when device briefly suspends between sounds.
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="35bb", ATTRS{idProduct}=="b0c8", TEST=="power/control", ATTR{power/control}="on", ATTR{power/autosuspend}="-1"
+  '';
 
   programs.nix-ld.enable = true;
 

@@ -7,7 +7,7 @@
   secretsPath,
   ...
 }: let
-  homeassistantDomain = "home-assitant.${globals.domains.me}";
+  homeassistantDomain = "home-assistant.${globals.domains.me}";
   certloc = "/var/lib/acme-sync/czichy.com";
 in {
   microvm.mem = 4196;
