@@ -89,11 +89,10 @@ in {
       abbr = "FJ";
     };
   };
-  # globals.monitoring.http.forgejo = {
-  #   url = "https://${forgejoDomain}/user/login";
-  #   expectedBodyRegex = "Redlew Git";
-  #   network = "internet";
-  # };
+  globals.monitoring.http.forgejo = {
+    url = "https://${forgejoDomain}/user/login";
+    network = "internet";
+  };
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {

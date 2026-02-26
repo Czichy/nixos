@@ -6,6 +6,11 @@
   services.resolved = {
     enable = true;
     dnssec = "false"; # wake me up in 20 years when DNSSEC is at least partly working
+    # Primary DNS: OPNsense Unbound (VLAN100 management gateway)
+    # Split-DNS: internal *.czichy.com resolves locally, no internet required
+    nameservers = [
+      "10.15.100.99"
+    ];
     fallbackDns = [
       "1.1.1.1"
       "2606:4700:4700::1111"

@@ -95,20 +95,44 @@ deploy-all:
   }
 
 # switch the local machine (build first, then switch)
-local:
+# use --no-cache to build without any binary cache (when cache.nixos.org is unreachable)
+local *flags:
   #!/usr/bin/env nu
+  let no_cache = ("{{flags}}" | str contains "--no-cache")
+  let trusted_settings = ($env.HOME | path join ".local/share/nix/trusted-settings.json")
+  let trusted_settings_bak = ($trusted_settings + ".bak")
+  if $no_cache and ($trusted_settings | path exists) {
+    print $"(ansi yellow_bold)Cache disabled - hiding trusted-settings.json temporarily(ansi reset)"
+    mv $trusted_settings $trusted_settings_bak
+  }
+  let extra = if $no_cache { ["--option" "substituters" ""] } else { ["--option" "connect-timeout" "5"] }
   print $"(ansi green_bold)Building HL-1-OZ-PC-01...(ansi reset)"
-  nixos-rebuild build --flake ".#HL-1-OZ-PC-01" --verbose
+  do --env { nixos-rebuild build --flake ".#HL-1-OZ-PC-01" --verbose ...$extra }
+  let build_ok = $env.LAST_EXIT_CODE == 0
+  if $no_cache and ($trusted_settings_bak | path exists) { mv $trusted_settings_bak $trusted_settings }
+  if not $build_ok { error make {msg: "Build failed"} }
   print $"(ansi green_bold)Build successful. Switching...(ansi reset)"
-  sudo nixos-rebuild switch --flake ".#HL-1-OZ-PC-01" --verbose
+  sudo nixos-rebuild switch --flake ".#HL-1-OZ-PC-01" --verbose ...$extra
 
 # build and set boot on local machine (for kernel updates)
-local-boot:
+# use --no-cache to build without any binary cache (when cache.nixos.org is unreachable)
+local-boot *flags:
   #!/usr/bin/env nu
+  let no_cache = ("{{flags}}" | str contains "--no-cache")
+  let trusted_settings = ($env.HOME | path join ".local/share/nix/trusted-settings.json")
+  let trusted_settings_bak = ($trusted_settings + ".bak")
+  if $no_cache and ($trusted_settings | path exists) {
+    print $"(ansi yellow_bold)Cache disabled - hiding trusted-settings.json temporarily(ansi reset)"
+    mv $trusted_settings $trusted_settings_bak
+  }
+  let extra = if $no_cache { ["--option" "substituters" ""] } else { ["--option" "connect-timeout" "5"] }
   print $"(ansi green_bold)Building HL-1-OZ-PC-01...(ansi reset)"
-  nixos-rebuild build --flake ".#HL-1-OZ-PC-01" --verbose
+  do --env { nixos-rebuild build --flake ".#HL-1-OZ-PC-01" --verbose ...$extra }
+  let build_ok = $env.LAST_EXIT_CODE == 0
+  if $no_cache and ($trusted_settings_bak | path exists) { mv $trusted_settings_bak $trusted_settings }
+  if not $build_ok { error make {msg: "Build failed"} }
   print $"(ansi green_bold)Build successful. Setting boot...(ansi reset)"
-  sudo nixos-rebuild boot --flake ".#HL-1-OZ-PC-01" --verbose
+  sudo nixos-rebuild boot --flake ".#HL-1-OZ-PC-01" --verbose ...$extra
   print $"(ansi yellow_bold)Reboot required.(ansi reset)"
 
 # list all available hosts

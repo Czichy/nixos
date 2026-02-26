@@ -45,7 +45,27 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      globals.services.healthchecks.domain = host;
+      globals.services.healthchecks = {
+        domain = host;
+        homepage = {
+          enable = true;
+          name = "Healthchecks";
+          icon = "sh-healthchecks";
+          description = "Cron job & background task monitoring with dead man's switch alerts";
+          category = "Monitoring & Observability";
+          priority = 20;
+          widget = {
+            type = "healthchecks";
+            url = "https://${host}";
+            key = "{{HOMEPAGE_VAR_HEALTHCHECKS_API_KEY}}";
+          };
+        };
+      };
+      globals.monitoring.http.healthchecks = {
+        url = "https://${host}";
+        expectedStatus = 302; # redirects to /accounts/login/
+        network = "internet";
+      };
       topology.self.services.healthchecks = let
         address = config.services.healthchecks.settings.SITE_ROOT null;
         port = config.services.healthchecks.port or null;
@@ -54,6 +74,42 @@ in {
         # icon = "services.uptime-kuma";
         info = "${host}";
         # details.listen = mkIf (address != null && port != null) {text = "${address}:${toString port}";};
+      };
+    }
+    # |----------------------------------------------------------------------| #
+    {
+      # After ntfy-sh restarts (e.g. on rebuild) it writes a fresh token to a known file.
+      # This service syncs that token into the healthchecks DB so ntfy alerts keep working.
+      systemd.services.healthchecks-sync-ntfy-token = {
+        description = "Sync ntfy-sh healthchecks token into healthchecks DB";
+        after = [ "ntfy-sh.service" "healthchecks.service" ];
+        requires = [ "ntfy-sh.service" ];
+        wantedBy = [ "multi-user.target" ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          User = "healthchecks";
+        };
+        script =
+          let
+            sq = "${pkgs.sqlite}/bin/sqlite3";
+            tokenFile = "/var/lib/ntfy-sh/healthchecks-token";
+            db = "/services/healthchecks/healthchecks.sqlite";
+          in
+          ''
+            if [ ! -f ${tokenFile} ]; then
+              echo "ntfy token file ${tokenFile} not found, skipping"
+              exit 0
+            fi
+            TOKEN=$(cat ${tokenFile})
+            if [ -z "$TOKEN" ]; then
+              echo "ntfy token file is empty, skipping"
+              exit 0
+            fi
+            echo "Updating healthchecks ntfy channel token to $TOKEN"
+            ${sq} ${db} "UPDATE api_channel SET value = json_set(value, '$.token', '$TOKEN') WHERE kind='ntfy';"
+            echo "Done"
+          '';
       };
     }
     # |----------------------------------------------------------------------| #

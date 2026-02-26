@@ -104,6 +104,11 @@ in {
   ];
 
   topology.self.services.influxdb2.info = "https://${influxdbDomain}";
+  globals.monitoring.http.influxdb = {
+    url = "https://${influxdbDomain}/health";
+    expectedBodyRegex = "pass";
+    network = "internet";
+  };
   services.influxdb2 = {
     enable = true;
     settings = {

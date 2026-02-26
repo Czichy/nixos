@@ -60,6 +60,10 @@ in {
       StateDirectory = "tika";
       CacheDirectory = "tika";
 
+      # Tika's WatchDog forks a child process and calls "java" by name,
+      # so the JDK bin directory must be in PATH.
+      Environment = ["PATH=${jdk}/bin:/run/current-system/sw/bin"];
+
       ExecStart = lib.concatStringsSep " " [
         "${jdk}/bin/java"
         # JVM-Heap: 512MB reichen für Einzeldatei-Extraktion.

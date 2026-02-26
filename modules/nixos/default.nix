@@ -62,10 +62,10 @@ in {
       inherit secretsPath;
     };
 
-    # services_telegraf = importApply ./services/telegraf.nix {
-    #   inherit localFlake;
-    #   inherit secretsPath;
-    # };
+    services_telegraf = importApply ./services/telegraf.nix {
+      inherit localFlake;
+      inherit secretsPath;
+    };
     services_healthchecks = importApply ./services/monitoring/healthchecks.nix {
       inherit localFlake;
       inherit secretsPath;

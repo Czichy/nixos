@@ -233,7 +233,7 @@ in {
       datasources.settings.datasources = [
         {
           name = "VictoriaMetrics";
-          # uid = "victoria-metrics";
+          uid = "victoria-metrics";
           type = "prometheus";
           access = "proxy";
           url = "http://${globals.net.vlan40.hosts."HL-3-RZ-METRICS-01".ipv4}:8428";
@@ -246,7 +246,7 @@ in {
         }
         {
           name = "InfluxDB (machines)";
-          # uid = "influxdb-machines";
+          uid = "influxdb-machines";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
@@ -295,7 +295,7 @@ in {
         }
       ];
 
-      # --- SeekingEdge Alerting ---
+      # --- Alerting Contact Points ---
       alerting.contactPoints.settings = {
         apiVersion = 1;
         contactPoints = [
@@ -317,6 +317,24 @@ in {
               }
             ];
           }
+          {
+            orgId = 1;
+            name = "ntfy-infra";
+            receivers = [
+              {
+                uid = "ntfy-infra-alerts";
+                type = "webhook";
+                disableResolveMessage = false;
+                settings = {
+                  url = "https://push.czichy.com/alerts";
+                  httpMethod = "POST";
+                  maxAlerts = "10";
+                  authorization_scheme = "Basic";
+                  authorization_credentials = "";
+                };
+              }
+            ];
+          }
         ];
       };
 
@@ -331,6 +349,15 @@ in {
             group_interval = "5m";
             repeat_interval = "4h";
             routes = [
+              # Infrastructure alerts → ntfy alerts topic (always, no mute)
+              {
+                receiver = "ntfy-infra";
+                group_wait = "30s";
+                repeat_interval = "1h";
+                object_matchers = [
+                  ["folder" "=" "Infrastructure Alerts"]
+                ];
+              }
               {
                 receiver = "ntfy-phone";
                 group_wait = "10s";
@@ -379,6 +406,82 @@ in {
       alerting.rules.settings = {
         apiVersion = 1;
         groups = [
+          # ---------------------------------------------------------------
+          # Generic HTTP Service Monitoring (Telegraf → InfluxDB/machines)
+          # ---------------------------------------------------------------
+          {
+            orgId = 1;
+            name = "http-service-monitoring";
+            folder = "Infrastructure Alerts";
+            interval = "60s";
+            rules = [
+              {
+                uid = "infra-http-service-down";
+                title = "HTTP Service Down";
+                condition = "C";
+                # Fire after 2 consecutive failures (2 × 60s = 2 min)
+                for = "2m";
+                # No data = service not scraped at all → treat as problem
+                noDataState = "Alerting";
+                execErrState = "Alerting";
+                labels = { severity = "critical"; };
+                annotations = {
+                  summary = "HTTP service unreachable";
+                  description = "Service {{ $labels.server }} returned result_code != 1 (success). Check Telegraf http_response plugin.";
+                };
+                data = [
+                  # A: last http_response_result_code per server tag from InfluxDB
+                  {
+                    refId = "A";
+                    relativeTimeRange = { from = 300; to = 0; };
+                    # Use the provisioned datasource name; Grafana resolves by name
+                    datasourceUid = "influxdb-machines";
+                    model = {
+                      refId = "A";
+                      hide = false;
+                      datasource = {
+                        type = "influxdb";
+                        uid = "influxdb-machines";
+                      };
+                      # Flux query: last result_code per monitored URL
+                      query = ''
+                        from(bucket: "telegraf")
+                          |> range(start: -5m)
+                          |> filter(fn: (r) => r._measurement == "http_response")
+                          |> filter(fn: (r) => r._field == "result_code")
+                          |> last()
+                      '';
+                    };
+                  }
+                  # B: reduce to last value per series
+                  {
+                    refId = "B";
+                    datasourceUid = "__expr__";
+                    model = {
+                      type = "reduce";
+                      refId = "B";
+                      expression = "A";
+                      reducer = "last";
+                      settings = { mode = "dropNN"; };
+                    };
+                  }
+                  # C: threshold – alert when result_code != 1 (i.e. not success)
+                  {
+                    refId = "C";
+                    datasourceUid = "__expr__";
+                    model = {
+                      type = "threshold";
+                      refId = "C";
+                      expression = "B";
+                      conditions = [{
+                        evaluator = { type = "outside_range"; params = [1 1]; };
+                      }];
+                    };
+                  }
+                ];
+              }
+            ];
+          }
           {
             orgId = 1;
             name = "trading-health";

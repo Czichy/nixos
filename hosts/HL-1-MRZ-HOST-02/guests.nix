@@ -45,6 +45,7 @@
             };
             networking.address = globals.net."${net}".hosts."${hostName}".cidrv4;
             networking.gateway = globals.net."${net}".hosts.HL-3-MRZ-FW-01.ipv4;
+            networking.dns = [globals.net."${net}".hosts.HL-3-MRZ-FW-01.ipv4];
             extraSpecialArgs = {
               inherit (inputs.self) secretsPath;
               inherit globals nodes;

@@ -89,6 +89,9 @@ in {
       # name = "${wgName}";
       matchConfig.Name = "${wgName}";
       address = [globals.net.proxy-vps.hosts."HL-4-PAZ-PROXY-01".cidrv4];
+      routes = [
+        {Destination = "10.15.70.0/24";}
+      ];
       networkConfig = {
         IPv4Forwarding = true;
         # If DNS requests should go to a specific nameserver when the tunnel is

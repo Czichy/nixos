@@ -7,6 +7,14 @@ _inputs: let
   # Container id for Smart Home (must match containers.nix)
   smartHomeContainer = 2;
 in {
+  "Healthchecks" = {
+    id = "b0000001-0000-4000-8000-000000000012";
+    url = "https://health.czichy.com";
+    workspace = smartHomeWorkspace;
+    container = smartHomeContainer;
+    position = 500;
+    isEssential = true;
+  };
   "Homepage" = {
     id = "b0000001-0000-4000-8000-000000000001";
     url = "https://home.czichy.com";

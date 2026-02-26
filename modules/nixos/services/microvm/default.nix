@@ -175,10 +175,11 @@ in {
                 type = lib.types.str;
                 description = "The gateway of the guest";
               };
-              # dns = lib.mkOption {
-              #   type = lib.types.listOf lib.types.str;
-              #   description = "The DNS servers of the guest";
-              # };
+              dns = lib.mkOption {
+                type = lib.types.listOf lib.types.str;
+                default = [];
+                description = "The DNS servers of the guest";
+              };
             };
 
             zfs = lib.mkOption {

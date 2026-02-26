@@ -50,7 +50,10 @@ in {
         "servers"
         "mgmt"
       ];
-      networkConfig.LinkLocalAddressing = "no";
+      networkConfig = {
+        LinkLocalAddressing = "no";
+        DNS = "10.15.1.99"; # OPNsense Unbound - Split-DNS for *.czichy.com
+      };
       linkConfig.RequiredForOnline = "carrier";
     };
     "30-trust" = {
@@ -61,6 +64,8 @@ in {
       networkConfig = {
         ConfigureWithoutCarrier = true;
         DHCP = "no";
+        DNS = globals.net.vlan10.hosts.HL-3-MRZ-FW-01.ipv4; # OPNsense Unbound - Split-DNS for *.czichy.com
+        Domains = "~czichy.com"; # route *.czichy.com DNS queries to this interface
       };
       linkConfig.RequiredForOnline = "routable";
     };
@@ -72,6 +77,8 @@ in {
         ConfigureWithoutCarrier = true;
         DHCP = "yes";
       };
+      dhcpV4Config.UseDNS = false; # don't use DNS from DHCP on this interface (10.15.40.99 is not a resolver)
+      dhcpV6Config.UseDNS = false;
       linkConfig.RequiredForOnline = "routable";
     };
 
@@ -83,6 +90,8 @@ in {
         ConfigureWithoutCarrier = true;
         DHCP = "yes";
       };
+      dhcpV4Config.UseDNS = false; # don't use DNS from DHCP on this interface
+      dhcpV6Config.UseDNS = false;
       linkConfig.RequiredForOnline = "routable";
     };
   };

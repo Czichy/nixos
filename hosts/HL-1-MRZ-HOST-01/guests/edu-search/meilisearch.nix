@@ -50,10 +50,10 @@
   devKeyFile = pkgs.writeText "meili-dev-master-key" devMasterKey;
 
   # Pfad zur Key-Datei – entweder agenix-entschlüsselt oder Dev-Fallback
-  masterKeyFilePath =
-    if hasSecret
-    then config.age.secrets.meili-master-key.path
-    else devKeyFile;
+  # WICHTIG: config.age.secrets.meili-master-key.path NICHT in hasSecret=false
+  # Branch referenzieren – sonst registriert agenix den Secret-Slot trotzdem
+  # und LoadCredential zeigt auf /run/agenix/meili-master-key (existiert nicht).
+  masterKeyFilePath = devKeyFile; # wird via mkIf überschrieben wenn hasSecret=true
 in {
   # ---------------------------------------------------------------------------
   # Agenix Secret (nur wenn .age-Datei vorhanden)
@@ -61,8 +61,8 @@ in {
   age.secrets.meili-master-key = lib.mkIf hasSecret {
     file = meiliSecretFile;
     mode = "440";
-    owner = "meilisearch";
-    group = "meilisearch";
+    owner = "root";
+    group = "root";
   };
 
   # ---------------------------------------------------------------------------
@@ -91,7 +91,10 @@ in {
     #   - Default Search API Key (nur Suche – für die Web-UI)
     # Die abgeleiteten Keys kann man abrufen via:
     #   curl -H "Authorization: Bearer $(cat <masterKeyFile>)" http://127.0.0.1:7700/keys
-    masterKeyFile = masterKeyFilePath;
+    masterKeyFile =
+      if hasSecret
+      then config.age.secrets.meili-master-key.path
+      else masterKeyFilePath;
   };
 
   # ---------------------------------------------------------------------------
@@ -113,7 +116,7 @@ in {
         set -euo pipefail
         mkdir -p /run/edu-search
         # Key-Datei kopieren (readable für nginx + edu-indexer)
-        cp "${masterKeyFilePath}" /run/edu-search/meili-master-key
+        cp "${if hasSecret then config.age.secrets.meili-master-key.path else masterKeyFilePath}" /run/edu-search/meili-master-key
         chmod 440 /run/edu-search/meili-master-key
         chown root:users /run/edu-search/meili-master-key
 
@@ -180,9 +183,9 @@ in {
   # ist Persistenz sinnvoll um nach jedem Reboot nicht neu indexieren zu müssen.
   environment.persistence."/persist".directories = [
     {
-      directory = "/var/lib/meilisearch";
-      user = "meilisearch";
-      group = "meilisearch";
+      directory = "/var/lib/private/meilisearch";
+      user = "root";
+      group = "root";
       mode = "0700";
     }
   ];

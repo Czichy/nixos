@@ -34,6 +34,11 @@ in {
     # |----------------------------------------------------------------------| #
     {
       globals.services.ntfy-sh.domain = ntfy-host;
+      globals.monitoring.http.ntfy-sh = {
+        url = "https://${ntfy-host}";
+        expectedStatus = 404; # web-root=disable → 404 is expected
+        network = "internet";
+      };
     }
     # |----------------------------------------------------------------------| #
     {
@@ -71,6 +76,7 @@ in {
     (mkIf agenixCheck {
       systemd.services.ntfy-sh.postStart = let
         ntfy = lib.getExe' config.services.ntfy-sh.package "ntfy";
+        tokenFile = "/var/lib/ntfy-sh/healthchecks-token";
         script = pkgs.writeShellScript "ntfy-setup-users.sh" ''
           ${ntfy} access everyone '*' deny
 
@@ -85,6 +91,20 @@ in {
               ${ntfy} user add readonly
             ${ntfy} access readonly '*' read-only
           fi
+
+          # Ensure a valid healthchecks token exists after every start/restart.
+          # Remove all existing tokens labeled "healthchecks", then create a fresh one
+          # and write it to a known path so healthchecks-sync-ntfy-token can pick it up.
+          for OLD_TOKEN in $(${ntfy} token list 2>/dev/null \
+              | ${pkgs.gnugrep}/bin/grep healthchecks \
+              | ${pkgs.gnugrep}/bin/grep -oP 'tk_[a-z0-9]+'); do
+            ${ntfy} token remove alert "$OLD_TOKEN" 2>/dev/null || true
+          done
+          TOKEN=$(${ntfy} token add --label healthchecks alert 2>&1 \
+            | ${pkgs.gnugrep}/bin/grep -oP 'tk_[a-z0-9]+')
+          echo "$TOKEN" > ${tokenFile}
+          chmod 644 ${tokenFile}
+          chown ntfy-sh:ntfy-sh ${tokenFile}
         '';
       in
         toString script;

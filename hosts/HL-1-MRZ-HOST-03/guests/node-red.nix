@@ -53,11 +53,28 @@ in {
       abbr = "NR";
     };
   };
+  globals.monitoring.http.node-red = {
+    url = "https://${domain}";
+    network = "internet";
+  };
   # |----------------------------------------------------------------------| #
   # Der innere Caddy (HL-1-MRZ-HOST-02-caddy) muss nun ein eigenes TLS-Zertifikat bereitstellen,
   # damit der äußere Caddy eine sichere Verbindung aufbauen kann.
   # Der innere Caddy muss auch seine eigene reverse_proxy-Verbindung zum
   # Vaultwarden-Server über HTTPS herstellen.
+  nodes.HL-4-PAZ-PROXY-01 = {
+    services.caddy = {
+      virtualHosts."${domain}".extraConfig = ''
+        reverse_proxy https://10.15.70.1:443 {
+            transport http {
+                tls_insecure_skip_verify
+                tls_server_name ${domain}
+            }
+        }
+        import czichy_headers
+      '';
+    };
+  };
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${domain}".extraConfig = ''

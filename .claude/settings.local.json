@@ -11,7 +11,13 @@
       "WebFetch(domain:www.interactivebrokers.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:docs.n8n.io)",
-      "WebFetch(domain:community.n8n.io)"
+      "WebFetch(domain:community.n8n.io)",
+      "Bash(find:*)",
+      "Bash(ssh:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(xargs:*)"
     ]
   }
 }

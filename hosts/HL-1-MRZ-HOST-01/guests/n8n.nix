@@ -44,6 +44,10 @@ in {
       abbr = "N8N";
     };
   };
+  globals.monitoring.http.n8n = {
+    url = "https://${n8nDomain}/healthz";
+    network = "internet";
+  };
   networking.hostName = "HL-3-RZ-N8N-01";
 
   networking.firewall = {

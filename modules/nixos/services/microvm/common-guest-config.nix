@@ -75,7 +75,7 @@ in {
     networkConfig = {
       Address = [guestCfg.networking.address];
       Gateway = guestCfg.networking.gateway;
-      # DNS = guestCfg.networking.dns;
+      DNS = guestCfg.networking.dns;
       IPv6PrivacyExtensions = "yes";
       MulticastDNS = true;
       IPv6AcceptRA = true;

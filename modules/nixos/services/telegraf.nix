@@ -36,6 +36,12 @@ with lib; let
   mkIfNotEmpty = xs: mkIf (xs != []) xs;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.system.impermanence
+    else {};
 in {
   options.tensorfiles.services.telegraf = with types; {
     enable = mkEnableOption "telegraf to push metrics to influx.";
@@ -106,11 +112,6 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      # Monitor anything that can only be monitored from this node
-      meta.telegraf.availableMonitoringNetworks = ["local-${config.node.name}"];
-    }
-    # |----------------------------------------------------------------------| #
-    {
       assertions = [
         {
           assertion = !config.boot.isContainer;
@@ -135,43 +136,6 @@ in {
         };
       };
     }
-    # |----------------------------------------------------------------------| #
-    {
-      services.uptime-kuma = {
-        enable = true;
-        settings = {PORT = toString uptime-port;};
-      };
-
-      users = {
-        users.uptime-kuma = {
-          isSystemUser = true;
-          group = "uptime-kuma";
-        };
-        groups.uptime-kuma = {};
-      };
-    }
-    # |----------------------------------------------------------------------| #
-    # {
-    #   security.elewrap.telegraf-sensors = mkIf cfg.scrapeSensors {
-    #     command = ["${pkgs.lm_sensors}/bin/sensors" "-A" "-u"];
-    #     targetUser = "root";
-    #     allowedUsers = ["telegraf"];
-    #   };
-
-    #   security.elewrap.telegraf-nvme = mkIf config.services.smartd.enable {
-    #     command = ["${pkgs.nvme-cli}/bin/nvme"];
-    #     targetUser = "root";
-    #     allowedUsers = ["telegraf"];
-    #     passArguments = true;
-    #   };
-
-    #   security.elewrap.telegraf-smartctl = mkIf config.services.smartd.enable {
-    #     command = ["${pkgs.smartmontools}/bin/smartctl"];
-    #     targetUser = "root";
-    #     allowedUsers = ["telegraf"];
-    #     passArguments = true;
-    #   };
-    # }
     # |----------------------------------------------------------------------| #
     {
       services.telegraf = {
@@ -296,13 +260,11 @@ in {
                   }
               )));
             }
-            // optionalAttrs config.services.smartd.enable {
+            // optionalAttrs (config.services.smartd.enable && cfg.scrapeSensors) {
               sensors = {};
               smart = {
                 attributes = true;
-                path_nvme = config.security.elewrap.telegraf-nvme.path;
-                path_smartctl = config.security.elewrap.telegraf-smartctl.path;
-                use_sudo = false;
+                use_sudo = true;
               };
             }
             // optionalAttrs config.services.nginx.enable {
@@ -317,11 +279,6 @@ in {
     # |----------------------------------------------------------------------| #
     {
       systemd.services.telegraf = {
-        path = [
-          # Make sensors refer to the correct wrapper
-          (mkIf cfg.scrapeSensors
-            (pkgs.writeShellScriptBin "sensors" config.security.elewrap.telegraf-sensors.path))
-        ];
         serviceConfig = {
           ExecStartPre = mkAfter [
             (
@@ -346,12 +303,12 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
       age.secrets.telegraf-influxdb-token = {
-        generator.script = "alnum";
+        file = secretsPath + "/hosts/${config.node.name}/telegraf-influxdb-token.age";
         mode = "440";
         group = "telegraf";
       };
 
-      meta.telegraf.secrets."@INFLUX_TOKEN@" = config.age.secrets.telegraf-influxdb-token.path;
+      tensorfiles.services.telegraf.secrets."@INFLUX_TOKEN@" = config.age.secrets.telegraf-influxdb-token.path;
     })
     # |----------------------------------------------------------------------| #
     (lib.mkIf impermanenceCheck {

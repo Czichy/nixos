@@ -41,11 +41,10 @@ in {
       };
     };
   };
-  # globals.monitoring.http.homeassistant = {
-  #   url = "https://${homeasisstantDomain}";
-  #   expectedBodyRegex = "homeassistant";
-  #   network = "internet";
-  # };
+  globals.monitoring.http.homeassistant = {
+    url = "https://${homeassistantDomain}";
+    network = "internet";
+  };
   #
   imports = [
     ./hass/mqtt-sensors.nix
