@@ -17,7 +17,8 @@
       "Bash(curl:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(chmod:*)"
     ]
   }
 }

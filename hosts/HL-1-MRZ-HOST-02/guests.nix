@@ -59,6 +59,7 @@
       {}
       # AdGuard Home deactivated — DNS rewrites moved to OPNsense Unbound Host Overrides:
       #   vault.czichy.com      → 10.15.40.22   (Vaultwarden)
+      #   cal.czichy.com        → 10.15.70.1    (Radicale CalDAV/CardDAV via Caddy DMZ)
       #   home.czichy.com       → 10.15.70.1    (Caddy DMZ)
       #   red.czichy.com        → 10.15.70.1    (Caddy DMZ)
       #   influxdb.czichy.com   → 10.15.70.1    (Caddy DMZ)
@@ -68,6 +69,7 @@
       # // mkMicrovm "nginx" "dmz" "vlan70" {enableStorageDataset = true;}
       // mkMicrovm "caddy" "HL-3-DMZ-PROXY-01" "dmz" "02:01:27:53:4a:97" "vlan70" {enableStorageDataset = true;}
       // mkMicrovm "kanidm" "HL-3-RZ-AUTH-01" "servers" "02:02:27:b8:35:04" "vlan40" {}
+      // mkMicrovm "radicale" "HL-3-RZ-CAL-01" "servers" "02:01:27:ca:1d:a0" "vlan40" {}
     );
   };
 }

@@ -99,6 +99,8 @@ in {
         hosts.HL-3-RZ-EDU-01.id = 114;
         # Kanidm Identity Provider (SSO/OAuth2)
         hosts.HL-3-RZ-AUTH-01.id = 115;
+        # Radicale CalDAV/CardDAV (Kalender & Kontakte)
+        hosts.HL-3-RZ-CAL-01.id = 116;
       };
 
       #IoT

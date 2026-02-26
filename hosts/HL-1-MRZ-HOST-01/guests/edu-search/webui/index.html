@@ -1,136 +1,165 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📚 Unterrichtsmaterial-Suche</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Kein externes CDN – alles lokal, kein Internet nötig -->
-</head>
-<body>
-  <header>
-    <h1>📚 Unterrichtsmaterial-Suche</h1>
-    <p class="subtitle">Finde Arbeitsblätter, Präsentationen, Tests und mehr</p>
-  </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>📚 Unterrichtsmaterial-Suche</title>
+        <link rel="stylesheet" href="style.css" />
+        <!-- Kein externes CDN – alles lokal, kein Internet nötig -->
+    </head>
+    <body>
+        <header>
+            <h1>📚 Unterrichtsmaterial-Suche</h1>
+            <p class="subtitle">
+                Finde Arbeitsblätter, Präsentationen, Tests und mehr
+            </p>
+        </header>
 
-  <main>
-    <!-- ================================================================= -->
-    <!-- Suchfeld -->
-    <!-- ================================================================= -->
-    <div class="search-bar">
-      <div class="search-icon">🔍</div>
-      <input
-        type="text"
-        id="search-input"
-        placeholder="Suche nach Thema, Inhalt, Dateiname..."
-        autofocus
-        autocomplete="off"
-        spellcheck="false"
-      >
-      <button id="clear-search" class="clear-btn" title="Suche leeren" style="display:none;">✕</button>
-    </div>
+        <main>
+            <!-- ================================================================= -->
+            <!-- Suchfeld -->
+            <!-- ================================================================= -->
+            <div class="search-bar">
+                <div class="search-icon">🔍</div>
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Suche nach Thema, Inhalt, Dateiname..."
+                    autofocus
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+                <button
+                    id="clear-search"
+                    class="clear-btn"
+                    title="Suche leeren"
+                    style="display: none"
+                >
+                    ✕
+                </button>
+            </div>
 
-    <!-- ================================================================= -->
-    <!-- Filter-Dropdowns -->
-    <!-- ================================================================= -->
-    <div class="filters">
-      <div class="filter-group">
-        <label for="filter-fach">Fach</label>
-        <select id="filter-fach">
-          <option value="">Alle Fächer</option>
-          <option value="Englisch">🇬🇧 Englisch</option>
-          <option value="Spanisch">🇪🇸 Spanisch</option>
-          <option value="Sonstige">📁 Sonstige</option>
-        </select>
-      </div>
+            <!-- ================================================================= -->
+            <!-- Filter-Dropdowns -->
+            <!-- ================================================================= -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="filter-fach">Fach</label>
+                    <select id="filter-fach">
+                        <option value="">Alle Fächer</option>
+                        <option value="Englisch">🇬🇧 Englisch</option>
+                        <option value="Spanisch">🇪🇸 Spanisch</option>
+                        <option value="Sonstige">📁 Sonstige</option>
+                    </select>
+                </div>
 
-      <div class="filter-group">
-        <label for="filter-klasse">Klasse</label>
-        <select id="filter-klasse">
-          <option value="">Alle Klassen</option>
-          <option value="5">Klasse 5</option>
-          <option value="6">Klasse 6</option>
-          <option value="7">Klasse 7</option>
-          <option value="8">Klasse 8</option>
-          <option value="9">Klasse 9</option>
-          <option value="10">Klasse 10</option>
-          <option value="11">Klasse 11</option>
-          <option value="12">Klasse 12</option>
-          <option value="13">Klasse 13</option>
-        </select>
-      </div>
+                <div class="filter-group">
+                    <label for="filter-klasse">Klasse</label>
+                    <select id="filter-klasse">
+                        <option value="">Alle Klassen</option>
+                        <option value="5">Klasse 5</option>
+                        <option value="6">Klasse 6</option>
+                        <option value="7">Klasse 7</option>
+                        <option value="8">Klasse 8</option>
+                        <option value="9">Klasse 9</option>
+                        <option value="10">Klasse 10</option>
+                        <option value="11">Klasse 11</option>
+                        <option value="12">Klasse 12</option>
+                        <option value="13">Klasse 13</option>
+                    </select>
+                </div>
 
-      <div class="filter-group">
-        <label for="filter-typ">Typ</label>
-        <select id="filter-typ">
-          <option value="">Alle Typen</option>
-          <option value="Arbeitsblatt">📄 Arbeitsblatt</option>
-          <option value="Präsentation">📊 Präsentation</option>
-          <option value="Test">📝 Test</option>
-          <option value="Klausur">🎓 Klausur</option>
-          <option value="Übung">✏️ Übung</option>
-          <option value="Vokabeln">📖 Vokabeln</option>
-          <option value="Grammatik">📐 Grammatik</option>
-          <option value="Lektüre">📕 Lektüre</option>
-          <option value="Audio">🔊 Audio</option>
-          <option value="Video">🎬 Video</option>
-          <option value="Bild">🖼️ Bild</option>
-          <option value="Sonstiges">📦 Sonstiges</option>
-        </select>
-      </div>
+                <div class="filter-group">
+                    <label for="filter-typ">Typ</label>
+                    <select id="filter-typ">
+                        <option value="">Alle Typen</option>
+                        <option value="Arbeitsblatt">📄 Arbeitsblatt</option>
+                        <option value="Präsentation">📊 Präsentation</option>
+                        <option value="Test">📝 Test</option>
+                        <option value="Klausur">🎓 Klausur</option>
+                        <option value="Übung">✏️ Übung</option>
+                        <option value="Vokabeln">📖 Vokabeln</option>
+                        <option value="Grammatik">📐 Grammatik</option>
+                        <option value="Lektüre">📕 Lektüre</option>
+                        <option value="Audio">🔊 Audio</option>
+                        <option value="Video">🎬 Video</option>
+                        <option value="Bild">🖼️ Bild</option>
+                        <option value="Sonstiges">📦 Sonstiges</option>
+                    </select>
+                </div>
 
-      <div class="filter-group">
-        <label for="filter-niveau">Niveau</label>
-        <select id="filter-niveau">
-          <option value="">Alle Niveaus</option>
-          <option value="A1">A1 – Anfänger</option>
-          <option value="A2">A2 – Grundlagen</option>
-          <option value="B1">B1 – Mittelstufe</option>
-          <option value="B2">B2 – Obere Mittelstufe</option>
-          <option value="C1">C1 – Fortgeschritten</option>
-          <option value="C2">C2 – Annähernd Muttersprachlich</option>
-        </select>
-      </div>
+                <div class="filter-group">
+                    <label for="filter-niveau">Niveau</label>
+                    <select id="filter-niveau">
+                        <option value="">Alle Niveaus</option>
+                        <option value="A1">A1 – Anfänger</option>
+                        <option value="A2">A2 – Grundlagen</option>
+                        <option value="B1">B1 – Mittelstufe</option>
+                        <option value="B2">B2 – Obere Mittelstufe</option>
+                        <option value="C1">C1 – Fortgeschritten</option>
+                        <option value="C2">
+                            C2 – Annähernd Muttersprachlich
+                        </option>
+                    </select>
+                </div>
 
-      <button id="reset-filters" class="reset-btn" title="Alle Filter zurücksetzen">
-        Filter zurücksetzen
-      </button>
-    </div>
+                <button
+                    id="reset-filters"
+                    class="reset-btn"
+                    title="Alle Filter zurücksetzen"
+                >
+                    Filter zurücksetzen
+                </button>
+            </div>
 
-    <!-- ================================================================= -->
-    <!-- Statistik-Zeile -->
-    <!-- ================================================================= -->
-    <div id="stats" class="stats"></div>
+            <!-- ================================================================= -->
+            <!-- Statistik-Zeile -->
+            <!-- ================================================================= -->
+            <div id="stats" class="stats"></div>
 
-    <!-- ================================================================= -->
-    <!-- Ergebnisliste -->
-    <!-- ================================================================= -->
-    <div id="results" class="results">
-      <div class="placeholder">
-        <div class="placeholder-icon">📚</div>
-        <p>Gib einen Suchbegriff ein oder wähle einen Filter,<br>um Unterrichtsmaterialien zu finden.</p>
-      </div>
-    </div>
+            <!-- ================================================================= -->
+            <!-- Ergebnisliste -->
+            <!-- ================================================================= -->
+            <div id="results" class="results">
+                <div class="placeholder">
+                    <div class="placeholder-icon">📚</div>
+                    <p>
+                        Gib einen Suchbegriff ein oder wähle einen Filter,<br />um
+                        Unterrichtsmaterialien zu finden.
+                    </p>
+                </div>
+            </div>
 
-    <!-- ================================================================= -->
-    <!-- "Mehr laden" Button (falls viele Ergebnisse) -->
-    <!-- ================================================================= -->
-    <div id="load-more-container" class="load-more-container" style="display:none;">
-      <button id="load-more-btn" class="load-more-btn">Weitere Ergebnisse laden</button>
-    </div>
-  </main>
+            <!-- ================================================================= -->
+            <!-- "Mehr laden" Button (falls viele Ergebnisse) -->
+            <!-- ================================================================= -->
+            <div
+                id="load-more-container"
+                class="load-more-container"
+                style="display: none"
+            >
+                <button id="load-more-btn" class="load-more-btn">
+                    Weitere Ergebnisse laden
+                </button>
+            </div>
+        </main>
 
-  <footer>
-    <p>
-      Edu-Search · Unterrichtsmaterialien von
-      <strong>Ina</strong> ·
-      <span id="total-docs">–</span> Dokumente indexiert
-    </p>
-  </footer>
+        <footer>
+            <p>
+                Edu-Search · Unterrichtsmaterialien von
+                <strong>Ina</strong> · <span id="total-docs">–</span> Dokumente
+                indexiert
+            </p>
+        </footer>
 
-  <!-- ================================================================= -->
-  <!-- JavaScript (keine externen Abhängigkeiten) -->
-  <!-- ================================================================= -->
-  <script src="app.js"></script>
-</body>
+        <!-- ================================================================= -->
+        <!-- JavaScript – modularer Aufbau (keine externen Abhängigkeiten)      -->
+        <!-- Reihenfolge wichtig: config → utils → preview → cards → search    -->
+        <!-- ================================================================= -->
+        <script src="edu-config.js"></script>
+        <script src="edu-utils.js"></script>
+        <script src="edu-preview.js"></script>
+        <script src="edu-cards.js"></script>
+        <script src="edu-search.js"></script>
+    </body>
 </html>

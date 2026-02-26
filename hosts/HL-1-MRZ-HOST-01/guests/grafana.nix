@@ -258,7 +258,7 @@ in {
         }
         {
           name = "InfluxDB (smart_home)";
-          # uid = "influxdb-smart-home";
+          uid = "influxdb-smart-home";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";
@@ -270,7 +270,7 @@ in {
         }
         {
           name = "InfluxDB (home_assistant)";
-          # uid = "influxdb-home-assistant";
+          uid = "influxdb-home-assistant";
           type = "influxdb";
           access = "proxy";
           url = "https://${globals.services.influxdb.domain}";

@@ -333,6 +333,19 @@ in {
           ++ map (
             guest: "d /lib/vm-persist/${guest} 0755 root root - -"
           ) (lib.attrNames cfg.guests);
+
+        # Ensure journal directory exists BEFORE virtiofsd starts.
+        # tmpfiles.rules run at boot, but with impermanence the persistent
+        # mount for /var/lib/microvms may not yet contain the journal/
+        # subdirectory for newly added guests. This ExecStartPre guarantees
+        # the directory is created after all mounts are in place.
+        systemd.services = lib.mkMerge (map (guest: {
+          "microvm-virtiofsd@${guest}" = {
+            serviceConfig.ExecStartPre = [
+              "${pkgs.coreutils}/bin/mkdir -p /var/lib/microvms/${guest}/journal"
+            ];
+          };
+        }) (lib.attrNames cfg.guests));
       }
       # |----------------------------------------------------------------------| #
     ]

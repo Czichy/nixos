@@ -20,6 +20,68 @@ with lib; let
   cfg = config.tensorfiles.hm.programs.thunderbird;
   _ = mkOverrideAtHmModuleLevel;
 
+  # ---------------------------------------------------------------------------
+  # Radicale CalDAV/CardDAV – Deklarative Kalender-Konfiguration
+  # ---------------------------------------------------------------------------
+  # Thunderbird speichert Kalender in calendar.registry.<id>.* Prefs.
+  # Wir nutzen deterministische IDs damit die Konfiguration idempotent ist.
+  #
+  # Nach dem ersten Start muss das Passwort einmalig in Thunderbird eingegeben
+  # werden – es wird dann im Thunderbird-Passwort-Manager gespeichert.
+  radicaleUrl = "https://cal.czichy.com";
+  radicaleUser = "christian";
+
+  # Deterministische Kalender-IDs (stabil über Rebuilds hinweg)
+  calId = "a1b2c3d4-radicale-cal";
+  contactsId = "a1b2c3d4-radicale-contacts";
+
+  # Hilfsfunktion: Erzeugt alle calendar.registry.<id>.* Prefs für einen Kalender
+  mkCalendarPrefs = {
+    id,
+    name,
+    uri,
+    color ? "#3366cc",
+    isDefault ? false,
+    refreshInterval ? 5,
+    calType ? "caldav",
+  }: {
+    "calendar.registry.${id}.type" = calType;
+    "calendar.registry.${id}.uri" = uri;
+    "calendar.registry.${id}.name" = name;
+    "calendar.registry.${id}.color" = color;
+    "calendar.registry.${id}.username" = radicaleUser;
+    "calendar.registry.${id}.disabled" = false;
+    "calendar.registry.${id}.readOnly" = false;
+    "calendar.registry.${id}.cache.enabled" = true;
+    "calendar.registry.${id}.refreshInterval" = refreshInterval;
+    "calendar.registry.${id}.suppressAlarms" = false;
+    "calendar.registry.${id}.calendar-main-in-composite" = true;
+    "calendar.registry.${id}.calendar-main-default" = isDefault;
+    "calendar.registry.${id}.imip.identity.disabled" = true;
+    "calendar.registry.${id}.forceEmailScheduling" = false;
+  };
+
+  # Kalender-Definitionen
+  calendarPrefs = mkCalendarPrefs {
+    id = calId;
+    name = "Kalender";
+    uri = "${radicaleUrl}/${radicaleUser}/calendar.ics/";
+    color = "#3366cc";
+    isDefault = true;
+  };
+
+  contactsCalPrefs = mkCalendarPrefs {
+    id = contactsId;
+    name = "Geburtstage (Kontakte)";
+    uri = "${radicaleUrl}/${radicaleUser}/contacts.vcf/";
+    color = "#e67e22";
+    calType = "caldav";
+    refreshInterval = 60;
+  };
+
+  # Sortier-Reihenfolge: Alle Kalender-IDs kommasepariert
+  calendarListOrder = "${calId} ${contactsId}";
+
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence =
@@ -85,26 +147,35 @@ in {
           isDefault = _ true;
           withExternalGnupg = true;
 
-          settings = {
-            # === General UI and behavior settings ===
-            "layout.css.devPixelsPerPx" = "1.25";
-            "intl.locale.requested" = "de-DE"; # UI language
-            "spellchecker.dictionary" = "de-DE"; # Spellcheck language
-            "intl.regional_prefs.use_os_locales" = true; # Don't use OS locale
-            "intl.regional_prefs.locales" = "de-DE"; # Use metric etc.
-            "mail.identity.default.archive_enabled" = true;
-            "mail.identity.default.archive_keep_folder_structure" = true;
-            "mail.identity.default.compose_html" = false;
-            "mail.identity.default.protectSubject" = true;
-            "mail.identity.default.reply_on_top" = 1;
-            "mail.identity.default.sig_on_reply" = false;
+          settings =
+            {
+              # === General UI and behavior settings ===
+              "layout.css.devPixelsPerPx" = "1";
+              "intl.locale.requested" = "de-DE"; # UI language
+              "spellchecker.dictionary" = "de-DE"; # Spellcheck language
+              "intl.regional_prefs.use_os_locales" = true; # Don't use OS locale
+              "intl.regional_prefs.locales" = "de-DE"; # Use metric etc.
+              "mail.identity.default.archive_enabled" = true;
+              "mail.identity.default.archive_keep_folder_structure" = true;
+              "mail.identity.default.compose_html" = false;
+              "mail.identity.default.protectSubject" = true;
+              "mail.identity.default.reply_on_top" = 1;
+              "mail.identity.default.sig_on_reply" = false;
 
-            "gfx.webrender.all" = true;
-            "gfx.webrender.enabled" = true;
+              "gfx.webrender.all" = true;
+              "gfx.webrender.enabled" = true;
 
-            "browser.display.use_system_colors" = true;
-            "browser.theme.dark-toolbar-theme" = true;
-          };
+              "browser.display.use_system_colors" = true;
+              "browser.theme.dark-toolbar-theme" = true;
+            }
+            # ---------------------------------------------------------------
+            # CalDAV-Kalender deklarativ registrieren (Radicale)
+            # ---------------------------------------------------------------
+            // calendarPrefs
+            // contactsCalPrefs
+            // {
+              "calendar.list.sortOrder" = calendarListOrder;
+            };
         };
 
         settings = {
@@ -157,6 +228,31 @@ in {
 
           "mail.biff.play_sound" = false;
           "mail.chat.play_sound" = false;
+
+          # =============================================================
+          # CalDAV / CardDAV – Radicale Integration (cal.czichy.com)
+          # =============================================================
+          # Kalender werden deklarativ über calendar.registry.* in den
+          # Profil-Settings konfiguriert (siehe oben: calendarPrefs).
+          #
+          # Beim ersten Start fragt Thunderbird nach dem Passwort –
+          # danach wird es im Thunderbird-Passwort-Manager gespeichert.
+          #
+          # CardDAV-Kontakte über CardBook (Add-on):
+          #   CardBook → Neues Adressbuch → Remote → CardDAV
+          #   URL: https://cal.czichy.com/christian/
+          #   Benutzername: christian
+
+          # Kalender-UI-Einstellungen
+          "calendar.integration.notify" = true;
+          "calendar.alarms.playsound" = false;
+          "calendar.alarms.show" = true;
+          "calendar.alarms.showmissed" = true;
+          "calendar.network.multirealm" = true;
+
+          # CalDAV-Debugging (bei Problemen auf true setzen)
+          "calendar.debug.log" = false;
+          "calendar.debug.log.verbose" = false;
 
           "thunderbird.policies.runOncePerModification.extensionsInstall" = "https://addons.thunderbird.net/thunderbird/downloads/latest/grammar-and-spell-checker/latest/latest.xpi,https://addons.thunderbird.net/thunderbird/downloads/latest/german-dictionary-de_de-for-sp/latest/latest.xpi,https://addons.thunderbird.net/thunderbird/downloads/latest/filelink-nextcloud-owncloud/latest/latest.xpi,https://addons.thunderbird.net/thunderbird/downloads/latest/cardbook/latest/latest.xpi";
         };
