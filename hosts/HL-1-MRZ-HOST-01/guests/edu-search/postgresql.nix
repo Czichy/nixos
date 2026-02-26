@@ -239,6 +239,8 @@ in {
     # n8n (HL-3-RZ-N8N-01) darf sich als n8n_reader an edu_search verbinden.
     # Nur SELECT-Rechte – kann keine Daten ändern.
     authentication = lib.mkAfter ''
+      # edu-indexer: lokal via TCP (kein Passwort nötig – lokaler Service in der MicroVM)
+      host ${dbName} ${dbUser} 127.0.0.1/32 trust
       # n8n Workflow-Automation (read-only)
       host ${dbName} ${n8nReaderUser} ${n8nHost}/32 md5
     '';
@@ -248,9 +250,44 @@ in {
     # -----------------------------------------------------------------------
     # WICHTIG: initialScript wird NUR ausgeführt wenn der PostgreSQL
     # data-Ordner noch nicht existiert (erster Start nach Installation).
-    # Bei bestehenden Installationen muss das Schema manuell angewendet werden:
-    #   sudo -u postgres psql -d edu_search -f /path/to/schema.sql
+    # Bei bestehenden Installationen wird das Schema via edu-search-pg-migrate
+    # idempotent angewendet (siehe systemd.services.edu-search-pg-migrate unten).
     initialScript = initSchema;
+  };
+
+  # ---------------------------------------------------------------------------
+  # Schema-Migration: Idempotent, läuft bei jedem Start nach PostgreSQL
+  # ---------------------------------------------------------------------------
+  # Da initialScript nur beim allerersten DB-Init läuft, wenden wir das Schema
+  # bei jedem Start erneut an. Alle SQL-Statements sind idempotent:
+  #   CREATE TABLE IF NOT EXISTS, CREATE INDEX IF NOT EXISTS, CREATE OR REPLACE
+  # Dadurch werden neue Schema-Änderungen automatisch übernommen.
+  systemd.services.edu-search-pg-migrate = {
+    description = "Apply Edu-Search PostgreSQL schema (idempotent)";
+    after = ["postgresql.service"];
+    requires = ["postgresql.service"];
+    before = ["edu-indexer.service"];
+    wantedBy = ["multi-user.target"];
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      User = "postgres";
+      Group = "postgres";
+
+      ExecStart = pkgs.writeShellScript "edu-search-migrate" ''
+        set -euo pipefail
+        echo "Applying edu-search schema to database '${dbName}'..."
+        ${pkgs.postgresql_16}/bin/psql -d ${dbName} -f ${initSchema}
+        echo "Schema migration complete."
+      '';
+    };
+  };
+
+  # edu-indexer muss nach der Migration starten
+  systemd.services.edu-indexer = {
+    after = ["edu-search-pg-migrate.service"];
+    requires = ["edu-search-pg-migrate.service"];
   };
 
   # ---------------------------------------------------------------------------
