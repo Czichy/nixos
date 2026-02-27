@@ -21,6 +21,9 @@
   dbName = "edu_search";
   dbUser = "edu_indexer";
 
+  # pgvector Extension für semantische Ähnlichkeitssuche (Embedding-Vektoren)
+  postgresPackage = pkgs.postgresql_16.withPackages (p: [p.pgvector]);
+
   # n8n Read-Only-Zugriff (für Workflows: Benachrichtigungen, Reports, Quizfragen)
   # n8n läuft als MicroVM auf HOST-01 im vlan40
   n8nReaderUser = "n8n_reader";
@@ -36,9 +39,11 @@
     -- =========================================================================
     -- Edu-Search Datenbank-Schema
     -- =========================================================================
-    -- Erstellt von: PLAN_EDU_SEARCH.md Phase 1
     -- Zweck: Metadaten + KI-Klassifikation von Unterrichtsmaterialien
     -- =========================================================================
+
+    -- pgvector Extension für semantische Ähnlichkeitssuche
+    CREATE EXTENSION IF NOT EXISTS vector;
 
     -- Haupttabelle: Ein Eintrag pro indexierter Datei
     CREATE TABLE IF NOT EXISTS documents (
@@ -60,13 +65,26 @@
         tika_content_type     TEXT,                        -- MIME-Type laut Tika (z.B. "application/pdf")
         tika_metadata         JSONB DEFAULT '{}'::jsonb,   -- Alle Tika-Metadaten als JSON
 
-        -- Von Ollama (LLM) klassifiziert
+        -- Von Ollama (LLM) klassifiziert – Basis
         fach                  TEXT,                        -- Englisch, Spanisch, Sonstige, unbekannt
         klasse                TEXT,                        -- 5-13 oder "unbekannt"
         thema                 TEXT,                        -- Kurzbeschreibung (max ~100 Zeichen)
-        typ                   TEXT,                        -- Arbeitsblatt, Präsentation, Test, Klausur, Audio, Video, Bild, Sonstiges
+        typ                   TEXT,                        -- Arbeitsblatt, Präsentation, Test, Klausur, Lösung, Audio, Video, Bild, Sonstiges
         niveau                TEXT,                        -- A1, A2, B1, B2, C1, C2, unbekannt
         ollama_raw            JSONB DEFAULT '{}'::jsonb,   -- Vollständige Ollama-Antwort als JSON (für Debugging)
+
+        -- Von Ollama (LLM) klassifiziert – erweitert
+        schlagwoerter         TEXT[],                      -- Array von Schlagwörtern (max 8)
+        lernziele             TEXT[],                      -- Lernziele des Dokuments (1-3)
+        grammatik_themen      TEXT[],                      -- Grammatikthemen (z.B. ["Present Perfect", "if-clauses"])
+        vokabeln_key          TEXT[],                      -- Wichtige Vokabeln (max 10)
+        hat_loesungen         BOOLEAN,                     -- Enthält das Dokument Lösungen?
+        zeitaufwand_min       INTEGER,                     -- Geschätzter Zeitaufwand in Minuten
+        sprache               TEXT,                        -- Dokumentsprache: "de", "en", "es"
+
+        -- Semantischer Embedding-Vektor (nomic-embed-text, 768-dimensional)
+        -- Wird für pgvector-Ähnlichkeitssuche verwendet
+        embedding             vector(768),
 
         -- Verwaltung / Status
         indexed_at            TIMESTAMP WITH TIME ZONE DEFAULT NOW(),  -- Wann wurde diese Datei zuletzt indexiert?
@@ -77,6 +95,19 @@
         created_at            TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         updated_at            TIMESTAMP WITH TIME ZONE DEFAULT NOW()
     );
+
+    -- =========================================================================
+    -- Idempotente Schema-Migration: Neue Spalten hinzufügen falls nicht vorhanden
+    -- =========================================================================
+    -- Diese Statements sind sicher bei bestehenden Installationen:
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS schlagwoerter    TEXT[];
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS lernziele        TEXT[];
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS grammatik_themen TEXT[];
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS vokabeln_key     TEXT[];
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS hat_loesungen    BOOLEAN;
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS zeitaufwand_min  INTEGER;
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS sprache          TEXT;
+    ALTER TABLE documents ADD COLUMN IF NOT EXISTS embedding        vector(768);
 
     -- =========================================================================
     -- Indizes für häufige Abfragen
@@ -99,6 +130,18 @@
 
     -- Extension-Index (für Filterung nach Dateityp)
     CREATE INDEX IF NOT EXISTS idx_doc_ext     ON documents(file_extension);
+
+    -- Sprach-Index (für Filterung nach Dokumentsprache)
+    CREATE INDEX IF NOT EXISTS idx_doc_sprache ON documents(sprache);
+
+    -- GIN-Index für Array-Felder (Schlagwörter, Grammatik-Themen)
+    CREATE INDEX IF NOT EXISTS idx_doc_schlagwoerter   ON documents USING GIN(schlagwoerter);
+    CREATE INDEX IF NOT EXISTS idx_doc_grammatik       ON documents USING GIN(grammatik_themen);
+
+    -- IVFFlat-Index für Vektor-Ähnlichkeitssuche (pgvector)
+    -- lists=100 ist ein guter Startwert für bis zu ~100k Dokumente
+    CREATE INDEX IF NOT EXISTS idx_doc_embedding ON documents
+        USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
 
     -- =========================================================================
     -- Trigger: updated_at automatisch aktualisieren bei UPDATEs
@@ -148,6 +191,35 @@
     ORDER BY fach, klasse;
 
     -- =========================================================================
+    -- View: Kandidaten für KI-Klausurerstellung (RAG-Endpunkt)
+    -- =========================================================================
+    -- Enthält nur Dokumente mit ausreichend Textinhalt für die KI-Generierung.
+    -- Der RAG-Service (rag_api.py) nutzt diese View um relevante Quellen zu finden.
+    CREATE OR REPLACE VIEW quiz_candidates AS
+    SELECT
+        id,
+        filepath,
+        filename,
+        fach,
+        klasse,
+        thema,
+        typ,
+        niveau,
+        sprache,
+        grammatik_themen,
+        vokabeln_key,
+        lernziele,
+        hat_loesungen,
+        zeitaufwand_min,
+        -- Kurzfassung für Kontext (max 3000 Zeichen reichen für LLM)
+        LEFT(extracted_text, 3000)  AS text_snippet,
+        embedding
+    FROM documents
+    WHERE classification_status = 'success'
+      AND extracted_text IS NOT NULL
+      AND char_length(extracted_text) > 100;
+
+    -- =========================================================================
     -- Berechtigungen
     -- =========================================================================
     GRANT ALL PRIVILEGES ON DATABASE edu_search TO edu_indexer;
@@ -184,7 +256,7 @@ in {
   # ---------------------------------------------------------------------------
   services.postgresql = {
     enable = true;
-    package = pkgs.postgresql_16;
+    package = postgresPackage;
 
     settings = {
       # Lokal + für n8n-MicroVM erreichbar (vlan40)
@@ -352,7 +424,7 @@ in {
           echo "Starting pg_dump of ${dbName}..."
 
           # Custom-Format (komprimiert, unterstützt parallele Restores)
-          ${config.services.postgresql.package}/bin/pg_dump \
+          ${postgresPackage}/bin/pg_dump \
             --format=custom \
             --compress=6 \
             --file="$DUMP_TMP" \

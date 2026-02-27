@@ -36,6 +36,8 @@
   var totalDocsSpan = document.getElementById("total-docs");
   var loadMoreContainer = document.getElementById("load-more-container");
   var loadMoreBtn = document.getElementById("load-more-btn");
+  var viewListBtn = document.getElementById("view-list-btn");
+  var viewGridBtn = document.getElementById("view-grid-btn");
 
   // ---------------------------------------------------------------------------
   // State
@@ -47,6 +49,7 @@
   var lastQuery = null;
   var lastFilters = null;
   var isLoading = false;
+  var currentView = localStorage.getItem("edu-view") || "list";
 
   // ---------------------------------------------------------------------------
   // MeiliSearch Filter-String bauen
@@ -324,8 +327,42 @@
   });
 
   // ---------------------------------------------------------------------------
+  // List / Grid View Toggle
+  // ---------------------------------------------------------------------------
+
+  function setView(view) {
+    currentView = view;
+    localStorage.setItem("edu-view", view);
+
+    if (view === "grid") {
+      resultsDiv.classList.add("view-grid");
+    } else {
+      resultsDiv.classList.remove("view-grid");
+    }
+
+    if (viewListBtn && viewGridBtn) {
+      viewListBtn.classList.toggle("active", view === "list");
+      viewGridBtn.classList.toggle("active", view === "grid");
+    }
+  }
+
+  if (viewListBtn) {
+    viewListBtn.addEventListener("click", function () {
+      setView("list");
+    });
+  }
+  if (viewGridBtn) {
+    viewGridBtn.addEventListener("click", function () {
+      setView("grid");
+    });
+  }
+
+  // ---------------------------------------------------------------------------
   // Initialisierung
   // ---------------------------------------------------------------------------
+
+  // Gespeicherte Ansicht wiederherstellen
+  setView(currentView);
 
   // Gesamt-Dokumentenzahl laden
   fetchTotalDocs();

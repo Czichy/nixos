@@ -31,6 +31,7 @@ in {
         package = _ pkgs.nixVersions.latest;
         registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {
+          accept-flake-config = _ true;
           auto-optimise-store = _ true;
           builders-use-substitutes = _ true;
           trusted-substituters = [

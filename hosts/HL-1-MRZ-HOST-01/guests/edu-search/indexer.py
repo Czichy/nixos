@@ -48,6 +48,7 @@ from watchdog.observers.polling import PollingObserver
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://10.15.40.10:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "mistral:7b")
+OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
 TIKA_URL = os.getenv("TIKA_URL", "http://127.0.0.1:9998")
 MEILI_URL = os.getenv("MEILI_URL", "http://127.0.0.1:7700")
 MEILI_INDEX = os.getenv("MEILI_INDEX", "edu_documents")
@@ -296,17 +297,30 @@ Analysiere den folgenden Dateinamen und Textinhalt und extrahiere die Metadaten.
 
 REGELN:
 - Antworte NUR mit validem JSON, KEINE Erklärungen davor oder danach
-- Wenn du unsicher bist, verwende "unbekannt"
-- Das Thema soll kurz und prägnant sein (max 50 Zeichen)
+- Wenn du unsicher bist, verwende "unbekannt" (für Textfelder) oder [] (für Arrays)
+- Das Thema soll kurz und prägnant sein (max 80 Zeichen)
 - Beachte den Dateinamen als wichtigen Hinweis
+- Schlagwörter: spezifische Begriffe aus dem Inhalt (z.B. "Present Perfect", "Spanien", "Lektüre")
+- grammatik_themen: NUR wenn Grammatik explizit geübt wird (z.B. ["if-clauses", "Past Tense"])
+- vokabeln_key: maximal 10 wichtige Fremdsprachenvokabeln aus dem Text
+- hat_loesungen: true wenn Musterlösungen, Lösungsschlüssel oder Antworten enthalten sind
+- zeitaufwand_min: realistischer Zeitbedarf in Minuten (z.B. 45 für eine Schulstunde, 90 für Klausur)
+- sprache: Hauptsprache des INHALTS (nicht des Dateinamens): "de" (Deutsch), "en" (Englisch), "es" (Spanisch)
 
 PFLICHTFELDER im JSON:
 {{
   "fach": "Englisch" oder "Spanisch" oder "Sonstige",
-  "klasse": "5" bis "13" oder "unbekannt",
-  "thema": "kurze Beschreibung (max 50 Zeichen)",
-  "typ": "Arbeitsblatt" oder "Präsentation" oder "Test" oder "Klausur" oder "Übung" oder "Vokabeln" oder "Grammatik" oder "Lektüre" oder "Audio" oder "Video" oder "Bild" oder "Sonstiges",
-  "niveau": "A1" oder "A2" oder "B1" oder "B2" oder "C1" oder "C2" oder "unbekannt"
+  "klasse": "5" oder "6" oder ... oder "13" oder "unbekannt",
+  "thema": "kurze Beschreibung (max 80 Zeichen)",
+  "typ": "Arbeitsblatt" oder "Präsentation" oder "Test" oder "Klausur" oder "Übung" oder "Vokabeln" oder "Grammatik" oder "Lektüre" oder "Lösung" oder "Audio" oder "Video" oder "Bild" oder "Sonstiges",
+  "niveau": "A1" oder "A2" oder "B1" oder "B2" oder "C1" oder "C2" oder "unbekannt",
+  "schlagwoerter": ["Begriff1", "Begriff2"],
+  "lernziele": ["Lernziel 1", "Lernziel 2"],
+  "grammatik_themen": ["Present Perfect", "if-clauses"],
+  "vokabeln_key": ["word1", "word2"],
+  "hat_loesungen": true oder false,
+  "zeitaufwand_min": 45,
+  "sprache": "de" oder "en" oder "es"
 }}
 
 DATEINAME: {filename}
@@ -339,6 +353,13 @@ def classify_with_ollama(text: str, filename: str) -> dict:
         "thema": "",
         "typ": "Sonstiges",
         "niveau": "unbekannt",
+        "schlagwoerter": [],
+        "lernziele": [],
+        "grammatik_themen": [],
+        "vokabeln_key": [],
+        "hat_loesungen": None,
+        "zeitaufwand_min": None,
+        "sprache": None,
         "_raw": "",
     }
 
@@ -367,12 +388,40 @@ def classify_with_ollama(text: str, filename: str) -> dict:
         json_match = re.search(r"\{[^{}]*\}", raw_response, re.DOTALL)
         if json_match:
             parsed = json.loads(json_match.group())
+
+            def _safe_list(val, max_items=10, max_len=100) -> list[str]:
+                """Stellt sicher dass ein Feld eine bereinigte Liste ist."""
+                if not isinstance(val, list):
+                    return []
+                return [str(x)[:max_len] for x in val[:max_items] if x]
+
+            def _safe_bool(val) -> bool | None:
+                if isinstance(val, bool):
+                    return val
+                if isinstance(val, str):
+                    return val.lower() in ("true", "1", "yes", "ja")
+                return None
+
+            def _safe_int(val, min_val=1, max_val=600) -> int | None:
+                try:
+                    v = int(val)
+                    return v if min_val <= v <= max_val else None
+                except (TypeError, ValueError):
+                    return None
+
             result = {
                 "fach": str(parsed.get("fach", "unbekannt"))[:50],
                 "klasse": str(parsed.get("klasse", "unbekannt"))[:10],
                 "thema": str(parsed.get("thema", ""))[:100],
                 "typ": str(parsed.get("typ", "Sonstiges"))[:50],
                 "niveau": str(parsed.get("niveau", "unbekannt"))[:10],
+                "schlagwoerter": _safe_list(parsed.get("schlagwoerter", []), 8, 80),
+                "lernziele": _safe_list(parsed.get("lernziele", []), 3, 200),
+                "grammatik_themen": _safe_list(parsed.get("grammatik_themen", []), 10, 80),
+                "vokabeln_key": _safe_list(parsed.get("vokabeln_key", []), 10, 50),
+                "hat_loesungen": _safe_bool(parsed.get("hat_loesungen")),
+                "zeitaufwand_min": _safe_int(parsed.get("zeitaufwand_min")),
+                "sprache": str(parsed.get("sprache", ""))[:5] or None,
                 "_raw": raw_response[:2000],
             }
             return result
@@ -397,6 +446,53 @@ def classify_with_ollama(text: str, filename: str) -> dict:
         log.error("Ollama-Klassifikation fehlgeschlagen: %s", exc)
         default_result["_raw"] = f"ERROR: {exc}"
         return default_result
+
+
+# =============================================================================
+# Ollama – Embedding-Generierung (für pgvector semantische Suche)
+# =============================================================================
+
+
+def generate_embedding(text: str) -> list[float] | None:
+    """
+    Embedding-Vektor via Ollama nomic-embed-text generieren.
+
+    Wird für die pgvector-Ähnlichkeitssuche im RAG-Service verwendet.
+    nomic-embed-text erzeugt 768-dimensionale Vektoren.
+
+    Args:
+        text: Volltext des Dokuments (wird auf 4000 Zeichen gekürzt)
+
+    Returns:
+        Liste mit 768 float-Werten oder None bei Fehler.
+    """
+    if not text or len(text.strip()) < 10:
+        return None
+
+    try:
+        resp = requests.post(
+            f"{OLLAMA_URL}/api/embeddings",
+            json={
+                "model": OLLAMA_EMBED_MODEL,
+                "prompt": text[:4000],
+            },
+            timeout=60,
+        )
+        resp.raise_for_status()
+        embedding = resp.json().get("embedding")
+        if embedding and len(embedding) > 0:
+            return embedding
+        log.warning("Ollama Embedding-Antwort enthielt kein 'embedding'-Feld")
+        return None
+    except requests.exceptions.Timeout:
+        log.warning("Ollama Embedding-Timeout für nomic-embed-text")
+        return None
+    except requests.exceptions.ConnectionError:
+        log.warning("Ollama nicht erreichbar für Embedding (%s)", OLLAMA_URL)
+        return None
+    except Exception as exc:
+        log.warning("Embedding-Fehler: %s", exc)
+        return None
 
 
 # =============================================================================
@@ -436,6 +532,10 @@ def get_meili_client():
             "typ",
             "niveau",
             "file_extension",
+            "sprache",
+            "schlagwoerter",
+            "grammatik_themen",
+            "hat_loesungen",
         ]
     )
 
@@ -445,16 +545,20 @@ def get_meili_client():
             "klasse",
             "filename",
             "last_modified",
+            "zeitaufwand_min",
         ]
     )
 
     # Durchsuchbare Attribute (Reihenfolge = Priorität)
     index.update_searchable_attributes(
         [
-            "thema",  # Höchste Priorität
-            "filename",  # Dateiname
-            "fach",  # Fach als Suchbegriff
-            "content",  # Volltext (niedrigste Priorität)
+            "thema",          # Höchste Priorität
+            "schlagwoerter",  # Schlagwörter (nach Thema)
+            "grammatik_themen",  # Grammatikthemen
+            "filename",       # Dateiname
+            "fach",           # Fach als Suchbegriff
+            "vokabeln_key",   # Vokabeln
+            "content",        # Volltext (niedrigste Priorität)
         ]
     )
 
@@ -469,6 +573,11 @@ def get_meili_client():
             "thema",
             "typ",
             "niveau",
+            "sprache",
+            "schlagwoerter",
+            "grammatik_themen",
+            "hat_loesungen",
+            "zeitaufwand_min",
             "smb_url",
             "unc_path",
             "last_modified",
@@ -610,7 +719,20 @@ def process_file(filepath: str, db_conn, meili_index) -> bool:
     smb_url = filepath_to_smb_url(filepath)
     unc_path = filepath_to_unc_path(filepath)
 
-    # 4. In PostgreSQL speichern (UPSERT)
+    # 4. Embedding generieren (für semantische Suche via pgvector)
+    # Kombination aus Thema + Text für bessere Embedding-Qualität
+    embedding_input = ""
+    if classification.get("thema"):
+        embedding_input = classification["thema"] + "\n"
+    if text:
+        embedding_input += text[:3000]
+    embedding = generate_embedding(embedding_input) if embedding_input.strip() else None
+    if embedding:
+        log.debug("Embedding generiert (%d Dimensionen) für %s", len(embedding), path.name)
+    else:
+        log.debug("Kein Embedding für %s (Ollama nicht verfügbar oder kein Text)", path.name)
+
+    # 5. In PostgreSQL speichern (UPSERT)
     try:
         with db_conn.cursor() as cur:
             cur.execute(
@@ -619,10 +741,13 @@ def process_file(filepath: str, db_conn, meili_index) -> bool:
                     filepath, filename, file_extension, file_size, file_hash,
                     last_modified, smb_url, extracted_text, tika_content_type,
                     tika_metadata, fach, klasse, thema, typ, niveau,
-                    ollama_raw, indexed_at, classification_status, error_message
+                    schlagwoerter, lernziele, grammatik_themen, vokabeln_key,
+                    hat_loesungen, zeitaufwand_min, sprache,
+                    ollama_raw, embedding, indexed_at, classification_status, error_message
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s, %s
                 )
                 ON CONFLICT (filepath) DO UPDATE SET
                     filename = EXCLUDED.filename,
@@ -639,7 +764,15 @@ def process_file(filepath: str, db_conn, meili_index) -> bool:
                     thema = EXCLUDED.thema,
                     typ = EXCLUDED.typ,
                     niveau = EXCLUDED.niveau,
+                    schlagwoerter = EXCLUDED.schlagwoerter,
+                    lernziele = EXCLUDED.lernziele,
+                    grammatik_themen = EXCLUDED.grammatik_themen,
+                    vokabeln_key = EXCLUDED.vokabeln_key,
+                    hat_loesungen = EXCLUDED.hat_loesungen,
+                    zeitaufwand_min = EXCLUDED.zeitaufwand_min,
+                    sprache = EXCLUDED.sprache,
                     ollama_raw = EXCLUDED.ollama_raw,
+                    embedding = COALESCE(EXCLUDED.embedding, documents.embedding),
                     indexed_at = EXCLUDED.indexed_at,
                     classification_status = EXCLUDED.classification_status,
                     error_message = EXCLUDED.error_message
@@ -660,7 +793,15 @@ def process_file(filepath: str, db_conn, meili_index) -> bool:
                     classification.get("thema"),
                     classification.get("typ"),
                     classification.get("niveau"),
+                    classification.get("schlagwoerter") or [],
+                    classification.get("lernziele") or [],
+                    classification.get("grammatik_themen") or [],
+                    classification.get("vokabeln_key") or [],
+                    classification.get("hat_loesungen"),
+                    classification.get("zeitaufwand_min"),
+                    classification.get("sprache"),
                     json.dumps(classification.get("_raw", ""), default=str),
+                    embedding,
                     datetime.now(timezone.utc),
                     status,
                     error_msg,
@@ -672,7 +813,7 @@ def process_file(filepath: str, db_conn, meili_index) -> bool:
         db_conn.rollback()
         return False
 
-    # 5. In MeiliSearch indexieren
+    # 6. In MeiliSearch indexieren
     doc_id = current_hash[:16]
     meili_doc = {
         "id": doc_id,
@@ -687,6 +828,12 @@ def process_file(filepath: str, db_conn, meili_index) -> bool:
         "thema": classification.get("thema", ""),
         "typ": classification.get("typ", "Sonstiges"),
         "niveau": classification.get("niveau", "unbekannt"),
+        "sprache": classification.get("sprache"),
+        "schlagwoerter": classification.get("schlagwoerter") or [],
+        "grammatik_themen": classification.get("grammatik_themen") or [],
+        "vokabeln_key": classification.get("vokabeln_key") or [],
+        "hat_loesungen": classification.get("hat_loesungen"),
+        "zeitaufwand_min": classification.get("zeitaufwand_min"),
         "last_modified": int(stat.st_mtime),
     }
 
@@ -694,7 +841,7 @@ def process_file(filepath: str, db_conn, meili_index) -> bool:
         meili_index.add_documents([meili_doc])
     except Exception as exc:
         log.error("MeiliSearch-Fehler für %s: %s", filepath, exc)
-        # Nicht kritisch – Datei ist in PostgreSQL gespeichert
+        # Nicht kritisch – Datei ist in PostgreSQL gespeichert + Embedding vorhanden
 
     log.info(
         "Indexiert: %s → %s/%s/%s [%s]",

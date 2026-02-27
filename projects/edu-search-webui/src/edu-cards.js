@@ -51,33 +51,82 @@
     }
 
     // --- Aktions-Buttons ---
-    var actionsHtml = buildActionsHtml(hit, index, fileUrl, previewLabel, uncPath);
+    var actionsHtml = buildActionsHtml(
+      hit,
+      index,
+      fileUrl,
+      previewLabel,
+      uncPath,
+    );
 
     // --- UNC-Pfad (nur bei Hover sichtbar) ---
     var pathInfoHtml = "";
     if (uncPath) {
       pathInfoHtml =
         '<div class="path-info">' +
-        '<span class="path-text">' + E.escapeHtml(uncPath) + "</span>" +
+        '<span class="path-text">' +
+        E.escapeHtml(uncPath) +
+        "</span>" +
         "</div>";
     }
 
+    // --- Grid-Thumbnail (nur im Grid sichtbar, via CSS) ---
+    var thumbHtml = buildThumbHtml(hit, fileUrl, previewType, icon);
+
+    // --- Extension-Badge für Grid ---
+    var ext = hit.file_extension || "";
+    var extBadge = ext
+      ? '<span class="card-thumb-ext">' +
+        E.escapeHtml(ext.replace(/^\./, "")) +
+        "</span>"
+      : "";
+
     // --- Karte zusammenbauen ---
     return (
-      '<div class="result-card" data-hit-index="' + index + '">' +
+      '<div class="result-card" data-hit-index="' +
+      index +
+      '">' +
+      '<div class="card-thumb">' +
+      thumbHtml +
+      extBadge +
+      "</div>" +
+      '<div class="card-body">' +
       '<div class="card-header">' +
-      '<span class="file-icon">' + icon + "</span>" +
+      '<span class="file-icon">' +
+      icon +
+      "</span>" +
       '<span class="filename">' +
       E.safeHighlight(hl.filename || hit.filename) +
       "</span>" +
       "</div>" +
-      '<div class="meta">' + tagsHtml + "</div>" +
+      '<div class="meta">' +
+      tagsHtml +
+      "</div>" +
       themaHtml +
-      '<div class="card-actions">' + actionsHtml + "</div>" +
+      '<div class="card-actions">' +
+      actionsHtml +
+      "</div>" +
       pathInfoHtml +
+      "</div>" +
       "</div>"
     );
   };
+
+  // ---------------------------------------------------------------------------
+  // Grid-Thumbnail HTML erzeugen
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Erzeugt den Inhalt für den .card-thumb Bereich.
+   * - Bilder: echtes <img> Thumbnail
+   * - Andere: großes Emoji-Icon
+   */
+  function buildThumbHtml(hit, fileUrl, previewType, icon) {
+    if (previewType === "image" && fileUrl) {
+      return '<img src="' + E.escapeHtml(fileUrl) + '" alt="" loading="lazy">';
+    }
+    return '<span class="card-thumb-icon">' + icon + "</span>";
+  }
 
   // ---------------------------------------------------------------------------
   // Tags-HTML zusammenbauen
@@ -88,14 +137,16 @@
 
     if (hit.fach && hit.fach !== "unbekannt") {
       tags.push(
-        '<span class="tag' + fachClass + '">' +
-        E.escapeHtml(hit.fach) +
-        "</span>"
+        '<span class="tag' +
+          fachClass +
+          '">' +
+          E.escapeHtml(hit.fach) +
+          "</span>",
       );
     }
     if (hit.klasse && hit.klasse !== "unbekannt") {
       tags.push(
-        '<span class="tag">Klasse ' + E.escapeHtml(hit.klasse) + "</span>"
+        '<span class="tag">Klasse ' + E.escapeHtml(hit.klasse) + "</span>",
       );
     }
     if (hit.typ && hit.typ !== "Sonstiges") {
@@ -107,8 +158,8 @@
     if (hit.file_extension) {
       tags.push(
         '<span class="tag tag-ext">' +
-        E.escapeHtml(hit.file_extension) +
-        "</span>"
+          E.escapeHtml(hit.file_extension) +
+          "</span>",
       );
     }
 
@@ -126,10 +177,12 @@
     if (previewLabel && fileUrl) {
       buttons.push(
         '<button class="card-action-btn action-preview" ' +
-        'data-hit-index="' + index + '" ' +
-        'title="Vorschau \u00F6ffnen">' +
-        previewLabel +
-        "</button>"
+          'data-hit-index="' +
+          index +
+          '" ' +
+          'title="Vorschau \u00F6ffnen">' +
+          previewLabel +
+          "</button>",
       );
     }
 
@@ -137,11 +190,15 @@
     if (fileUrl) {
       buttons.push(
         '<a class="card-action-btn action-download" ' +
-        'href="' + E.escapeHtml(fileUrl) + '" ' +
-        'download="' + E.escapeHtml(hit.filename || "") + '" ' +
-        'title="Datei herunterladen">' +
-        "\u2B07\uFE0F Download" +
-        "</a>"
+          'href="' +
+          E.escapeHtml(fileUrl) +
+          '" ' +
+          'download="' +
+          E.escapeHtml(hit.filename || "") +
+          '" ' +
+          'title="Datei herunterladen">' +
+          "\u2B07\uFE0F Download" +
+          "</a>",
       );
     }
 
@@ -149,10 +206,12 @@
     if (uncPath) {
       buttons.push(
         '<button class="card-action-btn action-copy" ' +
-        'data-path="' + E.escapeHtml(uncPath) + '" ' +
-        'title="Netzwerkpfad in die Zwischenablage kopieren">' +
-        "\uD83D\uDCCB Pfad kopieren" +
-        "</button>"
+          'data-path="' +
+          E.escapeHtml(uncPath) +
+          '" ' +
+          'title="Netzwerkpfad in die Zwischenablage kopieren">' +
+          "\uD83D\uDCCB Pfad kopieren" +
+          "</button>",
       );
     }
 
@@ -237,10 +296,7 @@
     card.dataset.cardListenerAttached = "true";
     card.addEventListener("click", function (e) {
       // Nur reagieren wenn kein Button/Link geklickt wurde
-      if (
-        e.target.closest(".card-action-btn") ||
-        e.target.closest("a")
-      ) {
+      if (e.target.closest(".card-action-btn") || e.target.closest("a")) {
         return;
       }
       var idx = parseInt(this.dataset.hitIndex, 10);

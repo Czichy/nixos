@@ -18,7 +18,9 @@
       "Bash(grep:*)",
       "Bash(ls:*)",
       "Bash(xargs:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(git add:*)",
+      "Bash(nix-instantiate:*)"
     ]
   }
 }

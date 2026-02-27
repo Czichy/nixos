@@ -17,6 +17,7 @@
         {
           inherit (args) system;
           inherit inputs home;
+          inherit (inputs.self) globals;
         }
         // extraSpecialArgs;
       modules =

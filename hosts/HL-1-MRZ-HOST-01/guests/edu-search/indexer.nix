@@ -24,6 +24,9 @@
   ollamaPort = 11434;
   ollamaUrl = "http://${ollamaHost}:${toString ollamaPort}";
   ollamaModel = "mistral:7b";
+  # nomic-embed-text: Kleines, schnelles Embedding-Modell (~300MB VRAM)
+  # Erzeugt 768-dimensionale Vektoren für pgvector-Ähnlichkeitssuche
+  ollamaEmbedModel = "nomic-embed-text";
 
   tikaUrl = "http://127.0.0.1:9998";
   meiliUrl = "http://127.0.0.1:7700";
@@ -173,6 +176,7 @@ in {
       Environment = [
         "OLLAMA_URL=${ollamaUrl}"
         "OLLAMA_MODEL=${ollamaModel}"
+        "OLLAMA_EMBED_MODEL=${ollamaEmbedModel}"
         "TIKA_URL=${tikaUrl}"
         "MEILI_URL=${meiliUrl}"
         "MEILI_INDEX=${meiliIndex}"
@@ -247,7 +251,9 @@ in {
     # wantedBy wird absichtlich NICHT gesetzt
 
     serviceConfig = {
-      Type = "oneshot";
+      # simple: systemctl start kehrt sofort zurück, Re-Indexierung läuft im Hintergrund.
+      # Fortschritt: journalctl -fu edu-reindex
+      Type = "simple";
       User = "edu-indexer";
       Group = "users";
 
@@ -256,6 +262,7 @@ in {
       Environment = [
         "OLLAMA_URL=${ollamaUrl}"
         "OLLAMA_MODEL=${ollamaModel}"
+        "OLLAMA_EMBED_MODEL=${ollamaEmbedModel}"
         "TIKA_URL=${tikaUrl}"
         "MEILI_URL=${meiliUrl}"
         "MEILI_INDEX=${meiliIndex}"
@@ -276,8 +283,9 @@ in {
       ReadOnlyPaths = ["/nas"];
       ReadWritePaths = ["/var/lib/edu-indexer"];
 
-      # Re-Indexierung kann bei vielen Dateien sehr lange dauern
-      TimeoutStartSec = "6h";
+      TimeoutStartSec = "30s";
+      # Kein Timeout für die Laufzeit – Re-Indexierung kann Stunden dauern
+      TimeoutStopSec = "300s";
     };
   };
 

@@ -5,6 +5,7 @@
 }: {
   config,
   lib,
+  globals,
   hostName,
   pkgs,
   ...
@@ -34,6 +35,15 @@ in {
     enable = mkEnableOption ''
       TODO
     '';
+
+    extraMatchBlocks = mkOption {
+      type = attrsOf anything;
+      default = {};
+      description = ''
+        Zusätzliche SSH matchBlocks, die zu den auto-generierten Host-Einträgen
+        aus globals.net hinzugefügt werden (z.B. externe Server oder git-Hosts).
+      '';
+    };
     impermanence = {
       enable = mkImpermanenceEnableOption;
     };
@@ -91,6 +101,38 @@ in {
       programs.ssh = {
         enable = _ true;
         enableDefaultConfig = _ false;
+
+        matchBlocks = let
+          # "10.15.40.0/24" → "10.15.40."
+          cidrToPrefix = cidr:
+            (lib.concatStringsSep "." (lib.take 3 (lib.splitString "." cidr))) + ".";
+
+          # Alle Hosts aus allen VLANs sammeln; erstes Auftreten gewinnt bei Duplikaten.
+          # builtins.tryEval fängt Fehler ab wenn ein VLAN im Modul-System eine
+          # hosts-Option hat, diese aber keinen Wert hat (z.B. vlan60/IoT).
+          autoMatchBlocks = lib.foldlAttrs (acc: _vlanName: vlan:
+            let
+              cidrResult = builtins.tryEval (vlan.cidrv4 or null);
+              hostsResult = builtins.tryEval (vlan.hosts or {});
+              cidr = if cidrResult.success then cidrResult.value else null;
+              hosts = if hostsResult.success then hostsResult.value else {};
+            in
+              if cidr == null || hosts == {}
+              then acc
+              else
+                let
+                  prefix = cidrToPrefix cidr;
+                  entries = lib.mapAttrs (_hostName: hostCfg: {
+                    hostname = prefix + toString hostCfg.id;
+                    user = "root";
+                    extraOptions.StrictHostKeyChecking = "accept-new";
+                  }) hosts;
+                in
+                  # acc hat Vorrang (erstes VLAN gewinnt)
+                  entries // acc
+          ) {} globals.net;
+        in
+          autoMatchBlocks // cfg.extraMatchBlocks;
       };
 
       programs.keychain = {

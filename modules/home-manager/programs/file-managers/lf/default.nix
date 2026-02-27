@@ -26,7 +26,7 @@ with lib; let
         w3m
         lynx
         catdoc
-        python39Packages.docx2txt
+        python3Packages.docx2txt
         transmission
       ]
       ++ (optional (cfg.previewer.backend == "ueberzug") lf-cleaner-ueberzug)

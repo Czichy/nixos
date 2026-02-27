@@ -2,10 +2,11 @@
 #
 # Diese MicroVM enthält:
 # - Apache Tika (Textextraktion aus DOCX/PDF/PPTX/ODT/etc.)
-# - PostgreSQL (Metadaten + KI-Klassifikationsergebnisse)
-# - MeiliSearch (Volltext- + Facettensuche)
-# - Python Indexer (Watchdog → Tika → Ollama → PG → MeiliSearch)
-# - Nginx + Web-UI (Suchoberfläche für Ina)
+# - PostgreSQL + pgvector (Metadaten + KI-Klassifikation + Embedding-Vektoren)
+# - MeiliSearch (Volltext- + Facettensuche + Synonyme)
+# - Python Indexer (Watchdog → Tika → Ollama → PG + Embedding → MeiliSearch)
+# - RAG API (FastAPI: Klausurerstellung + semantische Suche via pgvector)
+# - Nginx + Web-UI (Suchoberfläche für Ina + KI-Assistent Tab)
 #
 # Ollama läuft NICHT in dieser MicroVM, sondern nativ auf HOST-01 (GPU).
 # Der Indexer greift via HTTP auf HOST-01:11434 zu.
@@ -35,10 +36,11 @@ in {
   # ---------------------------------------------------------------------------
   # MicroVM-Ressourcen
   # ---------------------------------------------------------------------------
-  # 6 GB RAM: Tika (~512MB JVM) + PostgreSQL (~128MB) + MeiliSearch (~200MB)
-  #           + Python Indexer (~100MB) + Nginx (~10MB) + OS-Overhead
+  # 7 GB RAM: Tika (~512MB JVM) + PostgreSQL (~256MB, pgvector) + MeiliSearch (~200MB)
+  #           + Python Indexer (~100MB) + FastAPI RAG API (~100MB)
+  #           + Nginx (~10MB) + OS-Overhead + pgvector Index-Buffer
   # HOST-01 hat 64GB RAM, davon 34GB frei → kein Engpass.
-  microvm.mem = 1024 * 6;
+  microvm.mem = 1024 * 7;
   microvm.vcpu = 4;
 
   networking.hostName = hostName;
@@ -83,6 +85,7 @@ in {
     ./edu-search/postgresql.nix
     ./edu-search/meilisearch.nix
     ./edu-search/indexer.nix
+    ./edu-search/rag.nix       # RAG API: Klausurerstellung + semantische Suche
     ./edu-search/webui.nix
     ./edu-search/backup.nix
   ];

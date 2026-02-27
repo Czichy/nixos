@@ -24,6 +24,17 @@ window.EduSearch = window.EduSearch || {};
   // → URL wird: "/files/ina/schule/test.pdf"
   E.FILES_BASE = "/files";
 
+  // RAG API-Endpunkte (FastAPI auf Port 8090, via Nginx proxied)
+  E.RAG_KLAUSUR_URL = "/api/rag/klausur";
+  E.RAG_SEMANTIC_URL = "/api/rag/search-semantic";
+  E.RAG_HEALTH_URL = "/api/rag/health";
+
+  // Für edu-rag.js Kompatibilität (globales EDU_CONFIG-Objekt)
+  window.EDU_CONFIG = {
+    ragEndpoint: E.RAG_KLAUSUR_URL,
+    ragSemanticEndpoint: E.RAG_SEMANTIC_URL,
+  };
+
   // ---------------------------------------------------------------------------
   // Datei-Icon Mapping (Extension → Emoji)
   // ---------------------------------------------------------------------------
@@ -70,6 +81,19 @@ window.EduSearch = window.EduSearch || {};
     audio: ["mp3", "m4a", "wav", "ogg", "flac"],
     video: ["mp4", "webm"],
     text: ["txt", "csv", "md", "xml", "json"],
+    office: [
+      "doc",
+      "docx",
+      "odt",
+      "rtf",
+      "pptx",
+      "ppt",
+      "odp",
+      "xlsx",
+      "xls",
+      "ods",
+      "epub",
+    ],
   };
 
   // Menschenlesbare Labels für den Vorschau-Button
@@ -79,7 +103,11 @@ window.EduSearch = window.EduSearch || {};
     audio: "\uD83C\uDFB5 Anh\u00F6ren",
     video: "\uD83C\uDFAC Abspielen",
     text: "\uD83D\uDCC3 Textvorschau",
+    office: "\uD83D\uDDD2\uFE0F Vorschau",
   };
+
+  // Tika API endpoint for office document → HTML conversion
+  E.TIKA_URL = "/api/tika/";
 
   // ---------------------------------------------------------------------------
   // Hilfsfunktionen

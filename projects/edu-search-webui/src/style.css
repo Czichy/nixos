@@ -253,23 +253,188 @@ header .subtitle {
 }
 
 /* --------------------------------------------------------------------------
-   Stats Bar
+   Stats Bar + View Toggle Toolbar
    -------------------------------------------------------------------------- */
+.results-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 4px;
+    gap: 12px;
+}
+
 .stats {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
-    margin-bottom: 12px;
-    padding: 0 4px;
     min-height: 1.4em;
+    flex: 1;
+}
+
+/* View toggle (list / grid) */
+.view-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--color-tag-bg);
+    border-radius: var(--radius-md);
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+.view-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.view-toggle-btn:hover {
+    color: var(--color-text);
+    background: var(--color-surface);
+}
+
+.view-toggle-btn.active {
+    color: var(--color-primary);
+    background: var(--color-surface);
+    box-shadow: 0 1px 3px var(--color-shadow);
 }
 
 /* --------------------------------------------------------------------------
-   Results
+   Results – List View (default)
    -------------------------------------------------------------------------- */
 .results {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   Results – Grid View (Vorschau-Kacheln)
+   -------------------------------------------------------------------------- */
+.results.view-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+/* In grid mode, cards get a different layout */
+.results.view-grid .result-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+    padding: 0;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.results.view-grid .result-card:hover {
+    box-shadow: 0 4px 12px var(--color-shadow-hover);
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+}
+
+/* Grid thumbnail area */
+.results.view-grid .card-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 130px;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+    position: relative;
+}
+
+.results.view-grid .card-thumb-icon {
+    font-size: 3rem;
+    opacity: 0.6;
+    line-height: 1;
+}
+
+.results.view-grid .card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.results.view-grid .card-thumb-ext {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Grid card body (below thumbnail) */
+.results.view-grid .card-body {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.results.view-grid .card-header {
+    margin-bottom: 4px;
+}
+
+.results.view-grid .file-icon {
+    display: none;
+}
+
+.results.view-grid .filename {
+    font-size: 0.85rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.results.view-grid .meta {
+    margin-bottom: 0;
+}
+
+.results.view-grid .tag {
+    font-size: 0.65rem;
+    padding: 1px 6px;
+}
+
+.results.view-grid .thema {
+    display: none;
+}
+
+.results.view-grid .card-actions {
+    display: none;
+}
+
+.results.view-grid .path-info {
+    display: none;
+}
+
+/* In list mode, hide grid-only elements */
+.results:not(.view-grid) .card-thumb {
+    display: none;
+}
+
+.results:not(.view-grid) .card-body {
+    display: contents;
 }
 
 /* Placeholder / empty state */
@@ -688,6 +853,15 @@ header .subtitle {
     background: #000;
 }
 
+/* Office Document Preview (HTML via Tika) */
+.preview-office-frame {
+    width: 100%;
+    height: 70vh;
+    border: none;
+    background: #fff;
+    border-radius: var(--radius-sm);
+}
+
 /* Text Preview */
 .preview-text {
     width: 100%;
@@ -861,6 +1035,24 @@ footer strong {
     .preview-header-actions {
         width: 100%;
         justify-content: flex-end;
+    }
+
+    /* Grid: 2 columns on small screens */
+    .results.view-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .results.view-grid .card-thumb {
+        height: 100px;
+    }
+
+    .results.view-grid .result-card {
+        min-height: 170px;
+    }
+
+    .results.view-grid .filename {
+        font-size: 0.78rem;
     }
 }
 

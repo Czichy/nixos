@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>📚 Unterrichtsmaterial-Suche</title>
+        <link rel="stylesheet" href="style.css" />
+        <!-- Kein externes CDN – alles lokal, kein Internet nötig -->
+    </head>
+    <body>
+        <header>
+            <h1>📚 Unterrichtsmaterial-Suche</h1>
+            <p class="subtitle">
+                Finde Arbeitsblätter, Präsentationen, Tests und mehr
+            </p>
+            <!-- Tab-Navigation -->
+            <nav class="tab-nav" role="tablist">
+                <button
+                    class="tab-btn active"
+                    id="tab-btn-search"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="panel-search"
+                >
+                    🔍 Suche
+                </button>
+                <button
+                    class="tab-btn"
+                    id="tab-btn-rag"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="panel-rag"
+                >
+                    🤖 KI-Assistent
+                </button>
+            </nav>
+        </header>
+
+        <main>
+            <!-- ================================================================= -->
+            <!-- Panel 1: Suche (Standard)                                         -->
+            <!-- ================================================================= -->
+            <div
+                id="panel-search"
+                class="tab-panel active"
+                role="tabpanel"
+                aria-labelledby="tab-btn-search"
+            >
+                <!-- ============================================================= -->
+                <!-- Suchfeld                                                      -->
+                <!-- ============================================================= -->
+                <div class="search-bar">
+                    <div class="search-icon">🔍</div>
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Suche nach Thema, Inhalt, Dateiname..."
+                        autofocus
+                        autocomplete="off"
+                        spellcheck="false"
+                    />
+                    <button
+                        id="clear-search"
+                        class="clear-btn"
+                        title="Suche leeren"
+                        style="display: none"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <!-- ============================================================= -->
+                <!-- Filter-Dropdowns                                              -->
+                <!-- ============================================================= -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="filter-fach">Fach</label>
+                        <select id="filter-fach">
+                            <option value="">Alle Fächer</option>
+                            <option value="Englisch">🇬🇧 Englisch</option>
+                            <option value="Spanisch">🇪🇸 Spanisch</option>
+                            <option value="Sonstige">📁 Sonstige</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filter-klasse">Klasse</label>
+                        <select id="filter-klasse">
+                            <option value="">Alle Klassen</option>
+                            <option value="5">Klasse 5</option>
+                            <option value="6">Klasse 6</option>
+                            <option value="7">Klasse 7</option>
+                            <option value="8">Klasse 8</option>
+                            <option value="9">Klasse 9</option>
+                            <option value="10">Klasse 10</option>
+                            <option value="11">Klasse 11</option>
+                            <option value="12">Klasse 12</option>
+                            <option value="13">Klasse 13</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filter-typ">Typ</label>
+                        <select id="filter-typ">
+                            <option value="">Alle Typen</option>
+                            <option value="Arbeitsblatt">
+                                📄 Arbeitsblatt
+                            </option>
+                            <option value="Präsentation">
+                                📊 Präsentation
+                            </option>
+                            <option value="Test">📝 Test</option>
+                            <option value="Klausur">🎓 Klausur</option>
+                            <option value="Übung">✏️ Übung</option>
+                            <option value="Vokabeln">📖 Vokabeln</option>
+                            <option value="Grammatik">📐 Grammatik</option>
+                            <option value="Lektüre">📕 Lektüre</option>
+                            <option value="Audio">🔊 Audio</option>
+                            <option value="Video">🎬 Video</option>
+                            <option value="Bild">🖼️ Bild</option>
+                            <option value="Sonstiges">📦 Sonstiges</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filter-niveau">Niveau</label>
+                        <select id="filter-niveau">
+                            <option value="">Alle Niveaus</option>
+                            <option value="A1">A1 – Anfänger</option>
+                            <option value="A2">A2 – Grundlagen</option>
+                            <option value="B1">B1 – Mittelstufe</option>
+                            <option value="B2">B2 – Obere Mittelstufe</option>
+                            <option value="C1">C1 – Fortgeschritten</option>
+                            <option value="C2">
+                                C2 – Annähernd Muttersprachlich
+                            </option>
+                        </select>
+                    </div>
+
+                    <button
+                        id="reset-filters"
+                        class="reset-btn"
+                        title="Alle Filter zurücksetzen"
+                    >
+                        Filter zurücksetzen
+                    </button>
+                </div>
+
+                <!-- ============================================================= -->
+                <!-- Statistik + Ansicht-Umschalter                                -->
+                <!-- ============================================================= -->
+                <div class="results-toolbar">
+                    <div id="stats" class="stats"></div>
+                    <div class="view-toggle" id="view-toggle">
+                        <button
+                            class="view-toggle-btn active"
+                            id="view-list-btn"
+                            title="Listenansicht"
+                            aria-label="Listenansicht"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 18 18"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            >
+                                <line x1="1" y1="3" x2="17" y2="3" />
+                                <line x1="1" y1="9" x2="17" y2="9" />
+                                <line x1="1" y1="15" x2="17" y2="15" />
+                            </svg>
+                        </button>
+                        <button
+                            class="view-toggle-btn"
+                            id="view-grid-btn"
+                            title="Vorschau-Kacheln"
+                            aria-label="Vorschau-Kacheln"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 18 18"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <rect
+                                    x="1"
+                                    y="1"
+                                    width="6.5"
+                                    height="6.5"
+                                    rx="1"
+                                />
+                                <rect
+                                    x="10.5"
+                                    y="1"
+                                    width="6.5"
+                                    height="6.5"
+                                    rx="1"
+                                />
+                                <rect
+                                    x="1"
+                                    y="10.5"
+                                    width="6.5"
+                                    height="6.5"
+                                    rx="1"
+                                />
+                                <rect
+                                    x="10.5"
+                                    y="10.5"
+                                    width="6.5"
+                                    height="6.5"
+                                    rx="1"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ============================================================= -->
+                <!-- Ergebnisliste / Vorschau-Grid                                 -->
+                <!-- ============================================================= -->
+                <div id="results" class="results">
+                    <div class="placeholder">
+                        <div class="placeholder-icon">📚</div>
+                        <p>
+                            Gib einen Suchbegriff ein oder wähle einen
+                            Filter,<br />um Unterrichtsmaterialien zu finden.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ============================================================= -->
+                <!-- "Mehr laden" Button                                           -->
+                <!-- ============================================================= -->
+                <div
+                    id="load-more-container"
+                    class="load-more-container"
+                    style="display: none"
+                >
+                    <button id="load-more-btn" class="load-more-btn">
+                        Weitere Ergebnisse laden
+                    </button>
+                </div>
+            </div>
+            <!-- Ende Panel 1: Suche -->
+
+            <!-- ================================================================= -->
+            <!-- Panel 2: KI-Assistent (RAG-gestützte Klausurerstellung)           -->
+            <!-- ================================================================= -->
+            <div
+                id="panel-rag"
+                class="tab-panel"
+                role="tabpanel"
+                aria-labelledby="tab-btn-rag"
+                style="display: none"
+            >
+                <div class="rag-container">
+                    <div class="rag-intro">
+                        <p>
+                            Der KI-Assistent erstellt Tests und Klausuren
+                            basierend auf dem vorhandenen Unterrichtsmaterial.
+                            Die KI durchsucht das indexierte Material und nutzt
+                            es als Grundlage.
+                        </p>
+                    </div>
+
+                    <!-- Formular -->
+                    <form
+                        class="rag-form"
+                        id="rag-form"
+                        onsubmit="return false;"
+                    >
+                        <div class="rag-form-row">
+                            <div class="rag-field">
+                                <label for="rag-fach">Fach *</label>
+                                <select id="rag-fach" required>
+                                    <option value="">– Bitte wählen –</option>
+                                    <option value="Englisch">
+                                        🇬🇧 Englisch
+                                    </option>
+                                    <option value="Spanisch">
+                                        🇪🇸 Spanisch
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="rag-field">
+                                <label for="rag-klasse">Klasse *</label>
+                                <select id="rag-klasse" required>
+                                    <option value="">– Bitte wählen –</option>
+                                    <option value="5">Klasse 5</option>
+                                    <option value="6">Klasse 6</option>
+                                    <option value="7">Klasse 7</option>
+                                    <option value="8">Klasse 8</option>
+                                    <option value="9">Klasse 9</option>
+                                    <option value="10">Klasse 10</option>
+                                    <option value="11">Klasse 11</option>
+                                    <option value="12">Klasse 12</option>
+                                    <option value="13">Klasse 13</option>
+                                </select>
+                            </div>
+                            <div class="rag-field">
+                                <label for="rag-typ">Art</label>
+                                <select id="rag-typ">
+                                    <option value="Test">📝 Test</option>
+                                    <option value="Klausur">🎓 Klausur</option>
+                                    <option value="Übung">
+                                        ✏️ Übungsblatt
+                                    </option>
+                                    <option value="Arbeitsblatt">
+                                        📄 Arbeitsblatt
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="rag-field">
+                                <label for="rag-niveau">Niveau</label>
+                                <select id="rag-niveau">
+                                    <option value="">beliebig</option>
+                                    <option value="A1">A1</option>
+                                    <option value="A2">A2</option>
+                                    <option value="B1">B1</option>
+                                    <option value="B2">B2</option>
+                                    <option value="C1">C1</option>
+                                    <option value="C2">C2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="rag-form-row">
+                            <div class="rag-field rag-field-wide">
+                                <label for="rag-thema">Thema *</label>
+                                <input
+                                    type="text"
+                                    id="rag-thema"
+                                    placeholder="z.B. Conditional Sentences, Present Perfect, Subjuntivo..."
+                                    required
+                                    autocomplete="off"
+                                />
+                            </div>
+                            <div class="rag-field">
+                                <label for="rag-zeit"
+                                    >Zeitaufwand (Minuten)</label
+                                >
+                                <input
+                                    type="number"
+                                    id="rag-zeit"
+                                    value="45"
+                                    min="5"
+                                    max="180"
+                                    step="5"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="rag-form-row">
+                            <div class="rag-field rag-field-wide">
+                                <label for="rag-anweisungen"
+                                    >Zusätzliche Anweisungen (optional)</label
+                                >
+                                <textarea
+                                    id="rag-anweisungen"
+                                    rows="2"
+                                    maxlength="500"
+                                    placeholder="z.B. 'Schwerpunkt auf Lückentext', 'kein Multiple Choice', 'include listening comprehension task'..."
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <div class="rag-form-actions">
+                            <button
+                                type="submit"
+                                id="rag-generate-btn"
+                                class="rag-generate-btn"
+                            >
+                                🤖 Erstellen
+                            </button>
+                            <button
+                                type="button"
+                                id="rag-clear-btn"
+                                class="rag-clear-btn"
+                                style="display: none"
+                            >
+                                ✕ Zurücksetzen
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Ausgabe-Bereich -->
+                    <div
+                        id="rag-status"
+                        class="rag-status"
+                        style="display: none"
+                    ></div>
+
+                    <div id="rag-output-container" style="display: none">
+                        <div class="rag-output-header">
+                            <span id="rag-output-title">Ergebnis</span>
+                            <button
+                                id="rag-copy-btn"
+                                class="rag-copy-btn"
+                                title="In Zwischenablage kopieren"
+                            >
+                                📋 Kopieren
+                            </button>
+                        </div>
+                        <div id="rag-output" class="rag-output"></div>
+                    </div>
+                </div>
+                <!-- Ende .rag-container -->
+            </div>
+            <!-- Ende Panel 2: KI-Assistent -->
+        </main>
+
+        <footer>
+            <p>
+                Edu-Search · Unterrichtsmaterialien von
+                <strong>Ina</strong> · <span id="total-docs">–</span> Dokumente
+                indexiert
+            </p>
+        </footer>
+
+        <!-- ================================================================= -->
+        <!-- JavaScript – modularer Aufbau (keine externen Abhängigkeiten)      -->
+        <!-- Reihenfolge: config → utils → preview → cards → search → rag      -->
+        <!-- ================================================================= -->
+        <script src="edu-config.js"></script>
+        <script src="edu-utils.js"></script>
+        <script src="edu-preview.js"></script>
+        <script src="edu-cards.js"></script>
+        <script src="edu-search.js"></script>
+        <script src="edu-rag.js"></script>
+    </body>
+</html>

@@ -41,7 +41,10 @@
       };
     };
     # NOTE: Add "rd.systemd.unit=rescue.target" to debug initrd
-    kernelParams = ["log_buf_len=16M"]; # must be {power of two}[KMG]
+    kernelParams = [
+      "log_buf_len=16M" # must be {power of two}[KMG]
+      "snd_hda_intel.power_save=0" # disable HDA power-save to prevent audio pops/crashes on resume
+    ];
     tmp.useTmpfs = true;
   };
 
@@ -63,7 +66,7 @@
       };
     };
     #binfmt.emulatedSystems = [ "aarch64-linux" ];
-    kernelPackages = pkgs.linuxPackages_6_6;
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
   services.hardware.openrgb.enable = true;
@@ -78,8 +81,18 @@
       enable = true;
       enable32Bit = true; ## THIS IS CRITICAL
       extraPackages = with pkgs; [
+        vulkan-loader # Vulkan ICD loader – required by pressure-vessel / Steam runtime
         libva-vdpau-driver
         libvdpau-va-gl
+      ];
+      # 32-bit equivalents for Proton / 32-bit game processes.
+      # Without these pressure-vessel cannot determine the provider
+      # architecture → "invalid Elf handle" + segfault.
+      extraPackages32 = with pkgs.driversi686Linux; [
+        libva-vdpau-driver
+        libvdpau-va-gl
+      ] ++ [
+        pkgs.pkgsi686Linux.vulkan-loader
       ];
     };
     bluetooth = {

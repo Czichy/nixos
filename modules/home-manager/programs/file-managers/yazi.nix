@@ -1,6 +1,7 @@
 {localFlake}: {
   config,
   lib,
+  pkgs,
   ...
 }:
 with builtins;
@@ -64,6 +65,14 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # Tools used by the office preview plugin (pandoc is preferred,
+      # catdoc / odt2txt serve as lighter fallbacks for legacy formats).
+      home.packages = with pkgs; [
+        pandoc   # docx, odt, rtf, epub → plain text (primary converter)
+        catdoc   # legacy .doc → plain text
+        odt2txt  # ODF → plain text
+      ];
+
       programs.yazi = {
         enable = _ true;
         shellWrapperName = cfg.shellWrapperName;
@@ -71,7 +80,29 @@ in {
         enableZshIntegration = _ cfg.enableZshIntegration;
         enableFishIntegration = _ cfg.enableFishIntegration;
         enableNushellIntegration = _ cfg.enableNushellIntegration;
+
+        # Office document preview plugin (doc/docx/odt/pptx/xlsx/rtf)
+        plugins = {
+          office = ./yazi-plugins/office.yazi;
+        };
+
         settings = {
+          plugin = {
+            prepend_previewers = [
+              # Word / Rich Text
+              { mime = "application/msword"; run = "office"; }
+              { mime = "application/rtf"; run = "office"; }
+              { mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.*"; run = "office"; }
+              # Spreadsheets
+              { mime = "application/vnd.ms-excel"; run = "office"; }
+              { mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.*"; run = "office"; }
+              # Presentations
+              { mime = "application/vnd.ms-powerpoint"; run = "office"; }
+              { mime = "application/vnd.openxmlformats-officedocument.presentationml.*"; run = "office"; }
+              # OpenDocument
+              { mime = "application/vnd.oasis.opendocument.*"; run = "office"; }
+            ];
+          };
           mgr = {
             sort_by = _ "natural";
             linemode = _ "size";
@@ -94,6 +125,13 @@ in {
               {
                 run = ''$EDITOR "$@"'';
                 block = true;
+              }
+            ];
+            office = [
+              {
+                run = ''libreoffice "$@"'';
+                desc = "Open with LibreOffice";
+                orphan = true;
               }
             ];
             archive = [
@@ -221,6 +259,14 @@ in {
               mime = "application/x-rar";
               use = "archive";
             }
+
+            # Office documents → open with LibreOffice
+            { mime = "application/msword"; use = "office"; }
+            { mime = "application/rtf"; use = "office"; }
+            { mime = "application/vnd.openxmlformats-officedocument.*"; use = "office"; }
+            { mime = "application/vnd.ms-excel"; use = "office"; }
+            { mime = "application/vnd.ms-powerpoint"; use = "office"; }
+            { mime = "application/vnd.oasis.opendocument.*"; use = "office"; }
 
             {
               mime = "*";

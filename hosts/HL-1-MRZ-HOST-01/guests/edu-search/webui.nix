@@ -28,22 +28,15 @@
   webPort = 8080;
   meiliHost = "127.0.0.1";
   meiliPort = 7700;
+  ragHost = "127.0.0.1";
+  ragPort = 8090;
 
   # ---------------------------------------------------------------------------
   # Statische Web-UI Dateien als Nix-Derivation
   # ---------------------------------------------------------------------------
-  # Die Dateien werden in den Nix-Store kopiert und von Nginx ausgeliefert.
+  # Ausgelagert nach projects/edu-search-webui/ für eigenständige Entwicklung.
   # Änderungen an den HTML/CSS/JS-Dateien erfordern ein `nixos-rebuild`.
-  eduWebUI = pkgs.runCommand "edu-search-webui" {} ''
-    mkdir -p $out
-    cp ${./webui/index.html} $out/index.html
-    cp ${./webui/style.css} $out/style.css
-    cp ${./webui/edu-config.js} $out/edu-config.js
-    cp ${./webui/edu-utils.js} $out/edu-utils.js
-    cp ${./webui/edu-preview.js} $out/edu-preview.js
-    cp ${./webui/edu-cards.js} $out/edu-cards.js
-    cp ${./webui/edu-search.js} $out/edu-search.js
-  '';
+  eduWebUI = import ../../../../projects/edu-search-webui {inherit pkgs;};
 in {
   # ---------------------------------------------------------------------------
   # Nginx als statischer Webserver + MeiliSearch API-Proxy
@@ -191,13 +184,10 @@ in {
           # MeiliSearch Auth-Header serverseitig injizieren
           # Datei wird von edu-search-meili-key.service erzeugt und enthält:
           #   proxy_set_header Authorization "Bearer <master-key>";
-          include /run/edu-search/meili-auth.conf;
+          include /run/edu-search/meili-auth.conf*;
 
-          # Proxy-Header
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
+          # Proxy-Header werden durch recommendedProxySettings-Include global gesetzt.
+          # Nicht nochmal setzen — doppelter Host-Header würde Backend-Fehler verursachen.
 
           # CORS-Header (für lokale Entwicklung und Cross-Origin-Zugriff)
           add_header Access-Control-Allow-Origin "*" always;
@@ -205,11 +195,13 @@ in {
           add_header Access-Control-Allow-Headers "Content-Type" always;
 
           # Preflight-Requests (OPTIONS) sofort beantworten
+          # WICHTIG: Alle Parent-add_header hier wiederholen, da nginx
+          # if-Blöcke ALLE übergeordneten add_header ersetzen (gixy: add_header_redefinition).
           if ($request_method = 'OPTIONS') {
-            add_header Access-Control-Allow-Origin "*";
-            add_header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE";
-            add_header Access-Control-Allow-Headers "Content-Type";
-            add_header Access-Control-Max-Age 86400;
+            add_header Access-Control-Allow-Origin "*" always;
+            add_header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE" always;
+            add_header Access-Control-Allow-Headers "Content-Type" always;
+            add_header Access-Control-Max-Age 86400 always;
             add_header Content-Length 0;
             add_header Content-Type "text/plain charset=UTF-8";
             return 204;
@@ -221,6 +213,92 @@ in {
           proxy_send_timeout 10s;
 
           # Request-Body-Limit für Suchanfragen (POST mit JSON-Body)
+          client_max_body_size 1m;
+        '';
+      };
+
+      # Tika API-Proxy – Document-to-HTML Konvertierung für Office-Vorschau
+      # Die SPA fetcht eine Office-Datei (doc/docx/odt/pptx/xlsx/rtf),
+      # sendet sie als PUT an /api/tika/ und erhält HTML zurück.
+      # Tika läuft bereits als MicroVM-interner Service (tika.nix).
+      #
+      # Ablauf im Browser:
+      #   1. fetch("/files/ina/schule/test.docx")       → Blob
+      #   2. PUT  "/api/tika/"  body=Blob  Accept:text/html → HTML-String
+      #   3. HTML wird in sandboxed <iframe> im Preview-Modal angezeigt
+      locations."/api/tika/" = {
+        proxyPass = "http://${meiliHost}:9998/tika";
+        extraConfig = ''
+          # Nur PUT und OPTIONS erlauben (PUT = Tika-Protokoll, OPTIONS = CORS Preflight)
+          limit_except PUT OPTIONS {
+            deny all;
+          }
+
+          # Content-Type vom Client durchreichen (z.B. application/vnd.openxmlformats-...)
+          # Tika erkennt das Format darüber oder via Magic-Bytes.
+          proxy_set_header Content-Type $content_type;
+
+          # Antwort als HTML anfordern
+          proxy_set_header Accept "text/html";
+
+          # Office-Dokumente können groß sein (Präsentationen mit Bildern)
+          client_max_body_size 50m;
+
+          # Tika braucht Zeit für große/komplexe Dokumente
+          proxy_connect_timeout 5s;
+          proxy_read_timeout 60s;
+          proxy_send_timeout 30s;
+
+          # Kein Buffering – Antwort direkt streamen
+          proxy_buffering off;
+
+          # Sicherheit + CORS (SPA läuft auf gleicher Origin, aber sicherheitshalber)
+          add_header X-Content-Type-Options "nosniff" always;
+          add_header Access-Control-Allow-Origin "*" always;
+          add_header Access-Control-Allow-Methods "PUT, OPTIONS" always;
+          add_header Access-Control-Allow-Headers "Content-Type, Accept" always;
+
+          # Preflight
+          # WICHTIG: Alle Parent-add_header hier wiederholen, da nginx
+          # if-Blöcke ALLE übergeordneten add_header ersetzen (gixy: add_header_redefinition).
+          if ($request_method = 'OPTIONS') {
+            add_header X-Content-Type-Options "nosniff" always;
+            add_header Access-Control-Allow-Origin "*" always;
+            add_header Access-Control-Allow-Methods "PUT, OPTIONS" always;
+            add_header Access-Control-Allow-Headers "Content-Type, Accept" always;
+            add_header Access-Control-Max-Age 86400 always;
+            add_header Content-Length 0;
+            add_header Content-Type "text/plain charset=UTF-8";
+            return 204;
+          }
+        '';
+      };
+
+      # RAG API-Proxy
+      # Die Web-UI ruft /api/rag/klausur und /api/rag/search-semantic auf.
+      # Nginx leitet das weiter an die FastAPI-Instanz (127.0.0.1:8090).
+      # SSE (Server-Sent Events) erfordert spezielle Proxy-Einstellungen:
+      #   - proxy_buffering off: Token werden sofort weitergeleitet
+      #   - proxy_read_timeout: Klausurgenerierung kann mehrere Minuten dauern
+      locations."/api/rag/" = {
+        proxyPass = "http://${ragHost}:${toString ragPort}/api/rag/";
+        # HINWEIS: proxy_set_header Host/X-Real-IP/X-Forwarded-For werden vom
+        # recommendedProxySettings-Include global gesetzt — nicht nochmal setzen,
+        # sonst doppelte Header → uvicorn/h11 lehnt ab (RFC 7230: Host darf nur 1x vorkommen).
+        extraConfig = ''
+          # SSE: Buffering deaktivieren (Token werden sofort an Browser gesendet)
+          proxy_buffering off;
+          proxy_request_buffering off;
+          proxy_cache off;
+          proxy_set_header Connection "";
+          proxy_http_version 1.1;
+
+          # Timeouts: Klausur-Generierung kann 2-5 Minuten dauern
+          proxy_connect_timeout 10s;
+          proxy_read_timeout 300s;
+          proxy_send_timeout 60s;
+
+          # Request-Body-Limit (JSON-Anfragen sind klein)
           client_max_body_size 1m;
         '';
       };

@@ -7,6 +7,7 @@
 //   Audio  → <audio> mit Controls
 //   Video  → <video> mit Controls
 //   Text   → <pre> via fetch
+//   Office → HTML via Apache Tika (doc, docx, odt, pptx, xlsx, rtf, epub …)
 //   Andere → Download-Hinweis
 //
 // API:
@@ -145,6 +146,8 @@
       renderVideo(fileUrl);
     } else if (previewType === "text") {
       renderText(fileUrl);
+    } else if (previewType === "office") {
+      renderOffice(fileUrl, filename);
     } else {
       renderNoPreview(hit, fileUrl, filename);
     }
@@ -163,7 +166,9 @@
     div.className = "preview-unavailable";
     div.innerHTML =
       "<p>\u26A0\uFE0F Dateivorschau nicht verf\u00FCgbar</p>" +
-      '<p class="preview-hint">' + E.escapeHtml(message) + "</p>";
+      '<p class="preview-hint">' +
+      E.escapeHtml(message) +
+      "</p>";
     bodyEl.appendChild(div);
   }
 
@@ -243,14 +248,110 @@
         var pre = document.createElement("pre");
         pre.className = "preview-text";
         // Limit auf 100 KB für Performance
-        pre.textContent = text.length > 100000
-          ? text.substring(0, 100000) + "\n\n[… gekürzt …]"
-          : text;
+        pre.textContent =
+          text.length > 100000
+            ? text.substring(0, 100000) + "\n\n[… gekürzt …]"
+            : text;
         bodyEl.appendChild(pre);
       })
       .catch(function (err) {
         bodyEl.innerHTML = "";
         renderUnavailable("Text konnte nicht geladen werden: " + err.message);
+      });
+  }
+
+  // -------------------------------------------------------------------------
+  // Office-Dokument-Vorschau via Apache Tika (HTML-Extraktion)
+  // -------------------------------------------------------------------------
+  // 1. Datei vom Server als Blob holen (/files/…)
+  // 2. Blob an Tika senden (PUT /api/tika/ mit Accept: text/html)
+  // 3. Tika gibt HTML zurück (mit Formatierung: fett, kursiv, Tabellen…)
+  // 4. HTML in einem sandboxed <iframe> im Preview-Modal anzeigen
+  // -------------------------------------------------------------------------
+
+  function renderOffice(url, filename) {
+    // Ladeanimation
+    var loading = document.createElement("div");
+    loading.className = "loading";
+    loading.textContent = "Konvertiere Dokument\u2026";
+    bodyEl.appendChild(loading);
+
+    fetch(url)
+      .then(function (resp) {
+        if (!resp.ok)
+          throw new Error("Datei nicht ladbar (HTTP " + resp.status + ")");
+        return resp.blob();
+      })
+      .then(function (blob) {
+        // Tika erwartet den Datei-Inhalt als Request-Body (PUT).
+        // Accept: text/html  → Tika liefert strukturiertes HTML statt Plaintext.
+        return fetch(E.TIKA_URL, {
+          method: "PUT",
+          headers: {
+            Accept: "text/html",
+            "Content-Type": blob.type || "application/octet-stream",
+          },
+          body: blob,
+        });
+      })
+      .then(function (resp) {
+        if (!resp.ok)
+          throw new Error(
+            "Tika-Konvertierung fehlgeschlagen (HTTP " + resp.status + ")",
+          );
+        return resp.text();
+      })
+      .then(function (html) {
+        bodyEl.innerHTML = "";
+
+        if (!html || html.trim().length < 20) {
+          renderUnavailable(
+            "Das Dokument enth\u00E4lt keinen extrahierbaren Text.",
+          );
+          return;
+        }
+
+        // Minimales Wrapper-HTML mit eingebettetem Stylesheet für
+        // saubere Darstellung im iframe (Schriftart, Zeilenabstand, Tabellen).
+        var styledHtml =
+          '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+          "<style>" +
+          "body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;" +
+          "font-size:14px;line-height:1.7;color:#1a1a2e;padding:24px 32px;margin:0;max-width:none;}" +
+          "h1,h2,h3,h4,h5,h6{color:#16213e;margin-top:1.4em;margin-bottom:0.6em;}" +
+          "h1{font-size:1.6em;border-bottom:2px solid #e8e8e8;padding-bottom:0.3em;}" +
+          "h2{font-size:1.3em;}" +
+          "table{border-collapse:collapse;width:100%;margin:1em 0;}" +
+          "th,td{border:1px solid #d0d0d0;padding:6px 10px;text-align:left;}" +
+          "th{background:#f4f4f8;font-weight:600;}" +
+          "tr:nth-child(even){background:#fafafa;}" +
+          "ul,ol{padding-left:1.8em;}" +
+          "li{margin-bottom:0.3em;}" +
+          "p{margin:0.6em 0;}" +
+          "img{max-width:100%;height:auto;}" +
+          "a{color:#0a84ff;}" +
+          "blockquote{border-left:3px solid #d0d0d0;margin:1em 0;padding:0.4em 1em;color:#555;}" +
+          "pre,code{background:#f4f4f8;border-radius:4px;font-size:0.9em;}" +
+          "pre{padding:12px;overflow-x:auto;}" +
+          "code{padding:2px 4px;}" +
+          "</style></head><body>" +
+          html +
+          "</body></html>";
+
+        var iframe = document.createElement("iframe");
+        iframe.className = "preview-office-frame";
+        // Sandbox: keine Script-Ausführung, kein Formular, keine Navigation
+        iframe.setAttribute("sandbox", "allow-same-origin");
+        iframe.setAttribute("referrerpolicy", "no-referrer");
+
+        bodyEl.appendChild(iframe);
+
+        // srcdoc ist sicherer als blob-URL und erlaubt sandbox
+        iframe.srcdoc = styledHtml;
+      })
+      .catch(function (err) {
+        bodyEl.innerHTML = "";
+        renderUnavailable("Dokumentvorschau fehlgeschlagen: " + err.message);
       });
   }
 
@@ -265,12 +366,14 @@
     var msgP = document.createElement("p");
     var ext = E.escapeHtml(hit.file_extension || "unbekannt");
     msgP.innerHTML =
-      "F\u00FCr diesen Dateityp (<strong>" + ext +
+      "F\u00FCr diesen Dateityp (<strong>" +
+      ext +
       "</strong>) ist keine Vorschau verf\u00FCgbar.";
 
     var hintP = document.createElement("p");
     hintP.className = "preview-hint";
-    hintP.textContent = "Klicke auf \u201EHerunterladen\u201C um die Datei zu \u00F6ffnen.";
+    hintP.textContent =
+      "Klicke auf \u201EHerunterladen\u201C um die Datei zu \u00F6ffnen.";
 
     container.appendChild(iconDiv);
     container.appendChild(msgP);
