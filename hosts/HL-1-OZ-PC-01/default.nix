@@ -150,6 +150,7 @@
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
+    gamescopeSession.enable = true;
     extraPackages = with pkgs; [
       # --- Graphics / Vulkan / Mesa ---
       # Fixes: "Unable to determine architecture of provider" and
@@ -185,6 +186,16 @@
       gamescope
       mangohud
       gamemode
+    ];
+    # 32-bit packages for the Steam FHS environment.
+    # Fixes: pressure-vessel "invalid Elf handle" + "Unable to determine
+    # architecture of provider" when launching Proton games.
+    # Without these, 32-bit game processes (and Proton's Wine) cannot
+    # find the Mesa/Vulkan drivers → crash + Steam segfault on pipe disconnect.
+    extraCompatPackages = with pkgs; [
+      mesa
+      vulkan-loader
+      libdrm
     ];
   };
 

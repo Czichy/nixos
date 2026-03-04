@@ -3,7 +3,6 @@
   globals,
   lib,
   secretsPath,
-  nodes,
   pkgs,
   ...
 }: let

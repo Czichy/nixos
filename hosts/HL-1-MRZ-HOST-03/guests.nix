@@ -96,6 +96,9 @@
       // mkMicrovm "homepage" "HL-3-RZ-HOME-01" "enp4s0" "02:07:07:14:8f:17" "vlan40" {
         enableStorageDataset = true;
       }
+      // mkMicrovm "karakeep" "HL-3-RZ-KARA-01" "enp4s0" "02:09:07:14:8f:17" "vlan40" {
+        enableStorageDataset = true;
+      }
     );
   };
 }

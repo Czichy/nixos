@@ -20,7 +20,11 @@
       "Bash(xargs:*)",
       "Bash(chmod:*)",
       "Bash(git add:*)",
-      "Bash(nix-instantiate:*)"
+      "Bash(nix-instantiate:*)",
+      "Bash(nix search nixpkgs beyond-all-reason)",
+      "Bash(nix search nixpkgs bar-be-gone)",
+      "Bash(nix search nixpkgs \"beyond all reason\")",
+      "WebFetch(domain:mynixos.com)"
     ]
   }
 }

@@ -1,7 +1,5 @@
-{config, ...}
-: let
-  inherit (config) globals;
-in {
+{...}
+: {
   globals = {
     domains.me = "czichy.com";
     domains.personal = "czichy.com";
@@ -95,6 +93,8 @@ in {
         hosts.HL-3-RZ-HASS-01.id = 36;
         # Homepage
         hosts.HL-3-RZ-HOME-01.id = 37;
+        # Karakeep Bookmark Manager
+        hosts.HL-3-RZ-KARA-01.id = 40;
         # Edu-Search (Unterrichtsmaterial-Suche)
         hosts.HL-3-RZ-EDU-01.id = 114;
         # Kanidm Identity Provider (SSO/OAuth2)

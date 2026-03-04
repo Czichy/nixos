@@ -24,6 +24,7 @@ in {
       games = {
         steam.enable = true;
         minecraft.enable = true;
+        beyond-all-reason.enable = false;
       };
       terminals.foot.makeDefault = true;
       editors.zed.enable = true;

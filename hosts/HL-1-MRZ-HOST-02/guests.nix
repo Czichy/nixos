@@ -13,7 +13,7 @@
   tensorfiles.services.microvm = {
     enable = true;
     guests = let
-      mkGuest = guestName: {enableStorageDataset ? false, ...}: {
+      mkGuest = guestName: {...}: {
         autostart = true;
         modules =
           [

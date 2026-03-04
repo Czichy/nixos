@@ -89,6 +89,7 @@
       # Without these pressure-vessel cannot determine the provider
       # architecture → "invalid Elf handle" + segfault.
       extraPackages32 = with pkgs.driversi686Linux; [
+        mesa
         libva-vdpau-driver
         libvdpau-va-gl
       ] ++ [

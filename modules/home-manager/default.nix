@@ -95,6 +95,7 @@ in {
 
     programs_steam = importApply ./programs/games/steam.nix {inherit localFlake inputs;};
     programs_minecraft = importApply ./programs/games/minecraft.nix {inherit localFlake;};
+    programs_beyond-all-reason = importApply ./programs/games/beyond-all-reason.nix {inherit localFlake;};
     programs_wine = importApply ./programs/wine.nix {inherit localFlake;};
     # -- security --
     security_credentials = importApply ./security/credentials.nix {
