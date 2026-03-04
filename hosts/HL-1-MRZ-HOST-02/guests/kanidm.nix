@@ -120,6 +120,7 @@
   oauth2Clients = [
     "grafana"
     "forgejo"
+    "karakeep"
     "web-sentinel"
   ];
 in {
@@ -128,7 +129,7 @@ in {
   # ---------------------------------------------------------------------------
   # Kanidm ist sehr leichtgewichtig (Rust, ~50-100MB RAM).
   # 1 GB RAM und 2 vCPUs sind mehr als ausreichend.
-  microvm.mem = 1024;
+  microvm.mem = 2050;
   microvm.vcpu = 2;
 
   networking.hostName = hostName;
@@ -175,6 +176,7 @@ in {
   # sie laufen über web-sentinel (oauth2-proxy auf PAZ-PROXY-01 / sentinel).
   age.secrets.kanidm-oauth2-grafana = lib.mkIf (hasOAuth2Secret "grafana") (mkKanidmSecret (secretsBase + "/oauth2-grafana.age") {});
   age.secrets.kanidm-oauth2-forgejo = lib.mkIf (hasOAuth2Secret "forgejo") (mkKanidmSecret (secretsBase + "/oauth2-forgejo.age") {});
+  age.secrets.kanidm-oauth2-karakeep = lib.mkIf (hasOAuth2Secret "karakeep") (mkKanidmSecret (secretsBase + "/oauth2-karakeep.age") {});
   # Deaktiviert: paperless, immich, linkwarden haben keine aktiven MicroVMs
   # age.secrets.kanidm-oauth2-paperless = lib.mkIf (hasOAuth2Secret "paperless") (mkKanidmSecret (secretsBase + "/oauth2-paperless.age") {});
   # age.secrets.kanidm-oauth2-immich = lib.mkIf (hasOAuth2Secret "immich") (mkKanidmSecret (secretsBase + "/oauth2-immich.age") {});
@@ -321,6 +323,9 @@ in {
       groups."forgejo.access" = {};
       groups."forgejo.admins" = {};
 
+      # --- Karakeep ---
+      groups."karakeep.access" = {};
+
       # --- Paperless (DEAKTIVIERT - keine aktive MicroVM) ---
       # groups."paperless.access" = {};
 
@@ -385,6 +390,18 @@ in {
           joinType = "array";
           valuesByGroup."forgejo.admins" = ["admin"];
         };
+      };
+
+      # --- Karakeep (eigene OAuth2/OIDC-Integration) ---
+      systems.oauth2.karakeep = lib.mkIf (hasOAuth2Secret "karakeep") {
+        displayName = "Karakeep";
+        originUrl = "https://${globals.services.karakeep.domain}/api/auth/callback/custom";
+        originLanding = "https://${globals.services.karakeep.domain}/";
+        basicSecretFile = config.age.secrets.kanidm-oauth2-karakeep.path;
+        preferShortUsername = true;
+        # next-auth erwartet RS256, Kanidm nutzt standardmäßig ES256
+        enableLegacyCrypto = true;
+        scopeMaps."karakeep.access" = ["openid" "email" "profile"];
       };
 
       # --- Paperless (DEAKTIVIERT - keine aktive MicroVM) ---
