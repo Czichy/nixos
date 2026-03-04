@@ -13,7 +13,7 @@
   listenPort = 3000;
 in {
   # |----------------------------------------------------------------------| #
-  microvm.mem = 1024 * 2;
+  microvm.mem = 2029;
   microvm.vcpu = 2;
   # |----------------------------------------------------------------------| #
   networking.hostName = hostName;
@@ -107,6 +107,17 @@ in {
       NEXTAUTH_URL = "https://${karakeepDomain}";
       DISABLE_SIGNUPS = "true";
       DISABLE_NEW_RELEASE_CHECK = "true";
+      # Ollama AI-Integration (nativ auf HOST-01, GPU-beschleunigt via CUDA)
+      OLLAMA_BASE_URL = "http://${globals.net.vlan40.hosts.HL-1-MRZ-HOST-01.ipv4}:11434";
+      INFERENCE_TEXT_MODEL = "mistral:7b";
+      # Kanidm OIDC/OAuth2 SSO
+      # OAUTH_CLIENT_SECRET kommt aus karakeep-env.age (environmentFile)
+      OAUTH_WELLKNOWN_URL = "https://${globals.services.kanidm.domain}/oauth2/openid/karakeep/.well-known/openid-configuration";
+      OAUTH_CLIENT_ID = "karakeep";
+      OAUTH_PROVIDER_NAME = "Kanidm (SSO)";
+      OAUTH_AUTO_REDIRECT = "true";
+      DISABLE_PASSWORD_AUTH = "true";
+      OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING = "true";
     };
   };
 

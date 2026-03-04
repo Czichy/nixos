@@ -186,6 +186,7 @@
           "grafana.server-admins"
           "forgejo.access"
           "forgejo.admins"
+          "karakeep.access"
           # Deaktiviert: keine aktiven MicroVMs
           # "paperless.access"
           # "immich.access"
@@ -207,6 +208,7 @@
         groups = [
           # --- Zugriff auf relevante Services ---
           "edu-search.access"
+          "karakeep.access"
           # Deaktiviert: keine aktiven MicroVMs
           # "paperless.access"
           # "immich.access"
