@@ -12,11 +12,19 @@ let
 
   # Port auf dem VictoriaMetrics lauscht
   vmPort = 8428;
+  nodePort = 9100;
 
   # SeekingEdge App-Host (dein Dev-PC oder der Host wo die App laeuft)
   seekingEdgeHost = globals.net.vlan40.hosts."HL-1-OZ-PC-01".ipv4;
+
+  # Hilfsfunktion: Node-Exporter-Scrape-Target erzeugen
+  mkNodeTarget = ip: instance: {
+    targets = ["${ip}:${toString nodePort}"];
+    labels = {inherit instance;};
+  };
 in {
   networking.hostName = "HL-3-RZ-METRICS-01";
+  tensorfiles.services.monitoring.node-exporter.enable = true;
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
@@ -56,6 +64,8 @@ in {
   # |----------------------------------------------------------------------| #
   globals.services.victoria = {
     domain = victoriaDomain;
+    # Interne URL fuer direkten Prometheus-Push von vlan40-Hosts (kein Umweg ueber Internet)
+    internalUrl = "http://${globals.net.vlan40.hosts."HL-3-RZ-METRICS-01".ipv4}:${toString vmPort}";
     homepage = {
       enable = true;
       name = "VictoriaMetrics";
@@ -129,8 +139,6 @@ in {
 
       scrape_configs = [
         # --- SeekingEdge Trading Platform ---
-        # Die Rust-App exportiert Prometheus-Metriken auf Port 9091
-        # via se_observability crate (opentelemetry-prometheus exporter)
         {
           job_name = "seeking-edge";
           scrape_interval = "10s";
@@ -147,7 +155,6 @@ in {
         }
 
         # --- SeekingEdge Backtest Runner ---
-        # Gleiche App, aber im Backtest-Modus (anderer Port moeglich)
         {
           job_name = "seeking-edge-backtest";
           scrape_interval = "10s";
@@ -170,24 +177,33 @@ in {
           static_configs = [
             {
               targets = ["127.0.0.1:${toString vmPort}"];
-              labels = {
-                instance = "victoriametrics";
-              };
+              labels = {instance = "victoriametrics";};
             }
           ];
         }
 
-        # --- Node Exporter (Host-Metriken der MicroVM) ---
+        # --- Node Exporter: System-Metriken aller Hosts ---
+        # CPU, RAM, Disk, Netzwerk fuer Hypervisoren und key MicroVMs
         {
           job_name = "node";
           scrape_interval = "30s";
           static_configs = [
-            {
-              targets = ["127.0.0.1:9100"];
-              labels = {
-                instance = "metrics-vm";
-              };
-            }
+            # Hypervisoren
+            (mkNodeTarget globals.net.vlan40.hosts."HL-1-MRZ-HOST-01".ipv4 "host-01")
+            (mkNodeTarget globals.net.vlan40.hosts."HL-1-MRZ-HOST-02".ipv4 "host-02")
+            (mkNodeTarget globals.net.vlan100.hosts."HL-1-MRZ-HOST-03".ipv4 "host-03")
+            # Monitoring Stack
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-METRICS-01".ipv4 "victoria")
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-GRAFANA-01".ipv4 "grafana")
+            # Auth & Git
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-AUTH-01".ipv4 "kanidm")
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-GIT-01".ipv4 "forgejo")
+            # Apps
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-N8N-01".ipv4 "n8n")
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-KARA-01".ipv4 "karakeep")
+            # Home
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-HASS-01".ipv4 "hass")
+            (mkNodeTarget globals.net.vlan40.hosts."HL-3-RZ-HOME-01".ipv4 "homepage")
           ];
         }
       ];
@@ -200,23 +216,6 @@ in {
       "-dedup.minScrapeInterval=15s"
       # Memory-Limit fuer die MicroVM (konservativ)
       "-memory.allowedPercent=60"
-    ];
-  };
-
-  # |----------------------------------------------------------------------| #
-  # | NODE EXPORTER (optional - Host-Metriken)                             |
-  # |----------------------------------------------------------------------| #
-  services.prometheus.exporters.node = {
-    enable = true;
-    listenAddress = "127.0.0.1";
-    port = 9100;
-    enabledCollectors = [
-      "cpu"
-      "meminfo"
-      "diskstats"
-      "filesystem"
-      "netdev"
-      "loadavg"
     ];
   };
 }

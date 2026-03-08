@@ -14,6 +14,7 @@ in {
   microvm.vcpu = 4;
 
   networking.hostName = "HL-3-RZ-HASS-01";
+  tensorfiles.services.monitoring.node-exporter.enable = true;
   globals.services.home-assistant = {
     domain = homeassistantDomain;
     homepage = {

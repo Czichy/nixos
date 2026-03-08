@@ -22,6 +22,8 @@ with lib; let
   port = 45566;
   host = "health.czichy.com";
   certloc = "/var/lib/acme/czichy.com";
+  # Öffentliche WAN-IP des VPS (HL-4-PAZ-PROXY-01) – für den internen Caddy-Upstream
+  vpsWanIp = "37.120.178.230";
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
@@ -180,14 +182,28 @@ in {
     })
     # |----------------------------------------------------------------------| #
     {
-      # TODO: configure private ip
       nodes.HL-4-PAZ-PROXY-01 = {
         services.caddy.virtualHosts."${host}".extraConfig = ''
             reverse_proxy localhost:${toString port}
-
-            # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-            #   protocols tls1.3
-            # }
+          import czichy_headers
+        '';
+      };
+    }
+    # |----------------------------------------------------------------------| #
+    {
+      # Inner Caddy (HL-3-DMZ-PROXY-01 auf HL-1-MRZ-HOST-02) leitet intern an
+      # den Healthchecks-Dienst auf dem VPS weiter (via WireGuard 10.46.0.90).
+      nodes.HL-1-MRZ-HOST-02-caddy = {
+        services.caddy.virtualHosts."${host}".extraConfig = ''
+          reverse_proxy https://${vpsWanIp} {
+            transport http {
+              tls_insecure_skip_verify
+              tls_server_name ${host}
+            }
+          }
+          tls /var/lib/acme-sync/czichy.com/fullchain.pem /var/lib/acme-sync/czichy.com/key.pem {
+            protocols tls1.3
+          }
           import czichy_headers
         '';
       };
@@ -200,6 +216,8 @@ in {
         ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
         pingKey = "$(cat ${config.age.secrets.healthchecks-ping.path})";
         slug = "https://health.czichy.com/ping/${pingKey}/backup-healthchecks";
+
+        vmPushUrl = "https://${globals.services.victoria.domain}/api/v1/import/prometheus";
 
         script-post = host: site: ''
           if [ $EXIT_STATUS -ne 0 ]; then
@@ -214,6 +232,10 @@ in {
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
             ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused ${slug}
+            # Backup-Alter-Metrik an VictoriaMetrics pushen
+            ${pkgs.curl}/bin/curl -s --max-time 5 \
+              --data-binary "restic_backup_last_success_seconds{job=\"${site}\",host=\"${host}\"} $(date +%s)" \
+              '${vmPushUrl}' || true
           fi
         '';
       in {

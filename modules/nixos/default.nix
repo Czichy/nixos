@@ -76,6 +76,10 @@ in {
       inherit secretsPath;
     };
 
+    services_node-exporter = importApply ./services/monitoring/node-exporter.nix {
+      inherit localFlake;
+    };
+
     # |----------------------------------------------------------------------| #
     # | SERVICES - NETWORKING                                                |
     # |----------------------------------------------------------------------| #

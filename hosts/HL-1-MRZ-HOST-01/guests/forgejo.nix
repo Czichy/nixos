@@ -24,6 +24,7 @@
   # |----------------------------------------------------------------------| #
 in {
   networking.hostName = hostName;
+  tensorfiles.services.monitoring.node-exporter.enable = true;
 
   # |----------------------------------------------------------------------| #
   age.secrets.mailer-password = {

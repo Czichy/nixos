@@ -18,6 +18,7 @@
   hasOAuth2Secret = builtins.pathExists oauth2SecretFile;
 in {
   networking.hostName = "HL-3-RZ-GRAFANA-01";
+  tensorfiles.services.monitoring.node-exporter.enable = true;
 
   networking.firewall = {
     allowedTCPPorts = [config.services.grafana.settings.server.http_port];

@@ -81,6 +81,7 @@ in
   microvm.vcpu = 1;
   # |----------------------------------------------------------------------| #
   networking.hostName = hostName;
+  tensorfiles.services.monitoring.node-exporter.enable = true;
 
   networking.firewall = {
     allowedTCPPorts = [

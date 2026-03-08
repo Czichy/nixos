@@ -49,6 +49,7 @@ in {
     network = "internet";
   };
   networking.hostName = "HL-3-RZ-N8N-01";
+  tensorfiles.services.monitoring.node-exporter.enable = true;
 
   networking.firewall = {
     allowedTCPPorts = [n8nPort];

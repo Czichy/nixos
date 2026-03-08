@@ -603,6 +603,104 @@
       ],
       "title": "Connection Uptime",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "expr": "ibkr_subscriptions_failed_total",
+          "legendFormat": "Subscriptions Failed (client {{client_id}})",
+          "refId": "A"
+        },
+        {
+          "expr": "ibkr_api_errors_total{error=\"no_security_def_200\"}",
+          "legendFormat": "No Security Def / Stale conId (client {{client_id}})",
+          "refId": "B"
+        },
+        {
+          "expr": "ibkr_api_errors_total{error=\"not_subscribed_354\"}",
+          "legendFormat": "Not Subscribed / Missing Data Permissions (client {{client_id}})",
+          "refId": "C"
+        }
+      ],
+      "title": "Subscription Errors",
+      "description": "Tracks IBKR subscription failures: stale conId (error 200), missing data permissions (error 354), and general subscription failures. Red = at least 1 error.",
+      "type": "timeseries"
     }
   ],
   "refresh": "5s",
@@ -658,6 +756,6 @@
   "timezone": "",
   "title": "IBKR Core - Heartbeat Monitoring",
   "uid": "ibkr-heartbeat",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

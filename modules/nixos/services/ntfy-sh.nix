@@ -18,6 +18,7 @@ with lib; let
   cfg = config.tensorfiles.services.ntfy-sh;
   ntfy-port = "8090";
   ntfy-host = "push.czichy.com";
+  vpsWanIp = "37.120.178.230";
   certloc = "/var/lib/acme/czichy.com";
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
@@ -113,11 +114,25 @@ in {
     {
       nodes.HL-4-PAZ-PROXY-01 = {
         services.caddy.virtualHosts."${ntfy-host}".extraConfig = ''
-            reverse_proxy localhost:${ntfy-port}
-
-            # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
-            #   protocols tls1.3
-            # }
+          reverse_proxy localhost:${ntfy-port}
+          import czichy_headers
+        '';
+      };
+    }
+    {
+      # Inner Caddy (HL-3-DMZ-PROXY-01 auf HL-1-MRZ-HOST-02) leitet intern an
+      # den Healthchecks-Dienst auf dem VPS weiter (via WireGuard 10.46.0.90).
+      nodes.HL-1-MRZ-HOST-02-caddy = {
+        services.caddy.virtualHosts."${ntfy-host}".extraConfig = ''
+          reverse_proxy https://${vpsWanIp} {
+            transport http {
+              tls_insecure_skip_verify
+              tls_server_name ${ntfy-host}
+            }
+          }
+          tls /var/lib/acme-sync/czichy.com/fullchain.pem /var/lib/acme-sync/czichy.com/key.pem {
+            protocols tls1.3
+          }
           import czichy_headers
         '';
       };

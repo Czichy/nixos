@@ -133,6 +133,7 @@ in {
   microvm.vcpu = 2;
 
   networking.hostName = hostName;
+  tensorfiles.services.monitoring.node-exporter.enable = true;
 
   # ---------------------------------------------------------------------------
   # Globals: Kanidm als Service registrieren
