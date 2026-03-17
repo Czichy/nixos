@@ -325,16 +325,20 @@ in {
         "--http-address=0.0.0.0:${toString proxyPort}"
         "--redirect-url=https://${favaDomain}/oauth2/callback"
         "--email-domain=czichy.com"
-        # Kein --scope Flag: oauth2-proxy nutzt Standard-Scope "openid" (ausreichend).
-        # Leerzeichen in systemd ExecStart können nicht gequotet werden, daher
-        # --scope mit mehreren Werten hier nicht verwendbar.
         # sub-Claim als Identifier (immer im openid-Scope vorhanden, kein email-Scope nötig)
         "--oidc-email-claim=sub"
         "--cookie-secure=true"
         "--cookie-name=_fava_oauth2"
+        # SameSite=none: notwendig damit der CSRF-Cookie beim OAuth-Callback zurückgeschickt
+        # wird. Firefox blockiert SameSite=Lax cookies in no-cors Redirect-Chains (favicon etc.)
+        "--cookie-samesite=none"
+        # reverse-proxy: X-Forwarded-* Headers von Caddy vertrauen (Host, Proto, For)
+        "--reverse-proxy=true"
         "--skip-provider-button=true"
         "--silence-ping-logging=true"
         "--code-challenge-method=S256"
+        # Statische Assets direkt durchlassen (kein OAuth-Loop für favicon etc.)
+        "--skip-auth-regex=^/(favicon\\.ico|robots\\.txt)$"
       ];
       Restart = "always";
       RestartSec = "5s";
