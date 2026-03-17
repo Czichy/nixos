@@ -22,6 +22,46 @@ with lib; let
 
   cfg = config.tensorfiles.hm.profiles.graphical;
   _ = mkOverrideAtHmProfileLevel;
+
+  # LibreOffice mit GDK_SCALE=2 (GUI doppelt so groß)
+  libreoffice-scaled = pkgs.symlinkJoin {
+    name = "libreoffice-scaled";
+    paths = [pkgs.libreoffice];
+    nativeBuildInputs = [pkgs.makeWrapper];
+    postBuild = ''
+      wrapProgram $out/bin/soffice \
+        --set GDK_SCALE 2
+      wrapProgram $out/bin/libreoffice \
+        --set GDK_SCALE 2
+    '';
+  };
+
+  # Skript zum Setzen der LibreOffice-Einstellungen (idempotent)
+  loConfigScript = pkgs.writeText "libreoffice-configure.py" ''
+    import sys, os, re
+    path = os.path.expanduser("~/.config/libreoffice/4/user/registrymodifications.xcu")
+    if not os.path.exists(path):
+        sys.exit(0)
+    with open(path, "r") as f:
+        content = f.read()
+    inserts = []
+    # UI-Skalierung auf 200% (ScaleFactor)
+    if "ScaleFactor" not in content:
+        inserts.append('<item oor:path="/org.openoffice.Office.Common/Misc"><prop oor:name="ScaleFactor" oor:op="fuse"><value xsi:type="xs:short">200</value></prop></item>')
+    else:
+        content = re.sub(
+            r'(oor:name="ScaleFactor"[^<]*<value[^>]*>)\d+(<)',
+            r'\g<1>200\2', content)
+        print("LibreOffice: ScaleFactor auf 200% aktualisiert.")
+    # Writer-Standardschriftgröße auf 14pt (1400 = 14pt in 1/100pt)
+    if "org.openoffice.Office.Writer/DefaultFont" not in content or "StandardHeight" not in content:
+        inserts.append('<item oor:path="/org.openoffice.Office.Writer/DefaultFont"><prop oor:name="StandardHeight" oor:op="fuse"><value>1400</value></prop></item>')
+        print("LibreOffice Writer: Standardschriftgröße auf 14pt gesetzt.")
+    if inserts:
+        content = content.replace("</oor:items>", "\n".join(inserts) + "\n</oor:items>")
+    with open(path, "w") as f:
+        f.write(content)
+  '';
 in {
   options.tensorfiles.hm.profiles.graphical = with types; {
     enable = mkEnableOption ''
@@ -55,7 +95,7 @@ in {
 
       home.packages = with pkgs; [
         ente-desktop
-        libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
+        libreoffice-scaled # LibreOffice mit GDK_SCALE=2 (GUI doppelt so groß)
         # gitbutler # Git client for simultaneous branches on top of your existing workflow
         bruno # Open-source IDE For exploring and testing APIs
 
@@ -127,6 +167,11 @@ in {
         nh # Yet another nix cli helper
         disko # Declarative disk partitioning and formatting using nix
       ];
+
+      # LibreOffice: Writer-Standardschriftgröße auf 14pt setzen (idempotent)
+      home.activation.libreofficeConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        ${pkgs.python3}/bin/python3 ${loConfigScript}
+      '';
 
       fonts.fontconfig.enable = _ true;
 

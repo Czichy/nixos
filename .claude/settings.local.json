@@ -26,7 +26,8 @@
       "Bash(nix search nixpkgs \"beyond all reason\")",
       "WebFetch(domain:mynixos.com)",
       "WebFetch(domain:docs.karakeep.app)",
-      "Bash(rg -r \"secretsPath\" /home/czichy/projects/nixos --include=\"*.nix\" -l)"
+      "Bash(rg -r \"secretsPath\" /home/czichy/projects/nixos --include=\"*.nix\" -l)",
+      "Bash(rg -r \"czichy_headers\" /home/czichy/projects/nixos/ --include=\"*.nix\" -l)"
     ]
   }
 }

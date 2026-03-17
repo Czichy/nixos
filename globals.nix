@@ -95,6 +95,8 @@
         hosts.HL-3-RZ-HOME-01.id = 37;
         # Karakeep Bookmark Manager
         hosts.HL-3-RZ-KARA-01.id = 40;
+        # Fava Beancount Web UI (Finanzen/Ledger)
+        hosts.HL-3-RZ-FAVA-01.id = 41;
         # Edu-Search (Unterrichtsmaterial-Suche)
         hosts.HL-3-RZ-EDU-01.id = 114;
         # Kanidm Identity Provider (SSO/OAuth2)
@@ -187,6 +189,7 @@
           "forgejo.access"
           "forgejo.admins"
           "karakeep.access"
+          "fava.access"
           # Deaktiviert: keine aktiven MicroVMs
           # "paperless.access"
           # "immich.access"
@@ -209,6 +212,7 @@
           # --- Zugriff auf relevante Services ---
           "edu-search.access"
           "karakeep.access"
+          "fava.access"
           # Deaktiviert: keine aktiven MicroVMs
           # "paperless.access"
           # "immich.access"

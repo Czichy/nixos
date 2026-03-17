@@ -1,0 +1,11 @@
+--- a/hc/api/models.py
++++ b/hc/api/models.py
+@@ -519,6 +519,7 @@ class Check(models.Model):
+             self.n_pings = models.F("n_pings") + 1
+             body_lowercase = body.decode(errors="replace").lower()
+             self.has_confirmation_link = "confirm" in body_lowercase
+             self.save()
++            self.refresh_from_db(fields=["n_pings"])
+
+             ping = Ping(owner=self)
+             ping.n = self.n_pings

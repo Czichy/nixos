@@ -29,7 +29,7 @@
           chown 1000:1000 "/TWS_Flex_Reports/$destination" -R;
       done
       pingKey="$(cat ${config.age.secrets.ibkr-flex-hc-ping.path})";
-      ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/ibkr-flex-download"
+      ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/ibkr-flex-download?create=1"
 
     '';
   # |----------------------------------------------------------------------| #

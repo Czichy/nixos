@@ -175,6 +175,7 @@
             withHomeManager = true;
             extraOverlays = with inputs; [
               (final: _prev: {nur = import nur {pkgs = final;};})
+              (import ../parts/overlays/healthchecks.nix)
             ];
             extraModules = with inputs; [
               nix-topology.nixosModules.default

@@ -77,6 +77,16 @@ in {
     }
     # |----------------------------------------------------------------------| #
     {
+      # Workaround for nixpkgs regression: virt-secret-init-encryption.service
+      # hardcodes /usr/bin/sh which doesn't exist on NixOS.
+      # https://github.com/NixOS/nixpkgs/issues/XXXXX
+      systemd.services.virt-secret-init-encryption.serviceConfig.ExecStart = lib.mkForce [
+        ""
+        "${pkgs.bash}/bin/sh -c 'umask 0077 && (dd if=/dev/random status=none bs=32 count=1 | systemd-creds encrypt --name=secrets-encryption-key - /var/lib/libvirt/secrets/secrets-encryption-key)'"
+      ];
+    }
+    # |----------------------------------------------------------------------| #
+    {
       programs.dconf.enable = true;
       # dconf.settings = {
       #   "org/virt-manager/virt-manager/connections" = {

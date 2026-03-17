@@ -122,6 +122,7 @@
     "forgejo"
     "karakeep"
     "web-sentinel"
+    "fava"
   ];
 in {
   # ---------------------------------------------------------------------------
@@ -183,6 +184,7 @@ in {
   # age.secrets.kanidm-oauth2-immich = lib.mkIf (hasOAuth2Secret "immich") (mkKanidmSecret (secretsBase + "/oauth2-immich.age") {});
   # age.secrets.kanidm-oauth2-linkwarden = lib.mkIf (hasOAuth2Secret "linkwarden") (mkKanidmSecret (secretsBase + "/oauth2-linkwarden.age") {});
   age.secrets.kanidm-oauth2-web-sentinel = lib.mkIf (hasOAuth2Secret "web-sentinel") (mkKanidmSecret (secretsBase + "/oauth2-web-sentinel.age") {});
+  age.secrets.kanidm-oauth2-fava = lib.mkIf (hasOAuth2Secret "fava") (mkKanidmSecret (secretsBase + "/oauth2-fava.age") {});
 
   # Restic-Backup Secrets
   age.secrets.restic-kanidm = lib.mkIf hasRestic {
@@ -391,6 +393,19 @@ in {
           joinType = "array";
           valuesByGroup."forgejo.admins" = ["admin"];
         };
+      };
+
+      # --- Fava (oauth2-proxy Sidecar, intern) ---
+      # oauth2-proxy läuft in der Fava-MicroVM und authentifiziert via Kanidm.
+      # Nur christian und ina (Gruppe fava.access) haben Zugriff.
+      groups."fava.access" = {};
+      systems.oauth2.fava = lib.mkIf (hasOAuth2Secret "fava") {
+        displayName = "Fava (Finanzen)";
+        originUrl = "https://${globals.services.fava.domain}/oauth2/callback";
+        originLanding = "https://${globals.services.fava.domain}/";
+        basicSecretFile = config.age.secrets.kanidm-oauth2-fava.path;
+        preferShortUsername = true;
+        scopeMaps."fava.access" = ["openid" "email" "profile"];
       };
 
       # --- Karakeep (eigene OAuth2/OIDC-Integration) ---

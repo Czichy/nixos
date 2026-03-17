@@ -46,8 +46,7 @@ in {
     {
       programs.zen-browser = {
         enable = _ true;
-        suppressXdgMigrationWarning = true;
-        policies = import ./policies.nix;
+policies = import ./policies.nix;
       };
     }
     # |----------------------------------------------------------------------| #

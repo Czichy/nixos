@@ -64,8 +64,6 @@ in {
   # |----------------------------------------------------------------------| #
   globals.services.victoria = {
     domain = victoriaDomain;
-    # Interne URL fuer direkten Prometheus-Push von vlan40-Hosts (kein Umweg ueber Internet)
-    internalUrl = "http://${globals.net.vlan40.hosts."HL-3-RZ-METRICS-01".ipv4}:${toString vmPort}";
     homepage = {
       enable = true;
       name = "VictoriaMetrics";

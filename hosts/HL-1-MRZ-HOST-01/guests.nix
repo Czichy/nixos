@@ -109,6 +109,8 @@
       }
       // mkMicrovm "ibkr-flex" "HL-3-RZ-IBKR-01" "enp38s0" "02:01:27:ff:ed:77" "vlan40" {
       }
+      // mkMicrovm "fava" "HL-3-RZ-FAVA-01" "enp38s0" "02:09:27:ee:9e:16" "vlan40" {
+      }
       // mkMicrovm "ib-gateway" "HL-3-RZ-IBGW-01" "enp38s0" "02:06:27:ee:9e:16" "vlan40" {
       }
       // mkMicrovm "parseable" "HL-3-RZ-LOG-01" "enp38s0" "02:02:27:ee:9e:16" "vlan40" {

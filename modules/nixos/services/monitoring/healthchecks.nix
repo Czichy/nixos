@@ -225,13 +225,13 @@ in {
             -H 'Title: Backup (${site}) on ${host} failed!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/fail"
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}/fail?create=1"
           else
             ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
             -H 'Title: Backup (${site}) on ${host} successful!' \
             -H 'Tags: backup,restic,${host},${site}' \
             -d "Restic (${site}) backup success on ${host}!" '${ntfy_url}'
-            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused ${slug}
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}?create=1"
             # Backup-Alter-Metrik an VictoriaMetrics pushen
             ${pkgs.curl}/bin/curl -s --max-time 5 \
               --data-binary "restic_backup_last_success_seconds{job=\"${site}\",host=\"${host}\"} $(date +%s)" \
