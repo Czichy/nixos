@@ -324,8 +324,9 @@ in {
         "--upstream=http://127.0.0.1:${toString listenPort}"
         "--http-address=0.0.0.0:${toString proxyPort}"
         "--redirect-url=https://${favaDomain}/oauth2/callback"
-        "--email-domain=czichy.com"
-        # sub-Claim als Identifier (immer im openid-Scope vorhanden, kein email-Scope nötig)
+        # email-domain=* da wir sub-Claim (UUID) statt Email verwenden
+        "--email-domain=*"
+        # sub statt email als Identifier: Kanidm-User-UUID, kein @-Format
         "--oidc-email-claim=sub"
         "--cookie-secure=true"
         "--cookie-name=_fava_oauth2"
