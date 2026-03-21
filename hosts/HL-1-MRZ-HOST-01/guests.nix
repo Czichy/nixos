@@ -131,6 +131,9 @@
         enableSharedDataset = true;    # /shared → Inas Syncthing-Dateien (/shared/shares/users/ina)
         enableStorageDataset = true;   # /storage → Bibliothek, Dokumente, Media
       }
+      // mkMicrovm "minecraft" "HL-3-RZ-MC-01" "enp38s0" "02:0b:27:ee:9e:16" "vlan40" {
+        enableStorageDataset = true;   # /storage für Welten (kann über Zeit wachsen)
+      }
       # // mkMicrovm "affine" "HL-3-RZ-AFFINE-01" "enp38s0" "02:04:27:ee:9e:16" "vlan40" {
       #   enableStorageDataset = true;
       # }

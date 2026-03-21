@@ -1,4 +1,8 @@
-{pkgs, config, ...}: let
+{
+  pkgs,
+  config,
+  ...
+}: let
   homeDir = "/home/czichy";
 in {
   tensorfiles.hm = {
