@@ -44,10 +44,21 @@
         open-on-workspace = "tws-prod-overview";
       }
 
-      # 3. TWS Production Main (Niedrigste Priorität/Fallback: Matcht nur die App ID)
+      # 3. TWS Production Main (Matcht das Hauptfenster explizit)
       # Fenster: "U11213636 Interactive Brokers"
-      # Ziel: tws-prod
-      # Diese Regel greift nur, wenn die beiden spezifischeren TWS-Regeln zuvor NICHT gegriffen haben.
+      # Ziel: tws-prod, tiled
+      {
+        matches = [
+          {
+            app-id = "jclient-LoginFrame";
+            title = "^.* Interactive Brokers$";
+          }
+        ];
+        open-on-workspace = "tws-prod";
+      }
+
+      # 4. TWS Popups / Dialoge (alle anderen jclient-Fenster = Popups)
+      # Ziel: tws-prod, floating (immer im Vordergrund auf unterem Monitor)
       {
         matches = [
           {
@@ -55,6 +66,7 @@
           }
         ];
         open-on-workspace = "tws-prod";
+        open-floating = true;
       }
 
       # Regel für Zen-Beta (aus der alten Config übernommen)

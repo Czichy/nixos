@@ -105,7 +105,7 @@ in
             # };
 
             # Dracula
-            colors = {
+            colors-dark = {
               background = "282a36";
               foreground = "f8f8f2";
 

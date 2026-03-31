@@ -14,6 +14,12 @@
   proxyPort = 4180;   # oauth2-proxy (nach außen, Caddy zeigt hierauf)
   ledgerFile = "/ledger/main_full.beancount";
 
+  # Fava mit fava-dashboards Extension
+  fava-with-extensions = pkgs.python3.withPackages (ps: [
+    ps.fava
+    ps.fava-dashboards
+  ]);
+
   # Wrapper-Script: IBKR-Flex XMLs → Beancount-Import via ledger-eigenes Tooling
   # Voraussetzung: Python-Venv im Ledger-Repo ist initialisiert (just install)
   ibkr-import-script = pkgs.writeShellScriptBin "fava-ibkr-import" ''
@@ -228,9 +234,12 @@ in {
     serviceConfig = {
       Type = "simple";
       User = "fava";
-      ExecStart = "${pkgs.fava}/bin/fava --host 0.0.0.0 --port ${toString listenPort} ${ledgerFile}";
+      ExecStart = "${fava-with-extensions}/bin/fava --host 0.0.0.0 --port ${toString listenPort} ${ledgerFile}";
       Restart = "always";
       RestartSec = "5s";
+      # Plugins verwenden relative Pfade (z.B. "generators/recurring_config.toml") →
+      # WorkingDirectory muss /ledger sein damit Path.cwd() korrekt auflöst
+      WorkingDirectory = "/ledger";
       # Sanity-Check: Startet Fava erst wenn die Ledger-Datei vorhanden ist
       ExecStartPre = "${pkgs.coreutils}/bin/test -f ${ledgerFile}";
     };
@@ -251,7 +260,8 @@ in {
     serviceConfig = {
       Type = "oneshot";
       User = "fava";
-      ExecStart = "${pkgs.beancount}/bin/bean-check ${ledgerFile}";
+      ExecStart = "${fava-with-extensions}/bin/bean-check ${ledgerFile}";
+      WorkingDirectory = "/ledger";
     };
   };
 

@@ -196,6 +196,7 @@
       mesa
       vulkan-loader
       libdrm
+      proton-ge-bin
     ];
   };
 

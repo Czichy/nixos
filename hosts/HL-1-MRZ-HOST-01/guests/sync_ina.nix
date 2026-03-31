@@ -55,6 +55,17 @@ in {
   networking.hostName = hostName;
 
   # |----------------------------------------------------------------------| #
+  # Dediziertes Volume für den nix-Store Write-Layer (sonst füllt die root-tmpfs sich
+  # mit dem Overlay voll: 464M/483M = 97%). Wird bei erstem Start automatisch formatiert.
+  microvm.volumes = [
+    {
+      mountPoint = "/nix/.rw-store";
+      image = "nix-rw-store.img";
+      size = 2048; # MiB
+    }
+  ];
+
+  # |----------------------------------------------------------------------| #
   microvm.shares = [
     {
       # On the host
@@ -141,6 +152,14 @@ in {
       "/persist".files = [
         "/etc/ssh/ssh_host_rsa_key"
         "/etc/ssh/ssh_host_rsa_key.pub"
+      ];
+      "/persist".directories = [
+        {
+          directory = "/home/ina/.config/syncthing";
+          user = "ina";
+          group = "ina";
+          mode = "0700";
+        }
       ];
     }
   ];
