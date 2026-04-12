@@ -51,13 +51,19 @@ let
   adminPort = 3903;
 
   certloc = "/var/lib/acme-sync/czichy.com";
-in {
+in
+{
   networking.hostName = "HL-3-RZ-S3-01";
   # |----------------------------------------------------------------------| #
   # open firewall ports
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [9000 3901 3902 3903];
+    allowedTCPPorts = [
+      9000
+      3901
+      3902
+      3903
+    ];
     # allowedUDPPorts = [9000 9001];
   };
   # |----------------------------------------------------------------------| #
@@ -70,6 +76,7 @@ in {
             # Wichtige Einstellung: Deaktiviert die TLS-Zertifikatsprüfung
           	tls_server_name ${s3Domain}
           }
+          header_up Host {http.request.host}
       }
       import czichy_headers
     '';
@@ -123,7 +130,7 @@ in {
       isSystemUser = true;
       group = "garage";
     };
-    groups.garage = {};
+    groups.garage = { };
   };
 
   fileSystems."/storage".neededForBoot = true;
@@ -250,7 +257,7 @@ in {
     DynamicUser = false;
     User = "garage";
     Group = "garage";
-    ReadWriteDirectories = [config.services.garage.settings.data_dir];
+    ReadWriteDirectories = [ config.services.garage.settings.data_dir ];
     TimeoutSec = 300;
     # Allow group-readable secrets so nix user can access them for CLI
     Environment = [
@@ -293,91 +300,93 @@ in {
 
   # |----------------------------------------------------------------------| #
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
-  services.restic.backups = let
-    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-    slug = "https://health.czichy.com/ping/";
+  services.restic.backups =
+    let
+      ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+      ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+      slug = "https://health.czichy.com/ping/";
 
-    script-post = host: site: ''
-      pingKey="$(cat ${config.age.secrets.minio-hc-ping.path})"
-      if [ $EXIT_STATUS -ne 0 ]; then
-        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-        -H 'Title: Backup (${site}) on ${host} failed!' \
-        -H 'Tags: backup,restic,${host},${site}' \
-        -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
-      else
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
-      fi
-    '';
-  in {
-    ente-minio-backup = {
-      # Initialize the repository if it doesn't exist.
-      initialize = true;
+      script-post = host: site: ''
+        pingKey="$(cat ${config.age.secrets.minio-hc-ping.path})"
+        if [ $EXIT_STATUS -ne 0 ]; then
+          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+          -H 'Title: Backup (${site}) on ${host} failed!' \
+          -H 'Tags: backup,restic,${host},${site}' \
+          -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
+        else
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
+        fi
+      '';
+    in
+    {
+      ente-minio-backup = {
+        # Initialize the repository if it doesn't exist.
+        initialize = true;
 
-      # backup to a rclone remote
-      # repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-minio";
-      repository = "rclone:onedrive_nas:/backup/HL-3-RZ-ENTE-01-ente-minio";
-      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = ["${config.services.garage.settings.data_dir}/ente"];
+        # backup to a rclone remote
+        # repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-minio";
+        repository = "rclone:onedrive_nas:/backup/HL-3-RZ-ENTE-01-ente-minio";
+        # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+        paths = [ "${config.services.garage.settings.data_dir}/ente" ];
 
-      # Patterns to exclude when backing up. See
-      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-      # for details on syntax.
-      exclude = [];
+        # Patterns to exclude when backing up. See
+        #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+        # for details on syntax.
+        exclude = [ ];
 
-      passwordFile = config.age.secrets.restic-minio.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+        passwordFile = config.age.secrets.restic-minio.path;
+        rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-      # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "ente-minio";
+        # A script that must run after finishing the backup process.
+        backupCleanupCommand = script-post config.networking.hostName "ente-minio";
 
-      # A list of options (--keep-* et al.) for 'restic forget --prune',
-      # to automatically prune old snapshots.
-      # The 'forget' command is run *after* the 'backup' command, so
-      # keep that in mind when constructing the --keep-* options.
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
+        # A list of options (--keep-* et al.) for 'restic forget --prune',
+        # to automatically prune old snapshots.
+        # The 'forget' command is run *after* the 'backup' command, so
+        # keep that in mind when constructing the --keep-* options.
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
 
-      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
-      timerConfig = {
-        OnCalendar = "*-*-* 02:45:00";
+        # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+        timerConfig = {
+          OnCalendar = "*-*-* 02:45:00";
+        };
       };
-    };
 
-    # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
-    # ente-minio-backup-s3 = {
-    #   initialize = true;
-    #
-    #   # Example endpoints:
-    #   #   Backblaze B2:         "s3:https://s3.eu-central-003.backblazeb2.com/<bucket-name>"
-    #   #   Wasabi:               "s3:https://s3.eu-central-1.wasabisys.com/<bucket-name>"
-    #   #   Hetzner Storage Box:  "s3:https://nbg1.your-objectstorage.com/<bucket-name>"
-    #   repository = "s3:https://<S3_ENDPOINT>/<BUCKET_NAME>/ente-minio";
-    #
-    #   paths = ["${config.services.garage.settings.data_dir}/ente"];
-    #   exclude = [];
-    #
-    #   passwordFile = config.age.secrets.restic-minio-s3.path;
-    #   environmentFile = config.age.secrets.s3-backup-env.path;
-    #
-    #   backupCleanupCommand = script-post config.networking.hostName "ente-minio-s3";
-    #
-    #   pruneOpts = [
-    #     "--keep-daily 3"
-    #     "--keep-weekly 3"
-    #     "--keep-monthly 3"
-    #     "--keep-yearly 3"
-    #   ];
-    #
-    #   timerConfig = {
-    #     # 15 min versetzt zum OneDrive-Backup
-    #     OnCalendar = "*-*-* 03:15:00";
-    #   };
-    # };
-  };
+      # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
+      # ente-minio-backup-s3 = {
+      #   initialize = true;
+      #
+      #   # Example endpoints:
+      #   #   Backblaze B2:         "s3:https://s3.eu-central-003.backblazeb2.com/<bucket-name>"
+      #   #   Wasabi:               "s3:https://s3.eu-central-1.wasabisys.com/<bucket-name>"
+      #   #   Hetzner Storage Box:  "s3:https://nbg1.your-objectstorage.com/<bucket-name>"
+      #   repository = "s3:https://<S3_ENDPOINT>/<BUCKET_NAME>/ente-minio";
+      #
+      #   paths = ["${config.services.garage.settings.data_dir}/ente"];
+      #   exclude = [];
+      #
+      #   passwordFile = config.age.secrets.restic-minio-s3.path;
+      #   environmentFile = config.age.secrets.s3-backup-env.path;
+      #
+      #   backupCleanupCommand = script-post config.networking.hostName "ente-minio-s3";
+      #
+      #   pruneOpts = [
+      #     "--keep-daily 3"
+      #     "--keep-weekly 3"
+      #     "--keep-monthly 3"
+      #     "--keep-yearly 3"
+      #   ];
+      #
+      #   timerConfig = {
+      #     # 15 min versetzt zum OneDrive-Backup
+      #     OnCalendar = "*-*-* 03:15:00";
+      #   };
+      # };
+    };
 }

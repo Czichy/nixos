@@ -66,7 +66,7 @@
           }
         ];
         open-on-workspace = "tws-prod";
-        open-floating = true;
+        # open-floating = true;
       }
 
       # Regel für Zen-Beta (aus der alten Config übernommen)

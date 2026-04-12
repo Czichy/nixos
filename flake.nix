@@ -209,6 +209,10 @@
       url = "github:abenz1267/walker/";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    zed = {
+      url = "github:zed-industries/zed/v0.231.2";
+    };
+
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";

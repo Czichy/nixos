@@ -98,6 +98,8 @@
               # (final: _prev: {ceph-client = import ../flake-parts/overlays/ceph-client.nix;})
               nix-topology.overlays.default
               nixos-extra-modules.overlays.default
+              zed.overlays.default
+              (import ../parts/overlays/zed-fhs.nix)
             ];
             extraModules = with inputs; [
               nix-topology.nixosModules.default

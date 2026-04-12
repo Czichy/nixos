@@ -50,7 +50,8 @@
   secretsPath,
   hostName,
   ...
-}: let
+}:
+let
   # ---------------------------------------------------------------------------
   # Konfiguration
   # ---------------------------------------------------------------------------
@@ -90,13 +91,13 @@
   backupDir = "/var/lib/kanidm/backups";
 
   # Prüfe ob ein OAuth2-Secret existiert
-  hasOAuth2Secret = name:
-    builtins.pathExists (secretsBase + "/oauth2-${name}.age");
+  hasOAuth2Secret = name: builtins.pathExists (secretsBase + "/oauth2-${name}.age");
 
   # ---------------------------------------------------------------------------
   # Hilfsfunktionen für Secrets
   # ---------------------------------------------------------------------------
-  mkKanidmSecret = file: extraAttrs:
+  mkKanidmSecret =
+    file: extraAttrs:
     {
       inherit file;
       mode = "440";
@@ -105,11 +106,13 @@
     // extraAttrs;
 
   # OAuth2-Secret definieren (nur wenn .age-Datei existiert)
-  mkOAuth2Secret = name: let
-    secretFile = secretsBase + "/oauth2-${name}.age";
-  in
+  mkOAuth2Secret =
+    name:
+    let
+      secretFile = secretsBase + "/oauth2-${name}.age";
+    in
     lib.nameValuePair "kanidm-oauth2-${name}" (
-      lib.mkIf (builtins.pathExists secretFile) (mkKanidmSecret secretFile {})
+      lib.mkIf (builtins.pathExists secretFile) (mkKanidmSecret secretFile { })
     );
 
   # Liste aller OAuth2-Clients (Services die eigene Kanidm-Auth nutzen)
@@ -124,7 +127,8 @@
     "web-sentinel"
     "fava"
   ];
-in {
+in
+{
   # ---------------------------------------------------------------------------
   # MicroVM-Ressourcen
   # ---------------------------------------------------------------------------
@@ -166,25 +170,35 @@ in {
   # ---------------------------------------------------------------------------
 
   # TLS-Zertifikate (Kanidm erzwingt TLS, auch intern)
-  age.secrets."kanidm-self-signed.crt" = lib.mkIf hasTlsCrt (mkKanidmSecret tlsCrtFile {});
-  age.secrets."kanidm-self-signed.key" = lib.mkIf hasTlsKey (mkKanidmSecret tlsKeyFile {});
+  age.secrets."kanidm-self-signed.crt" = lib.mkIf hasTlsCrt (mkKanidmSecret tlsCrtFile { });
+  age.secrets."kanidm-self-signed.key" = lib.mkIf hasTlsKey (mkKanidmSecret tlsKeyFile { });
 
   # Admin-Passwörter
-  age.secrets.kanidm-admin-password = lib.mkIf hasAdminPw (mkKanidmSecret adminPwFile {});
-  age.secrets.kanidm-idm-admin-password = lib.mkIf hasIdmAdminPw (mkKanidmSecret idmAdminPwFile {});
+  age.secrets.kanidm-admin-password = lib.mkIf hasAdminPw (mkKanidmSecret adminPwFile { });
+  age.secrets.kanidm-idm-admin-password = lib.mkIf hasIdmAdminPw (mkKanidmSecret idmAdminPwFile { });
 
   # OAuth2 Client-Secrets (eines pro Service, nur wenn .age-Datei existiert)
   # Hinweis: edu-search und open-webui brauchen kein eigenes Secret –
   # sie laufen über web-sentinel (oauth2-proxy auf PAZ-PROXY-01 / sentinel).
-  age.secrets.kanidm-oauth2-grafana = lib.mkIf (hasOAuth2Secret "grafana") (mkKanidmSecret (secretsBase + "/oauth2-grafana.age") {});
-  age.secrets.kanidm-oauth2-forgejo = lib.mkIf (hasOAuth2Secret "forgejo") (mkKanidmSecret (secretsBase + "/oauth2-forgejo.age") {});
-  age.secrets.kanidm-oauth2-karakeep = lib.mkIf (hasOAuth2Secret "karakeep") (mkKanidmSecret (secretsBase + "/oauth2-karakeep.age") {});
+  age.secrets.kanidm-oauth2-grafana = lib.mkIf (hasOAuth2Secret "grafana") (
+    mkKanidmSecret (secretsBase + "/oauth2-grafana.age") { }
+  );
+  age.secrets.kanidm-oauth2-forgejo = lib.mkIf (hasOAuth2Secret "forgejo") (
+    mkKanidmSecret (secretsBase + "/oauth2-forgejo.age") { }
+  );
+  age.secrets.kanidm-oauth2-karakeep = lib.mkIf (hasOAuth2Secret "karakeep") (
+    mkKanidmSecret (secretsBase + "/oauth2-karakeep.age") { }
+  );
   # Deaktiviert: paperless, immich, linkwarden haben keine aktiven MicroVMs
   # age.secrets.kanidm-oauth2-paperless = lib.mkIf (hasOAuth2Secret "paperless") (mkKanidmSecret (secretsBase + "/oauth2-paperless.age") {});
   # age.secrets.kanidm-oauth2-immich = lib.mkIf (hasOAuth2Secret "immich") (mkKanidmSecret (secretsBase + "/oauth2-immich.age") {});
   # age.secrets.kanidm-oauth2-linkwarden = lib.mkIf (hasOAuth2Secret "linkwarden") (mkKanidmSecret (secretsBase + "/oauth2-linkwarden.age") {});
-  age.secrets.kanidm-oauth2-web-sentinel = lib.mkIf (hasOAuth2Secret "web-sentinel") (mkKanidmSecret (secretsBase + "/oauth2-web-sentinel.age") {});
-  age.secrets.kanidm-oauth2-fava = lib.mkIf (hasOAuth2Secret "fava") (mkKanidmSecret (secretsBase + "/oauth2-fava.age") {});
+  age.secrets.kanidm-oauth2-web-sentinel = lib.mkIf (hasOAuth2Secret "web-sentinel") (
+    mkKanidmSecret (secretsBase + "/oauth2-web-sentinel.age") { }
+  );
+  age.secrets.kanidm-oauth2-fava = lib.mkIf (hasOAuth2Secret "fava") (
+    mkKanidmSecret (secretsBase + "/oauth2-fava.age") { }
+  );
 
   # Restic-Backup Secrets
   age.secrets.restic-kanidm = lib.mkIf hasRestic {
@@ -206,7 +220,7 @@ in {
   # ---------------------------------------------------------------------------
   # Firewall
   # ---------------------------------------------------------------------------
-  networking.firewall.allowedTCPPorts = [kanidmPort];
+  networking.firewall.allowedTCPPorts = [ kanidmPort ];
 
   # ---------------------------------------------------------------------------
   # Reverse Proxy: Caddy auf HOST-02 (intern) + PAZ-PROXY-01 (extern)
@@ -239,6 +253,7 @@ in {
                 tls_insecure_skip_verify
                 tls_server_name ${kanidmDomain}
             }
+            header_up Host {http.request.host}
         }
         import czichy_headers
       '';
@@ -314,20 +329,20 @@ in {
       # Benutzer werden in globals.kanidm.persons ihren Gruppen zugeordnet.
 
       # --- Edu-Search ---
-      groups."edu-search.access" = {};
+      groups."edu-search.access" = { };
 
       # --- Grafana ---
-      groups."grafana.access" = {};
-      groups."grafana.editors" = {};
-      groups."grafana.admins" = {};
-      groups."grafana.server-admins" = {};
+      groups."grafana.access" = { };
+      groups."grafana.editors" = { };
+      groups."grafana.admins" = { };
+      groups."grafana.server-admins" = { };
 
       # --- Forgejo ---
-      groups."forgejo.access" = {};
-      groups."forgejo.admins" = {};
+      groups."forgejo.access" = { };
+      groups."forgejo.admins" = { };
 
       # --- Karakeep ---
-      groups."karakeep.access" = {};
+      groups."karakeep.access" = { };
 
       # --- Paperless (DEAKTIVIERT - keine aktive MicroVM) ---
       # groups."paperless.access" = {};
@@ -345,8 +360,8 @@ in {
       # --- Web-Sentinel (oauth2-proxy auf PAZ-PROXY-01) ---
       # Dieser Client schützt Services die KEINE eigene OAuth2-Integration haben
       # (z.B. edu-search, adguardhome). Zugang wird über Untergruppen gesteuert.
-      groups."web-sentinel.access" = {};
-      groups."web-sentinel.edu-search" = {};
+      groups."web-sentinel.access" = { };
+      groups."web-sentinel.edu-search" = { };
       # groups."web-sentinel.adguardhome" = {};  # AdGuard deactivated
       # Deaktiviert: open-webui hat keine aktive MicroVM
       # groups."web-sentinel.open-webui" = {};
@@ -367,13 +382,17 @@ in {
         originLanding = "https://${globals.services.grafana.domain}/";
         basicSecretFile = config.age.secrets.kanidm-oauth2-grafana.path;
         preferShortUsername = true;
-        scopeMaps."grafana.access" = ["openid" "email" "profile"];
+        scopeMaps."grafana.access" = [
+          "openid"
+          "email"
+          "profile"
+        ];
         claimMaps.groups = {
           joinType = "array";
           valuesByGroup = {
-            "grafana.editors" = ["editor"];
-            "grafana.admins" = ["admin"];
-            "grafana.server-admins" = ["server_admin"];
+            "grafana.editors" = [ "editor" ];
+            "grafana.admins" = [ "admin" ];
+            "grafana.server-admins" = [ "server_admin" ];
           };
         };
       };
@@ -388,24 +407,32 @@ in {
         # PKCE wird von Forgejo noch nicht unterstützt
         # https://github.com/go-gitea/gitea/issues/21376
         allowInsecureClientDisablePkce = true;
-        scopeMaps."forgejo.access" = ["openid" "email" "profile"];
+        scopeMaps."forgejo.access" = [
+          "openid"
+          "email"
+          "profile"
+        ];
         claimMaps.groups = {
           joinType = "array";
-          valuesByGroup."forgejo.admins" = ["admin"];
+          valuesByGroup."forgejo.admins" = [ "admin" ];
         };
       };
 
       # --- Fava (oauth2-proxy Sidecar, intern) ---
       # oauth2-proxy läuft in der Fava-MicroVM und authentifiziert via Kanidm.
       # Nur christian und ina (Gruppe fava.access) haben Zugriff.
-      groups."fava.access" = {};
+      groups."fava.access" = { };
       systems.oauth2.fava = lib.mkIf (hasOAuth2Secret "fava") {
         displayName = "Fava (Finanzen)";
         originUrl = "https://${globals.services.fava.domain}/oauth2/callback";
         originLanding = "https://${globals.services.fava.domain}/";
         basicSecretFile = config.age.secrets.kanidm-oauth2-fava.path;
         preferShortUsername = true;
-        scopeMaps."fava.access" = ["openid" "email" "profile"];
+        scopeMaps."fava.access" = [
+          "openid"
+          "email"
+          "profile"
+        ];
       };
 
       # --- Karakeep (eigene OAuth2/OIDC-Integration) ---
@@ -417,7 +444,11 @@ in {
         preferShortUsername = true;
         # next-auth erwartet RS256, Kanidm nutzt standardmäßig ES256
         enableLegacyCrypto = true;
-        scopeMaps."karakeep.access" = ["openid" "email" "profile"];
+        scopeMaps."karakeep.access" = [
+          "openid"
+          "email"
+          "profile"
+        ];
       };
 
       # --- Paperless (DEAKTIVIERT - keine aktive MicroVM) ---
@@ -468,11 +499,14 @@ in {
         originLanding = "https://oauth2.${globals.domains.me}/";
         basicSecretFile = config.age.secrets.kanidm-oauth2-web-sentinel.path;
         preferShortUsername = true;
-        scopeMaps."web-sentinel.access" = ["openid" "email"];
+        scopeMaps."web-sentinel.access" = [
+          "openid"
+          "email"
+        ];
         claimMaps.groups = {
           joinType = "array";
           valuesByGroup = {
-            "web-sentinel.edu-search" = ["access_edu_search"];
+            "web-sentinel.edu-search" = [ "access_edu_search" ];
             # "web-sentinel.adguardhome" = ["access_adguardhome"];  # AdGuard deactivated
             # Deaktiviert: open-webui hat keine aktive MicroVM
             # "web-sentinel.open-webui" = ["access_openwebui"];
@@ -503,62 +537,65 @@ in {
   #   Secret anlegen:
   #     openssl rand -base64 32 | agenix -e hosts/HL-1-MRZ-HOST-02/guests/kanidm/restic-kanidm.age
   # ---------------------------------------------------------------------------
-  services.restic.backups = lib.mkIf (hasRequiredSecrets && hasBackupSecrets) (let
-    ntfy_pass = lib.optionalString hasNtfy "$(cat ${config.age.secrets.kanidm-ntfy-alert-pass.path})";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+  services.restic.backups = lib.mkIf (hasRequiredSecrets && hasBackupSecrets) (
+    let
+      ntfy_pass = lib.optionalString hasNtfy "$(cat ${config.age.secrets.kanidm-ntfy-alert-pass.path})";
+      ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
 
-    script-post = host: site: ''
-      if [ $EXIT_STATUS -ne 0 ]; then
-        ${lib.optionalString hasNtfy ''
-          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-            -H 'Title: Backup (${site}) on ${host} failed!' \
-            -H 'Tags: backup,restic,${host},${site}' \
-            -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-        ''}
-        echo "ERROR: Restic backup ${site} on ${host} failed (exit $EXIT_STATUS)" >&2
-      else
-        ${lib.optionalString hasNtfy ''
-          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-            -H 'Title: Backup (${site}) on ${host} OK' \
-            -H 'Tags: backup,restic,${host},${site},white_check_mark' \
-            -H 'Priority: low' \
-            -d "Restic (${site}) backup on ${host} completed successfully." '${ntfy_url}'
-        ''}
-        echo "Restic backup ${site} on ${host} completed successfully."
-      fi
-    '';
-  in {
-    kanidm-backup = {
-      # Repository bei erstem Lauf automatisch initialisieren
-      initialize = true;
+      script-post = host: site: ''
+        if [ $EXIT_STATUS -ne 0 ]; then
+          ${lib.optionalString hasNtfy ''
+            ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+              -H 'Title: Backup (${site}) on ${host} failed!' \
+              -H 'Tags: backup,restic,${host},${site}' \
+              -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+          ''}
+          echo "ERROR: Restic backup ${site} on ${host} failed (exit $EXIT_STATUS)" >&2
+        else
+          ${lib.optionalString hasNtfy ''
+            ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+              -H 'Title: Backup (${site}) on ${host} OK' \
+              -H 'Tags: backup,restic,${host},${site},white_check_mark' \
+              -H 'Priority: low' \
+              -d "Restic (${site}) backup on ${host} completed successfully." '${ntfy_url}'
+          ''}
+          echo "Restic backup ${site} on ${host} completed successfully."
+        fi
+      '';
+    in
+    {
+      kanidm-backup = {
+        # Repository bei erstem Lauf automatisch initialisieren
+        initialize = true;
 
-      # Ziel: rclone-Remote (OneDrive NAS)
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-kanidm";
+        # Ziel: rclone-Remote (OneDrive NAS)
+        repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-kanidm";
 
-      # Kanidm online_backup JSON-Dumps sichern
-      paths = [backupDir];
+        # Kanidm online_backup JSON-Dumps sichern
+        paths = [ backupDir ];
 
-      exclude = [];
+        exclude = [ ];
 
-      passwordFile = config.age.secrets.restic-kanidm.path;
-      rcloneConfigFile = config.age.secrets."rclone-kanidm.conf".path;
+        passwordFile = config.age.secrets.restic-kanidm.path;
+        rcloneConfigFile = config.age.secrets."rclone-kanidm.conf".path;
 
-      # Cleanup-Script: ntfy-Benachrichtigung nach Backup
-      backupCleanupCommand = script-post config.networking.hostName "kanidm";
+        # Cleanup-Script: ntfy-Benachrichtigung nach Backup
+        backupCleanupCommand = script-post config.networking.hostName "kanidm";
 
-      # Aufbewahrungsrichtlinie: 14 Snapshots behalten, Rest prunen
-      pruneOpts = ["--keep-last 14"];
+        # Aufbewahrungsrichtlinie: 14 Snapshots behalten, Rest prunen
+        pruneOpts = [ "--keep-last 14" ];
 
-      # Zeitplan: 30 Min nach online_backup (02:00), damit Dump fertig ist
-      timerConfig = {
-        OnCalendar = "*-*-* 02:30:00";
-        # Verpasste Backups nachholen (z.B. nach Shutdown)
-        Persistent = true;
-        # Leichte Streuung um Lastspitzen zu vermeiden
-        RandomizedDelaySec = "5min";
+        # Zeitplan: 30 Min nach online_backup (02:00), damit Dump fertig ist
+        timerConfig = {
+          OnCalendar = "*-*-* 02:30:00";
+          # Verpasste Backups nachholen (z.B. nach Shutdown)
+          Persistent = true;
+          # Leichte Streuung um Lastspitzen zu vermeiden
+          RandomizedDelaySec = "5min";
+        };
       };
-    };
-  });
+    }
+  );
 
   # ---------------------------------------------------------------------------
   # Boot / Netzwerk
@@ -576,10 +613,16 @@ in {
     lib.optional (!hasRequiredSecrets) (
       "kanidm: Nicht alle TLS/Admin-Secrets vorhanden - Kanidm-Server ist DEAKTIVIERT.\n"
       + "Benoetigte Secrets (siehe Kommentar am Dateianfang fuer Anleitung):\n"
-      + (lib.optionalString (!hasTlsCrt) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/kanidm-self-signed.crt.age\n")
-      + (lib.optionalString (!hasTlsKey) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/kanidm-self-signed.key.age\n")
+      + (lib.optionalString (
+        !hasTlsCrt
+      ) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/kanidm-self-signed.crt.age\n")
+      + (lib.optionalString (
+        !hasTlsKey
+      ) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/kanidm-self-signed.key.age\n")
       + (lib.optionalString (!hasAdminPw) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/admin-password.age\n")
-      + (lib.optionalString (!hasIdmAdminPw) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/idm-admin-password.age\n")
+      + (lib.optionalString (
+        !hasIdmAdminPw
+      ) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/idm-admin-password.age\n")
     )
     ++ lib.optional (hasRequiredSecrets && !hasBackupSecrets) (
       "kanidm: Backup-Secrets fehlen - Restic-Backup ist DEAKTIVIERT.\n"

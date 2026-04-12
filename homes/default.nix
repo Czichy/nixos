@@ -44,14 +44,22 @@ in {
       "czichy@desktop" = withSystem "x86_64-linux" (
         args:
           mkHome args "czichy@desktop" {
-            extraOverlays = with inputs; [(final: _prev: {nur = import inputs.nur {pkgs = final;};})];
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import inputs.nur {pkgs = final;};})
+              zed.overlays.default
+              (import ../parts/overlays/zed-fhs.nix)
+            ];
           }
       );
 
       "czichy@server" = withSystem "x86_64-linux" (
         args:
           mkHome args "czichy@server" {
-            extraOverlays = with inputs; [(final: _prev: {nur = import inputs.nur {pkgs = final;};})];
+            extraOverlays = with inputs; [
+              (final: _prev: {nur = import inputs.nur {pkgs = final;};})
+              zed.overlays.default
+              (import ../parts/overlays/zed-fhs.nix)
+            ];
           }
       );
 

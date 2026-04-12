@@ -1,7 +1,7 @@
 {
   config.tensorfiles.services = {
     networking.networkd.enable = true;
-    virtualisation.enable = true;
+    virtualisation.enable = false; # MicroVM nutzt QEMU direkt, kein libvirtd nötig
     monitoring.node-exporter.enable = true;
     telegraf = {
       enable = true;

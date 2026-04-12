@@ -18,7 +18,8 @@
   hostName,
   lib,
   ...
-}: let
+}:
+let
   # ---------------------------------------------------------------------------
   # Konfiguration
   # ---------------------------------------------------------------------------
@@ -32,7 +33,8 @@
   webPort = 8080;
   meiliPort = 7700;
   tikaPort = 9998;
-in {
+in
+{
   # ---------------------------------------------------------------------------
   # MicroVM-Ressourcen
   # ---------------------------------------------------------------------------
@@ -85,7 +87,7 @@ in {
     ./edu-search/postgresql.nix
     ./edu-search/meilisearch.nix
     ./edu-search/indexer.nix
-    ./edu-search/rag.nix       # RAG API: Klausurerstellung + semantische Suche
+    ./edu-search/rag.nix # RAG API: Klausurerstellung + semantische Suche
     ./edu-search/webui.nix
     ./edu-search/backup.nix
   ];
@@ -94,9 +96,9 @@ in {
   # Firewall
   # ---------------------------------------------------------------------------
   networking.firewall.allowedTCPPorts = [
-    webPort   # Nginx Web-UI (über Caddy Reverse Proxy erreichbar)
+    webPort # Nginx Web-UI (über Caddy Reverse Proxy erreichbar)
     meiliPort # MeiliSearch API (für Web-UI JavaScript-Client)
-    5432      # PostgreSQL für n8n Read-Only-Zugriff (Workflows: Reports, Benachrichtigungen)
+    5432 # PostgreSQL für n8n Read-Only-Zugriff (Workflows: Reports, Benachrichtigungen)
   ];
 
   # ---------------------------------------------------------------------------
@@ -185,6 +187,7 @@ in {
                 tls_insecure_skip_verify
                 tls_server_name ${eduDomain}
             }
+            header_up Host {http.request.host}
         }
         import czichy_headers
       '';
@@ -210,7 +213,7 @@ in {
   # Boot / Netzwerk
   # ---------------------------------------------------------------------------
   fileSystems = lib.mkMerge [
-    {"/state".neededForBoot = true;}
+    { "/state".neededForBoot = true; }
   ];
 
   systemd.network.enable = true;

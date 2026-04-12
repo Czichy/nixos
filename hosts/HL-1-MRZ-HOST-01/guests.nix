@@ -97,8 +97,9 @@
       {
         enableStorageDataset = true;
       }
-      // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp38s0" "02:01:27:6b:d9:d4" "vlan40" {
-      }
+      # syncthing läuft jetzt nativ auf HOST-01 (modules/syncthing.nix), kein MicroVM mehr
+      # // mkMicrovm "syncthing" "HL-3-RZ-SYNC-01" "enp38s0" "02:01:27:6b:d9:d4" "vlan40" {
+      # }
       // mkMicrovm "sync_ina" "HL-3-RZ-SYNC-02" "enp38s0" "02:02:27:6b:d9:d4" "vlan40" {
       }
       // mkMicrovm "influxdb" "HL-3-RZ-INFLUX-01" "enp38s0" "02:01:27:dc:85:68" "vlan40" {

@@ -1,34 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "mcp__acp__Edit",
-      "mcp__acp__Bash",
-      "mcp__acp__Write",
-      "WebFetch(domain:)",
-      "WebFetch(domain:home-manager-options.extrato.io)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:ente.io)",
-      "WebFetch(domain:www.interactivebrokers.com)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:docs.n8n.io)",
-      "WebFetch(domain:community.n8n.io)",
-      "Bash(find:*)",
-      "Bash(ssh:*)",
-      "Bash(curl:*)",
-      "Bash(grep:*)",
-      "Bash(ls:*)",
-      "Bash(xargs:*)",
-      "Bash(chmod:*)",
-      "Bash(git add:*)",
-      "Bash(nix-instantiate:*)",
-      "Bash(nix search nixpkgs beyond-all-reason)",
-      "Bash(nix search nixpkgs bar-be-gone)",
-      "Bash(nix search nixpkgs \"beyond all reason\")",
-      "WebFetch(domain:mynixos.com)",
-      "WebFetch(domain:docs.karakeep.app)",
-      "Bash(rg -r \"secretsPath\" /home/czichy/projects/nixos --include=\"*.nix\" -l)",
-      "Bash(rg -r \"czichy_headers\" /home/czichy/projects/nixos/ --include=\"*.nix\" -l)",
-      "Bash(nix search:*)"
+      "Bash(grep -l \"microvm\\\\.\" hosts/HL-1-MRZ-HOST-01/guests/*.nix)",
+      "Bash(while read:*)",
+      "Bash(do basename:*)",
+      "Bash(done)",
+      "Bash(for guest:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $guest ===\")",
+      "Read(//home/czichy/projects/nixos/hosts/HL-1-MRZ-HOST-01/guests/**)"
     ]
   }
 }

@@ -7,11 +7,13 @@
   hostName,
   lib,
   ...
-}: let
+}:
+let
   karakeepDomain = "karakeep.${globals.domains.me}";
   certloc = "/var/lib/acme-sync/czichy.com";
   listenPort = 3000;
-in {
+in
+{
   # |----------------------------------------------------------------------| #
   microvm.mem = 2029;
   microvm.vcpu = 2;
@@ -39,7 +41,7 @@ in {
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
-    allowedTCPPorts = [listenPort];
+    allowedTCPPorts = [ listenPort ];
   };
 
   # |----------------------------------------------------------------------| #
@@ -52,6 +54,7 @@ in {
                 tls_insecure_skip_verify
             	tls_server_name ${karakeepDomain}
             }
+            header_up Host {http.request.host}
         }
         import czichy_headers
       '';
@@ -125,45 +128,47 @@ in {
 
   # |----------------------------------------------------------------------| #
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
-  services.restic.backups = let
-    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-    slug = "https://health.czichy.com/ping/";
+  services.restic.backups =
+    let
+      ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+      ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+      slug = "https://health.czichy.com/ping/";
 
-    script-post = host: site: ''
-      pingKey="$(cat ${config.age.secrets.karakeep-hc-ping.path})"
-      if [ $EXIT_STATUS -ne 0 ]; then
-        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-        -H 'Title: Backup (${site}) on ${host} failed!' \
-        -H 'Tags: backup,restic,${host},${site}' \
-        -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
-      else
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
-      fi
-    '';
-  in {
-    karakeep-backup = {
-      initialize = true;
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-karakeep";
-      paths = ["/var/lib/karakeep"];
-      exclude = [
-        "/var/lib/karakeep/cache"
-      ];
-      passwordFile = config.age.secrets.restic-karakeep.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
-      backupCleanupCommand = script-post config.networking.hostName "karakeep";
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
-      timerConfig = {
-        OnCalendar = "*-*-* 02:00:00";
+      script-post = host: site: ''
+        pingKey="$(cat ${config.age.secrets.karakeep-hc-ping.path})"
+        if [ $EXIT_STATUS -ne 0 ]; then
+          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+          -H 'Title: Backup (${site}) on ${host} failed!' \
+          -H 'Tags: backup,restic,${host},${site}' \
+          -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
+        else
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
+        fi
+      '';
+    in
+    {
+      karakeep-backup = {
+        initialize = true;
+        repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-karakeep";
+        paths = [ "/var/lib/karakeep" ];
+        exclude = [
+          "/var/lib/karakeep/cache"
+        ];
+        passwordFile = config.age.secrets.restic-karakeep.path;
+        rcloneConfigFile = config.age.secrets."rclone.conf".path;
+        backupCleanupCommand = script-post config.networking.hostName "karakeep";
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
+        timerConfig = {
+          OnCalendar = "*-*-* 02:00:00";
+        };
       };
     };
-  };
 
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {

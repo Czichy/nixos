@@ -52,8 +52,6 @@
   networking.firewall.checkReversePath = false;
 
   home-manager.users."czichy" = import (../../homes + "/czichy@server");
-  users.users.qemu-libvirtd.group = "qemu-libvirtd";
-  users.groups.qemu-libvirtd = {};
 
   # Workaround: microvm.nix supervisord event buffer overflow.
   # edu-search has 10+ virtiofs shares → 11 supervisord processes.

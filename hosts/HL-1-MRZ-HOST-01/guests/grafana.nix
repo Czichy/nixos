@@ -5,7 +5,8 @@
   secretsPath,
   pkgs,
   ...
-}: let
+}:
+let
   grafanaDomain = "grafana.${globals.domains.me}";
   certloc = "/var/lib/acme-sync/czichy.com";
 
@@ -16,12 +17,13 @@
   # Kanidm und Grafana müssen denselben client_secret kennen.
   oauth2SecretFile = secretsPath + "/hosts/HL-1-MRZ-HOST-02/guests/kanidm/oauth2-grafana.age";
   hasOAuth2Secret = builtins.pathExists oauth2SecretFile;
-in {
+in
+{
   networking.hostName = "HL-3-RZ-GRAFANA-01";
   tensorfiles.services.monitoring.node-exporter.enable = true;
 
   networking.firewall = {
-    allowedTCPPorts = [config.services.grafana.settings.server.http_port];
+    allowedTCPPorts = [ config.services.grafana.settings.server.http_port ];
   };
 
   nodes.HL-4-PAZ-PROXY-01 = {
@@ -37,6 +39,7 @@ in {
                 # tls_server_name stellt sicher, dass der Hostname für die TLS-Handshake übermittelt wird.
             	tls_server_name ${grafanaDomain}
             }
+            header_up Host {http.request.host}
         }
 
         # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
@@ -49,7 +52,9 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${grafanaDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-GRAFANA-01".ipv4}:${toString config.services.grafana.settings.server.http_port}
+        reverse_proxy http://${
+          globals.net.vlan40.hosts."HL-3-RZ-GRAFANA-01".ipv4
+        }:${toString config.services.grafana.settings.server.http_port}
         tls ${certloc}/fullchain.pem ${certloc}/key.pem {
            protocols tls1.3
         }
@@ -206,25 +211,29 @@ in {
       #   grafana.server-admins → "server_admin"
       # Kanidm OAuth2/OIDC – nur aktiviert wenn das Client-Secret existiert.
       # Ohne Secret startet Grafana trotzdem (nur lokale Auth, kein SSO).
-      "auth.generic_oauth" = if hasOAuth2Secret then {
-        enabled = true;
-        name = "Kanidm";
-        icon = "signin";
-        allow_sign_up = true;
-        auto_login = false;
-        client_id = "grafana";
-        client_secret = "$__file{${config.age.secrets.grafana-oauth2-client-secret.path}}";
-        scopes = "openid email profile";
-        auth_url = "https://${globals.services.kanidm.domain}/ui/oauth2";
-        token_url = "https://${globals.services.kanidm.domain}/oauth2/token";
-        api_url = "https://${globals.services.kanidm.domain}/oauth2/openid/grafana/userinfo";
-        use_pkce = true;
-        # Rollen-Mapping via Kanidm-Gruppen
-        role_attribute_path = "contains(groups[*], 'server_admin') && 'GrafanaAdmin' || contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'";
-        allow_assign_grafana_admin = true;
-      } else {
-        enabled = false;
-      };
+      "auth.generic_oauth" =
+        if hasOAuth2Secret then
+          {
+            enabled = true;
+            name = "Kanidm";
+            icon = "signin";
+            allow_sign_up = true;
+            auto_login = false;
+            client_id = "grafana";
+            client_secret = "$__file{${config.age.secrets.grafana-oauth2-client-secret.path}}";
+            scopes = "openid email profile";
+            auth_url = "https://${globals.services.kanidm.domain}/ui/oauth2";
+            token_url = "https://${globals.services.kanidm.domain}/oauth2/token";
+            api_url = "https://${globals.services.kanidm.domain}/oauth2/openid/grafana/userinfo";
+            use_pkce = true;
+            # Rollen-Mapping via Kanidm-Gruppen
+            role_attribute_path = "contains(groups[*], 'server_admin') && 'GrafanaAdmin' || contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'";
+            allow_assign_grafana_admin = true;
+          }
+        else
+          {
+            enabled = false;
+          };
 
     };
 
@@ -344,7 +353,7 @@ in {
           {
             orgId = 1;
             receiver = "ntfy-phone";
-            group_by = ["alertname"];
+            group_by = [ "alertname" ];
             group_wait = "30s";
             group_interval = "5m";
             repeat_interval = "4h";
@@ -355,7 +364,11 @@ in {
                 group_wait = "30s";
                 repeat_interval = "1h";
                 object_matchers = [
-                  ["folder" "=" "Infrastructure Alerts"]
+                  [
+                    "folder"
+                    "="
+                    "Infrastructure Alerts"
+                  ]
                 ];
               }
               {
@@ -363,16 +376,24 @@ in {
                 group_wait = "10s";
                 repeat_interval = "1h";
                 object_matchers = [
-                  ["severity" "=" "critical"]
+                  [
+                    "severity"
+                    "="
+                    "critical"
+                  ]
                 ];
               }
               {
                 receiver = "ntfy-phone";
                 group_wait = "30s";
                 repeat_interval = "4h";
-                mute_time_intervals = ["outside-market-hours"];
+                mute_time_intervals = [ "outside-market-hours" ];
                 object_matchers = [
-                  ["severity" "=" "warning"]
+                  [
+                    "severity"
+                    "="
+                    "warning"
+                  ]
                 ];
               }
             ];
@@ -388,15 +409,40 @@ in {
             name = "outside-market-hours";
             intervals = [
               {
-                weekdays = ["saturday" "sunday"];
+                weekdays = [
+                  "saturday"
+                  "sunday"
+                ];
               }
               {
-                weekdays = ["monday" "tuesday" "wednesday" "thursday" "friday"];
-                times = [{ start = "00:00"; end = "14:30"; }];
+                weekdays = [
+                  "monday"
+                  "tuesday"
+                  "wednesday"
+                  "thursday"
+                  "friday"
+                ];
+                times = [
+                  {
+                    start = "00:00";
+                    end = "14:30";
+                  }
+                ];
               }
               {
-                weekdays = ["monday" "tuesday" "wednesday" "thursday" "friday"];
-                times = [{ start = "21:00"; end = "24:00"; }];
+                weekdays = [
+                  "monday"
+                  "tuesday"
+                  "wednesday"
+                  "thursday"
+                  "friday"
+                ];
+                times = [
+                  {
+                    start = "21:00";
+                    end = "24:00";
+                  }
+                ];
               }
             ];
           }
@@ -424,7 +470,9 @@ in {
                 # No data = service not scraped at all → treat as problem
                 noDataState = "Alerting";
                 execErrState = "Alerting";
-                labels = { severity = "critical"; };
+                labels = {
+                  severity = "critical";
+                };
                 annotations = {
                   summary = "HTTP service unreachable";
                   description = "Service {{ $labels.server }} returned result_code != 1 (success). Check Telegraf http_response plugin.";
@@ -433,7 +481,10 @@ in {
                   # A: last http_response_result_code per server tag from InfluxDB
                   {
                     refId = "A";
-                    relativeTimeRange = { from = 300; to = 0; };
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
                     # Use the provisioned datasource name; Grafana resolves by name
                     datasourceUid = "influxdb-machines";
                     model = {
@@ -462,7 +513,9 @@ in {
                       refId = "B";
                       expression = "A";
                       reducer = "last";
-                      settings = { mode = "dropNN"; };
+                      settings = {
+                        mode = "dropNN";
+                      };
                     };
                   }
                   # C: threshold – alert when result_code != 1 (i.e. not success)
@@ -473,9 +526,17 @@ in {
                       type = "threshold";
                       refId = "C";
                       expression = "B";
-                      conditions = [{
-                        evaluator = { type = "outside_range"; params = [1 1]; };
-                      }];
+                      conditions = [
+                        {
+                          evaluator = {
+                            type = "outside_range";
+                            params = [
+                              1
+                              1
+                            ];
+                          };
+                        }
+                      ];
                     };
                   }
                 ];
@@ -495,12 +556,19 @@ in {
                 for = "1m";
                 noDataState = "OK";
                 execErrState = "Alerting";
-                labels = { severity = "critical"; };
-                annotations = { summary = "System errors detected"; };
+                labels = {
+                  severity = "critical";
+                };
+                annotations = {
+                  summary = "System errors detected";
+                };
                 data = [
                   {
                     refId = "A";
-                    relativeTimeRange = { from = 300; to = 0; };
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
                     datasourceUid = "victoria-metrics";
                     model = {
                       refId = "A";
@@ -510,12 +578,29 @@ in {
                   {
                     refId = "B";
                     datasourceUid = "__expr__";
-                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                    model = {
+                      type = "reduce";
+                      refId = "B";
+                      expression = "A";
+                      reducer = "last";
+                    };
                   }
                   {
                     refId = "C";
                     datasourceUid = "__expr__";
-                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "gt"; params = [0]; }; }]; };
+                    model = {
+                      type = "threshold";
+                      refId = "C";
+                      expression = "B";
+                      conditions = [
+                        {
+                          evaluator = {
+                            type = "gt";
+                            params = [ 0 ];
+                          };
+                        }
+                      ];
+                    };
                   }
                 ];
               }
@@ -526,24 +611,51 @@ in {
                 for = "10m";
                 noDataState = "Alerting";
                 execErrState = "Alerting";
-                labels = { severity = "warning"; };
-                annotations = { summary = "No orders created in the last 10 minutes"; };
+                labels = {
+                  severity = "warning";
+                };
+                annotations = {
+                  summary = "No orders created in the last 10 minutes";
+                };
                 data = [
                   {
                     refId = "A";
-                    relativeTimeRange = { from = 600; to = 0; };
+                    relativeTimeRange = {
+                      from = 600;
+                      to = 0;
+                    };
                     datasourceUid = "victoria-metrics";
-                    model = { refId = "A"; expr = "sum(rate(orders_created_total[10m]))"; };
+                    model = {
+                      refId = "A";
+                      expr = "sum(rate(orders_created_total[10m]))";
+                    };
                   }
                   {
                     refId = "B";
                     datasourceUid = "__expr__";
-                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                    model = {
+                      type = "reduce";
+                      refId = "B";
+                      expression = "A";
+                      reducer = "last";
+                    };
                   }
                   {
                     refId = "C";
                     datasourceUid = "__expr__";
-                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "lt"; params = [0.001]; }; }]; };
+                    model = {
+                      type = "threshold";
+                      refId = "C";
+                      expression = "B";
+                      conditions = [
+                        {
+                          evaluator = {
+                            type = "lt";
+                            params = [ 0.001 ];
+                          };
+                        }
+                      ];
+                    };
                   }
                 ];
               }
@@ -554,24 +666,51 @@ in {
                 for = "2m";
                 noDataState = "OK";
                 execErrState = "Alerting";
-                labels = { severity = "warning"; };
-                annotations = { summary = "Signal-to-order latency p95 exceeded 200ms"; };
+                labels = {
+                  severity = "warning";
+                };
+                annotations = {
+                  summary = "Signal-to-order latency p95 exceeded 200ms";
+                };
                 data = [
                   {
                     refId = "A";
-                    relativeTimeRange = { from = 300; to = 0; };
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
                     datasourceUid = "victoria-metrics";
-                    model = { refId = "A"; expr = "histogram_quantile(0.95, rate(latency_signal_to_order_ms_bucket[5m]))"; };
+                    model = {
+                      refId = "A";
+                      expr = "histogram_quantile(0.95, rate(latency_signal_to_order_ms_bucket[5m]))";
+                    };
                   }
                   {
                     refId = "B";
                     datasourceUid = "__expr__";
-                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                    model = {
+                      type = "reduce";
+                      refId = "B";
+                      expression = "A";
+                      reducer = "last";
+                    };
                   }
                   {
                     refId = "C";
                     datasourceUid = "__expr__";
-                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "gt"; params = [200]; }; }]; };
+                    model = {
+                      type = "threshold";
+                      refId = "C";
+                      expression = "B";
+                      conditions = [
+                        {
+                          evaluator = {
+                            type = "gt";
+                            params = [ 200 ];
+                          };
+                        }
+                      ];
+                    };
                   }
                 ];
               }
@@ -582,24 +721,51 @@ in {
                 for = "0s";
                 noDataState = "OK";
                 execErrState = "Alerting";
-                labels = { severity = "critical"; };
-                annotations = { summary = "Risk check failures detected"; };
+                labels = {
+                  severity = "critical";
+                };
+                annotations = {
+                  summary = "Risk check failures detected";
+                };
                 data = [
                   {
                     refId = "A";
-                    relativeTimeRange = { from = 300; to = 0; };
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
                     datasourceUid = "victoria-metrics";
-                    model = { refId = "A"; expr = "sum(increase(risk_checks_failed_total[5m]))"; };
+                    model = {
+                      refId = "A";
+                      expr = "sum(increase(risk_checks_failed_total[5m]))";
+                    };
                   }
                   {
                     refId = "B";
                     datasourceUid = "__expr__";
-                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                    model = {
+                      type = "reduce";
+                      refId = "B";
+                      expression = "A";
+                      reducer = "last";
+                    };
                   }
                   {
                     refId = "C";
                     datasourceUid = "__expr__";
-                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "gt"; params = [0]; }; }]; };
+                    model = {
+                      type = "threshold";
+                      refId = "C";
+                      expression = "B";
+                      conditions = [
+                        {
+                          evaluator = {
+                            type = "gt";
+                            params = [ 0 ];
+                          };
+                        }
+                      ];
+                    };
                   }
                 ];
               }
@@ -610,24 +776,51 @@ in {
                 for = "1m";
                 noDataState = "Alerting";
                 execErrState = "Alerting";
-                labels = { severity = "critical"; };
-                annotations = { summary = "SeekingEdge application metrics endpoint is unreachable"; };
+                labels = {
+                  severity = "critical";
+                };
+                annotations = {
+                  summary = "SeekingEdge application metrics endpoint is unreachable";
+                };
                 data = [
                   {
                     refId = "A";
-                    relativeTimeRange = { from = 300; to = 0; };
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
                     datasourceUid = "victoria-metrics";
-                    model = { refId = "A"; expr = "up{job=\"seeking-edge\"}"; };
+                    model = {
+                      refId = "A";
+                      expr = "up{job=\"seeking-edge\"}";
+                    };
                   }
                   {
                     refId = "B";
                     datasourceUid = "__expr__";
-                    model = { type = "reduce"; refId = "B"; expression = "A"; reducer = "last"; };
+                    model = {
+                      type = "reduce";
+                      refId = "B";
+                      expression = "A";
+                      reducer = "last";
+                    };
                   }
                   {
                     refId = "C";
                     datasourceUid = "__expr__";
-                    model = { type = "threshold"; refId = "C"; expression = "B"; conditions = [{ evaluator = { type = "lt"; params = [1]; }; }]; };
+                    model = {
+                      type = "threshold";
+                      refId = "C";
+                      expression = "B";
+                      conditions = [
+                        {
+                          evaluator = {
+                            type = "lt";
+                            params = [ 1 ];
+                          };
+                        }
+                      ];
+                    };
                   }
                 ];
               }

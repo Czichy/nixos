@@ -7,13 +7,15 @@
   pkgs,
   inputs,
   ...
-}: let
+}:
+let
   # |----------------------------------------------------------------------| #
   docspellDomain = "search.${globals.domains.me}";
 
   certloc = "/var/lib/acme-sync/czichy.com";
   # |----------------------------------------------------------------------| #
-in {
+in
+{
   microvm.mem = 1024 * 2;
   microvm.vcpu = 2;
 
@@ -68,6 +70,7 @@ in {
             transport http {
             	tls_server_name ${docspellDomain}
             }
+            header_up Host {http.request.host}
         }
 
         # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
@@ -80,7 +83,9 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${docspellDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-SEARCH-01".ipv4}:${toString config.services.forgejo.settings.server.HTTP_PORT}
+        reverse_proxy http://${
+          globals.net.vlan40.hosts."HL-3-RZ-SEARCH-01".ipv4
+        }:${toString config.services.forgejo.settings.server.HTTP_PORT}
         tls ${certloc}/fullchain.pem ${certloc}/key.pem {
            protocols tls1.3
         }

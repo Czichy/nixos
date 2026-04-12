@@ -3,7 +3,8 @@
   treefmt,
   devenv-root,
   ...
-}: {
+}:
+{
   # DEVENV:  Fast, Declarative, Reproducible, and Composable Developer
   # Environments using Nix developed by Cachix. For more information refer to
   #
@@ -31,7 +32,7 @@
 
     # -- BASE LANG UTILS --
     markdownlint-cli # Command line interface for MarkdownLint
-    nodePackages.prettier # Prettier is an opinionated code formatter
+    prettier # Prettier is an opinionated code formatter
     typos # Source code spell checker
     treefmt # one CLI to format the code tree
 
@@ -113,9 +114,10 @@
   # This is currently needed for devenv to properly run in pure hermetic
   # mode while still being able to run processes & services and modify
   # (some parts) of the active shell.
-  devenv.root = let
-    devenvRootFileContent = builtins.readFile devenv-root.outPath;
-  in
+  devenv.root =
+    let
+      devenvRootFileContent = builtins.readFile devenv-root.outPath;
+    in
     pkgs.lib.mkIf (devenvRootFileContent != "") devenvRootFileContent;
 
   # ---------------------

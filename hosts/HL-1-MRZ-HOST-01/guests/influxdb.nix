@@ -4,12 +4,14 @@
   secretsPath,
   pkgs,
   ...
-}: let
+}:
+let
   influxdbDomain = "influxdb.${globals.domains.me}";
   influxdbPort = 8086;
 
   certloc = "/var/lib/acme-sync/czichy.com";
-in {
+in
+{
   # |----------------------------------------------------------------------| #
   globals.services.influxdb = {
     domain = influxdbDomain;
@@ -26,8 +28,8 @@ in {
   networking.hostName = "HL-3-RZ-INFLUX-01";
 
   networking.firewall = {
-    allowedTCPPorts = [8086];
-    allowedUDPPorts = [8086];
+    allowedTCPPorts = [ 8086 ];
+    allowedUDPPorts = [ 8086 ];
   };
 
   nodes.HL-4-PAZ-PROXY-01 = {
@@ -43,6 +45,7 @@ in {
                 # tls_server_name stellt sicher, dass der Hostname für die TLS-Handshake übermittelt wird.
             	tls_server_name ${influxdbDomain}
             }
+            header_up Host {http.request.host}
         }
 
         # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
@@ -124,40 +127,37 @@ in {
         tokenFile = config.age.secrets.influxdb-admin-token.path;
       };
       organizations.machines = {
-        buckets.telegraf = {};
+        buckets.telegraf = { };
         auths = {
           telegraf = {
-            readBuckets = ["telegraf"];
-            writeBuckets = ["telegraf"];
-            tokenFile =
-              config.age.secrets."influxdb-user-telegraf-token".path;
+            readBuckets = [ "telegraf" ];
+            writeBuckets = [ "telegraf" ];
+            tokenFile = config.age.secrets."influxdb-user-telegraf-token".path;
           };
         };
       };
       organizations.home = {
         buckets = {
-          home_assistant = {};
-          smart-home = {};
+          home_assistant = { };
+          smart-home = { };
         };
         auths = {
           smart-home = {
-            readBuckets = ["smart-home"];
-            writeBuckets = ["smart-home"];
-            tokenFile =
-              config.age.secrets."influxdb-user-smart-home-token".path;
+            readBuckets = [ "smart-home" ];
+            writeBuckets = [ "smart-home" ];
+            tokenFile = config.age.secrets."influxdb-user-smart-home-token".path;
           };
           home_assistant = {
-            readBuckets = ["home_assistant"];
-            writeBuckets = ["home_assistant"];
-            tokenFile =
-              config.age.secrets."influxdb-user-home_assistant-token".path;
+            readBuckets = [ "home_assistant" ];
+            writeBuckets = [ "home_assistant" ];
+            tokenFile = config.age.secrets."influxdb-user-home_assistant-token".path;
           };
         };
       };
     };
   };
 
-  environment.systemPackages = [pkgs.influxdb2-cli];
+  environment.systemPackages = [ pkgs.influxdb2-cli ];
 
   systemd.services.grafana.serviceConfig.RestartSec = "60"; # Retry every minute
 }

@@ -8,7 +8,8 @@
   inputs,
   system,
   ...
-}: let
+}:
+let
   # |----------------------------------------------------------------------| #
   docspellDomain = "docs.${globals.domains.me}";
 
@@ -36,7 +37,8 @@
   watchDir = "/shared/ina";
   header-value = "test123";
   # |----------------------------------------------------------------------| #
-in {
+in
+{
   microvm.mem = 1024 * 6;
   microvm.vcpu = 2;
 
@@ -107,6 +109,7 @@ in {
             transport http {
             	tls_server_name ${docspellDomain}
             }
+            header_up Host {http.request.host}
         }
 
         # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
@@ -119,7 +122,9 @@ in {
   nodes.HL-1-MRZ-HOST-02-caddy = {
     services.caddy = {
       virtualHosts."${docspellDomain}".extraConfig = ''
-        reverse_proxy http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}
+        reverse_proxy http://${
+          globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4
+        }:${toString config.services.docspell-restserver.bind.port}
         tls ${certloc}/fullchain.pem ${certloc}/key.pem {
            protocols tls1.3
         }
@@ -148,28 +153,30 @@ in {
   #       host  all  all 0.0.0.0/0 md5
   #     '';
   # };
-  services.postgresql = let
-    pginit = pkgs.writeText "pginit.sql" ''
-      CREATE USER docspell WITH PASSWORD 'docspell' LOGIN CREATEDB;
-      GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO docspell;
-      GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO docspell;
-      CREATE DATABASE DOCSPELL OWNER 'docspell';
-    '';
-  in {
-    enable = true;
-    initialScript = pginit;
-    # package = pkgs.postgresql_15;
-    # enableTCPIP = true;
-    ensureDatabases = ["docspell"];
-    ensureUsers = [
-      {
-        name = "docspell";
-        # password = "docspell";
-        ensureDBOwnership = true;
-        ensureClauses.login = true;
-      }
-    ];
-  };
+  services.postgresql =
+    let
+      pginit = pkgs.writeText "pginit.sql" ''
+        CREATE USER docspell WITH PASSWORD 'docspell' LOGIN CREATEDB;
+        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO docspell;
+        GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO docspell;
+        CREATE DATABASE DOCSPELL OWNER 'docspell';
+      '';
+    in
+    {
+      enable = true;
+      initialScript = pginit;
+      # package = pkgs.postgresql_15;
+      # enableTCPIP = true;
+      ensureDatabases = [ "docspell" ];
+      ensureUsers = [
+        {
+          name = "docspell";
+          # password = "docspell";
+          ensureDBOwnership = true;
+          ensureClauses.login = true;
+        }
+      ];
+    };
   # |----------------------------------------------------------------------| #
   # https://docspell.org/docs/install/nix/
 
@@ -280,26 +287,30 @@ in {
   };
   # |----------------------------------------------------------------------| #
 
-  services.dsc-watch = let
-    docspell-url = "http://10.15.40.18:7880";
-  in {
-    enable = true;
-    package = inputs.dsc.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    inherit docspell-url;
-    # docspell-url = "http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}";
-    exclude-filter = null;
-    watchDirs = [
-      watchDir # Note, dsc expects files to be in a subdirectory corresponding to a collective. There is no way to declaratively create a collective as of the time of writing
-    ];
-    integration-endpoint = let
-      headerFile = pkgs.writeText "int-header-file" ''
-        Docspell-Integration:${header-value}
-      '';
-    in {
-      enabled = true;
-      header-file = headerFile;
+  services.dsc-watch =
+    let
+      docspell-url = "http://10.15.40.18:7880";
+    in
+    {
+      enable = true;
+      package = inputs.dsc.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      inherit docspell-url;
+      # docspell-url = "http://${globals.net.vlan40.hosts."HL-3-RZ-DOCSPL-01".ipv4}:${toString config.services.docspell-restserver.bind.port}";
+      exclude-filter = null;
+      watchDirs = [
+        watchDir # Note, dsc expects files to be in a subdirectory corresponding to a collective. There is no way to declaratively create a collective as of the time of writing
+      ];
+      integration-endpoint =
+        let
+          headerFile = pkgs.writeText "int-header-file" ''
+            Docspell-Integration:${header-value}
+          '';
+        in
+        {
+          enabled = true;
+          header-file = headerFile;
+        };
     };
-  };
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
     files = [

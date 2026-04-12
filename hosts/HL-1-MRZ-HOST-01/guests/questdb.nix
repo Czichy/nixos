@@ -6,12 +6,14 @@
   nodes,
   pkgs,
   ...
-}: let
+}:
+let
   influxdbDomain = "influxdb.${globals.domains.me}";
   influxdbPort = 8086;
 
   certloc = "/var/lib/acme-sync/czichy.com";
-in {
+in
+{
   # age.secrets.github-access-token = {
   #   rekeyFile = config.node.secretsDir + "/github-access-token.age";
   #   mode = "440";
@@ -42,8 +44,8 @@ in {
   networking.hostName = "HL-3-RZ-INFLUX-01";
 
   networking.firewall = {
-    allowedTCPPorts = [8086];
-    allowedUDPPorts = [8086];
+    allowedTCPPorts = [ 8086 ];
+    allowedUDPPorts = [ 8086 ];
   };
 
   nodes.HL-4-PAZ-PROXY-01 = {
@@ -54,6 +56,7 @@ in {
             transport http {
             	tls_server_name ${influxdbDomain}
             }
+            header_up Host {http.request.host}
         }
 
         # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
@@ -117,12 +120,12 @@ in {
         passwordFile = config.age.secrets.influxdb-admin-password.path;
         tokenFile = config.age.secrets.influxdb-admin-token.path;
       };
-      organizations.machines.buckets.telegraf = {};
-      organizations.home.buckets.home_assistant = {};
+      organizations.machines.buckets.telegraf = { };
+      organizations.home.buckets.home_assistant = { };
     };
   };
 
-  environment.systemPackages = [pkgs.influxdb2-cli];
+  environment.systemPackages = [ pkgs.influxdb2-cli ];
 
   systemd.services.grafana.serviceConfig.RestartSec = "60"; # Retry every minute
 }

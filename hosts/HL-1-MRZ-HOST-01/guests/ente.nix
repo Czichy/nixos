@@ -23,13 +23,22 @@ let
   admin_id = "1580559962386438";
 
   certloc = "/var/lib/acme-sync/czichy.com";
-in {
+in
+{
   networking.hostName = "HL-3-RZ-ENTE-01";
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
-    allowedTCPPorts = [8080 9000 9001];
-    allowedUDPPorts = [8080 9000 9001];
+    allowedTCPPorts = [
+      8080
+      9000
+      9001
+    ];
+    allowedUDPPorts = [
+      8080
+      9000
+      9001
+    ];
   };
   # |----------------------------------------------------------------------| #
   #
@@ -41,6 +50,7 @@ in {
             # Wichtige Einstellung: Deaktiviert die TLS-Zertifikatsprüfung
           	tls_server_name ${enteApiDomain}
           }
+          header_up Host {http.request.host}
       }
       import czichy_headers
     '';
@@ -49,6 +59,7 @@ in {
           transport http {
           	tls_server_name ${s3Domain}
           }
+          header_up Host {http.request.host}
       }
       import czichy_headers
     '';
@@ -241,7 +252,7 @@ in {
 
       webauthn = {
         rpid = enteAccountsDomain;
-        rporigins = ["https://${enteAccountsDomain}"];
+        rporigins = [ "https://${enteAccountsDomain}" ];
       };
 
       # FIXME: blocked on https://github.com/ente-io/ente/issues/5958
@@ -284,127 +295,121 @@ in {
   };
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
-  services.restic.backups = let
-    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-    slug = "https://health.czichy.com/ping/";
+  services.restic.backups =
+    let
+      ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+      ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+      slug = "https://health.czichy.com/ping/";
 
-    script-post = host: site: ''
-      pingKey="$(cat ${config.age.secrets.postgres-hc-ping.path})"
-      if [ $EXIT_STATUS -ne 0 ]; then
-        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-        -H 'Title: Backup (${site}) on ${host} failed!' \
-        -H 'Tags: backup,restic,${host},${site}' \
-        -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
-      else
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
-      fi
-    '';
-  in {
-    ente-postgres-backup = {
-      # Initialize the repository if it doesn't exist.
-      initialize = true;
+      script-post = host: site: ''
+        pingKey="$(cat ${config.age.secrets.postgres-hc-ping.path})"
+        if [ $EXIT_STATUS -ne 0 ]; then
+          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+          -H 'Title: Backup (${site}) on ${host} failed!' \
+          -H 'Tags: backup,restic,${host},${site}' \
+          -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
+        else
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
+        fi
+      '';
+    in
+    {
+      ente-postgres-backup = {
+        # Initialize the repository if it doesn't exist.
+        initialize = true;
 
-      # backup to a rclone remote
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-postgres";
+        # backup to a rclone remote
+        repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ente-postgres";
 
-      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = ["/tmp/postgresql-dump.sql.gz"];
+        # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+        paths = [ "/tmp/postgresql-dump.sql.gz" ];
 
-      # Patterns to exclude when backing up. See
-      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-      # for details on syntax.
-      exclude = [];
+        # Patterns to exclude when backing up. See
+        #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+        # for details on syntax.
+        exclude = [ ];
 
-      passwordFile = config.age.secrets.restic-postgres.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+        passwordFile = config.age.secrets.restic-postgres.path;
+        rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-      # A script that must run before starting the backup process.
-      backupPrepareCommand =
-        /*
-        sh
-        */
-        ''
+        # A script that must run before starting the backup process.
+        backupPrepareCommand = /* sh */ ''
           ${config.services.postgresql.package}/bin/pg_dumpall --clean \
           | ${lib.getExe pkgs.gzip} --rsyncable \
           > /tmp/postgresql-dump.sql.gz
         '';
 
-      # A script that must run after finishing the backup process.
-      backupCleanupCommand =
-        /*
-        sh
-        */
-        ''
+        # A script that must run after finishing the backup process.
+        backupCleanupCommand = /* sh */ ''
           rm -f /tmp/postgresql-dump.sql.gz
           ${script-post config.networking.hostName "ente-postgres"}
         '';
 
-      # Extra extended options to be passed to the restic --option flag.
-      # extraOptions = [];
+        # Extra extended options to be passed to the restic --option flag.
+        # extraOptions = [];
 
-      # Extra arguments passed to restic backup.
-      # extraBackupArgs = [
-      #   "--exclude-file=/etc/restic/excludes-list"
-      # ];
+        # Extra arguments passed to restic backup.
+        # extraBackupArgs = [
+        #   "--exclude-file=/etc/restic/excludes-list"
+        # ];
 
-      # A list of options (--keep-* et al.) for 'restic forget --prune',
-      # to automatically prune old snapshots.
-      # The 'forget' command is run *after* the 'backup' command, so
-      # keep that in mind when constructing the --keep-* options.
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
+        # A list of options (--keep-* et al.) for 'restic forget --prune',
+        # to automatically prune old snapshots.
+        # The 'forget' command is run *after* the 'backup' command, so
+        # keep that in mind when constructing the --keep-* options.
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
 
-      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
-      timerConfig = {
-        OnCalendar = "*-*-* 02:30:00";
+        # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+        timerConfig = {
+          OnCalendar = "*-*-* 02:30:00";
+        };
       };
-    };
 
-    # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
-    # ente-postgres-backup-s3 = {
-    #   initialize = true;
-    #
-    #   # Example endpoints:
-    #   #   Backblaze B2:         "s3:https://s3.eu-central-003.backblazeb2.com/<bucket-name>"
-    #   #   Wasabi:               "s3:https://s3.eu-central-1.wasabisys.com/<bucket-name>"
-    #   #   Hetzner Storage Box:  "s3:https://nbg1.your-objectstorage.com/<bucket-name>"
-    #   repository = "s3:https://<S3_ENDPOINT>/<BUCKET_NAME>/ente-postgres";
-    #
-    #   paths = ["/tmp/postgresql-dump-s3.sql.gz"];
-    #   exclude = [];
-    #
-    #   passwordFile = config.age.secrets.restic-postgres-s3.path;
-    #   environmentFile = config.age.secrets.s3-backup-env.path;
-    #
-    #   backupPrepareCommand = ''
-    #     ${config.services.postgresql.package}/bin/pg_dumpall --clean \
-    #     | ${lib.getExe pkgs.gzip} --rsyncable \
-    #     > /tmp/postgresql-dump-s3.sql.gz
-    #   '';
-    #
-    #   backupCleanupCommand = ''
-    #     rm -f /tmp/postgresql-dump-s3.sql.gz
-    #     ${script-post config.networking.hostName "ente-postgres-s3"}
-    #   '';
-    #
-    #   pruneOpts = [
-    #     "--keep-daily 3"
-    #     "--keep-weekly 3"
-    #     "--keep-monthly 3"
-    #     "--keep-yearly 3"
-    #   ];
-    #
-    #   timerConfig = {
-    #     OnCalendar = "*-*-* 03:00:00";
-    #   };
-    # };
-  };
+      # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
+      # ente-postgres-backup-s3 = {
+      #   initialize = true;
+      #
+      #   # Example endpoints:
+      #   #   Backblaze B2:         "s3:https://s3.eu-central-003.backblazeb2.com/<bucket-name>"
+      #   #   Wasabi:               "s3:https://s3.eu-central-1.wasabisys.com/<bucket-name>"
+      #   #   Hetzner Storage Box:  "s3:https://nbg1.your-objectstorage.com/<bucket-name>"
+      #   repository = "s3:https://<S3_ENDPOINT>/<BUCKET_NAME>/ente-postgres";
+      #
+      #   paths = ["/tmp/postgresql-dump-s3.sql.gz"];
+      #   exclude = [];
+      #
+      #   passwordFile = config.age.secrets.restic-postgres-s3.path;
+      #   environmentFile = config.age.secrets.s3-backup-env.path;
+      #
+      #   backupPrepareCommand = ''
+      #     ${config.services.postgresql.package}/bin/pg_dumpall --clean \
+      #     | ${lib.getExe pkgs.gzip} --rsyncable \
+      #     > /tmp/postgresql-dump-s3.sql.gz
+      #   '';
+      #
+      #   backupCleanupCommand = ''
+      #     rm -f /tmp/postgresql-dump-s3.sql.gz
+      #     ${script-post config.networking.hostName "ente-postgres-s3"}
+      #   '';
+      #
+      #   pruneOpts = [
+      #     "--keep-daily 3"
+      #     "--keep-weekly 3"
+      #     "--keep-monthly 3"
+      #     "--keep-yearly 3"
+      #   ];
+      #
+      #   timerConfig = {
+      #     OnCalendar = "*-*-* 03:00:00";
+      #   };
+      # };
+    };
 
   # NOTE: services.ente.web is configured separately on both proxy servers!
   # nodes.sentinel.services.nginx = proxyConfig config.wireguard.proxy-sentinel.ipv4 "";

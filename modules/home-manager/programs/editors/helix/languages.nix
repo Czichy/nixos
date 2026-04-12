@@ -51,7 +51,7 @@
     };
     bash-language-server = {
       args = [ "start" ];
-      command = "${pkgs.nodePackages.bash-language-server}/bin/bash-language-server";
+      command = "${pkgs.bash-language-server}/bin/bash-language-server";
     };
     ltex-ls = {
       command = "${pkgs.ltex-ls}/bin/ltex-ls";
@@ -65,7 +65,7 @@
     };
     vscode-json-language-server = {
       args = [ "--stdio" ];
-      command = "${pkgs.nodePackages.vscode-json-languageserver}/bin/vscode-json-languageserver";
+      command = "${pkgs.vscode-langservers-extracted}/bin/vscode-json-language-server";
     };
   };
 }

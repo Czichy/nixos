@@ -118,6 +118,21 @@
         ];
       };
 
+      # Lock Bluetooth headsets to A2DP (stereo) profile.
+      # Without this, any app opening a capture device (e.g. game voice chat)
+      # triggers an automatic switch to HFP (mono, 8/16 kHz) → no audio in games.
+      wireplumber.extraConfig."52-bluetooth-a2dp" = {
+        "monitor.bluez.rules" = [
+          {
+            matches = [{"device.name" = "~bluez_card.*";}];
+            actions.update-props = {
+              "bluez5.auto-connect" = ["a2dp_sink"];
+              "bluez5.profile" = "a2dp-sink";
+            };
+          }
+        ];
+      };
+
       # Globally disable node suspension so that no audio device sleeps
       # and triggers USB re-enumeration or HDA codec wake-up races.
       wireplumber.extraConfig."50-disable-suspend" = {
@@ -143,6 +158,21 @@
   '';
 
   programs.nix-ld.enable = true;
+
+  # 32-bit GPU driver support for Proton/Wine (Mesa, Vulkan, VA-API).
+  # common-gpu-amd does NOT set driSupport32Bit; without it, 32-bit Wine
+  # processes have no GPU acceleration → crash at startup.
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+    extraPackages = with pkgs; [
+      amdvlk
+      rocmPackages.clr.icd
+    ];
+    extraPackages32 = with pkgs.pkgsi686Linux; [
+      libva
+    ];
+  };
 
   # Steam needs system-level integration for sandbox setuid wrappers,
   # firewall rules, and proper FHS environment (fixes launch from Walker/desktop)

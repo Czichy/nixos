@@ -24,11 +24,7 @@
         "input"
         "docker"
         "kvm"
-        "libvirt"
-        "libvirtd"
         "network"
-        "podman"
-        "qemu-libvirtd"
       ];
     };
 

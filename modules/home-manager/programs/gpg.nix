@@ -1,16 +1,19 @@
-{localFlake}: {
+{ localFlake }:
+{
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.gpg;
   _ = mkOverrideAtHmModuleLevel;
-in {
+in
+{
   options.tensorfiles.hm.programs.gpg = with types; {
     enable = mkEnableOption ''
       TODO
@@ -35,10 +38,11 @@ in {
       programs.git.signing = {
         signByDefault = _ true;
         key = _ null;
+        format = _ "openpgp";
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [czichy];
+  meta.maintainers = with localFlake.lib.maintainers; [ czichy ];
 }

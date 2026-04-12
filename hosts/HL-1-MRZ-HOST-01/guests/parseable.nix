@@ -16,13 +16,22 @@ let
   s3Domain = "log-s3.${globals.domains.me}";
 
   certloc = "/var/lib/acme-sync/czichy.com";
-in {
+in
+{
   networking.hostName = "HL-3-RZ-LOG-01";
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
-    allowedTCPPorts = [8000 8001 8002];
-    allowedUDPPorts = [8000 8001 8002];
+    allowedTCPPorts = [
+      8000
+      8001
+      8002
+    ];
+    allowedUDPPorts = [
+      8000
+      8001
+      8002
+    ];
   };
   # |----------------------------------------------------------------------| #
   #
@@ -35,10 +44,7 @@ in {
             tls_insecure_skip_verify
           	tls_server_name ${parseableDomain}
           }
-          # header_up Host {http.request.host}
-          # header_up X-Real-IP {http.request.remote}
-          # header_up X-Forwarded-For {http.request.remote}
-          # header_up X-Forwarded-Proto {http.request.scheme}
+          header_up Host {http.request.host}
       }
       # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
       #   protocols tls1.3
@@ -107,14 +113,14 @@ in {
   #
   systemd.services."parseable-s3" = {
     description = "Parseable";
-    wantedBy = ["multi-user.target"];
-    wants = ["network-online.target"];
-    after = ["network-online.target"];
+    wantedBy = [ "multi-user.target" ];
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
 
     # type = "simple";
     # LimitNOFILE = 1048576;
     serviceConfig = {
-      EnvironmentFile = config.age.secrets.parseable-config.path; #"/etc/default/parseable";
+      EnvironmentFile = config.age.secrets.parseable-config.path; # "/etc/default/parseable";
       WorkingDirectory = "/usr/local/";
       # User = "parseable-user";
       # Group = "parseable-user";

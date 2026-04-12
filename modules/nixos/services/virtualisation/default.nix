@@ -98,7 +98,13 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       environment.persistence."${impermanence.persistentRoot}" = {
-        directories = ["/var/lib/libvirt"];
+        directories = [
+          "/var/lib/libvirt"
+          # systemd credential.secret muss mit dem verschlüsselten libvirt-Key übereinstimmen.
+          # Ohne Persistenz: nach Reboot neues credential.secret → alter Key nicht mehr entschlüsselbar
+          # → libvirtd schlägt mit status=243/CREDENTIALS fehl.
+          "/var/lib/systemd"
+        ];
       };
     })
     # |----------------------------------------------------------------------| #

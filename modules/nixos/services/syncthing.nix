@@ -151,11 +151,11 @@ in {
               path = "${cfg.dataDir}/Trading"; # Which folder to add to Syncthing
               devices = ["nas"]; # Which devices to share the folder with
             };
-            "nandi-sj5en" = {
-              # Name of folder in Syncthing, also the folder ID
-              path = "${cfg.dataDir}/.credentials"; # Which folder to add to Syncthing
-              devices = ["nas"]; # Which devices to share the folder with
-            };
+            # "nandi-sj5en" = {
+            #   # Name of folder in Syncthing, also the folder ID
+            #   path = "${cfg.dataDir}/.credentials"; # Which folder to add to Syncthing
+            #   devices = ["nas"]; # Which devices to share the folder with
+            # };
           };
           options.globalAnnounceEnabled = false; # Only sync on LAN
           gui.insecureSkipHostcheck = true;

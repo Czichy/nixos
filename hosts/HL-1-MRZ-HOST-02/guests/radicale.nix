@@ -56,7 +56,8 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   # ---------------------------------------------------------------------------
   # Konfiguration
   # ---------------------------------------------------------------------------
@@ -81,7 +82,8 @@
   hasNtfy = builtins.pathExists ntfyFile;
   hasHcPing = builtins.pathExists hcPingFile;
   hasBackupSecrets = hasRestic && hasRclone;
-in {
+in
+{
   # ---------------------------------------------------------------------------
   # MicroVM-Ressourcen
   # ---------------------------------------------------------------------------
@@ -148,10 +150,7 @@ in {
 
       auth = {
         type = "htpasswd";
-        htpasswd_filename =
-          if hasHtpasswd
-          then config.age.secrets.radicale-users.path
-          else "/dev/null";
+        htpasswd_filename = if hasHtpasswd then config.age.secrets.radicale-users.path else "/dev/null";
         htpasswd_encryption = "bcrypt";
       };
 
@@ -295,6 +294,7 @@ in {
             tls_insecure_skip_verify
             tls_server_name ${radicaleDomain}
           }
+          header_up Host {http.request.host}
         }
         import czichy_headers
         # CalDAV/CardDAV braucht größere Body-Limits
@@ -310,72 +310,72 @@ in {
   # ---------------------------------------------------------------------------
   # Radicale-Daten sind wichtig (Kalender, Kontakte) und nicht rekonstruierbar.
   # Backup nach OneDrive via rclone.
-  services.restic.backups = lib.mkIf hasBackupSecrets (let
-    ntfy_pass =
-      if hasNtfy
-      then "$(cat ${config.age.secrets.ntfy-alert-pass.path})"
-      else "";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-    slug = "https://health.czichy.com/ping/";
+  services.restic.backups = lib.mkIf hasBackupSecrets (
+    let
+      ntfy_pass = if hasNtfy then "$(cat ${config.age.secrets.ntfy-alert-pass.path})" else "";
+      ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+      slug = "https://health.czichy.com/ping/";
 
-    script-post = host: site: ''
-      ${lib.optionalString hasHcPing ''
-        pingKey="$(cat ${config.age.secrets.radicale-hc-ping.path})"
-      ''}
-      if [ $EXIT_STATUS -ne 0 ]; then
-        ${lib.optionalString hasNtfy ''
-          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-            -H 'Title: Backup (${site}) on ${host} failed!' \
-            -H 'Tags: backup,restic,${host},${site}' \
-            -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-        ''}
+      script-post = host: site: ''
         ${lib.optionalString hasHcPing ''
-          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
+          pingKey="$(cat ${config.age.secrets.radicale-hc-ping.path})"
         ''}
-      else
-        ${lib.optionalString hasHcPing ''
-          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
-        ''}
-      fi
-    '';
-  in {
-    radicale-backup = {
-      initialize = true;
+        if [ $EXIT_STATUS -ne 0 ]; then
+          ${lib.optionalString hasNtfy ''
+            ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+              -H 'Title: Backup (${site}) on ${host} failed!' \
+              -H 'Tags: backup,restic,${host},${site}' \
+              -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+          ''}
+          ${lib.optionalString hasHcPing ''
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
+          ''}
+        else
+          ${lib.optionalString hasHcPing ''
+            ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
+          ''}
+        fi
+      '';
+    in
+    {
+      radicale-backup = {
+        initialize = true;
 
-      # Backup nach OneDrive via rclone
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-radicale";
+        # Backup nach OneDrive via rclone
+        repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-radicale";
 
-      # Was wird gesichert: Alle Radicale-Collections (Kalender + Kontakte)
-      paths = [
-        "/var/lib/radicale"
-      ];
+        # Was wird gesichert: Alle Radicale-Collections (Kalender + Kontakte)
+        paths = [
+          "/var/lib/radicale"
+        ];
 
-      exclude = [
-        "/var/lib/radicale/.Radicale.lock"
-      ];
+        exclude = [
+          "/var/lib/radicale/.Radicale.lock"
+        ];
 
-      passwordFile = config.age.secrets.restic-radicale.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+        passwordFile = config.age.secrets.restic-radicale.path;
+        rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-      # Benachrichtigung + Healthcheck nach Backup
-      backupCleanupCommand = script-post config.networking.hostName "radicale";
+        # Benachrichtigung + Healthcheck nach Backup
+        backupCleanupCommand = script-post config.networking.hostName "radicale";
 
-      # Aufbewahrung: Radicale-Daten ändern sich häufig (Kalender-Einträge),
-      # daher moderate Retention.
-      pruneOpts = [
-        "--keep-daily 14"
-        "--keep-weekly 8"
-        "--keep-monthly 6"
-      ];
+        # Aufbewahrung: Radicale-Daten ändern sich häufig (Kalender-Einträge),
+        # daher moderate Retention.
+        pruneOpts = [
+          "--keep-daily 14"
+          "--keep-weekly 8"
+          "--keep-monthly 6"
+        ];
 
-      # Täglich um 02:30 Uhr
-      timerConfig = {
-        OnCalendar = "*-*-* 02:30:00";
-        Persistent = true;
-        RandomizedDelaySec = "30min";
+        # Täglich um 02:30 Uhr
+        timerConfig = {
+          OnCalendar = "*-*-* 02:30:00";
+          Persistent = true;
+          RandomizedDelaySec = "30min";
+        };
       };
-    };
-  });
+    }
+  );
 
   # ---------------------------------------------------------------------------
   # Nützliche Pakete
@@ -388,18 +388,21 @@ in {
   # ---------------------------------------------------------------------------
   # Warnungen bei fehlenden Secrets
   # ---------------------------------------------------------------------------
-  warnings = let
-    missing =
-      (lib.optional (!hasHtpasswd) "hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-users.age")
-      ++ (lib.optional (!hasRestic) "hosts/HL-1-MRZ-HOST-02/guests/radicale/restic-radicale.age")
-      ++ (lib.optional (!hasRclone) "rclone/onedrive_nas/rclone.conf.age")
-      ++ (lib.optional (!hasNtfy) "ntfy-sh/alert-pass.age")
-      ++ (lib.optional (!hasHcPing) "hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age");
-  in
+  warnings =
+    let
+      missing =
+        (lib.optional (!hasHtpasswd) "hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-users.age")
+        ++ (lib.optional (!hasRestic) "hosts/HL-1-MRZ-HOST-02/guests/radicale/restic-radicale.age")
+        ++ (lib.optional (!hasRclone) "rclone/onedrive_nas/rclone.conf.age")
+        ++ (lib.optional (!hasNtfy) "ntfy-sh/alert-pass.age")
+        ++ (lib.optional (!hasHcPing) "hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age");
+    in
     (lib.optional (!hasHtpasswd)
-      "radicale: htpasswd-Secret fehlt! Radicale akzeptiert KEINE Logins. Erstelle: agenix -e hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-users.age")
+      "radicale: htpasswd-Secret fehlt! Radicale akzeptiert KEINE Logins. Erstelle: agenix -e hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-users.age"
+    )
     ++ (lib.optional (!hasBackupSecrets)
-      "radicale: Restic-Backup ist DEAKTIVIERT (fehlende Secrets: ${lib.concatStringsSep ", " missing})");
+      "radicale: Restic-Backup ist DEAKTIVIERT (fehlende Secrets: ${lib.concatStringsSep ", " missing})"
+    );
 
   # ---------------------------------------------------------------------------
   # Netzwerk

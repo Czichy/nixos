@@ -6,5 +6,6 @@
     ./system.nix
     ./gpu.nix
     ./ollama.nix
+    ./syncthing.nix
   ];
 }

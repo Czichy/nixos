@@ -7,7 +7,8 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   # |----------------------------------------------------------------------| #
   forgejoDomain = "git.czichy.com";
   # forgejoDomain = "git.${globals.domains.me}";
@@ -22,7 +23,8 @@
   oauth2SecretFile = secretsPath + "/hosts/HL-1-MRZ-HOST-02/guests/kanidm/oauth2-forgejo.age";
   hasOAuth2Secret = builtins.pathExists oauth2SecretFile;
   # |----------------------------------------------------------------------| #
-in {
+in
+{
   networking.hostName = hostName;
   tensorfiles.services.monitoring.node-exporter.enable = true;
 
@@ -121,6 +123,7 @@ in {
                 # tls_server_name stellt sicher, dass der Hostname für die TLS-Handshake übermittelt wird.
                 tls_server_name ${forgejoDomain}
             }
+            header_up Host {http.request.host}
         }
         import czichy_headers
       '';
@@ -139,7 +142,7 @@ in {
   };
 
   # |----------------------------------------------------------------------| #
-  users.groups.git = {};
+  users.groups.git = { };
   users.users.git = {
     isSystemUser = true;
     useDefaultShell = true;
@@ -159,7 +162,7 @@ in {
       "${config.services.forgejo.stateDir}/.ssh/authorized_keys"
     ];
     # Recommended by forgejo: https://forgejo.org/docs/latest/admin/recommendations/#git-over-ssh
-    settings.AcceptEnv = ["GIT_PROTOCOL"];
+    settings.AcceptEnv = [ "GIT_PROTOCOL" ];
   };
   services.forgejo = {
     enable = true;
@@ -265,47 +268,75 @@ in {
   # |----------------------------------------------------------------------| #
   systemd.services.forgejo.serviceConfig.RestartSec = "60"; # Bei Fehler 60s warten
 
-  systemd.services.forgejo.preStart = let
-    adminCmd = "${lib.getExe config.services.forgejo.package} admin user";
-    admin-pwd = config.age.secrets.admin-password.path;
-    admin = "administrator"; # Note, Forgejo doesn't allow creation of an account named "admin"
-    user-pwd = config.age.secrets.user-password.path;
-    user = "czichy";
+  systemd.services.forgejo.preStart =
+    let
+      adminCmd = "${lib.getExe config.services.forgejo.package} admin user";
+      admin-pwd = config.age.secrets.admin-password.path;
+      admin = "administrator"; # Note, Forgejo doesn't allow creation of an account named "admin"
+      user-pwd = config.age.secrets.user-password.path;
+      user = "czichy";
 
-    # --- Kanidm OAuth2 Provider Registration ---
-    exe = lib.getExe config.services.forgejo.package;
-    providerName = "kanidm";
-    clientId = "forgejo";
-    oauthArgs = lib.escapeShellArgs (lib.concatLists [
-      ["--name" providerName]
-      ["--provider" "openidConnect"]
-      ["--key" clientId]
-      ["--auto-discover-url" "https://${globals.services.kanidm.domain}/oauth2/openid/${clientId}/.well-known/openid-configuration"]
-      ["--scopes" "email"]
-      ["--scopes" "profile"]
-      ["--group-claim-name" "groups"]
-      ["--admin-group" "admin"]
-      ["--skip-local-2fa"]
-    ]);
-  in ''
-    ${adminCmd} create --admin --email "root@localhost" --username ${admin} --password "$(tr -d '\n' < ${admin-pwd})" || true
-    ${adminCmd} create --email "christian@czichy.com" --username ${user} --password "$(tr -d '\n' < ${user-pwd})" || true
-    ## uncomment this line to change an admin user which was already created
-    # ${adminCmd} change-password --username ${user} --password "$(tr -d '\n' < ${user-pwd})" || true
+      # --- Kanidm OAuth2 Provider Registration ---
+      exe = lib.getExe config.services.forgejo.package;
+      providerName = "kanidm";
+      clientId = "forgejo";
+      oauthArgs = lib.escapeShellArgs (
+        lib.concatLists [
+          [
+            "--name"
+            providerName
+          ]
+          [
+            "--provider"
+            "openidConnect"
+          ]
+          [
+            "--key"
+            clientId
+          ]
+          [
+            "--auto-discover-url"
+            "https://${globals.services.kanidm.domain}/oauth2/openid/${clientId}/.well-known/openid-configuration"
+          ]
+          [
+            "--scopes"
+            "email"
+          ]
+          [
+            "--scopes"
+            "profile"
+          ]
+          [
+            "--group-claim-name"
+            "groups"
+          ]
+          [
+            "--admin-group"
+            "admin"
+          ]
+          [ "--skip-local-2fa" ]
+        ]
+      );
+    in
+    ''
+      ${adminCmd} create --admin --email "root@localhost" --username ${admin} --password "$(tr -d '\n' < ${admin-pwd})" || true
+      ${adminCmd} create --email "christian@czichy.com" --username ${user} --password "$(tr -d '\n' < ${user-pwd})" || true
+      ## uncomment this line to change an admin user which was already created
+      # ${adminCmd} change-password --username ${user} --password "$(tr -d '\n' < ${user-pwd})" || true
 
-    # --- Kanidm OAuth2 Provider anlegen/aktualisieren ---
-    if [[ -f "${config.age.secrets.forgejo-oauth2-client-secret.path}" ]]; then
-      provider_id=$(${exe} admin auth list | ${pkgs.gnugrep}/bin/grep -w '${providerName}' | cut -f1)
-      SECRET="$(< ${config.age.secrets.forgejo-oauth2-client-secret.path})"
-      if [[ -z "$provider_id" ]]; then
-        ${exe} admin auth add-oauth ${oauthArgs} --secret "$SECRET" || echo "Warning: failed to add OAuth2 provider"
+      # --- Kanidm OAuth2 Provider anlegen/aktualisieren ---
+      if [[ -f "${config.age.secrets.forgejo-oauth2-client-secret.path}" ]]; then
+        provider_id=$(${exe} admin auth list | ${pkgs.gnugrep}/bin/grep -w '${providerName}' | cut -f1)
+        SECRET="$(< ${config.age.secrets.forgejo-oauth2-client-secret.path})"
+        if [[ -z "$provider_id" ]]; then
+          ${exe} admin auth add-oauth ${oauthArgs} --secret "$SECRET" || echo "Warning: failed to add OAuth2 provider"
+        else
+          ${exe} admin auth update-oauth --id "$provider_id" ${oauthArgs} --secret "$SECRET" || echo "Warning: failed to update OAuth2 provider"
+        fi
       else
-        ${exe} admin auth update-oauth --id "$provider_id" ${oauthArgs} --secret "$SECRET" || echo "Warning: failed to update OAuth2 provider"
+        echo "Warning: OAuth2 client secret not found at ${config.age.secrets.forgejo-oauth2-client-secret.path}, skipping Kanidm SSO setup"
       fi
-    else
-      echo "Warning: OAuth2 client secret not found at ${config.age.secrets.forgejo-oauth2-client-secret.path}, skipping Kanidm SSO setup"
-    fi
-  '';
+    '';
 
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist" = {
@@ -338,65 +369,68 @@ in {
   ];
   # |----------------------------------------------------------------------| #
 
-  systemd.services.backup-forgejo.environment.DATA_FOLDER = lib.mkForce "${config.services.forgejo.dump.backupDir}";
+  systemd.services.backup-forgejo.environment.DATA_FOLDER =
+    lib.mkForce "${config.services.forgejo.dump.backupDir}";
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
-  services.restic.backups = let
-    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
-    ntfy_url = "https://ntfy.czichy.com/backups";
-    slug = "https://health.czichy.com/ping/";
+  services.restic.backups =
+    let
+      ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+      ntfy_url = "https://ntfy.czichy.com/backups";
+      slug = "https://health.czichy.com/ping/";
 
-    script-post = host: site: ''
-      pingKey="$(cat ${config.age.secrets.forgejo-hc-ping.path})"
-      if [ $EXIT_STATUS -ne 0 ]; then
-        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-        -H 'Title: Backup (${site}) on ${host} failed!' \
-        -H 'Tags: backup,restic,${host},${site}' \
-        -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
-      else
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
-      fi
-    '';
-  in {
-    forgejo-backup = {
-      # Initialize the repository if it doesn't exist.
-      initialize = true;
+      script-post = host: site: ''
+        pingKey="$(cat ${config.age.secrets.forgejo-hc-ping.path})"
+        if [ $EXIT_STATUS -ne 0 ]; then
+          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+          -H 'Title: Backup (${site}) on ${host} failed!' \
+          -H 'Tags: backup,restic,${host},${site}' \
+          -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
+        else
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
+        fi
+      '';
+    in
+    {
+      forgejo-backup = {
+        # Initialize the repository if it doesn't exist.
+        initialize = true;
 
-      # backup to a rclone remote
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-forgejo";
+        # backup to a rclone remote
+        repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-forgejo";
 
-      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
-      paths = [config.services.forgejo.dump.backupDir];
+        # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
+        paths = [ config.services.forgejo.dump.backupDir ];
 
-      # Patterns to exclude when backing up. See
-      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-      # for details on syntax.
-      exclude = [];
+        # Patterns to exclude when backing up. See
+        #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
+        # for details on syntax.
+        exclude = [ ];
 
-      passwordFile = config.age.secrets.restic-forgejo.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+        passwordFile = config.age.secrets.restic-forgejo.path;
+        rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-      # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "forgejo";
+        # A script that must run after finishing the backup process.
+        backupCleanupCommand = script-post config.networking.hostName "forgejo";
 
-      # A list of options (--keep-* et al.) for 'restic forget --prune',
-      # to automatically prune old snapshots.
-      # The 'forget' command is run *after* the 'backup' command, so
-      # keep that in mind when constructing the --keep-* options.
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
+        # A list of options (--keep-* et al.) for 'restic forget --prune',
+        # to automatically prune old snapshots.
+        # The 'forget' command is run *after* the 'backup' command, so
+        # keep that in mind when constructing the --keep-* options.
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
 
-      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
-      timerConfig = {
-        OnCalendar = "*-*-* 02:30:00";
+        # When to run the backup. See {manpage}`systemd.timer(5)` for details.
+        timerConfig = {
+          OnCalendar = "*-*-* 02:30:00";
+        };
       };
     };
-  };
 
   # |----------------------------------------------------------------------| #
   systemd.network.enable = true;

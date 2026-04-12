@@ -19,18 +19,19 @@ let
 
   # Hilfsfunktion: Node-Exporter-Scrape-Target erzeugen
   mkNodeTarget = ip: instance: {
-    targets = ["${ip}:${toString nodePort}"];
-    labels = {inherit instance;};
+    targets = [ "${ip}:${toString nodePort}" ];
+    labels = { inherit instance; };
   };
-in {
+in
+{
   networking.hostName = "HL-3-RZ-METRICS-01";
   tensorfiles.services.monitoring.node-exporter.enable = true;
 
   # |----------------------------------------------------------------------| #
   networking.firewall = {
     allowedTCPPorts = [
-      vmPort    # VictoriaMetrics HTTP API
-      8089      # OpenTelemetry OTLP/HTTP (optional, fuer remote write)
+      vmPort # VictoriaMetrics HTTP API
+      8089 # OpenTelemetry OTLP/HTTP (optional, fuer remote write)
     ];
   };
   # |----------------------------------------------------------------------| #
@@ -43,6 +44,7 @@ in {
                 tls_insecure_skip_verify
             	tls_server_name ${victoriaDomain}
             }
+            header_up Host {http.request.host}
         }
         import czichy_headers
       '';
@@ -85,8 +87,8 @@ in {
   # | SYSTEM PACKAGES                                                      |
   # |----------------------------------------------------------------------| #
   environment.systemPackages = with pkgs; [
-    victoriametrics  # CLI tools (vmctl, etc.)
-    curl             # Health checks
+    victoriametrics # CLI tools (vmctl, etc.)
+    curl # Health checks
   ];
 
   # |----------------------------------------------------------------------| #
@@ -97,7 +99,7 @@ in {
     group = "victoriametrics";
     home = "/var/lib/victoriametrics";
   };
-  users.groups.victoriametrics = {};
+  users.groups.victoriametrics = { };
 
   # Override DynamicUser from upstream module - incompatible with
   # impermanence bind-mounts (causes "Device or resource busy")
@@ -143,7 +145,7 @@ in {
           metrics_path = "/metrics";
           static_configs = [
             {
-              targets = ["${seekingEdgeHost}:9091"];
+              targets = [ "${seekingEdgeHost}:9091" ];
               labels = {
                 instance = "seeking-edge";
                 environment = "production";
@@ -159,7 +161,7 @@ in {
           metrics_path = "/metrics";
           static_configs = [
             {
-              targets = ["${seekingEdgeHost}:9092"];
+              targets = [ "${seekingEdgeHost}:9092" ];
               labels = {
                 instance = "seeking-edge-backtest";
                 environment = "backtest";
@@ -174,8 +176,10 @@ in {
           scrape_interval = "15s";
           static_configs = [
             {
-              targets = ["127.0.0.1:${toString vmPort}"];
-              labels = {instance = "victoriametrics";};
+              targets = [ "127.0.0.1:${toString vmPort}" ];
+              labels = {
+                instance = "victoriametrics";
+              };
             }
           ];
         }

@@ -4,10 +4,12 @@
   pkgs,
   hostName,
   ...
-}: let
+}:
+let
   unifiDomain = "unifi.czichy.com";
   certloc = "/var/lib/acme-sync/czichy.com";
-in {
+in
+{
   # |----------------------------------------------------------------------| #
   microvm.mem = 1024 * 3;
   microvm.vcpu = 4;
@@ -59,6 +61,7 @@ in {
             transport http {
             	tls_server_name ${unifiDomain}
             }
+            header_up Host {http.request.host}
         }
         import czichy_headers
       '';

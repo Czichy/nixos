@@ -237,6 +237,10 @@ in {
       ExecStart = "${fava-with-extensions}/bin/fava --host 0.0.0.0 --port ${toString listenPort} ${ledgerFile}";
       Restart = "always";
       RestartSec = "5s";
+      # virtiofs leitet keine inotify-Events vom Host in den Gast weiter.
+      # Syncthing's atomares Rename (neuer inode) würde vom inotify-Watcher
+      # nie erkannt. Polling via os.stat() funktioniert korrekt auf virtiofs.
+      Environment = "WATCHFILES_FORCE_POLLING=1";
       # Plugins verwenden relative Pfade (z.B. "generators/recurring_config.toml") →
       # WorkingDirectory muss /ledger sein damit Path.cwd() korrekt auflöst
       WorkingDirectory = "/ledger";

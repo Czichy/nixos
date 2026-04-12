@@ -92,14 +92,14 @@ in {
       tag = "sync-trading";
       proto = "virtiofs";
     }
-    {
-      # On the host
-      source = "/shared/shares/users/christian/.credentials/";
-      # In the MicroVM
-      mountPoint = "${cfg.dataDir}/users/christian/.credentials";
-      tag = "sync-credentials";
-      proto = "virtiofs";
-    }
+    # {
+    #   # On the host
+    #   source = "/shared/shares/users/christian/.credentials/";
+    #   # In the MicroVM
+    #   mountPoint = "${cfg.dataDir}/users/christian/.credentials";
+    #   tag = "sync-credentials";
+    #   proto = "virtiofs";
+    # }
   ];
   # |----------------------------------------------------------------------| #
   age.secrets = {
@@ -180,11 +180,11 @@ in {
           path = "${cfg.dataDir}/users/christian/Trading"; # Which folder to add to Syncthing
           devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01"]; # Which devices to share the folder with
         };
-        "nandi-sj5en" = {
+        # "nandi-sj5en" = {
           # Name of folder in Syncthing, also the folder ID
-          path = "${cfg.dataDir}/users/christian/.credentials"; # Which folder to add to Syncthing
-          devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01" "HANDY-Christian"]; # Which devices to share the folder with
-        };
+          # path = "${cfg.dataDir}/users/christian/.credentials"; # Which folder to add to Syncthing
+          # devices = ["HL-1-OZ-PC-01" "HL-3-RZ-SYNC-01" "HANDY-Christian"]; # Which devices to share the folder with
+        # };
       };
       options.globalAnnounceEnabled = false; # Only sync on LAN
       gui.insecureSkipHostcheck = true;
@@ -194,6 +194,19 @@ in {
   systemd.services.syncthing.serviceConfig.UMask = "0007";
   # Don't create default ~/Sync folder
   systemd.services.syncthing.environment.STNODEFAULTFOLDER = "true";
+  # Restart syncthing automatically if virtiofs mounts go stale (e.g. after host rebuild)
+  systemd.services.syncthing.unitConfig = {
+    BindsTo = [
+      "shared-shares-dokumente.mount"
+      "shared-shares-users-christian-Trading.mount"
+      # "shared-shares-users-christian-.credentials.mount"
+    ];
+    After = [
+      "shared-shares-dokumente.mount"
+      "shared-shares-users-christian-Trading.mount"
+      # "shared-shares-users-christian-.credentials.mount"
+    ];
+  };
   # |----------------------------------------------------------------------| #
   environment.persistence = lib.mkMerge [
     {

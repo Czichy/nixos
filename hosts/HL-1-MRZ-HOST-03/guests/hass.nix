@@ -6,10 +6,12 @@
   pkgs,
   secretsPath,
   ...
-}: let
+}:
+let
   homeassistantDomain = "home-assistant.${globals.domains.me}";
   certloc = "/var/lib/acme-sync/czichy.com";
-in {
+in
+{
   microvm.mem = 4196;
   microvm.vcpu = 4;
 
@@ -73,6 +75,7 @@ in {
             tls_insecure_skip_verify
             tls_server_name ${homeassistantDomain}
           }
+          header_up Host {http.request.host}
         }
         # tls ${certloc}/fullchain.pem ${certloc}/key.pem {
         #   protocols tls1.3
@@ -118,6 +121,16 @@ in {
   topology.self.services.home-assistant.info = "https://${homeassistantDomain}";
   services.home-assistant = {
     enable = true;
+    package = (
+      pkgs.home-assistant.override {
+        packageOverrides = _self: super: {
+          reactivex = super.reactivex.overridePythonAttrs (_old: {
+            disabled = false;
+            doCheck = false;
+          });
+        };
+      }
+    );
     extraComponents = [
       "esphome"
       "fritzbox"
@@ -144,8 +157,8 @@ in {
     ];
 
     customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
-      (pkgs.callPackage ./hass/lovelace/config-template-card/package.nix {})
-      (pkgs.callPackage ./hass/lovelace/hui-element/package.nix {})
+      (pkgs.callPackage ./hass/lovelace/config-template-card/package.nix { })
+      (pkgs.callPackage ./hass/lovelace/hui-element/package.nix { })
       apexcharts-card
       bubble-card
       button-card
@@ -161,12 +174,12 @@ in {
     ];
 
     config = {
-      default_config = {};
+      default_config = { };
       http = {
-        server_host = ["0.0.0.0"];
+        server_host = [ "0.0.0.0" ];
         server_port = 8123;
         use_x_forwarded_for = true;
-        trusted_proxies = ["10.15.70.1"];
+        trusted_proxies = [ "10.15.70.1" ];
         # trusted_proxies = [nodes.ward-web-proxy.config.wireguard.proxy-home.ipv4];
       };
 
@@ -230,19 +243,19 @@ in {
           platform = "waste_collection_schedule";
           name = "restmuell_upcoming";
           value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-          types = ["Restmüll"];
+          types = [ "Restmüll" ];
         }
         {
           platform = "waste_collection_schedule";
           name = "papiermuell_upcoming";
           value_template = "{{value.types|join(\", \")}}|{{value.daysTo}}|{{value.date.strftime(\"%d.%m.%Y\")}}|{{value.date.strftime(\"%a\")}}";
-          types = ["Papiermüll"];
+          types = [ "Papiermüll" ];
         }
       ];
     };
 
-    extraPackages = python3Packages:
-      with python3Packages; [
+    extraPackages =
+      python3Packages: with python3Packages; [
         # adguardhome
         aioelectricitymaps
         dwdwfsapi
@@ -282,8 +295,8 @@ in {
       INFLUXDB_TOKEN="$(cat "$CREDENTIALS_DIRECTORY/hass-influxdb-token")" \
         ${lib.getExe pkgs.yq-go} '.influxdb_token = strenv(INFLUXDB_TOKEN)' \
         ${
-        config.age.secrets."home-assistant-secrets.yaml".path
-      } > ${config.services.home-assistant.configDir}/secrets.yaml
+          config.age.secrets."home-assistant-secrets.yaml".path
+        } > ${config.services.home-assistant.configDir}/secrets.yaml
 
       touch -a ${config.services.home-assistant.configDir}/{automations,scenes,scripts,manual}.yaml
     '';

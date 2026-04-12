@@ -2,9 +2,11 @@
   pkgs,
   config,
   ...
-}: let
+}:
+let
   homeDir = "/home/czichy";
-in {
+in
+{
   tensorfiles.hm = {
     profiles.graphical-hyprland.enable = true;
     profiles.graphical-niri.enable = true;
@@ -23,7 +25,109 @@ in {
         sshKey.enable = false;
       };
       git.enable = true;
-      ib-tws.enable = true;
+      ib-tws = {
+        enable = true;
+        instances = {
+          tws-paper-stable = {
+            app = "tws";
+            mode = "paper";
+            channel = "stable";
+            settings = {
+              timeZone = "Europe/Berlin";
+              fontSize = 21;
+              colorPalette = "dark";
+              locale = "en";
+              screenHeight = 2160;
+              ibkrBranding = "pro";
+              region = "usr";
+            };
+            jvm.maxHeapMb = 2048;
+          };
+          tws-live-stable = {
+            app = "tws";
+            mode = "live";
+            channel = "stable";
+            settings = {
+              timeZone = "Europe/Berlin";
+              fontSize = 21;
+              colorPalette = "dark";
+              locale = "de";
+              screenHeight = 2160;
+              ibkrBranding = "pro";
+              region = "usr";
+            };
+            jvm.maxHeapMb = 2048;
+          };
+          tws-paper-latest = {
+            app = "tws";
+            mode = "paper";
+            channel = "latest";
+            settings = {
+              timeZone = "Europe/Berlin";
+              fontSize = 21;
+              colorPalette = "dark";
+              locale = "en";
+              screenHeight = 2160;
+              ibkrBranding = "pro";
+              region = "usr";
+            };
+            jvm.maxHeapMb = 2048;
+          };
+          tws-live-latest = {
+            app = "tws";
+            mode = "live";
+            channel = "latest";
+            settings = {
+              timeZone = "Europe/Berlin";
+              fontSize = 21;
+              colorPalette = "dark";
+              locale = "de";
+              screenHeight = 2160;
+              ibkrBranding = "pro";
+              region = "usr";
+            };
+            jvm.maxHeapMb = 2048;
+          };
+          gw-paper-stable = {
+            app = "gateway";
+            mode = "paper";
+            channel = "stable";
+            settings = {
+              timeZone = "Europe/Berlin";
+              colorPalette = "dark";
+              locale = "en";
+              screenHeight = 2160;
+              ibkrBranding = "pro";
+              region = "usr";
+            };
+            gateway = {
+              apiOnly = true;
+              localServerPort = 4000;
+              trustedIPs = [ "127.0.0.1" ];
+            };
+            jvm.maxHeapMb = 1024;
+          };
+          gw-live-stable = {
+            app = "gateway";
+            mode = "live";
+            channel = "stable";
+            settings = {
+              timeZone = "Europe/Berlin";
+              colorPalette = "dark";
+              locale = "de";
+              screenHeight = 2160;
+              ibkrBranding = "pro";
+              region = "usr";
+            };
+            gateway = {
+              apiOnly = true;
+              localServerPort = 4001;
+              trustedIPs = [ "127.0.0.1" ];
+            };
+            jvm.maxHeapMb = 1024;
+          };
+        };
+      };
       ragenix.enable = true;
       games = {
         steam.enable = true;
@@ -78,8 +182,8 @@ in {
 
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
-      autoconnect = ["qemu:///system"];
-      uris = ["qemu:///system"];
+      autoconnect = [ "qemu:///system" ];
+      uris = [ "qemu:///system" ];
     };
   };
 

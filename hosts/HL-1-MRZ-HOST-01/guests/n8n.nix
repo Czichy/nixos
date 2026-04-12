@@ -5,7 +5,8 @@
   secretsPath,
   pkgs,
   ...
-}: let
+}:
+let
   n8nDomain = "n8n.${globals.domains.me}";
   n8nPort = 5678;
 
@@ -30,7 +31,8 @@
   #   Host = eduSearchDbHost, Port = 5432, DB = edu_search,
   #   User = n8n_reader, Password = edu_n8n_readonly
   eduSearchDbHost = globals.net.vlan40.hosts."HL-3-RZ-EDU-01".ipv4;
-in {
+in
+{
   # |----------------------------------------------------------------------| #
   globals.services.n8n = {
     domain = n8nDomain;
@@ -52,7 +54,7 @@ in {
   tensorfiles.services.monitoring.node-exporter.enable = true;
 
   networking.firewall = {
-    allowedTCPPorts = [n8nPort];
+    allowedTCPPorts = [ n8nPort ];
   };
   # |----------------------------------------------------------------------| #
   nodes.HL-4-PAZ-PROXY-01 = {
@@ -63,6 +65,7 @@ in {
                 tls_insecure_skip_verify
                 tls_server_name ${n8nDomain}
             }
+            header_up Host {http.request.host}
         }
         import czichy_headers
       '';
@@ -114,7 +117,7 @@ in {
     isSystemUser = true;
     group = "n8n";
   };
-  users.groups.n8n = {};
+  users.groups.n8n = { };
   # |----------------------------------------------------------------------| #
   environment.persistence."/persist".directories = [
     {
@@ -160,8 +163,8 @@ in {
 
   systemd.services.n8n-setup-env = {
     description = "Prepare n8n environment secrets";
-    wantedBy = ["n8n.service"];
-    before = ["n8n.service"];
+    wantedBy = [ "n8n.service" ];
+    before = [ "n8n.service" ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -180,8 +183,8 @@ in {
   };
 
   systemd.services.n8n = {
-    after = ["n8n-setup-env.service"];
-    requires = ["n8n-setup-env.service"];
+    after = [ "n8n-setup-env.service" ];
+    requires = [ "n8n-setup-env.service" ];
     serviceConfig = {
       DynamicUser = lib.mkForce false;
       User = "n8n";
@@ -196,60 +199,62 @@ in {
   # |----------------------------------------------------------------------| #
   # -- Restic Backup --
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/backup/restic.nix
-  services.restic.backups = let
-    ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
-    ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
-    slug = "https://health.czichy.com/ping/";
+  services.restic.backups =
+    let
+      ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
+      ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
+      slug = "https://health.czichy.com/ping/";
 
-    script-post = host: site: ''
-      pingKey="$(cat ${config.age.secrets.n8n-hc-ping.path})"
-      if [ $EXIT_STATUS -ne 0 ]; then
-        ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
-        -H 'Title: Backup (${site}) on ${host} failed!' \
-        -H 'Tags: backup,restic,${host},${site}' \
-        -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
-      else
-        ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
-      fi
-    '';
-  in {
-    n8n-backup = {
-      # Initialize the repository if it doesn't exist.
-      initialize = true;
+      script-post = host: site: ''
+        pingKey="$(cat ${config.age.secrets.n8n-hc-ping.path})"
+        if [ $EXIT_STATUS -ne 0 ]; then
+          ${pkgs.curl}/bin/curl -u alert:${ntfy_pass} \
+          -H 'Title: Backup (${site}) on ${host} failed!' \
+          -H 'Tags: backup,restic,${host},${site}' \
+          -d "Restic (${site}) backup error on ${host}!" '${ntfy_url}'
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}/fail?create=1"
+        else
+          ${pkgs.curl}/bin/curl -m 10 --retry 5 --retry-connrefused "${slug}$pingKey/backup-${site}?create=1"
+        fi
+      '';
+    in
+    {
+      n8n-backup = {
+        # Initialize the repository if it doesn't exist.
+        initialize = true;
 
-      # backup to a rclone remote
-      repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-n8n";
+        # backup to a rclone remote
+        repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-n8n";
 
-      # Which local paths to backup.
-      paths = ["/var/lib/n8n"];
+        # Which local paths to backup.
+        paths = [ "/var/lib/n8n" ];
 
-      # Patterns to exclude when backing up.
-      exclude = [
-        "/var/lib/n8n/.cache"
-        "/var/lib/n8n/.npm"
-      ];
+        # Patterns to exclude when backing up.
+        exclude = [
+          "/var/lib/n8n/.cache"
+          "/var/lib/n8n/.npm"
+        ];
 
-      passwordFile = config.age.secrets.restic-n8n.path;
-      rcloneConfigFile = config.age.secrets."rclone.conf".path;
+        passwordFile = config.age.secrets.restic-n8n.path;
+        rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-      # A script that must run after finishing the backup process.
-      backupCleanupCommand = script-post config.networking.hostName "n8n";
+        # A script that must run after finishing the backup process.
+        backupCleanupCommand = script-post config.networking.hostName "n8n";
 
-      # Prune old snapshots.
-      pruneOpts = [
-        "--keep-daily 3"
-        "--keep-weekly 3"
-        "--keep-monthly 3"
-        "--keep-yearly 3"
-      ];
+        # Prune old snapshots.
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
 
-      # When to run the backup. See systemd.timer(5) for details.
-      timerConfig = {
-        OnCalendar = "*-*-* 03:00:00";
+        # When to run the backup. See systemd.timer(5) for details.
+        timerConfig = {
+          OnCalendar = "*-*-* 03:00:00";
+        };
       };
     };
-  };
   # |----------------------------------------------------------------------| #
   systemd.network.enable = true;
   system.stateVersion = "24.05";
