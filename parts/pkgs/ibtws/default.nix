@@ -5,12 +5,12 @@
   fetchurl,
   makeDesktopItem,
   copyDesktopItems,
-  libXxf86vm,
-  libX11,
-  libXext,
-  libXtst,
-  libXi,
-  libXrender,
+  libxxf86vm,
+  libx11,
+  libxext,
+  libxtst,
+  libxi,
+  libxrender,
   glib,
   libxml2,
   ffmpeg,
@@ -113,7 +113,7 @@ in
       libxml2
       ffmpeg
       libGL
-      libXxf86vm
+      libxxf86vm
       libGL
       alsa-lib
       fontconfig
@@ -123,11 +123,11 @@ in
       cairo
       gdk-pixbuf
       atk
-      libX11
-      libXext
-      libXtst
-      libXi
-      libXrender
+      libx11
+      libxext
+      libxtst
+      libxi
+      libxrender
     ];
     runScript = "env GDK_BACKEND=x11 /usr/bin/ib-tws-native";
   }

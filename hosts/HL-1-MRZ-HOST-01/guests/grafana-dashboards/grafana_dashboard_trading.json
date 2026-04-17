@@ -3124,12 +3124,12 @@
           "sort": "desc"
         }
       },
-      "title": "Position Exposure",
+      "title": "Open Position Exposure (Live)",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "sum by (strategy_id, instrument_id) (positions_exposure_sum{job=~\"$job\", strategy_id=~\"$strategy\", instrument_id=~\"$instrument\"})",
-          "legendFormat": "{{strategy_id}} / {{instrument_id}}",
+          "expr": "position_open_exposure{job=~\"$job\", strategy_id=~\"$strategy\", instrument_id!=\"portfolio\"}",
+          "legendFormat": "{{instrument_id}}",
           "refId": "A"
         }
       ]
@@ -3896,6 +3896,468 @@
           "refId": "A"
         }
       ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": -1
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "currencyUSD",
+          "custom": {
+            "neutral": 0
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 115
+      },
+      "id": 308,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color",
+        "minVizWidth": 0,
+        "minVizHeight": 10,
+        "namePlacement": "auto",
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        }
+      },
+      "title": "Open Positions \u2014 Exposure per Instrument ($)",
+      "description": "Current open dollar exposure per instrument (positive = long, negative = short, 0 = flat). Updated on each fill.",
+      "type": "bargauge",
+      "targets": [
+        {
+          "expr": "position_open_exposure{job=~\"$job\", instrument_id!=\"portfolio\"}",
+          "legendFormat": "{{instrument_id}}",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": -0.01
+              },
+              {
+                "color": "green",
+                "value": 0.01
+              }
+            ]
+          },
+          "unit": "short",
+          "custom": {
+            "neutral": 0
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 115
+      },
+      "id": 309,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "color",
+        "minVizWidth": 0,
+        "minVizHeight": 10,
+        "namePlacement": "auto",
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        }
+      },
+      "title": "Open Positions \u2014 Quantity per Instrument (shares)",
+      "description": "Current open position size per instrument (positive = long, negative = short, 0 = flat). Updated on each fill.",
+      "type": "bargauge",
+      "targets": [
+        {
+          "expr": "position_open_qty{job=~\"$job\", instrument_id!=\"portfolio\"}",
+          "legendFormat": "{{instrument_id}}",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "opacity",
+            "lineWidth": 2,
+            "showPoints": "never",
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            }
+          },
+          "unit": "short",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "info"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#73BF69",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "warning"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#FAB620",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "critical"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#F2495C",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 123
+      },
+      "id": 310,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "title": "Alert Rate by Severity",
+      "description": "Alerts sent per severity over time (stacked). Rate-limited duplicate alerts are not counted.",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "increase(alerts_info_total{job=~\"$job\",instrument_id=\"portfolio\"}[$__rate_interval])",
+          "legendFormat": "info",
+          "refId": "A"
+        },
+        {
+          "expr": "increase(alerts_warning_total{job=~\"$job\",instrument_id=\"portfolio\"}[$__rate_interval])",
+          "legendFormat": "warning",
+          "refId": "B"
+        },
+        {
+          "expr": "increase(alerts_critical_total{job=~\"$job\",instrument_id=\"portfolio\"}[$__rate_interval])",
+          "legendFormat": "critical",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "info": {
+                        "color": "green",
+                        "text": "INFO",
+                        "index": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "options": {
+                      "warning": {
+                        "color": "yellow",
+                        "text": "WARN",
+                        "index": 1
+                      }
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "options": {
+                      "critical": {
+                        "color": "red",
+                        "text": "CRIT",
+                        "index": 2
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "category"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "title"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 123
+      },
+      "id": 311,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Time"
+          }
+        ]
+      },
+      "title": "Alert History (Recent)",
+      "description": "Individual alerts sent by the live trading engine. Queryable by severity and category.",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "alert_info{job=~\"$job\"}",
+          "legendFormat": "",
+          "refId": "A",
+          "instant": false,
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "severity",
+                "category",
+                "title"
+              ]
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": [
+              {
+                "desc": true,
+                "displayName": "Time"
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "refresh": "10s",
@@ -4023,5 +4485,5 @@
   "timezone": "browser",
   "title": "SeekingEdge Trading Platform",
   "uid": "seeking-edge-trading",
-  "version": 4
+  "version": 6
 }

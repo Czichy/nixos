@@ -104,7 +104,9 @@ in {
 
     # --- Pinned Tabs ---
     pinsForce = true;
-    pins = import ./pins/smart-home-pins.nix inputs;
+    pins =
+      (import ./pins/default-pins.nix inputs)
+      // (import ./pins/smart-home-pins.nix inputs);
   };
   home.file.".config/zen/default-profile/zen-keyboard-shortcuts.json".source = ./shortcuts.json;
 

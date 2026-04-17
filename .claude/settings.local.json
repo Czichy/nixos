@@ -8,7 +8,9 @@
       "Bash(for guest:*)",
       "Bash(do)",
       "Bash(echo \"=== $guest ===\")",
-      "Read(//home/czichy/projects/nixos/hosts/HL-1-MRZ-HOST-01/guests/**)"
+      "Read(//home/czichy/projects/nixos/hosts/HL-1-MRZ-HOST-01/guests/**)",
+      "Bash(nix eval:*)",
+      "Bash(find /home/czichy/projects/nixos/hosts -name \"net.nix\" -exec wc -l {} +)"
     ]
   }
 }

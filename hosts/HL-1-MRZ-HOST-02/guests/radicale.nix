@@ -71,17 +71,26 @@ let
   secretsBase = secretsPath + "/hosts/HL-1-MRZ-HOST-02/guests/radicale";
 
   htpasswdFile = secretsBase + "/radicale-users.age";
+  ldapTokenFile = secretsBase + "/radicale-ldap-token.age";
+  kanidmCertFile = secretsPath + "/hosts/HL-1-MRZ-HOST-02/guests/kanidm/kanidm-self-signed.crt.age";
   resticFile = secretsBase + "/restic-radicale.age";
   rcloneFile = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
   ntfyFile = secretsPath + "/ntfy-sh/alert-pass.age";
   hcPingFile = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
 
   hasHtpasswd = builtins.pathExists htpasswdFile;
+  hasLdapToken = builtins.pathExists ldapTokenFile;
+  hasKanidmCert = builtins.pathExists kanidmCertFile;
   hasRestic = builtins.pathExists resticFile;
   hasRclone = builtins.pathExists rcloneFile;
   hasNtfy = builtins.pathExists ntfyFile;
   hasHcPing = builtins.pathExists hcPingFile;
   hasBackupSecrets = hasRestic && hasRclone;
+
+  # Kanidm-IP und LDAP-Konfiguration
+  kanidmLdapUrl = "ldaps://${globals.net.vlan40.hosts."HL-3-RZ-AUTH-01".ipv4}:3636";
+  # Base-DN abgeleitet aus Kanidm-Domain "auth.czichy.com" → dc=auth,dc=czichy,dc=com
+  kanidmLdapBase = "dc=auth,dc=czichy,dc=com";
 in
 {
   # ---------------------------------------------------------------------------
@@ -101,6 +110,19 @@ in
     file = htpasswdFile;
     mode = "440";
     group = "radicale";
+  };
+
+  # Kanidm LDAP-Auth: API-Token des Service-Accounts "radicale-ldap"
+  age.secrets.radicale-ldap-token = lib.mkIf hasLdapToken {
+    file = ldapTokenFile;
+    mode = "440";
+    group = "radicale";
+  };
+
+  # Kanidm Self-Signed-Zertifikat für TLS-Verifikation der LDAP-Verbindung
+  age.secrets.kanidm-self-signed-cert = lib.mkIf hasKanidmCert {
+    file = kanidmCertFile;
+    mode = "444";
   };
 
   age.secrets.restic-radicale = lib.mkIf hasRestic {
@@ -149,9 +171,24 @@ in
       };
 
       auth = {
-        type = "htpasswd";
-        htpasswd_filename = if hasHtpasswd then config.age.secrets.radicale-users.path else "/dev/null";
+        # Kanidm LDAP-Auth: Credentials werden gegen Kanidm validiert.
+        # ldap_secret wird NICHT hier gesetzt – es wird zur Laufzeit via
+        # preStart in /run/radicale/ldap-secrets.conf injiziert (agenix-Secret).
+        type = if hasLdapToken then "ldap" else "htpasswd";
+        # htpasswd-Fallback (solange kein LDAP-Token vorhanden)
+        htpasswd_filename = if (!hasLdapToken && hasHtpasswd) then config.age.secrets.radicale-users.path else "/dev/null";
         htpasswd_encryption = "bcrypt";
+        # LDAP-Konfiguration (aktiv wenn hasLdapToken)
+        ldap_url = lib.mkIf hasLdapToken kanidmLdapUrl;
+        ldap_base = lib.mkIf hasLdapToken kanidmLdapBase;
+        # Token-basiertes Bind: DN ist "dn=token", Passwort = API-Token
+        ldap_reader_dn = lib.mkIf hasLdapToken "dn=token";
+        # ldap_secret kommt aus /run/radicale/ldap-secrets.conf (via preStart)
+        # Filter: Person in der Gruppe "radicale.access" mit passendem Namen
+        ldap_filter = lib.mkIf hasLdapToken "(&(class=person)(memberof=radicale.access@auth.czichy.com)(name={0}))";
+        ldap_user_attribute = lib.mkIf hasLdapToken "name";
+        ldap_use_ssl = lib.mkIf hasLdapToken true;
+        # CA-Zertifikat kommt ebenfalls aus /run/radicale/ldap-secrets.conf
       };
 
       storage = {
@@ -203,8 +240,40 @@ in
     };
   };
 
-  # Restart-Verhalten
-  systemd.services.radicale.serviceConfig.RestartSec = "60";
+  # Restart-Verhalten + LDAP-Secret-Injection
+  systemd.services.radicale = {
+    serviceConfig = {
+      RestartSec = "60";
+      # LDAP-Token + Kanidm-Zertifikat zur Laufzeit laden
+      LoadCredential = lib.mkIf hasLdapToken (
+        [
+          "ldap-token:${config.age.secrets.radicale-ldap-token.path}"
+        ]
+        ++ lib.optional hasKanidmCert "kanidm-cert:${config.age.secrets.kanidm-self-signed-cert.path}"
+      );
+      # /run/radicale/ für dynamische Config-Datei
+      RuntimeDirectory = "radicale";
+      RuntimeDirectoryMode = "0750";
+      # Radicale mit zwei Config-Dateien starten: Nix-generierte + Secrets
+      ExecStart = lib.mkIf hasLdapToken (
+        lib.mkForce "${config.services.radicale.package}/bin/radicale --config /etc/radicale/config:/run/radicale/ldap-secrets.conf"
+      );
+    };
+    # ldap_secret + ldap_ssl_ca_file werden erst zur Laufzeit bekannt (agenix)
+    # und können nicht in die statische Nix-Config geschrieben werden.
+    preStart = lib.mkIf hasLdapToken (
+      lib.mkBefore ''
+        {
+          echo '[auth]'
+          echo "ldap_secret = $(cat "$CREDENTIALS_DIRECTORY/ldap-token")"
+          ${lib.optionalString hasKanidmCert ''
+            echo "ldap_ssl_ca_file = $CREDENTIALS_DIRECTORY/kanidm-cert"
+          ''}
+        } > /run/radicale/ldap-secrets.conf
+        chmod 600 /run/radicale/ldap-secrets.conf
+      ''
+    );
+  };
 
   # ---------------------------------------------------------------------------
   # Impermanence
@@ -381,8 +450,8 @@ in
   # Nützliche Pakete
   # ---------------------------------------------------------------------------
   environment.systemPackages = with pkgs; [
-    # htpasswd für lokale Benutzerverwaltung
-    apacheHttpd # enthält htpasswd
+    apacheHttpd # enthält htpasswd (Fallback / manuelle Verwaltung)
+    openldap # ldapsearch für LDAP-Debugging
   ];
 
   # ---------------------------------------------------------------------------
@@ -391,14 +460,17 @@ in
   warnings =
     let
       missing =
-        (lib.optional (!hasHtpasswd) "hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-users.age")
+        (lib.optional (!hasLdapToken) "hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-ldap-token.age")
         ++ (lib.optional (!hasRestic) "hosts/HL-1-MRZ-HOST-02/guests/radicale/restic-radicale.age")
         ++ (lib.optional (!hasRclone) "rclone/onedrive_nas/rclone.conf.age")
         ++ (lib.optional (!hasNtfy) "ntfy-sh/alert-pass.age")
         ++ (lib.optional (!hasHcPing) "hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age");
     in
-    (lib.optional (!hasHtpasswd)
-      "radicale: htpasswd-Secret fehlt! Radicale akzeptiert KEINE Logins. Erstelle: agenix -e hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-users.age"
+    (lib.optional (!hasLdapToken && !hasHtpasswd)
+      "radicale: Weder LDAP-Token noch htpasswd-Secret vorhanden! Radicale akzeptiert KEINE Logins."
+    )
+    ++ (lib.optional (!hasLdapToken && hasHtpasswd)
+      "radicale: Kein LDAP-Token (radicale-ldap-token.age) → Fallback auf htpasswd. Schritte: kanidm service-account api-token generate radicale-ldap radicale-token, dann agenix -e hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-ldap-token.age"
     )
     ++ (lib.optional (!hasBackupSecrets)
       "radicale: Restic-Backup ist DEAKTIVIERT (fehlende Secrets: ${lib.concatStringsSep ", " missing})"

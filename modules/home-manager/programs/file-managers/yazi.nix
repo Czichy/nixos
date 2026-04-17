@@ -68,9 +68,12 @@ in {
       # Tools used by the office preview plugin (pandoc is preferred,
       # catdoc / odt2txt serve as lighter fallbacks for legacy formats).
       home.packages = with pkgs; [
-        pandoc   # docx, odt, rtf, epub → plain text (primary converter)
-        catdoc   # legacy .doc → plain text
-        odt2txt  # ODF → plain text
+        pandoc            # docx, odt, rtf, epub → plain text (primary converter)
+        catdoc            # legacy .doc → plain text
+        odt2txt           # ODF → plain text
+        ffmpegthumbnailer # video thumbnail previews
+        exiftool          # EXIF metadata display (used by image opener)
+        unar              # archive extraction (used by archive opener)
       ];
 
       programs.yazi = {
@@ -116,8 +119,8 @@ in {
           };
           preview = {
             cache_dir = "${config.xdg.cacheHome}/yazi";
-            max_height = 1920;
-            max_width = 1080;
+            max_width = 3840;
+            max_height = 2160;
           };
 
           opener = {
@@ -148,8 +151,9 @@ in {
             ];
             image = [
               {
-                run = ''open "$@"'';
-                desc = "Open";
+                run = ''loupe "$@"'';
+                desc = "Open with Loupe";
+                orphan = true;
               }
               {
                 run = ''exiftool "$1"; echo "Press enter to exit"; read'';
@@ -181,12 +185,8 @@ in {
             ];
             fallback = [
               {
-                run = ''open "$@"'';
+                run = ''xdg-open "$@"'';
                 desc = "Open";
-              }
-              {
-                run = ''open -R "$@"'';
-                desc = "Reveal in Finder";
               }
             ];
           };

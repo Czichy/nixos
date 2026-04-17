@@ -256,6 +256,19 @@ in
 
     extraPackages =
       python3Packages: with python3Packages; [
+        # Required by HA's built-in remote/IR integration (not yet in nixpkgs)
+        (buildPythonPackage rec {
+          pname = "infrared-protocols";
+          version = "0.1.1";
+          pyproject = true;
+          src = fetchPypi {
+            inherit version;
+            pname = "infrared_protocols";
+            hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+          };
+          build-system = [ setuptools ];
+          doCheck = false;
+        })
         # adguardhome
         aioelectricitymaps
         dwdwfsapi

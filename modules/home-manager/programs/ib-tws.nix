@@ -104,8 +104,12 @@ with lib; let
     -DvmOptionsPath=$VMOPTIONS
     -Dsun.awt.nopixfmt=true
     -Dsun.java2d.noddraw=true
+    -Dsun.java2d.xrender=true
     -Dswing.boldMetal=false
     -Dsun.locale.formatasdefault=true
+    # Ensure menus/popups are heavyweight (native X11 windows) so Niri can position them correctly
+    -Djavax.swing.rebaseCssSizeMap=true
+    -Djava.awt.headless=false
 
     ### keep on update
     ${concatStringsSep "\n" jvm.extraOptions}
@@ -194,6 +198,13 @@ with lib; let
         BIN="ib-tws-native"
       fi
     fi
+
+    # Java AWT / Swing fixes for Wayland/XWayland + non-reparenting WMs (Niri, Hyprland, etc.)
+    # Without _JAVA_AWT_WM_NONREPARENTING, Java places menus/popups relative to a window frame
+    # that non-reparenting WMs never create → menus appear at wrong positions or not at all.
+    export _JAVA_AWT_WM_NONREPARENTING=1
+    # XRender backend improves Swing rendering under XWayland (smoother repaints)
+    export _JAVA_OPTIONS="-Dawt.useSystemAAFontSettings=lcd -Dswing.aatext=true"
 
     echo "Starting IB $APP ($CHANNEL) in $MODE mode..."
     echo "Config dir: $IBKR_CONFIG_DIR"

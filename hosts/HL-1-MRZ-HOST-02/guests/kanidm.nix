@@ -220,7 +220,10 @@ in
   # ---------------------------------------------------------------------------
   # Firewall
   # ---------------------------------------------------------------------------
-  networking.firewall.allowedTCPPorts = [ kanidmPort ];
+  networking.firewall.allowedTCPPorts = [
+    kanidmPort
+    3636 # LDAP over TLS – für Radicale (HL-3-RZ-CAL-01) und andere interne Services
+  ];
 
   # ---------------------------------------------------------------------------
   # Reverse Proxy: Caddy auf HOST-02 (intern) + PAZ-PROXY-01 (extern)
@@ -327,6 +330,16 @@ in
       # =====================================================================
       # Jeder Service bekommt eine *.access Gruppe (und optional *.admins).
       # Benutzer werden in globals.kanidm.persons ihren Gruppen zugeordnet.
+
+      # --- Radicale (CalDAV/CardDAV) – LDAP-Auth ---
+      # Benutzer in dieser Gruppe können sich über LDAP bei Radicale einloggen.
+      # Service-Account-Erstellung (einmalig, nach erstem Deployment):
+      #   kanidm login -D idm_admin --skip-hostname-verification
+      #   kanidm service-account create radicale-ldap "Radicale LDAP Reader" --skip-hostname-verification
+      #   kanidm service-account api-token generate --skip-hostname-verification radicale-ldap radicale-token
+      #   → Token als Secret speichern:
+      #   echo -n "<token>" | agenix -e hosts/HL-1-MRZ-HOST-02/guests/radicale/radicale-ldap-token.age
+      groups."radicale.access" = { };
 
       # --- Edu-Search ---
       groups."edu-search.access" = { };

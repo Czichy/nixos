@@ -133,19 +133,20 @@ in {
     ];
 
     interfaces = {
-      # eth9 = {
-      #   virtual = false;
-      #   physicalConnections = [(mkConnection "HL-1-MRZ-HOST-01" "enp38s0")];
-      # };
+      # HOST-01: enp38s0 = servers NIC (VLAN40), enp37s0 = mgmt NIC (VLAN100)
+      eth9 = {
+        virtual = false;
+        physicalConnections = [(mkConnection "HL-1-MRZ-HOST-01" "enp38s0")];
+      };
       eth11 = {
         virtual = false;
         physicalConnections = [(mkConnection "HL-1-MRZ-HOST-02" "enp4s0")];
       };
-      # eth12 = {
-      #   virtual = false;
-      #   physicalConnections = [(mkConnection "HL-1-MRZ-HOST-01" "enp37s0")];
-      #   network = "mgmt";
-      # };
+      eth12 = {
+        virtual = false;
+        physicalConnections = [(mkConnection "HL-1-MRZ-HOST-01" "enp37s0")];
+        network = "mgmt";
+      };
       eth13 = {
         virtual = false;
         physicalConnections = [(mkConnection "HL-1-MRZ-HOST-03" "enp4s0")];
@@ -160,11 +161,20 @@ in {
         virtual = true;
         network = "servers";
         physicalConnections = [
-          # (mkConnection "HL-1-MRZ-HOST-01" "30-servers")
-          # (mkConnection "HL-1-MRZ-HOST-02" "servers")
+          (mkConnection "HL-1-MRZ-HOST-01" "enp38s0")
           (mkConnection "HL-1-MRZ-HOST-02" "enp4s0")
-          (mkConnection "HL-1-MRZ-HOST-03" "servers")
-          # (mkConnectionRev "HL-3-MRZ-FW-01" "servers")
+          (mkConnection "HL-1-MRZ-HOST-03" "enp4s0")
+          (mkConnectionRev "HL-3-MRZ-FW-01" "servers")
+        ];
+      };
+      mgmt = {
+        virtual = true;
+        network = "mgmt";
+        physicalConnections = [
+          (mkConnection "HL-1-MRZ-HOST-01" "enp37s0")
+          (mkConnection "HL-1-MRZ-HOST-02" "enp4s0")
+          (mkConnection "HL-1-MRZ-HOST-03" "enp4s0")
+          (mkConnection "HL-3-MRZ-FW-01" "mgmt")
         ];
       };
       iot = {
@@ -177,87 +187,34 @@ in {
       trust = {
         virtual = true;
         network = "trust";
-        # physicalConnections = [
-        # (mkConnection "HL-3-MRZ-FW-01" "trust")
-        # ];
+        physicalConnections = [
+          (mkConnection "HL-3-MRZ-FW-01" "trust")
+        ];
       };
       guest = {
         virtual = true;
         network = "guest";
-        # physicalConnections = [
-        # (mkConnection "HL-3-MRZ-FW-01" "guest")
-        # ];
+        physicalConnections = [
+          (mkConnection "HL-3-MRZ-FW-01" "guest")
+        ];
       };
-      # mgmt = {
-      #   virtual = true;
-      #   network = "mgmt";
-      #   physicalConnections = [
-      #     (mkConnection "HL-1-MRZ-HOST-01" "30-mgmt")
-      #     (mkConnection "HL-1-MRZ-HOST-02" "mgmt")
-      #     (mkConnection "HL-1-MRZ-HOST-03" "30-mgmt")
-      #     (mkConnection "HL-3-MRZ-FW-01" "mgmt")
-      #   ];
-      # };
     };
   };
 
-  # nodes.switch-office = mkSwitch "Switch Office" {
-  #   info = "NETGEAR GS108Ev3 - 8 Port Switch";
-  #   # address: 10.15.100.252/24
-  #   image = ./images/dlink-dgs1016d.png;
-  #   interfaceGroups = [
-  #     [
-  #       "eth1"
-  #       "eth2"
-  #       "eth3"
-  #       "eth4"
-  #       "eth5"
-  #       "eth6"
-  #       "eth7"
-  #       "eth8"
-  #     ]
-  #   ];
-
-  #   interfaces = {
-  #     eth1 = {
-  #       virtual = false;
-  #       physicalConnections = [
-  #         (mkConnection "switch-keller" "eth1")
-  #       ];
-  #     };
-
-  #     eth2 = {
-  #       virtual = false;
-  #       physicalConnections = [
-  #         (mkConnection "HL-1-OZ-PC-01" "enp39s0")
-  #       ];
-  #     };
-  #     trust = {
-  #       virtual = true;
-  #       physicalConnections = [
-  #         (mkConnection "switch-keller" "trust")
-  #       ];
-  #     };
-  #   };
-  #   # connections.trust = mkConnection "switch-keller" "trust";
-  #   # connections.mgmt = mkConnection "switch-keller" "mgmt";
-  #   # connections.guest = mkConnection "switch-keller" "guest";
-  #   # connections.trust = mkConnection "switch-keller" "eth1";
-  #   # connections.mgmt = mkConnection "switch-keller" "eth1";
-  #   # connections.guest = mkConnection "switch-keller" "eth1";
-  # };
   # |----------------------------------------------------------------------| #
 
   nodes.tv-livingroom = mkDevice "TV Wohnzimmer" {
     info = "LG OLED65B6D";
-    # image = ./images/lg-oled65b6d.png;
-    interfaces.eth1 = {};
+    interfaces.eth1 = {
+      network = "trust";
+    };
   };
 
   nodes.tv-hobby = mkDevice "TV Hobbyraum" {
     info = "LG OLED65B6D";
-    # image = ./images/lg-oled65b6d.png;
-    interfaces.eth1 = {};
+    interfaces.eth1 = {
+      network = "trust";
+    };
   };
 
   nodes.uap-ap-pro = mkSwitch "Wi-Fi AP" {

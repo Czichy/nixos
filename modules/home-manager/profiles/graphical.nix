@@ -103,7 +103,7 @@ in {
         zathura # A highly customizable and functional PDF viewer
 
         grim
-        imv
+        loupe  # GTK4/libadwaita image viewer, Wayland-native, HiDPI-aware
         pulseaudio
         cliphist
         ydotool

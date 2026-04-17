@@ -9,7 +9,7 @@
       sensor = [
         {
           name = "Temperature bedroom Rick";
-          object_id = "temperature_bedroom_rick";
+          unique_id = "temperature_bedroom_rick";
           state_topic = "sensor/temperature/bedroom/status";
           unit_of_measurement = "°C";
           device_class = "temperature";
