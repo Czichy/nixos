@@ -221,6 +221,10 @@ in
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
+  age.secrets.hetzner-storage-box-ssh-key = {
+    file = secretsPath + "/hetzner/storage-box/ssh_key.age";
+    mode = "400";
+  };
   # |----------------------------------------------------------------------| #
   # services.minio = {
   #   enable = true;
@@ -371,6 +375,35 @@ in
         };
       };
 
+      ente-postgres-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-ente-postgres";
+        paths = [ "/tmp/ente-postgresql-dump-hetzner.sql.gz" ];
+        exclude = [ ];
+        passwordFile = config.age.secrets.restic-postgres.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupPrepareCommand = ''
+          ${config.services.postgresql.package}/bin/pg_dumpall --clean \
+          | ${lib.getExe pkgs.gzip} --rsyncable \
+          > /tmp/ente-postgresql-dump-hetzner.sql.gz
+        '';
+        backupCleanupCommand = ''
+          rm -f /tmp/ente-postgresql-dump-hetzner.sql.gz
+          ${script-post config.networking.hostName "ente-postgres-hetzner"}
+        '';
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
+        timerConfig = {
+          OnCalendar = "*-*-* 03:30:00";
+        };
+      };
+
       # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
       # ente-postgres-backup-s3 = {
       #   initialize = true;
@@ -421,4 +454,10 @@ in
   #   allow ${globals.net.home-lan.vlans.services.hosts.ward.ipv6};
   #   deny all;
   # '';
+
+  # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
 }

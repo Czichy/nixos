@@ -77,6 +77,7 @@ let
   rcloneFile = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
   ntfyFile = secretsPath + "/ntfy-sh/alert-pass.age";
   hcPingFile = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
+  hetznerKeyFile = secretsPath + "/hetzner/storage-box/ssh_key.age";
 
   hasHtpasswd = builtins.pathExists htpasswdFile;
   hasLdapToken = builtins.pathExists ldapTokenFile;
@@ -85,6 +86,7 @@ let
   hasRclone = builtins.pathExists rcloneFile;
   hasNtfy = builtins.pathExists ntfyFile;
   hasHcPing = builtins.pathExists hcPingFile;
+  hasHetznerKey = builtins.pathExists hetznerKeyFile;
   hasBackupSecrets = hasRestic && hasRclone;
 
   # Kanidm-IP und LDAP-Konfiguration
@@ -143,6 +145,10 @@ in
   age.secrets.radicale-hc-ping = lib.mkIf hasHcPing {
     file = hcPingFile;
     mode = "440";
+  };
+  age.secrets.hetzner-storage-box-ssh-key = lib.mkIf hasHetznerKey {
+    file = hetznerKeyFile;
+    mode = "400";
   };
 
   # ---------------------------------------------------------------------------
@@ -413,34 +419,46 @@ in
         # Backup nach OneDrive via rclone
         repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-radicale";
 
-        # Was wird gesichert: Alle Radicale-Collections (Kalender + Kontakte)
-        paths = [
-          "/var/lib/radicale"
-        ];
-
-        exclude = [
-          "/var/lib/radicale/.Radicale.lock"
-        ];
+        paths = [ "/var/lib/radicale" ];
+        exclude = [ "/var/lib/radicale/.Radicale.lock" ];
 
         passwordFile = config.age.secrets.restic-radicale.path;
         rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-        # Benachrichtigung + Healthcheck nach Backup
         backupCleanupCommand = script-post config.networking.hostName "radicale";
 
-        # Aufbewahrung: Radicale-Daten ändern sich häufig (Kalender-Einträge),
-        # daher moderate Retention.
         pruneOpts = [
           "--keep-daily 14"
           "--keep-weekly 8"
           "--keep-monthly 6"
         ];
 
-        # Täglich um 02:30 Uhr
         timerConfig = {
           OnCalendar = "*-*-* 02:30:00";
           Persistent = true;
           RandomizedDelaySec = "30min";
+        };
+      };
+    }
+    // lib.optionalAttrs hasHetznerKey {
+      radicale-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-radicale";
+        paths = [ "/var/lib/radicale" ];
+        exclude = [ "/var/lib/radicale/.Radicale.lock" ];
+        passwordFile = config.age.secrets.restic-radicale.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupCleanupCommand = script-post config.networking.hostName "radicale-hetzner";
+        pruneOpts = [
+          "--keep-daily 14"
+          "--keep-weekly 8"
+          "--keep-monthly 6"
+        ];
+        timerConfig = {
+          OnCalendar = "*-*-* 03:30:00";
+          Persistent = true;
         };
       };
     }
@@ -481,6 +499,11 @@ in
   # ---------------------------------------------------------------------------
   # KEIN fileSystems."/state" – HOST-02 MicroVMs nutzen nur /persist
   # (bereitgestellt via virtiofs in common-guest-config.nix).
+  tensorfiles.services.resticMaintenance = lib.mkIf hasNtfy {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
+
   systemd.network.enable = true;
   system.stateVersion = "24.05";
 }

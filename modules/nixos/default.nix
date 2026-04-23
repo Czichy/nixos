@@ -61,6 +61,9 @@ in {
       inherit localFlake;
       inherit secretsPath;
     };
+    services_restic_maintenance = importApply ./services/restic-maintenance.nix {
+      inherit localFlake;
+    };
 
     services_telegraf = importApply ./services/telegraf.nix {
       inherit localFlake;

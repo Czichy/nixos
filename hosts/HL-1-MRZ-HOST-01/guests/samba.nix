@@ -468,6 +468,10 @@ in {
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
+  age.secrets.hetzner-storage-box-ssh-key = {
+    file = secretsPath + "/hetzner/storage-box/ssh_key.age";
+    mode = "400";
+  };
   services.restic.backups = let
     ntfy_pass = "$(cat ${config.age.secrets.ntfy-alert-pass.path})";
     ntfy_url = "https://${globals.services.ntfy-sh.domain}/backups";
@@ -640,42 +644,132 @@ in {
       };
     };
     ina-backup = {
-      # Initialize the repository if it doesn't exist.
       initialize = true;
-
-      # backup to a rclone remote
       repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-ina";
-
-      # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
       paths = ["/shares/users/ina"];
-
-      # Patterns to exclude when backing up. See
-      #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-      # for details on syntax.
       exclude = [];
-
       passwordFile = config.age.secrets.restic-ina.path;
       rcloneConfigFile = config.age.secrets."rclone.conf".path;
-
-      # A script that must run after finishing the backup process.
       backupCleanupCommand = script-post config.networking.hostName "ina";
-
-      # A list of options (--keep-* et al.) for 'restic forget --prune',
-      # to automatically prune old snapshots.
-      # The 'forget' command is run *after* the 'backup' command, so
-      # keep that in mind when constructing the --keep-* options.
       pruneOpts = [
         "--keep-daily 3"
         "--keep-weekly 3"
         "--keep-monthly 3"
         "--keep-yearly 3"
       ];
-
-      # When to run the backup. See {manpage}`systemd.timer(5)` for details.
       timerConfig = {
         OnCalendar = "*-*-* 01:45:00";
       };
     };
+
+    dokumente-backup-hetzner = {
+      initialize = true;
+      repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-dokumente";
+      paths = ["shares/dokumente"];
+      exclude = [];
+      passwordFile = config.age.secrets.restic-dokumente.path;
+      extraOptions = [
+        "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+      ];
+      backupCleanupCommand = script-post config.networking.hostName "dokumente-hetzner";
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+      timerConfig = {
+        OnCalendar = "*-*-* 02:30:00";
+      };
+    };
+
+    bibliothek-backup-hetzner = {
+      initialize = true;
+      repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-bibliothek";
+      paths = ["shares/bibliothek"];
+      exclude = [];
+      passwordFile = config.age.secrets.restic-bibliothek.path;
+      extraOptions = [
+        "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+      ];
+      backupCleanupCommand = script-post config.networking.hostName "bibliothek-hetzner";
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+      timerConfig = {
+        OnCalendar = "*-*-* 02:45:00";
+      };
+    };
+
+    media-backup-hetzner = {
+      initialize = true;
+      repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-media";
+      paths = ["shares/media"];
+      exclude = [];
+      passwordFile = config.age.secrets.restic-media.path;
+      extraOptions = [
+        "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+      ];
+      backupCleanupCommand = script-post config.networking.hostName "media-hetzner";
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+      timerConfig = {
+        OnCalendar = "*-*-* 03:15:00";
+      };
+    };
+
+    christian-backup-hetzner = {
+      initialize = true;
+      repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-christian";
+      paths = ["/shares/users/christian"];
+      exclude = [];
+      passwordFile = config.age.secrets.restic-christian.path;
+      extraOptions = [
+        "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+      ];
+      backupCleanupCommand = script-post config.networking.hostName "christian-hetzner";
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+      timerConfig = {
+        OnCalendar = "*-*-* 03:30:00";
+      };
+    };
+
+    ina-backup-hetzner = {
+      initialize = true;
+      repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-ina";
+      paths = ["/shares/users/ina"];
+      exclude = [];
+      passwordFile = config.age.secrets.restic-ina.path;
+      extraOptions = [
+        "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+      ];
+      backupCleanupCommand = script-post config.networking.hostName "ina-hetzner";
+      pruneOpts = [
+        "--keep-daily 3"
+        "--keep-weekly 3"
+        "--keep-monthly 3"
+        "--keep-yearly 3"
+      ];
+      timerConfig = {
+        OnCalendar = "*-*-* 03:45:00";
+      };
+    };
   };
   # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
 }

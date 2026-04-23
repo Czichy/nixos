@@ -47,10 +47,13 @@
   ntfySecretFile = secretsPath + "/ntfy-sh/alert-pass.age";
   hcPingSecretFile = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
 
+  hetznerKeyFile = secretsPath + "/hetzner/storage-box/ssh_key.age";
+
   hasResticSecret = builtins.pathExists resticSecretFile;
   hasRcloneSecret = builtins.pathExists rcloneSecretFile;
   hasNtfySecret = builtins.pathExists ntfySecretFile;
   hasHcPingSecret = builtins.pathExists hcPingSecretFile;
+  hasHetznerKey = builtins.pathExists hetznerKeyFile;
 
   # Backup ist nur aktiv wenn ALLE benötigten Secrets vorhanden sind
   backupEnabled = hasResticSecret && hasRcloneSecret && hasNtfySecret && hasHcPingSecret;
@@ -81,6 +84,10 @@ in {
   age.secrets.edu-search-hc-ping = lib.mkIf hasHcPingSecret {
     file = hcPingSecretFile;
     mode = "440";
+  };
+  age.secrets.hetzner-storage-box-ssh-key = lib.mkIf hasHetznerKey {
+    file = hetznerKeyFile;
+    mode = "400";
   };
 
   # ---------------------------------------------------------------------------
@@ -151,12 +158,43 @@ in {
         "--keep-yearly 2"
       ];
 
-      # Nachts um 02:30 Uhr (nach dem Samba-Backup um 02:00)
       timerConfig = {
         OnCalendar = "*-*-* 02:30:00";
-        # Randomisierte Verzögerung um Lastspitzen zu vermeiden
         RandomizedDelaySec = "15min";
-        # Verpasste Backups nachholen (z.B. nach Shutdown)
+        Persistent = true;
+      };
+    };
+  }
+  // lib.optionalAttrs hasHetznerKey {
+    edu-search-backup-hetzner = {
+      initialize = true;
+      repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-edu-search";
+      paths = [
+        "/var/lib/edu-search-backup"
+        "/var/lib/edu-indexer"
+      ];
+      exclude = [
+        "/var/lib/edu-search-backup/*.tmp"
+        "/var/lib/edu-indexer/__pycache__"
+      ];
+      passwordFile = config.age.secrets.restic-edu-search.path;
+      extraOptions = [
+        "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+      ];
+      backupPrepareCommand = ''
+        echo "Running pg_dump before Hetzner backup..."
+        systemctl start edu-search-pg-dump.service
+        echo "pg_dump completed."
+      '';
+      backupCleanupCommand = script-post config.networking.hostName "edu-search-hetzner";
+      pruneOpts = [
+        "--keep-daily 7"
+        "--keep-weekly 4"
+        "--keep-monthly 6"
+        "--keep-yearly 2"
+      ];
+      timerConfig = {
+        OnCalendar = "*-*-* 03:30:00";
         Persistent = true;
       };
     };
@@ -184,4 +222,10 @@ in {
   #   Name: backup-edu-search
   #   Period: 1 day
   #   Grace: 6 hours
+
+  # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = lib.mkIf backupEnabled {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
 }

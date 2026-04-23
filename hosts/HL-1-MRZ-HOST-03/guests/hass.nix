@@ -259,12 +259,12 @@ in
         # Required by HA's built-in remote/IR integration (not yet in nixpkgs)
         (buildPythonPackage rec {
           pname = "infrared-protocols";
-          version = "0.1.1";
+          version = "2.0.0";
           pyproject = true;
           src = fetchPypi {
             inherit version;
             pname = "infrared_protocols";
-            hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+            hash = "sha256-gOKIs0Pc6Gqfl7tSpbKCirJIogxHlQzNzfDSUw3F8A4=";
           };
           build-system = [ setuptools ];
           doCheck = false;

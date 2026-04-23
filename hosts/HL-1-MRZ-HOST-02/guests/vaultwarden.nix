@@ -51,6 +51,10 @@ in
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
+  age.secrets.hetzner-storage-box-ssh-key = {
+    file = secretsPath + "/hetzner/storage-box/ssh_key.age";
+    mode = "400";
+  };
 
   # |----------------------------------------------------------------------| #
 
@@ -206,44 +210,34 @@ in
         # backup to a rclone remote
         repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-vaultwarden";
 
-        # Which local paths to backup, in addition to ones specified via `dynamicFilesFrom`.
         paths = [ config.services.vaultwarden.backupDir ];
-
-        # Patterns to exclude when backing up. See
-        #   https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files
-        # for details on syntax.
         exclude = [ ];
 
         passwordFile = config.age.secrets.restic-vaultwarden.path;
         rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-        # A script that must run before starting the backup process.
-        # backupPrepareCommand = ''
-        #   echo "Building backup dir ${config.services.vaultwarden.backupDir}"
-        #   mkdir -p ${config.services.vaultwarden.backupDir}
-        #   ${pkgs.sqlite}/bin/sqlite3 ${config.services.vaultwarden.backupDir}/db.sqlite3 ".backup '${config.services.vaultwarden.backupDir}/vaultwarden.sqlite'"
-        # '';
-
-        # A script that must run after finishing the backup process.
         backupCleanupCommand = script-post config.networking.hostName "vaultwarden";
 
-        # Extra extended options to be passed to the restic --option flag.
-        # extraOptions = [];
-
-        # Extra arguments passed to restic backup.
-        # extraBackupArgs = [
-        #   "--exclude-file=/etc/restic/excludes-list"
-        # ];
-
-        # A list of options (--keep-* et al.) for 'restic forget --prune',
-        # to automatically prune old snapshots.
-        # The 'forget' command is run *after* the 'backup' command, so
-        # keep that in mind when constructing the --keep-* options.
         pruneOpts = [ "--keep-last 14" ];
 
-        # When to run the backup. See {manpage}`systemd.timer(5)` for details.
         timerConfig = {
           OnCalendar = "*-*-* 01:30:00";
+        };
+      };
+
+      vaultwarden-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-vaultwarden";
+        paths = [ config.services.vaultwarden.backupDir ];
+        exclude = [ ];
+        passwordFile = config.age.secrets.restic-vaultwarden.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupCleanupCommand = script-post config.networking.hostName "vaultwarden-hetzner";
+        pruneOpts = [ "--keep-last 14" ];
+        timerConfig = {
+          OnCalendar = "*-*-* 02:30:00";
         };
       };
     };
@@ -260,5 +254,10 @@ in
   ];
 
   # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
+
   system.stateVersion = "24.05";
 }

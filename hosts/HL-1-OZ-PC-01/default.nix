@@ -74,6 +74,7 @@
     pipewire = {
       enable = true;
       alsa.enable = true;
+      alsa.support32Bit = true; # Proton/Wine 32-bit audio (ALSA → PipeWire bridge)
       pulse.enable = true;
       jack.enable = true;
 

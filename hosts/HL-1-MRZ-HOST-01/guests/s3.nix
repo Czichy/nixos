@@ -197,6 +197,10 @@ in
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
+  age.secrets.hetzner-storage-box-ssh-key = {
+    file = secretsPath + "/hetzner/storage-box/ssh_key.age";
+    mode = "400";
+  };
   # |----------------------------------------------------------------------| #
   #  # Add garage CLI and Web UI to system packages for management
   # environment.systemPackages = with pkgs; [
@@ -358,6 +362,27 @@ in
         };
       };
 
+      ente-minio-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/HL-3-RZ-ENTE-01-ente-minio";
+        paths = [ "${config.services.garage.settings.data_dir}/ente" ];
+        exclude = [ ];
+        passwordFile = config.age.secrets.restic-minio.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupCleanupCommand = script-post config.networking.hostName "ente-minio-hetzner";
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
+        timerConfig = {
+          OnCalendar = "*-*-* 03:45:00";
+        };
+      };
+
       # TODO: Uncomment when S3 backup provider is configured (e.g. Backblaze B2, Wasabi, Hetzner Storage Box)
       # ente-minio-backup-s3 = {
       #   initialize = true;
@@ -389,4 +414,10 @@ in
       #   };
       # };
     };
+
+  # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
 }

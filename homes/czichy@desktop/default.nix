@@ -2,11 +2,9 @@
   pkgs,
   config,
   ...
-}:
-let
+}: let
   homeDir = "/home/czichy";
-in
-{
+in {
   tensorfiles.hm = {
     profiles.graphical-hyprland.enable = true;
     profiles.graphical-niri.enable = true;
@@ -103,7 +101,7 @@ in
             gateway = {
               apiOnly = true;
               localServerPort = 4000;
-              trustedIPs = [ "127.0.0.1" ];
+              trustedIPs = ["127.0.0.1"];
             };
             jvm.maxHeapMb = 1024;
           };
@@ -122,7 +120,7 @@ in
             gateway = {
               apiOnly = true;
               localServerPort = 4001;
-              trustedIPs = [ "127.0.0.1" ];
+              trustedIPs = ["127.0.0.1"];
             };
             jvm.maxHeapMb = 1024;
           };
@@ -131,7 +129,7 @@ in
       ragenix.enable = true;
       games = {
         steam.enable = true;
-        minecraft.enable = true;
+        minecraft.enable = false;
         beyond-all-reason.enable = false;
       };
       terminals.foot.makeDefault = true;
@@ -182,8 +180,8 @@ in
 
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
-      autoconnect = [ "qemu:///system" ];
-      uris = [ "qemu:///system" ];
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
     };
   };
 

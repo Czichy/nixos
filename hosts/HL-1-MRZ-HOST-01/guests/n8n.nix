@@ -112,6 +112,10 @@ in
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
+  age.secrets.hetzner-storage-box-ssh-key = {
+    file = secretsPath + "/hetzner/storage-box/ssh_key.age";
+    mode = "400";
+  };
   # |----------------------------------------------------------------------| #
   users.users.n8n = {
     isSystemUser = true;
@@ -241,7 +245,6 @@ in
         # A script that must run after finishing the backup process.
         backupCleanupCommand = script-post config.networking.hostName "n8n";
 
-        # Prune old snapshots.
         pruneOpts = [
           "--keep-daily 3"
           "--keep-weekly 3"
@@ -249,13 +252,41 @@ in
           "--keep-yearly 3"
         ];
 
-        # When to run the backup. See systemd.timer(5) for details.
         timerConfig = {
           OnCalendar = "*-*-* 03:00:00";
         };
       };
+
+      n8n-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-n8n";
+        paths = [ "/var/lib/n8n" ];
+        exclude = [
+          "/var/lib/n8n/.cache"
+          "/var/lib/n8n/.npm"
+        ];
+        passwordFile = config.age.secrets.restic-n8n.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupCleanupCommand = script-post config.networking.hostName "n8n-hetzner";
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
+        timerConfig = {
+          OnCalendar = "*-*-* 04:00:00";
+        };
+      };
     };
   # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
+
   systemd.network.enable = true;
   system.stateVersion = "24.05";
 }

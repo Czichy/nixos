@@ -44,6 +44,10 @@ in
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
+  age.secrets.hetzner-storage-box-ssh-key = {
+    file = secretsPath + "/hetzner/storage-box/ssh_key.age";
+    mode = "400";
+  };
 
   # |----------------------------------------------------------------------| #
   globals.services.node-red = {
@@ -145,18 +149,6 @@ in
         # A script that must run after finishing the backup process.
         backupCleanupCommand = script-post config.networking.hostName "node-red";
 
-        # Extra extended options to be passed to the restic --option flag.
-        # extraOptions = [];
-
-        # Extra arguments passed to restic backup.
-        # extraBackupArgs = [
-        #   "--exclude-file=/etc/restic/excludes-list"
-        # ];
-
-        # A list of options (--keep-* et al.) for 'restic forget --prune',
-        # to automatically prune old snapshots.
-        # The 'forget' command is run *after* the 'backup' command, so
-        # keep that in mind when constructing the --keep-* options.
         pruneOpts = [
           "--keep-daily 3"
           "--keep-weekly 3"
@@ -164,9 +156,29 @@ in
           "--keep-yearly 3"
         ];
 
-        # When to run the backup. See {manpage}`systemd.timer(5)` for details.
         timerConfig = {
           OnCalendar = "*-*-* 01:30:00";
+        };
+      };
+
+      node-red-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-node-red";
+        paths = [ "/var/lib/node-red" ];
+        exclude = [ ];
+        passwordFile = config.age.secrets.restic-node-red.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupCleanupCommand = script-post config.networking.hostName "node-red-hetzner";
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
+        timerConfig = {
+          OnCalendar = "*-*-* 02:30:00";
         };
       };
     };
@@ -190,4 +202,8 @@ in
   # name = "Power Meter";
   # };
   # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = {
+    enable = true;
+    ntfyPassFile = config.age.secrets.ntfy-alert-pass.path;
+  };
 }

@@ -96,6 +96,10 @@ in
     file = secretsPath + "/hosts/HL-4-PAZ-PROXY-01/healthchecks-ping.age";
     mode = "440";
   };
+  age.secrets.hetzner-storage-box-ssh-key = {
+    file = secretsPath + "/hetzner/storage-box/ssh_key.age";
+    mode = "400";
+  };
   # |----------------------------------------------------------------------| #
   services.affine = {
     enable = true;
@@ -163,13 +167,8 @@ in
         passwordFile = config.age.secrets.restic-dokumente.path;
         rcloneConfigFile = config.age.secrets."rclone.conf".path;
 
-        # A script that must run after finishing the backup process.
         backupCleanupCommand = script-post config.networking.hostName "affine";
 
-        # A list of options (--keep-* et al.) for 'restic forget --prune',
-        # to automatically prune old snapshots.
-        # The 'forget' command is run *after* the 'backup' command, so
-        # keep that in mind when constructing the --keep-* options.
         pruneOpts = [
           "--keep-daily 3"
           "--keep-weekly 3"
@@ -177,10 +176,36 @@ in
           "--keep-yearly 3"
         ];
 
-        # When to run the backup. See {manpage}`systemd.timer(5)` for details.
         timerConfig = {
           OnCalendar = "*-*-* 01:30:00";
         };
       };
+
+      affine-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-affine";
+        paths = [ "/var/lib/affine" ];
+        exclude = [ ];
+        passwordFile = config.age.secrets.restic-affine.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupCleanupCommand = script-post config.networking.hostName "affine-hetzner";
+        pruneOpts = [
+          "--keep-daily 3"
+          "--keep-weekly 3"
+          "--keep-monthly 3"
+          "--keep-yearly 3"
+        ];
+        timerConfig = {
+          OnCalendar = "*-*-* 02:30:00";
+        };
+      };
     };
+
+  # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = {
+    enable = true;
+    ntfyPassFile = config.age.secrets.affine-ntfy-alert-pass.path;
+  };
 }

@@ -74,6 +74,7 @@ let
   resticFile = secretsBase + "/restic-kanidm.age";
   rcloneFile = secretsPath + "/rclone/onedrive_nas/rclone.conf.age";
   ntfyFile = secretsPath + "/ntfy-sh/alert-pass.age";
+  hetznerKeyFile = secretsPath + "/hetzner/storage-box/ssh_key.age";
 
   hasTlsCrt = builtins.pathExists tlsCrtFile;
   hasTlsKey = builtins.pathExists tlsKeyFile;
@@ -82,6 +83,7 @@ let
   hasRestic = builtins.pathExists resticFile;
   hasRclone = builtins.pathExists rcloneFile;
   hasNtfy = builtins.pathExists ntfyFile;
+  hasHetznerKey = builtins.pathExists hetznerKeyFile;
   hasBackupSecrets = hasRestic && hasRclone;
 
   # Kanidm kann nur starten wenn TLS-Zertifikate vorhanden sind
@@ -215,6 +217,10 @@ in
     file = ntfyFile;
     mode = "440";
     group = "kanidm";
+  };
+  age.secrets.hetzner-storage-box-ssh-key = lib.mkIf hasHetznerKey {
+    file = hetznerKeyFile;
+    mode = "400";
   };
 
   # ---------------------------------------------------------------------------
@@ -584,27 +590,38 @@ in
         # Ziel: rclone-Remote (OneDrive NAS)
         repository = "rclone:onedrive_nas:/backup/${config.networking.hostName}-kanidm";
 
-        # Kanidm online_backup JSON-Dumps sichern
         paths = [ backupDir ];
-
         exclude = [ ];
 
         passwordFile = config.age.secrets.restic-kanidm.path;
         rcloneConfigFile = config.age.secrets."rclone-kanidm.conf".path;
 
-        # Cleanup-Script: ntfy-Benachrichtigung nach Backup
         backupCleanupCommand = script-post config.networking.hostName "kanidm";
 
-        # Aufbewahrungsrichtlinie: 14 Snapshots behalten, Rest prunen
         pruneOpts = [ "--keep-last 14" ];
 
-        # Zeitplan: 30 Min nach online_backup (02:00), damit Dump fertig ist
         timerConfig = {
           OnCalendar = "*-*-* 02:30:00";
-          # Verpasste Backups nachholen (z.B. nach Shutdown)
           Persistent = true;
-          # Leichte Streuung um Lastspitzen zu vermeiden
           RandomizedDelaySec = "5min";
+        };
+      };
+    }
+    // lib.optionalAttrs hasHetznerKey {
+      kanidm-backup-hetzner = {
+        initialize = true;
+        repository = "sftp:u581144@u581144.your-storagebox.de:/restic/${config.networking.hostName}-kanidm";
+        paths = [ backupDir ];
+        exclude = [ ];
+        passwordFile = config.age.secrets.restic-kanidm.path;
+        extraOptions = [
+          "sftp.args='-i ${config.age.secrets.hetzner-storage-box-ssh-key.path} -o StrictHostKeyChecking=accept-new'"
+        ];
+        backupCleanupCommand = script-post config.networking.hostName "kanidm-hetzner";
+        pruneOpts = [ "--keep-last 14" ];
+        timerConfig = {
+          OnCalendar = "*-*-* 03:30:00";
+          Persistent = true;
         };
       };
     }
@@ -643,4 +660,10 @@ in
       + (lib.optionalString (!hasRestic) "  - hosts/HL-1-MRZ-HOST-02/guests/kanidm/restic-kanidm.age\n")
       + (lib.optionalString (!hasRclone) "  - rclone/onedrive_nas/rclone.conf.age\n")
     );
+
+  # |----------------------------------------------------------------------| #
+  tensorfiles.services.resticMaintenance = lib.mkIf (hasNtfy && hasBackupSecrets) {
+    enable = true;
+    ntfyPassFile = config.age.secrets.kanidm-ntfy-alert-pass.path;
+  };
 }
