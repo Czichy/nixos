@@ -190,8 +190,8 @@
           "forgejo.admins"
           "karakeep.access"
           "fava.access"
+          "paperless.access"
           # Deaktiviert: keine aktiven MicroVMs
-          # "paperless.access"
           # "immich.access"
           # "linkwarden.access"
           # "linkwarden.admins"
@@ -213,8 +213,8 @@
           "edu-search.access"
           "karakeep.access"
           "fava.access"
+          "paperless.access"
           # Deaktiviert: keine aktiven MicroVMs
-          # "paperless.access"
           # "immich.access"
           # "linkwarden.access"
           # --- Web-Sentinel (oauth2-proxy) ---

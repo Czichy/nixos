@@ -135,6 +135,10 @@
       // mkMicrovm "minecraft" "HL-3-RZ-MC-01" "enp38s0" "02:0b:27:ee:9e:16" "vlan40" {
         enableStorageDataset = true;   # /storage für Welten (kann über Zeit wachsen)
       }
+      // mkMicrovm "paperless" "HL-3-RZ-PAPERLESS-01" "enp38s0" "02:0c:27:ee:9e:16" "vlan40" {
+        enablePaperlessDataset = true; # /paperless → consume + media (ZFS bunker/paperless)
+        enableStorageDataset = true;   # /storage → Dokumente-Share (Samba)
+      }
       # // mkMicrovm "affine" "HL-3-RZ-AFFINE-01" "enp38s0" "02:04:27:ee:9e:16" "vlan40" {
       #   enableStorageDataset = true;
       # }

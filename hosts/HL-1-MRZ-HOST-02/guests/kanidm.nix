@@ -191,8 +191,10 @@ in
   age.secrets.kanidm-oauth2-karakeep = lib.mkIf (hasOAuth2Secret "karakeep") (
     mkKanidmSecret (secretsBase + "/oauth2-karakeep.age") { }
   );
-  # Deaktiviert: paperless, immich, linkwarden haben keine aktiven MicroVMs
-  # age.secrets.kanidm-oauth2-paperless = lib.mkIf (hasOAuth2Secret "paperless") (mkKanidmSecret (secretsBase + "/oauth2-paperless.age") {});
+  age.secrets.kanidm-oauth2-paperless = lib.mkIf (hasOAuth2Secret "paperless") (
+    mkKanidmSecret (secretsBase + "/oauth2-paperless.age") { }
+  );
+  # Deaktiviert: immich, linkwarden haben keine aktiven MicroVMs
   # age.secrets.kanidm-oauth2-immich = lib.mkIf (hasOAuth2Secret "immich") (mkKanidmSecret (secretsBase + "/oauth2-immich.age") {});
   # age.secrets.kanidm-oauth2-linkwarden = lib.mkIf (hasOAuth2Secret "linkwarden") (mkKanidmSecret (secretsBase + "/oauth2-linkwarden.age") {});
   age.secrets.kanidm-oauth2-web-sentinel = lib.mkIf (hasOAuth2Secret "web-sentinel") (
@@ -470,15 +472,20 @@ in
         ];
       };
 
-      # --- Paperless (DEAKTIVIERT - keine aktive MicroVM) ---
-      # systems.oauth2.paperless = lib.mkIf (hasOAuth2Secret "paperless") {
-      #   displayName = "Paperless";
-      #   originUrl = "https://${globals.services.paperless.domain}/accounts/oidc/kanidm/login/callback/";
-      #   originLanding = "https://${globals.services.paperless.domain}/";
-      #   basicSecretFile = config.age.secrets.kanidm-oauth2-paperless.path;
-      #   preferShortUsername = true;
-      #   scopeMaps."paperless.access" = ["openid" "email" "profile"];
-      # };
+      # --- Paperless-NGX (django-allauth OIDC) ---
+      groups."paperless.access" = { };
+      systems.oauth2.paperless = lib.mkIf (hasOAuth2Secret "paperless") {
+        displayName = "Paperless-ngx";
+        originUrl = "https://${globals.services.paperless.domain}/accounts/oidc/kanidm/login/callback/";
+        originLanding = "https://${globals.services.paperless.domain}/";
+        basicSecretFile = config.age.secrets.kanidm-oauth2-paperless.path;
+        preferShortUsername = true;
+        scopeMaps."paperless.access" = [
+          "openid"
+          "email"
+          "profile"
+        ];
+      };
 
       # --- Immich (DEAKTIVIERT - keine aktive MicroVM) ---
       # systems.oauth2.immich = lib.mkIf (hasOAuth2Secret "immich") {
